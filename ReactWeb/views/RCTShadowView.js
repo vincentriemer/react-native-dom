@@ -1,6 +1,9 @@
-// @flow
-import type { RCTComponent } from "./RCTComponent";
-import YogaNode from "yoga-js";
+/**
+ * @providesModule RCTShadowView
+ * @flow
+ */
+import type { RCTComponent } from "RCTComponent";
+import Yoga from "yoga-layout";
 
 type RCTUpdateLifecycle = "uninitialized" | "computed" | "dirtied";
 
@@ -14,7 +17,7 @@ class RCTShadowView implements RCTComponent {
   _recomputeBorder: boolean;
   _didUpdateSubviews: boolean;
 
-  yogaNode: YogaNode;
+  // yogaNode: typeof YogaNode;
   isNewView: boolean;
   isHidden: boolean;
 
@@ -31,3 +34,5 @@ class RCTShadowView implements RCTComponent {
     return 0;
   }
 }
+
+export default RCTShadowView;

@@ -1,6 +1,10 @@
-// @flow
-import invariant from "invariant";
+/**
+ * @providesModule RCTNativeEventEmitter
+ * @flow
+ */
+import invariant from "Invariant";
 import RCTBridge, { RCT_EXPORT_METHOD, RCTFunctionTypeNormal } from "RCTBridge";
+import NotificationCenter from "NotificationCenter";
 
 class RCTEventEmitter {
   bridge: ?RCTBridge;
@@ -18,7 +22,8 @@ class RCTEventEmitter {
     invariant(
       this.bridge,
       "bridge is not set. This is probably because you've" +
-        `explicitly synthesized the bridge in ${this.constructor.name}, even though it's inherited ` +
+        `explicitly synthesized the bridge in ${this.constructor
+          .name}, even though it's inherited ` +
         "from RCTEventEmitter."
     );
 
@@ -31,6 +36,7 @@ class RCTEventEmitter {
         body ? [eventName, body] : [eventName],
         null
       );
+      NotificationCenter.emitEvent(eventName, [body]);
     } else {
       console.warn(`Sending ${eventName} with no listeners registered`);
     }
@@ -45,13 +51,22 @@ class RCTEventEmitter {
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  addListener(eventName: string) {
+  addListener(eventName: string, callback: ?(body: any) => void) {
     // TODO: Add debug check for supportedEvents
+
+    if (callback != null) {
+      NotificationCenter.addListener(eventName, callback);
+    }
 
     this.listenerCount++;
     if (this.listenerCount === 1) {
       this.startObserving();
     }
+  }
+
+  removeListener(eventName: string, callback: Function) {
+    NotificationCenter.removeListener(eventName, callback);
+    this.removeListeners(1);
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)

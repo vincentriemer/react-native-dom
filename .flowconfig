@@ -1,10 +1,16 @@
 [ignore]
-
+.*/node_modules/fbjs/.*
+.*/node_modules/metro-bundler/.*
+.*/node_modules/react-native/.*
+.*/node_modules/haul-cli/.*
 [include]
 
 [libs]
+node_modules/yoga-js/flow-typed
+node_modules/fbjs/lib
 
 [options]
 esproposal.decorators=ignore
 unsafe.enable_getters_and_setters=true
 module.name_mapper='^RCTBridge$' -> '<PROJECT_ROOT>/ReactWeb/bridge/RCTBridge'
+module.system=haste

@@ -1,17 +1,28 @@
-// @flow
-import { moduleConfigFactory } from "./RCTModuleConfig";
+/**
+ * @providesModule RCTBridge
+ * @flow
+ */
+import invariant from "Invariant";
+import { moduleConfigFactory } from "RCTModuleConfig";
 import {
   RCTFunctionTypeNormal,
   RCTFunctionTypePromise,
   RCTFunctionTypeSync,
   RCTFunctionType,
-} from "./RCTBridgeMethod";
+} from "RCTBridgeMethod";
 
 export {
   RCTFunctionTypeNormal,
   RCTFunctionTypePromise,
   RCTFunctionTypeSync,
   RCTFunctionType,
+};
+
+type MessagePayload = {
+  data: {
+    topic: string,
+    payload: any,
+  },
 };
 
 export interface ModuleClass {
@@ -21,13 +32,28 @@ export interface ModuleClass {
   [string]: ?Function,
 }
 
-function getPropertyNames(obj: ?Object): Array<string> {
+export function getPropertyNames(obj: ?Object): Array<string> {
   if (obj == null) return [];
 
   const currentPropertyNames = Object.getOwnPropertyNames(obj);
   return currentPropertyNames.concat(
     getPropertyNames(Object.getPrototypeOf(obj))
   );
+}
+
+export function bridgeModuleNameForClass(cls: Class<ModuleClass>): string {
+  let name = cls.__moduleName;
+
+  if (name != null) {
+    if (name.startsWith("RK")) {
+      name = name.substring(2);
+    } else if (name.startsWith("RCT")) {
+      name = name.substring(3);
+    }
+    return name;
+  }
+
+  return "";
 }
 
 function generateModuleConfig(name: string, bridgeModule: ModuleClass) {
@@ -69,6 +95,13 @@ export default class RCTBridge {
   };
 
   modulesByName: { [name: string]: ModuleClass } = {};
+  moduleClasses: Array<Class<ModuleClass>> = [];
+  bundleFinishedLoading: ?() => void;
+
+  moduleForClass(cls: Class<ModuleClass>): ModuleClass {
+    invariant(cls.__moduleName, "Class does not seem to be exported");
+    return this.modulesByName[bridgeModuleNameForClass(cls)];
+  }
 
   queue: Array<any> = [];
   executing: boolean = false;
@@ -85,11 +118,25 @@ export default class RCTBridge {
     }
   }
 
-  onMessage({ data: { topic, payload } }) {
-    console.log("Recieved message from worker thread:", topic, payload);
+  onMessage(message: any) {
+    const { topic, payload } = message.data;
+    // console.log("Recieved message from worker thread:", topic, payload);
+
+    switch (topic) {
+      case "bundleFinishedLoading": {
+        if (this.bundleFinishedLoading) {
+          this.bundleFinishedLoading();
+        }
+        break;
+      }
+      default: {
+        console.log(`Unknown topic: ${topic}`);
+      }
+    }
   }
 
   initializeModules = () => {
+    this.moduleClasses = [...RCTBridge.RCTModuleClasses];
     RCTBridge.RCTModuleClasses.forEach((moduleClass: Class<ModuleClass>) => {
       const module = new moduleClass();
 
@@ -97,12 +144,14 @@ export default class RCTBridge {
         module.setBridge(this);
       }
 
-      const moduleName = moduleClass.__moduleName || "";
+      const moduleName = bridgeModuleNameForClass(moduleClass);
       this.modulesByName[moduleName] = module;
     });
-
-    this.sendMessage("loadBridgeConfig", this.getInitialModuleConfig());
   };
+
+  loadBridgeConfig() {
+    this.sendMessage("loadBridgeConfig", this.getInitialModuleConfig());
+  }
 
   getInitialModuleConfig = () => {
     const remoteModuleConfig = Object.keys(

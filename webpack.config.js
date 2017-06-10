@@ -3,19 +3,14 @@ var glob = require("glob");
 var HasteResolverPlugin = require("haste-resolver-webpack-plugin");
 var HtmlWebpackPlugin = require("html-webpack-plugin");
 var webpack = require("webpack");
-var HasteMapWebPackResolver = require("haste-map-webpack-resolver");
-var ProgressBarPlugin = require("progress-bar-webpack-plugin");
-
-var hasteMapWebPackResolver = new HasteMapWebPackResolver({
-  rootPath: path.resolve(__dirname, "."),
-});
 
 const mainEntry = "./ReactWeb/index.js";
 const modules = glob.sync("./ReactWeb/modules/*.js");
+const views = glob.sync("./ReactWeb/views/*.js");
 
 module.exports = {
   devtool: "source-map",
-  entry: modules.concat([mainEntry]),
+  entry: [].concat(modules, views, [mainEntry]),
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist"),
@@ -23,7 +18,6 @@ module.exports = {
   resolve: {
     alias: {
       ReactBundle: path.resolve(__dirname, "index.js"),
-      RCTBridge: path.resolve(__dirname, "ReactWeb", "bridge", "RCTBridge.js"),
     },
   },
   module: {
@@ -53,6 +47,12 @@ module.exports = {
       platform: "web",
       nodeModules: ["react-native"],
     }),
-    new HtmlWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      template: "public/index.html",
+    }),
   ],
+  node: {
+    fs: "empty",
+    module: "empty",
+  },
 };

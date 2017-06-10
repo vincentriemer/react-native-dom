@@ -1,9 +1,11 @@
 // @flow
-import ReactThread from "./jsExecutor/index.worker.js";
-const reactThread = new ReactThread();
+import ReactWorker from "./jsExecutor/index.worker.js";
+import RCTRootView from "./bridge/RCTRootView";
 
-import RCTBridge from "./bridge/RCTBridge";
+const reactWorker = new ReactWorker();
+const rootView = new RCTRootView(reactWorker, "HelloWorldApp");
 
-const bridge = new RCTBridge();
-bridge.setThread(reactThread);
-bridge.initializeModules();
+const rootElement = document.getElementById("root");
+if (rootElement != null) {
+  rootView.render(rootElement);
+}

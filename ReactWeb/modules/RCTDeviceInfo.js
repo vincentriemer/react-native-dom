@@ -1,6 +1,9 @@
-// @flow
+/**
+ * @providesModule RCTDeviceInfo
+ * @flow
+ */
 import { RCT_EXPORT_MODULE, RCT_EXPORT_METHOD } from "RCTBridge";
-import RCTEventEmitter from "./RCTEventEmitter";
+import RCTEventEmitter from "RCTNativeEventEmitter";
 
 // Optimized Resize Event
 // https://developer.mozilla.org/en-US/docs/Web/Events/resize
@@ -24,9 +27,10 @@ import RCTEventEmitter from "./RCTEventEmitter";
   throttle("resize", "optimizedResize");
 })();
 
-@RCT_EXPORT_MODULE class DeviceInfo extends RCTEventEmitter {
-  constructor(...args) {
-    super(...args);
+@RCT_EXPORT_MODULE
+class RCTDeviceInfo extends RCTEventEmitter {
+  constructor() {
+    super();
 
     window.addEventListener(
       "optimizedResize",
@@ -82,4 +86,4 @@ import RCTEventEmitter from "./RCTEventEmitter";
   }
 }
 
-export default DeviceInfo;
+export default RCTDeviceInfo;

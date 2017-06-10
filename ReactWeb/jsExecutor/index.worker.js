@@ -14,16 +14,15 @@ global.ErrorUtils = {
 // global.nativeRequireModuleConfig =
 
 onmessage = ({ data: { topic, payload } }) => {
-  console.log("Recieved message from main thread:", topic, payload);
+  // console.log("Recieved message from main thread:", topic, payload);
 
   switch (topic) {
     case "loadBridgeConfig": {
       global.__fbBatchedBridgeConfig = payload;
       loadReactBundle();
-      sendMessage("loaded");
+      sendMessage("bundleFinishedLoading");
       break;
     }
-
     case "callFunctionReturnFlushedQueue": {
       const batchedBridge = global.__fbBatchedBridge;
       const flushedQueue = batchedBridge.callFunctionReturnFlushedQueue(
