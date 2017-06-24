@@ -7,25 +7,31 @@ import RCTBridge, {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
   bridgeModuleNameForClass,
+  RCTFunctionTypeNormal,
 } from "RCTBridge";
+import type { RCTComponent } from "RCTComponent";
 import RCTComponentData from "RCTComponentData";
 import RCTViewManager from "RCTViewManager";
 import UIView from "UIView";
 import RCTRootView from "RCTRootView";
 import RCTDeviceInfo from "RCTDeviceInfo";
+import RCTRootShadowView from "RCTRootShadowView";
 
 type ShadowView = any;
 type Size = { width: number, height: number };
 
-let rootTagCounter = 1;
+let rootTagCounter = 0;
 
 @RCT_EXPORT_MODULE
 class RCTUIManager {
+  ticking: boolean = false;
   bridge: ?RCTBridge;
   rootViewTags: Set<number> = new Set();
   shadowViewRegistry: Map<number, ShadowView> = new Map();
   viewRegistry: Map<number, UIView> = new Map();
   componentDataByName: Map<string, RCTComponentData> = new Map();
+
+  pendingUIBlocks: Array<Function> = [];
 
   didUpdateDimensions = ({ window: { width, height } }: any) => {
     for (let rootViewTag of this.rootViewTags) {
@@ -72,7 +78,7 @@ class RCTUIManager {
   get allocateRootTag(): number {
     const tag = rootTagCounter;
     rootTagCounter++;
-    return tag;
+    return tag * 10 + 1;
   }
 
   /**
@@ -86,7 +92,14 @@ class RCTUIManager {
     this.viewRegistry.set(reactTag, rootView);
 
     // register shadow view
-    (async () => {})();
+    const shadowView = new RCTRootShadowView();
+    shadowView.availableSize = availableSize;
+    shadowView.reactTag = reactTag;
+    shadowView.backgroundColor = rootView.backgroundColor;
+    shadowView.viewName = rootView.constructor.name;
+
+    this.shadowViewRegistry.set(reactTag, shadowView);
+    this.rootViewTags.add(reactTag);
   }
 
   /**
@@ -152,6 +165,95 @@ class RCTUIManager {
    *
    */
   rootViewForReactTag(reactTag: number, completion: Function) {}
+
+  frame() {
+    if (this.pendingUIBlocks.length > 0) {
+      const uiBlocks = [...this.pendingUIBlocks];
+      this.pendingUIBlocks = [];
+
+      uiBlocks.forEach(block => {
+        block.call(null, this, this.viewRegistry);
+      });
+    }
+  }
+
+  addUIBlock(block: ?Function) {
+    if (block == null || this.viewRegistry == null) {
+      return;
+    }
+    this.pendingUIBlocks.push(block);
+  }
+
+  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+  setChildren(containerTag: number, reactTags: Array<number>) {
+    RCTUIManager.RCTSetChildren(
+      containerTag,
+      reactTags,
+      this.shadowViewRegistry
+    );
+
+    this.addUIBlock(
+      (uiManager: RCTUIManager, viewRegistry: Map<number, UIView>) => {
+        RCTUIManager.RCTSetChildren(containerTag, reactTags, viewRegistry);
+      }
+    );
+  }
+
+  static RCTSetChildren(
+    containerTag: number,
+    reactTags: Array<number>,
+    registry: Map<number, $Subtype<RCTComponent>>
+  ) {
+    const container = registry.get(containerTag);
+    let index = 0;
+    reactTags.forEach(reactTag => {
+      const view = registry.get(reactTag);
+      invariant(container, `No container view found with id: ${containerTag}`);
+      invariant(view, `No view found with id: ${reactTag}`);
+      container.insertReactSubviewAtIndex(view, index++);
+    });
+  }
+
+  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+  createView(
+    reactTag: number,
+    viewName: string,
+    rootTag: number,
+    props: Object
+  ) {
+    const componentData = this.componentDataByName.get(viewName);
+    invariant(
+      componentData,
+      `No component found for view with name ${viewName}`
+    );
+
+    // register shadow view
+    const shadowView = componentData.createShadowView(reactTag);
+    if (shadowView != null) {
+      componentData.setPropsForShadowView(props, shadowView);
+      this.shadowViewRegistry.set(reactTag, shadowView);
+    }
+
+    // Shadow view is the source of truth for background color this is a little
+    // bit counter-intuitive if people try to set background color when setting up
+    // the view, but it's the only way that makes sense given our threading model
+    const backgroundColor = shadowView.backgroundColor;
+
+    // Dispatch view creation directly to the main thread instead of adding to
+    // UIBlocks array. This way, it doesn't get deferred until after layout.
+    const view = componentData.createView(reactTag);
+    if (view != null) {
+      componentData.setPropsForView(props, view);
+
+      if (typeof view.setBackgroundColor === "function") {
+        view.setBackgroundColor(backgroundColor);
+      }
+
+      // TODO: investigate usage of reactBridgeDidFinishTransaction
+
+      this.viewRegistry.set(reactTag, view);
+    }
+  }
 
   constantsToExport() {
     const constants = {};

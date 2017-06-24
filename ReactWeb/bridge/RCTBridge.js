@@ -3,7 +3,7 @@
  * @flow
  */
 import invariant from "Invariant";
-import { moduleConfigFactory } from "RCTModuleConfig";
+import { moduleConfigFactory, ModuleConfig } from "RCTModuleConfig";
 import {
   RCTFunctionTypeNormal,
   RCTFunctionTypePromise,
@@ -24,6 +24,53 @@ type MessagePayload = {
     payload: any,
   },
 };
+
+type NativeCall = {
+  moduleId: number,
+  methodId: number,
+  args: Array<any>,
+};
+
+const MODULE_IDS = 0;
+const METHOD_IDS = 1;
+const PARAMS = 2;
+
+const WORKER_SRC = `
+ErrorUtils = {
+  setGlobalHandler: () => {},
+  reportFatalError: console.error,
+};
+
+function sendMessage(topic, payload) {
+  postMessage({ topic, payload });
+}
+
+var Status = undefined;
+
+onmessage = ({ data: { topic, payload } }) => {
+  // console.log("Recieved message from main thread:", topic, payload);
+
+  switch (topic) {
+    case "loadBridgeConfig": {
+      const { config, bundle } = payload;
+
+      __fbBatchedBridgeConfig = config;
+      importScripts(bundle);
+
+      sendMessage("bundleFinishedLoading");
+      break;
+    }
+    case "callFunctionReturnFlushedQueue": {
+      const batchedBridge = __fbBatchedBridge;
+      const flushedQueue = batchedBridge.callFunctionReturnFlushedQueue(
+        ...payload
+      );
+      sendMessage("flushedQueue", flushedQueue);
+      break;
+    }
+  }
+};
+`;
 
 export interface ModuleClass {
   static __moduleName: ?string,
@@ -96,7 +143,20 @@ export default class RCTBridge {
 
   modulesByName: { [name: string]: ModuleClass } = {};
   moduleClasses: Array<Class<ModuleClass>> = [];
+  moduleConfigs: Array<ModuleConfig> = [];
   bundleFinishedLoading: ?() => void;
+  messages: Array<NativeCall> = [];
+  moduleName: string;
+  bundleLocation: string;
+
+  constructor(moduleName: string, bundle: string) {
+    this.moduleName = moduleName;
+    this.bundleLocation = bundle;
+
+    const bridgeCodeBlob = new Blob([WORKER_SRC]);
+    const worker = new Worker(URL.createObjectURL(bridgeCodeBlob));
+    this.setThread(worker);
+  }
 
   moduleForClass(cls: Class<ModuleClass>): ModuleClass {
     invariant(cls.__moduleName, "Class does not seem to be exported");
@@ -118,14 +178,53 @@ export default class RCTBridge {
     }
   }
 
+  callNativeModule(moduleId: number, methodId: number, params: Array<any>) {
+    const moduleConfig = this.moduleConfigs[moduleId];
+
+    invariant(moduleConfig, `No such module with id: ${moduleId}`);
+    const [name, , functions] = moduleConfig;
+
+    invariant(functions, `Module ${name} has no methods to call`);
+    const functionName = functions[methodId];
+
+    invariant(
+      functionName,
+      `No such function in module ${name} with id ${methodId}`
+    );
+    const nativeModule = this.modulesByName[name];
+
+    invariant(nativeModule, `No such module with name ${name}`);
+    invariant(
+      nativeModule[functionName],
+      `No such method ${functionName} on module ${name}`
+    );
+    nativeModule[functionName].apply(nativeModule, params);
+  }
+
   onMessage(message: any) {
-    const { topic, payload } = message.data;
+    const { topic, payload } = (message.data: {
+      topic: string,
+      payload: ?any,
+    });
     // console.log("Recieved message from worker thread:", topic, payload);
 
     switch (topic) {
       case "bundleFinishedLoading": {
         if (this.bundleFinishedLoading) {
           this.bundleFinishedLoading();
+        }
+        break;
+      }
+      case "flushedQueue": {
+        if (payload != null && Array.isArray(payload)) {
+          const [moduleIds, methodIds, params] = payload;
+          for (let i = 0; i < moduleIds.length; i++) {
+            this.messages.push({
+              moduleId: moduleIds[i],
+              methodId: methodIds[i],
+              args: params[i],
+            });
+          }
         }
         break;
       }
@@ -149,8 +248,53 @@ export default class RCTBridge {
     });
   };
 
+  generateModuleConfig(name: string, bridgeModule: ModuleClass) {
+    const methodNames = [
+      ...new Set(getPropertyNames(bridgeModule)),
+    ].filter(methodName => methodName.startsWith("__rct_export__"));
+
+    const constants = bridgeModule.constantsToExport
+      ? bridgeModule.constantsToExport()
+      : undefined;
+
+    const allMethods = [];
+    const promiseMethods = [];
+    const syncMethods = [];
+
+    methodNames.forEach(rctName => {
+      if (bridgeModule[rctName]) {
+        const [methodName, methodType] = bridgeModule[rctName].call(
+          bridgeModule
+        );
+        allMethods.push(methodName);
+
+        if (methodType === RCTFunctionTypePromise) {
+          promiseMethods.push(allMethods.length - 1);
+        }
+
+        if (methodType === RCTFunctionTypeSync) {
+          syncMethods.push(allMethods.length - 1);
+        }
+      }
+    });
+    this.moduleConfigs.push(
+      moduleConfigFactory(
+        name,
+        constants,
+        allMethods,
+        promiseMethods,
+        syncMethods
+      )
+    );
+    return [name, constants, allMethods, promiseMethods, syncMethods];
+  }
+
   loadBridgeConfig() {
-    this.sendMessage("loadBridgeConfig", this.getInitialModuleConfig());
+    const config = this.getInitialModuleConfig();
+    this.sendMessage("loadBridgeConfig", {
+      config,
+      bundle: this.bundleLocation,
+    });
   }
 
   getInitialModuleConfig = () => {
@@ -158,7 +302,7 @@ export default class RCTBridge {
       this.modulesByName
     ).map(moduleName => {
       const bridgeModule = this.modulesByName[moduleName];
-      return generateModuleConfig(moduleName, bridgeModule);
+      return this.generateModuleConfig(moduleName, bridgeModule);
     });
     return { remoteModuleConfig };
   };
@@ -174,6 +318,16 @@ export default class RCTBridge {
       args,
     ]);
   };
+
+  frame() {
+    const frameStart = window.performance ? performance.now() : Date.now();
+
+    const messages = [...this.messages];
+    this.messages = [];
+    messages.forEach(({ moduleId, methodId, args }) => {
+      this.callNativeModule(moduleId, methodId, args);
+    });
+  }
 }
 
 export function RCT_EXPORT_METHOD(type: RCTFunctionType) {

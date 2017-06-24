@@ -1,7 +1,3 @@
-function loadReactBundle() {
-  require("ReactBundle");
-}
-
 function sendMessage(topic, payload) {
   postMessage({ topic, payload });
 }
@@ -11,15 +7,18 @@ global.ErrorUtils = {
   reportFatalError: console.error,
 };
 
-// global.nativeRequireModuleConfig =
+var Status = undefined;
 
 onmessage = ({ data: { topic, payload } }) => {
   // console.log("Recieved message from main thread:", topic, payload);
 
   switch (topic) {
     case "loadBridgeConfig": {
-      global.__fbBatchedBridgeConfig = payload;
-      loadReactBundle();
+      const { config, moduleName } = payload;
+
+      global.__fbBatchedBridgeConfig = config;
+      importScripts(moduleName);
+
       sendMessage("bundleFinishedLoading");
       break;
     }

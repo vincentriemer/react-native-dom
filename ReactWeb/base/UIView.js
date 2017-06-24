@@ -2,6 +2,7 @@
  * @providesModule UIView
  * @flow
  */
+import type { RCTComponent } from "RCTComponent";
 
 type Frame = {
   top: number,
@@ -24,7 +25,7 @@ export const FrameZero: Frame = {
   height: 0,
 };
 
-class UIView {
+class UIView implements RCTComponent {
   // Frame
   _left: number;
   _top: number;
@@ -38,6 +39,10 @@ class UIView {
   _clipsToBounds: boolean;
   _color: string;
   // opaque: boolean = true; TODO: this seems to be very UI specific
+
+  reactTag: number;
+  reactSubviews: Array<UIView>;
+  reactSuperview: UIView;
 
   // DOM-Related Properties
   tag: HTMLTag = "div";
@@ -164,6 +169,15 @@ class UIView {
   set color(value: string) {
     this.element.style.color = value;
     this._color = value;
+  }
+
+  insertReactSubviewAtIndex(subview: UIView, index: number) {}
+  removeReactSubview(subview: UIView) {}
+
+  didSetProps(changedProps: Array<string>) {}
+  didUpdateReactSubviews() {}
+  reactTagAtPoint(point: { x: number, y: number }): number {
+    return 0;
   }
 }
 

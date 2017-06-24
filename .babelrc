@@ -1,23 +1,22 @@
 {
+  "sourceMaps": "inline",
   "presets": [
-    [
-      "env",
-      {
-        "targets": {
-          "browsers": [
-            "last 2 versions",
-            "safari >= 7"
-          ]
-        }
-      }
-    ],
-    "react"
+    "react-native"
   ],
   "plugins": [
     "syntax-flow",
     "transform-flow-strip-types",
+    "transform-react-jsx",
     "transform-decorators-legacy",
     "transform-class-properties",
-    "transform-object-rest-spread"
+    "transform-object-rest-spread",
+    "transform-inline-environment-variables",
+    [
+      "replace-require",
+      {
+        "fs": "{}",
+        "path": "{}"
+      }
+    ]
   ]
 }
