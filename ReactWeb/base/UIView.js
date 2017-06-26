@@ -3,6 +3,7 @@
  * @flow
  */
 import type { RCTComponent } from "RCTComponent";
+import { rgba } from "normalize-css-color";
 
 type Frame = {
   top: number,
@@ -18,11 +19,43 @@ export type Size = {
   height: number,
 };
 
+(function() {
+  var typesToPatch = ["DocumentType", "Element", "CharacterData"],
+    remove = function() {
+      // The check here seems pointless, since we're not adding this
+      // method to the prototypes of any any elements that CAN be the
+      // root of the DOM. However, it's required by spec (see point 1 of
+      // https://dom.spec.whatwg.org/#dom-childnode-remove) and would
+      // theoretically make a difference if somebody .apply()ed this
+      // method to the DOM's root node, so let's roll with it.
+      if (this.parentNode != null) {
+        this.parentNode.removeChild(this);
+      }
+    };
+
+  for (var i = 0; i < typesToPatch.length; i++) {
+    var type = typesToPatch[i];
+    if (window[type] && !window[type].prototype.remove) {
+      window[type].prototype.remove = remove;
+    }
+  }
+})();
+
 export const FrameZero: Frame = {
   top: 0,
   left: 0,
   width: 0,
   height: 0,
+};
+
+const ColorArrayFromHexARGB = function(hex) {
+  hex = Math.floor(hex);
+  return [
+    ((hex >> 24) & 255) / 255, // a
+    (hex >> 16) & 255, // r
+    (hex >> 8) & 255, // g
+    hex & 255, //b
+  ];
 };
 
 class UIView implements RCTComponent {
@@ -42,7 +75,7 @@ class UIView implements RCTComponent {
 
   reactTag: number;
   reactSubviews: Array<UIView>;
-  reactSuperview: UIView;
+  reactSuperview: ?UIView;
 
   // DOM-Related Properties
   tag: HTMLTag = "div";
@@ -53,6 +86,7 @@ class UIView implements RCTComponent {
       this.tag = tag;
     }
 
+    this.reactSubviews = [];
     this.initializeDOMElement(frame);
   }
 
@@ -70,6 +104,15 @@ class UIView implements RCTComponent {
     this.alpha = 1.0;
     this.clipsToBounds = false;
     this.color = "WindowText";
+  }
+
+  get id(): string {
+    return this._id;
+  }
+
+  set id(value: string) {
+    this.element.id = value;
+    this._id = value;
   }
 
   // Layout Getters and Setters
@@ -109,30 +152,16 @@ class UIView implements RCTComponent {
     this._height = value;
   }
 
-  get frame(): Frame {
-    return {
-      left: this._left,
-      top: this._top,
-      width: this._width,
-      height: this._height,
-    };
-  }
-
-  set frame(value: Frame) {
-    this.left = value.left;
-    this.top = value.top;
-    this.width = value.width;
-    this.height = value.height;
-  }
-
   // Visual Getters and Setters
   get backgroundColor(): string {
     return this._backgroundColor;
   }
 
-  set backgroundColor(value: string) {
-    this.element.style.backgroundColor = value;
-    this._backgroundColor = value;
+  set backgroundColor(value: number) {
+    const [a, r, g, b] = ColorArrayFromHexARGB(value);
+    const stringValue = `rgba(${r},${g},${b},${a})`;
+    this.element.style.backgroundColor = stringValue;
+    this._backgroundColor = stringValue;
   }
 
   get hidden(): boolean {
@@ -171,13 +200,31 @@ class UIView implements RCTComponent {
     this._color = value;
   }
 
-  insertReactSubviewAtIndex(subview: UIView, index: number) {}
-  removeReactSubview(subview: UIView) {}
+  insertReactSubviewAtIndex(subview: UIView, index: number) {
+    if (index === this.reactSubviews.length) {
+      this.element.appendChild(subview.element);
+    } else {
+      const beforeElement = this.reactSubviews[index].element;
+      this.element.insertBefore(subview.element, beforeElement);
+    }
+
+    this.reactSubviews.splice(index, 0, subview);
+    subview.reactSuperview = this;
+  }
+
+  removeReactSubview(subview: UIView) {
+    subview.reactSuperview = undefined;
+    this.reactSubviews = this.reactSubviews.filter(s => s !== subview);
+  }
 
   didSetProps(changedProps: Array<string>) {}
   didUpdateReactSubviews() {}
   reactTagAtPoint(point: { x: number, y: number }): number {
     return 0;
+  }
+
+  purge() {
+    this.element.remove();
   }
 }
 

@@ -2,14 +2,13 @@
 import RCTRootView from "RCTRootView";
 import bundleFromRoot from "BundleFromRoot";
 
-// const reactWorker = new ReactWorker();
-// const rootView = new RCTRootView(reactWorker, "HelloWorldApp");
+import "RCTDeviceInfo";
+import "RCTPlatform";
+import "RCTTiming";
+import "RCTUIManager";
+import "RCTViewManager";
 
-// const rootElement = document.getElementById("root");
-// if (rootElement != null) {
-//   rootView.render(rootElement);
-// }
-
+// React Native Web Entrypoint instance
 export class RNWebInstance {
   rootView: RCTRootView;
 

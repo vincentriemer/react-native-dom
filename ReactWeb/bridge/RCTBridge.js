@@ -35,7 +35,10 @@ const MODULE_IDS = 0;
 const METHOD_IDS = 1;
 const PARAMS = 2;
 
-const WORKER_SRC = `
+const DEVTOOLS_FLAG = /\bdevtools\b/;
+const HOTRELOAD_FLAG = /\bhotreload\b/;
+
+let WORKER_SRC = `
 ErrorUtils = {
   setGlobalHandler: () => {},
   reportFatalError: console.error,
@@ -71,6 +74,19 @@ onmessage = ({ data: { topic, payload } }) => {
   }
 };
 `;
+
+if (__DEV__) {
+  if (DEVTOOLS_FLAG.test(location.search)) {
+    WORKER_SRC += "__DEVTOOLS__ = true;\n";
+    if (window.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
+      console.log(
+        "We detected that you have the React Devtools extension installed. " +
+          "Please note that at this time, React VR is only compatible with the " +
+          "standalone React Native Inspector that ships with Nuclide."
+      );
+    }
+  }
+}
 
 export interface ModuleClass {
   static __moduleName: ?string,
@@ -237,12 +253,7 @@ export default class RCTBridge {
   initializeModules = () => {
     this.moduleClasses = [...RCTBridge.RCTModuleClasses];
     RCTBridge.RCTModuleClasses.forEach((moduleClass: Class<ModuleClass>) => {
-      const module = new moduleClass();
-
-      if (module.setBridge != null) {
-        module.setBridge(this);
-      }
-
+      const module = new moduleClass(this);
       const moduleName = bridgeModuleNameForClass(moduleClass);
       this.modulesByName[moduleName] = module;
     });

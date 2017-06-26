@@ -14,6 +14,17 @@ class RCTRootShadowView extends RCTShadowView {
     super();
     this.availableSize = { width: Infinity, height: Infinity };
   }
+
+  updateAvailableSize(size: Size) {
+    this.availableSize = size;
+    this.makeDirtyRecursive();
+  }
+
+  recalculateLayout() {
+    const { width, height } = this.availableSize;
+    this.yogaNode.calculateLayout(width, height);
+    return this.getLayoutChanges();
+  }
 }
 
 export default RCTRootShadowView;

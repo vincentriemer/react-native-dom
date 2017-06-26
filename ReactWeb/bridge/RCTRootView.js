@@ -7,6 +7,7 @@ import RCTUIManager from "RCTUIManager";
 import UIView, { FrameZero } from "UIView";
 import NotificationCenter from "NotificationCenter";
 import RCTDeviceInfo from "RCTDeviceInfo";
+import RCTTiming from "RCTTiming";
 
 type Size = { width: number, height: number };
 
@@ -26,6 +27,7 @@ class RCTRootView extends UIView {
   availableSize: Size;
   parent: Element;
   uiManager: RCTUIManager;
+  timing: RCTTiming;
 
   constructor(bundle: string, moduleName: string, parent: Element) {
     super(FrameZero);
@@ -52,6 +54,7 @@ class RCTRootView extends UIView {
     this.height = this.availableSize.height;
 
     this.uiManager = (this.bridge.modulesByName["UIManager"]: any);
+    this.timing = (this.bridge.modulesByName["Timing"]: any);
   }
 
   get reactTag(): number {
@@ -80,8 +83,9 @@ class RCTRootView extends UIView {
   }
 
   frame() {
-    this.bridge.frame();
     this.uiManager.frame();
+    this.bridge.frame();
+    this.timing.frame();
 
     window.requestAnimationFrame(this.frame.bind(this));
   }

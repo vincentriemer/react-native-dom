@@ -1,5 +1,8 @@
 {
   "sourceMaps": "inline",
+  "ignore": [
+    "node_modules/yoga-layout"
+  ],
   "presets": [
     "react-native"
   ],
@@ -10,13 +13,6 @@
     "transform-decorators-legacy",
     "transform-class-properties",
     "transform-object-rest-spread",
-    "transform-inline-environment-variables",
-    [
-      "replace-require",
-      {
-        "fs": "{}",
-        "path": "{}"
-      }
-    ]
+    "transform-inline-environment-variables"
   ]
 }

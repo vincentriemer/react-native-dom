@@ -7,10 +7,10 @@ import RCTBridge, { RCT_EXPORT_METHOD, RCTFunctionTypeNormal } from "RCTBridge";
 import NotificationCenter from "NotificationCenter";
 
 class RCTEventEmitter {
-  bridge: ?RCTBridge;
+  bridge: RCTBridge;
   listenerCount: number = 0;
 
-  setBridge(bridge: RCTBridge) {
+  constructor(bridge: RCTBridge) {
     this.bridge = bridge;
   }
 

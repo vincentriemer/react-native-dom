@@ -2,7 +2,7 @@
  * @providesModule RCTDeviceInfo
  * @flow
  */
-import { RCT_EXPORT_MODULE, RCT_EXPORT_METHOD } from "RCTBridge";
+import RCTBridge, { RCT_EXPORT_MODULE, RCT_EXPORT_METHOD } from "RCTBridge";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 
 // Optimized Resize Event
@@ -29,8 +29,8 @@ import RCTEventEmitter from "RCTNativeEventEmitter";
 
 @RCT_EXPORT_MODULE
 class RCTDeviceInfo extends RCTEventEmitter {
-  constructor() {
-    super();
+  constructor(bridge: RCTBridge) {
+    super(bridge);
 
     window.addEventListener(
       "optimizedResize",

@@ -17,4 +17,6 @@ export interface RCTComponent {
 
   didSetProps(changedProps: Array<string>): void,
   didUpdateReactSubviews(): void,
+
+  purge(): void,
 }
