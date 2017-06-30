@@ -45,12 +45,13 @@ ErrorUtils = {
 };
 
 function sendMessage(topic, payload) {
-  postMessage({ topic, payload });
+  postMessage(JSON.stringify({ topic, payload }));
 }
 
 var Status = undefined;
 
-onmessage = ({ data: { topic, payload } }) => {
+onmessage = ({ data }) => {
+  const { topic, payload } = JSON.parse(data);
   // console.log("Recieved message from main thread:", topic, payload);
 
   switch (topic) {
@@ -68,6 +69,11 @@ onmessage = ({ data: { topic, payload } }) => {
       const flushedQueue = batchedBridge.callFunctionReturnFlushedQueue(
         ...payload
       );
+      sendMessage("flushedQueue", flushedQueue);
+      break;
+    }
+    case "flush":{
+      const flushedQueue = __fbBatchedBridge.flushedQueue.apply(null);
       sendMessage("flushedQueue", flushedQueue);
       break;
     }
@@ -190,7 +196,7 @@ export default class RCTBridge {
 
   sendMessage(topic: string, payload: any) {
     if (this.thread) {
-      this.thread.postMessage({ topic, payload });
+      this.thread.postMessage(JSON.stringify({ topic, payload }));
     }
   }
 
@@ -203,6 +209,7 @@ export default class RCTBridge {
     invariant(functions, `Module ${name} has no methods to call`);
     const functionName = functions[methodId];
 
+    // console.log(name, functionName, params);
     invariant(
       functionName,
       `No such function in module ${name} with id ${methodId}`
@@ -218,11 +225,10 @@ export default class RCTBridge {
   }
 
   onMessage(message: any) {
-    const { topic, payload } = (message.data: {
+    const { topic, payload } = (JSON.parse(message.data): {
       topic: string,
       payload: ?any,
     });
-    // console.log("Recieved message from worker thread:", topic, payload);
 
     switch (topic) {
       case "bundleFinishedLoading": {
@@ -331,10 +337,11 @@ export default class RCTBridge {
   };
 
   frame() {
-    const frameStart = window.performance ? performance.now() : Date.now();
+    this.sendMessage("flush");
 
     const messages = [...this.messages];
     this.messages = [];
+
     messages.forEach(({ moduleId, methodId, args }) => {
       this.callNativeModule(moduleId, methodId, args);
     });

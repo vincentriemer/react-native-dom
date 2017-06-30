@@ -30,5 +30,10 @@ onmessage = ({ data: { topic, payload } }) => {
       sendMessage("flushedQueue", flushedQueue);
       break;
     }
+    case "flush":{
+      const flushedQueue = __fbBatchedBridge.flushedQueue.apply(null);
+      sendMessage("flushedQueue", flushedQueue);
+      break;
+    }
   }
 };

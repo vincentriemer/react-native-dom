@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { AppRegistry, View } from "react-native";
+import { AppRegistry, View, Animated, LayoutAnimation } from "react-native";
 
 function shuffle(items) {
   for (var i = items.length; i-- > 1; ) {
@@ -17,55 +17,63 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      children: childrenIds.map(id =>
-        <View
-          id={id}
-          key={id}
-          style={{
-            margin: 20,
-            width: id * 50,
-            height: id * 50,
-            backgroundColor: "#9EDE9D",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {id === 3
-            ? <View
-                style={{
-                  width: 50,
-                  height: 50,
-                  backgroundColor: "#F5F5F5",
-                }}
-              />
-            : null}
-        </View>
-      ),
+      anim: new Animated.Value(0),
+      toggle: true,
     };
   }
 
   componentDidMount() {
     setInterval(() => {
-      // this.setState({
-      //   alternate: !this.state.alternate,
-      // });
-      this.setState({
-        children: shuffle([...this.state.children]),
-      });
-    }, 500);
+      Animated.spring(this.state.anim, {
+        toValue: this.state.toggle ? 1 : 0,
+      }).start();
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+      this.setState({ toggle: !this.state.toggle });
+    }, 1000);
   }
 
   render() {
+    const flexDirection = this.state.toggle ? "row" : "column";
+
     return (
       <View
         style={{
           flex: 1,
+          flexDirection,
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "space-around",
           backgroundColor: "#E58331",
         }}
       >
-        {this.state.children}
+        <View style={{ width: 100, height: 100, backgroundColor: "#9EDE9D" }} />
+        <Animated.View
+          style={{
+            width: 40,
+            height: 40,
+            backgroundColor: "#9EDE9D",
+            transform: [
+              {
+                scale: this.state.anim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [1, 5],
+                }),
+              },
+              {
+                rotate: this.state.anim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ["0deg", "180deg"],
+                }),
+              },
+              {
+                rotateX: this.state.anim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ["0deg", "180deg"],
+                }),
+              },
+            ],
+          }}
+        />
+        <View style={{ width: 100, height: 100, backgroundColor: "#9EDE9D" }} />
       </View>
     );
   }

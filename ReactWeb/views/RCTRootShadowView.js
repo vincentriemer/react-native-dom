@@ -23,7 +23,8 @@ class RCTRootShadowView extends RCTShadowView {
   recalculateLayout() {
     const { width, height } = this.availableSize;
     this.yogaNode.calculateLayout(width, height);
-    return this.getLayoutChanges();
+    const layoutChanges = this.getLayoutChanges();
+    return layoutChanges;
   }
 }
 

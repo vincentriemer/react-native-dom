@@ -71,6 +71,11 @@ class UIView implements RCTComponent {
   _alpha: number;
   _clipsToBounds: boolean;
   _color: string;
+  _opacity: string;
+  _transform: Array<number>;
+
+  // Debugging Properties
+  _testID: string;
   // opaque: boolean = true; TODO: this seems to be very UI specific
 
   reactTag: number;
@@ -104,15 +109,6 @@ class UIView implements RCTComponent {
     this.alpha = 1.0;
     this.clipsToBounds = false;
     this.color = "WindowText";
-  }
-
-  get id(): string {
-    return this._id;
-  }
-
-  set id(value: string) {
-    this.element.id = value;
-    this._id = value;
   }
 
   // Layout Getters and Setters
@@ -198,6 +194,33 @@ class UIView implements RCTComponent {
   set color(value: string) {
     this.element.style.color = value;
     this._color = value;
+  }
+
+  get testID(): string {
+    return this._testID;
+  }
+
+  set testID(value: string) {
+    this.element.id = value;
+    this._testID = value;
+  }
+
+  get opacity(): string {
+    return this._opacity;
+  }
+
+  set opacity(value: string) {
+    this.element.style.opacity = value;
+    this._opacity = value;
+  }
+
+  get transform(): Array<number> {
+    return this._transform;
+  }
+
+  set transform(value: Array<number>) {
+    this.element.style.transform = `matrix3d(${value.join(",")})`;
+    this._transform = value;
   }
 
   insertReactSubviewAtIndex(subview: UIView, index: number) {

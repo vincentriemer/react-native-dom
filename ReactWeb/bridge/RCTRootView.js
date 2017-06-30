@@ -83,9 +83,9 @@ class RCTRootView extends UIView {
   }
 
   frame() {
-    this.uiManager.frame();
-    this.bridge.frame();
     this.timing.frame();
+    this.bridge.frame();
+    this.uiManager.frame();
 
     window.requestAnimationFrame(this.frame.bind(this));
   }

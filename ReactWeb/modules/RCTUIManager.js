@@ -194,17 +194,17 @@ class RCTUIManager {
       uiBlocks.forEach(block => {
         block.call(null, this, this.viewRegistry);
       });
-
-      this.rootViewTags.forEach(rootTag => {
-        const rootShadowView = this.shadowViewRegistry.get(rootTag);
-        if (rootShadowView != null && rootShadowView.isDirty) {
-          const layoutChanges = rootShadowView.recalculateLayout();
-          this.addUIBlock(() => {
-            this.applyLayoutChanges(layoutChanges);
-          });
-        }
-      });
     }
+
+    this.rootViewTags.forEach(rootTag => {
+      const rootShadowView = this.shadowViewRegistry.get(rootTag);
+      if (rootShadowView != null && rootShadowView.isDirty) {
+        const layoutChanges = rootShadowView.recalculateLayout();
+        this.addUIBlock(() => {
+          this.applyLayoutChanges(layoutChanges);
+        });
+      }
+    });
   }
 
   applyLayoutChanges(layoutChanges: LayoutChange[]) {
@@ -213,6 +213,11 @@ class RCTUIManager {
       const view = this.viewRegistry.get(reactTag);
       (view: any)[propName] = value;
     });
+  }
+
+  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+  configureNextLayoutAnimation(config, onAnimationDidEnd) {
+    console.log(config, onAnimationDidEnd);
   }
 
   addUIBlock(block: ?Function) {
@@ -306,12 +311,11 @@ class RCTUIManager {
       componentData.setPropsForShadowView(updatedProps, shadowView);
     }
 
-    this.addUIBlock((uiManager, viewRegistry) => {
-      const view = viewRegistry.get(reactTag);
-      if (view) {
-        componentData.setPropsForView(updatedProps, view);
-      }
-    });
+    // TODO determine if should be added to UI Queue or not
+    const view = this.viewRegistry.get(reactTag);
+    if (view) {
+      componentData.setPropsForView(updatedProps, view);
+    }
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)

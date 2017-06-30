@@ -19,8 +19,10 @@ class RCTViewManager {
   propConfig() {
     return [
       ["backgroundColor", "string"],
-      ["opacity", "number"],
+      ["opacity", "string"],
       ["overflow", "string"],
+      ["testID", "string"],
+      ["transform", "array"],
     ];
   }
 

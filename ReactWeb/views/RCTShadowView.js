@@ -140,14 +140,16 @@ class RCTShadowView implements RCTComponent {
 
   makeDirty(): void {
     let view = this;
-    while (view) {
-      view.isDirty = true;
+    while (view.reactSuperview) {
       view = view.reactSuperview;
     }
+    view.makeDirtyRecursive();
   }
 
   makeDirtyRecursive(): void {
-    this.reactSubviews.forEach(subView => subView.makeDirtyRecursive());
+    this.reactSubviews.forEach(subView => {
+      subView.makeDirtyRecursive();
+    });
     this.isDirty = true;
   }
 
@@ -155,14 +157,14 @@ class RCTShadowView implements RCTComponent {
     subview.reactSuperview = this;
     this.reactSubviews.splice(index, 0, subview);
     this.yogaNode.insertChild(subview.yogaNode, index);
-    this.makeDirtyRecursive();
+    this.makeDirty();
   }
 
   removeReactSubview(subview: RCTShadowView) {
     subview.reactSuperview = undefined;
     this.reactSubviews = this.reactSubviews.filter(s => s !== subview);
     this.yogaNode.removeChild(subview.yogaNode);
-    this.makeDirtyRecursive();
+    this.makeDirty();
   }
 
   purge() {

@@ -39,12 +39,30 @@ class RCTTiming {
       jsSchedulingTime - currentDateNowTimeMillis + duration
     );
     const initialTargetTime = currentTimeMillis + adjustedDuration;
-    this.timers[String(callbackId)] = {
+
+    const timer = {
       callbackId,
       duration,
       jsSchedulingTime: initialTargetTime,
       repeats,
     };
+
+    if (adjustedDuration === 0) {
+      if (timer.repeats) {
+        timer.jsSchedulingTime += timer.duration;
+        this.timers[String(callbackId)] = timer;
+      }
+      this.bridge.enqueueJSCall("JSTimersExecution", "callTimers", [
+        [callbackId],
+      ]);
+    } else {
+      this.timers[String(callbackId)] = timer;
+    }
+  }
+
+  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+  deleteTimer(callbackId: number) {
+    delete this.timers[String(callbackId)];
   }
 
   frame() {
