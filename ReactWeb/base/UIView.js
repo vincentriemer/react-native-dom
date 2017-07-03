@@ -3,20 +3,21 @@
  * @flow
  */
 import type { RCTComponent } from "RCTComponent";
+import CustomElement from "CustomElement";
 import { rgba } from "normalize-css-color";
 
 type Frame = {
   top: number,
   left: number,
   width: number,
-  height: number,
+  height: number
 };
 
 type HTMLTag = "div" | "p";
 
 export type Size = {
   width: number,
-  height: number,
+  height: number
 };
 
 (function() {
@@ -45,7 +46,7 @@ export const FrameZero: Frame = {
   top: 0,
   left: 0,
   width: 0,
-  height: 0,
+  height: 0
 };
 
 const ColorArrayFromHexARGB = function(hex) {
@@ -54,181 +55,132 @@ const ColorArrayFromHexARGB = function(hex) {
     ((hex >> 24) & 255) / 255, // a
     (hex >> 16) & 255, // r
     (hex >> 8) & 255, // g
-    hex & 255, //b
+    hex & 255 //b
   ];
 };
 
-class UIView implements RCTComponent {
-  // Frame
-  _left: number;
-  _top: number;
-  _width: number;
-  _height: number;
-
-  // Visual Appearance
-  _backgroundColor: string;
-  _hidden: boolean;
-  _alpha: number;
-  _clipsToBounds: boolean;
-  _color: string;
-  _opacity: string;
-  _transform: Array<number>;
-
-  // Debugging Properties
-  _testID: string;
-  // opaque: boolean = true; TODO: this seems to be very UI specific
-
+@CustomElement("ui-view")
+class UIView extends HTMLElement implements RCTComponent {
   reactTag: number;
   reactSubviews: Array<UIView>;
   reactSuperview: ?UIView;
 
-  // DOM-Related Properties
-  tag: HTMLTag = "div";
-  element: HTMLElement;
-
-  constructor(frame: Frame, tag: ?HTMLTag) {
-    if (tag != undefined) {
-      this.tag = tag;
-    }
+  constructor() {
+    super();
 
     this.reactSubviews = [];
-    this.initializeDOMElement(frame);
-  }
 
-  initializeDOMElement(frame: Frame) {
-    this.element = document.createElement(this.tag);
-    this.element.style.position = "absolute";
-
-    this.left = frame.left;
-    this.top = frame.top;
-    this.width = frame.width;
-    this.height = frame.height;
-
+    this.position = "absolute";
     this.backgroundColor = "transparent";
-    this.hidden = false;
-    this.alpha = 1.0;
-    this.clipsToBounds = false;
     this.color = "WindowText";
   }
 
-  // Layout Getters and Setters
-  get left(): number {
-    return this._left;
+  get position(): string {
+    return this.style.position;
   }
 
-  set left(value: number) {
-    this.element.style.left = `${value}px`;
-    this._left = value;
+  set position(value: string) {
+    this.style.position = value;
   }
 
-  get top(): number {
-    return this._top;
+  get top(): string {
+    return this.style.top;
   }
 
   set top(value: number) {
-    this.element.style.top = `${value}px`;
-    this._top = value;
+    this.style.top = `${value}px`;
   }
 
-  get width(): number {
-    return this._width;
+  get left(): string {
+    return this.style.left;
+  }
+
+  set left(value: number) {
+    this.style.left = `${value}px`;
+  }
+
+  get bottom(): string {
+    return this.style.bottom;
+  }
+
+  set bottom(value: number) {
+    this.style.bottom = `${value}px`;
+  }
+
+  get right(): string {
+    return this.style.right;
+  }
+
+  set right(value: number) {
+    this.style.right = `${value}px`;
+  }
+
+  get width(): string {
+    return this.style.width;
   }
 
   set width(value: number) {
-    this.element.style.width = `${value}px`;
-    this._width = value;
+    this.style.width = `${value}px`;
   }
 
-  get height(): number {
-    return this._height;
+  get height(): string {
+    return this.style.height;
   }
 
   set height(value: number) {
-    this.element.style.height = `${value}px`;
-    this._height = value;
+    this.style.height = `${value}px`;
   }
 
-  // Visual Getters and Setters
   get backgroundColor(): string {
-    return this._backgroundColor;
+    return this.style.backgroundColor;
   }
 
-  set backgroundColor(value: number) {
-    const [a, r, g, b] = ColorArrayFromHexARGB(value);
-    const stringValue = `rgba(${r},${g},${b},${a})`;
-    this.element.style.backgroundColor = stringValue;
-    this._backgroundColor = stringValue;
-  }
-
-  get hidden(): boolean {
-    return this._hidden;
-  }
-
-  set hidden(value: boolean) {
-    this.element.style.visibility = value ? "hidden" : "visible";
-    this._hidden = value;
-  }
-
-  get alpha(): number {
-    return this._alpha;
-  }
-
-  set alpha(value: number) {
-    this.element.style.opacity = `${value}`;
-    this._alpha = value;
-  }
-
-  get clipsToBounds(): boolean {
-    return this._clipsToBounds;
-  }
-
-  set clipsToBounds(value: boolean) {
-    this.element.style.overflow = value ? "hidden" : "visible";
-    this._clipsToBounds = value;
-  }
-
-  get color(): string {
-    return this._color;
-  }
-
-  set color(value: string) {
-    this.element.style.color = value;
-    this._color = value;
-  }
-
-  get testID(): string {
-    return this._testID;
-  }
-
-  set testID(value: string) {
-    this.element.id = value;
-    this._testID = value;
+  set backgroundColor(value: string | number) {
+    if (typeof value === "number") {
+      const [a, r, g, b] = ColorArrayFromHexARGB(value);
+      const stringValue = `rgba(${r},${g},${b},${a})`;
+      this.style.backgroundColor = stringValue;
+    } else {
+      this.style.backgroundColor = value;
+    }
   }
 
   get opacity(): string {
-    return this._opacity;
+    return this.style.opacity;
   }
 
-  set opacity(value: string) {
-    this.element.style.opacity = value;
-    this._opacity = value;
+  set opacity(value: number) {
+    this.style.opacity = `${value}`;
   }
 
-  get transform(): Array<number> {
-    return this._transform;
+  get color(): string {
+    return this.style.color;
+  }
+
+  set color(value: string | number) {
+    if (typeof value === "number") {
+      const [a, r, g, b] = ColorArrayFromHexARGB(value);
+      const stringValue = `rgba(${r},${g},${b},${a})`;
+      this.style.color = stringValue;
+    } else {
+      this.style.color = value;
+    }
+  }
+
+  get transform(): string {
+    return this.style.transform;
   }
 
   set transform(value: Array<number>) {
-    this.element.style.transform = `matrix3d(${value.join(",")})`;
-    this._transform = value;
+    this.style.transform = `matrix3d(${value.join(",")})`;
   }
 
   insertReactSubviewAtIndex(subview: UIView, index: number) {
     if (index === this.reactSubviews.length) {
-      this.element.appendChild(subview.element);
+      this.appendChild(subview);
     } else {
-      const beforeElement = this.reactSubviews[index].element;
-      this.element.insertBefore(subview.element, beforeElement);
+      const beforeElement = this.reactSubviews[index];
+      this.insertBefore(subview, beforeElement);
     }
 
     this.reactSubviews.splice(index, 0, subview);
@@ -240,14 +192,8 @@ class UIView implements RCTComponent {
     this.reactSubviews = this.reactSubviews.filter(s => s !== subview);
   }
 
-  didSetProps(changedProps: Array<string>) {}
-  didUpdateReactSubviews() {}
-  reactTagAtPoint(point: { x: number, y: number }): number {
-    return 0;
-  }
-
   purge() {
-    this.element.remove();
+    this.remove();
   }
 }
 

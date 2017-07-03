@@ -11,17 +11,37 @@
 </head>
 
 <body>
-  <!-- When you're ready to deploy your app, update this line to point to your compiled client.bundle.js -->
-  <script src="./client.bundle?platform=web"></script>
+  <!--Web Components Polyfill-->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/1.0.1/webcomponents-loader.js"></script>
+
+  <!--Bundle Paths-->
   <script>
-    // Initialize the React VR application
-    ReactWeb.init(
-      // When you're ready to deploy your app, update this line to point to
-      // your compiled index.bundle.js
-      '../index.web.bundle?platform=web&dev=true',
-      // Attach it to the body tag
-      document.body
-    );
+    var clientBundlePath = "./client.bundle?platform=web";
+    var rnBundlePath = "../index.web.bundle?platform=web&dev=true";
+  </script>
+
+  <!--Helper Functions-->
+  <script>
+    function addScript(src, callback) {
+      var s = document.createElement('script');
+      s.setAttribute('src', src);
+      s.onload = callback;
+      document.body.appendChild(s);
+    }
+  </script>
+
+  <!--App Initialization-->
+  <script>
+    window.addEventListener('WebComponentsReady', function () {
+      addScript(clientBundlePath, function () {
+        // Initialize the React Native application
+        ReactWeb.init(
+          rnBundlePath,
+          // Attach it to the body tag
+          document.body
+        );
+      });
+    });
   </script>
 </body>
 

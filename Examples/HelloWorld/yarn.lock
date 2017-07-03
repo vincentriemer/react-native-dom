@@ -2,19 +2,9 @@
 # yarn lockfile v1
 
 
-babel-plugin-replace-require@^0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/babel-plugin-replace-require/-/babel-plugin-replace-require-0.0.4.tgz#2afe99c8cfd1a9faf5fa2a807bdb35c30a4970f8"
-  dependencies:
-    babylon "^6.14.1"
-
-babylon@^6.14.1:
-  version "6.17.4"
-  resolved "https://registry.yarnpkg.com/babylon/-/babylon-6.17.4.tgz#3e8b7402b88d22c3423e137a1577883b15ff869a"
-
-fs@0.0.1-security:
-  version "0.0.1-security"
-  resolved "https://registry.yarnpkg.com/fs/-/fs-0.0.1-security.tgz#8a7bd37186b6dddf3813f23858b57ecaaf5e41d4"
+start@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/start/-/start-5.1.0.tgz#1c171f0ef9487f56d0ab9a755ace860169208763"
 
 xopen@^1.0.0:
   version "1.0.0"

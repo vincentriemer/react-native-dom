@@ -13,10 +13,6 @@ export interface RCTComponent {
     index: number
   ): void,
   removeReactSubview(subview: $Subtype<RCTComponent>): void,
-  reactTagAtPoint(point: { x: number, y: number }): number,
-
-  didSetProps(changedProps: Array<string>): void,
-  didUpdateReactSubviews(): void,
 
   purge(): void,
 }

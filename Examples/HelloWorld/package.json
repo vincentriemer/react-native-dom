@@ -8,6 +8,7 @@
     "open": "node -e \"require('xopen')('http://localhost:8081/Examples/HelloWorld/web')\""
   },
   "dependencies": {
+    "start": "^5.1.0",
     "xopen": "^1.0.0"
   }
 }

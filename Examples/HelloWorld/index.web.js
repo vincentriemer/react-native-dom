@@ -1,16 +1,6 @@
 import React, { Component } from "react";
 import { AppRegistry, View, Animated, LayoutAnimation } from "react-native";
 
-function shuffle(items) {
-  for (var i = items.length; i-- > 1; ) {
-    var j = Math.floor(Math.random() * i);
-    var tmp = items[i];
-    items[i] = items[j];
-    items[j] = tmp;
-  }
-  return items;
-}
-
 const childrenIds = [1, 2, 3];
 
 class App extends Component {
@@ -18,16 +8,16 @@ class App extends Component {
     super(props);
     this.state = {
       anim: new Animated.Value(0),
-      toggle: true,
+      toggle: true
     };
   }
 
   componentDidMount() {
     setInterval(() => {
       Animated.spring(this.state.anim, {
-        toValue: this.state.toggle ? 1 : 0,
+        toValue: this.state.toggle ? 1 : 0
       }).start();
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+      // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
       this.setState({ toggle: !this.state.toggle });
     }, 1000);
   }
@@ -42,7 +32,7 @@ class App extends Component {
           flexDirection,
           alignItems: "center",
           justifyContent: "space-around",
-          backgroundColor: "#E58331",
+          backgroundColor: "#E58331"
         }}
       >
         <View style={{ width: 100, height: 100, backgroundColor: "#9EDE9D" }} />
@@ -55,22 +45,22 @@ class App extends Component {
               {
                 scale: this.state.anim.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [1, 5],
-                }),
+                  outputRange: [1, 5]
+                })
               },
               {
                 rotate: this.state.anim.interpolate({
                   inputRange: [0, 1],
-                  outputRange: ["0deg", "180deg"],
-                }),
+                  outputRange: ["0deg", "180deg"]
+                })
               },
               {
                 rotateX: this.state.anim.interpolate({
                   inputRange: [0, 1],
-                  outputRange: ["0deg", "180deg"],
-                }),
-              },
-            ],
+                  outputRange: ["0deg", "180deg"]
+                })
+              }
+            ]
           }}
         />
         <View style={{ width: 100, height: 100, backgroundColor: "#9EDE9D" }} />

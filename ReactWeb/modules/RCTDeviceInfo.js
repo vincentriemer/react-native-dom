@@ -5,35 +5,13 @@
 import RCTBridge, { RCT_EXPORT_MODULE, RCT_EXPORT_METHOD } from "RCTBridge";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 
-// Optimized Resize Event
-// https://developer.mozilla.org/en-US/docs/Web/Events/resize
-(function() {
-  const throttle = function(type, name) {
-    var running = false;
-    var func = function() {
-      if (running) {
-        return;
-      }
-      running = true;
-      requestAnimationFrame(function() {
-        window.dispatchEvent(new CustomEvent(name));
-        running = false;
-      });
-    };
-    window.addEventListener(type, func);
-  };
-
-  /* init - you can init any event */
-  throttle("resize", "optimizedResize");
-})();
-
 @RCT_EXPORT_MODULE
 class RCTDeviceInfo extends RCTEventEmitter {
   constructor(bridge: RCTBridge) {
     super(bridge);
 
     window.addEventListener(
-      "optimizedResize",
+      "resize",
       this.didUpdateDimensions.bind(this),
       false
     );
@@ -43,7 +21,7 @@ class RCTDeviceInfo extends RCTEventEmitter {
 
   constantsToExport() {
     return {
-      Dimensions: this.exportedDimensions(),
+      Dimensions: this.exportedDimensions()
     };
   }
 
@@ -56,12 +34,12 @@ class RCTDeviceInfo extends RCTEventEmitter {
       width: window.innerWidth,
       height: window.innerHeight,
       scale: this.getDevicePixelRatio(),
-      fontScale: 1,
+      fontScale: 1
     };
 
     return {
       window: dims,
-      screen: dims,
+      screen: dims
     };
   }
 

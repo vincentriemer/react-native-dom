@@ -1,4 +1,6 @@
 // @flow
+import "proxy-polyfill";
+
 import RCTRootView from "RCTRootView";
 import bundleFromRoot from "BundleFromRoot";
 

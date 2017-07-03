@@ -51,7 +51,7 @@ export const SHADOW_PROPS = [
   "position",
   "aspectRatio",
   "overflow",
-  "display",
+  "display"
 ];
 
 const LAYOUT_PROPS = ["top", "left", "width", "height"];
@@ -60,7 +60,7 @@ type Layout = {
   top: ?number,
   left: ?number,
   width: ?number,
-  height: ?number,
+  height: ?number
 };
 
 class RCTShadowView implements RCTComponent {
@@ -97,7 +97,8 @@ class RCTShadowView implements RCTComponent {
         set: value => {
           this.yogaNode.style[shadowPropName] = value;
           this.makeDirty();
-        },
+          return true;
+        }
       });
     });
 
@@ -105,7 +106,7 @@ class RCTShadowView implements RCTComponent {
       top: undefined,
       left: undefined,
       width: undefined,
-      height: undefined,
+      height: undefined
     };
   }
 
