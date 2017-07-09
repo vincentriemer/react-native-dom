@@ -4,7 +4,6 @@
   "description": "",
   "scripts": {
     "start": "node ../../node_modules/react-native/local-cli/cli.js start --config ../../../../Examples/HelloWorld/rn-helloworld.config.js --reset-cache",
-    "build": "node ../../node_modules/react-native/local-cli/cli.js bundle --config ../../../../Examples/HelloWorld/rn-helloworld.config.js --entry-file ./Examples/HelloWorld/index.web.js --bundle-output ./bundle.js --dev false",
     "open": "node -e \"require('xopen')('http://localhost:8081/Examples/HelloWorld/web')\""
   },
   "dependencies": {

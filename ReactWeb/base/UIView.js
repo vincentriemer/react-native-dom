@@ -3,17 +3,15 @@
  * @flow
  */
 import type { RCTComponent } from "RCTComponent";
+import RCTTouchHandler from "RCTTouchHandler";
 import CustomElement from "CustomElement";
-import { rgba } from "normalize-css-color";
 
-type Frame = {
+export type Frame = {
   top: number,
   left: number,
   width: number,
   height: number
 };
-
-type HTMLTag = "div" | "p";
 
 export type Size = {
   width: number,
@@ -61,9 +59,20 @@ const ColorArrayFromHexARGB = function(hex) {
 
 @CustomElement("ui-view")
 class UIView extends HTMLElement implements RCTComponent {
+  _top: number;
+  _left: number;
+  _bottom: number;
+  _right: number;
+  _width: number;
+  _height: number;
+  _borderRadius: number;
+  _touchable: boolean;
+
   reactTag: number;
   reactSubviews: Array<UIView>;
   reactSuperview: ?UIView;
+
+  touchHandler: ?RCTTouchHandler;
 
   constructor() {
     super();
@@ -72,7 +81,20 @@ class UIView extends HTMLElement implements RCTComponent {
 
     this.position = "absolute";
     this.backgroundColor = "transparent";
-    this.color = "WindowText";
+    this.style.overflow = "hidden";
+  }
+
+  get frame(): Frame {
+    return {
+      top: this.top,
+      left: this.left,
+      width: this.width,
+      height: this.height
+    };
+  }
+
+  set frame(value: Frame) {
+    Object.assign(this, value);
   }
 
   get position(): string {
@@ -83,51 +105,57 @@ class UIView extends HTMLElement implements RCTComponent {
     this.style.position = value;
   }
 
-  get top(): string {
-    return this.style.top;
+  get top(): number {
+    return this._top;
   }
 
   set top(value: number) {
+    this._top = value;
     this.style.top = `${value}px`;
   }
 
-  get left(): string {
-    return this.style.left;
+  get left(): number {
+    return this._left;
   }
 
   set left(value: number) {
+    this._left = value;
     this.style.left = `${value}px`;
   }
 
-  get bottom(): string {
-    return this.style.bottom;
+  get bottom(): number {
+    return this._bottom;
   }
 
   set bottom(value: number) {
+    this._bottom = value;
     this.style.bottom = `${value}px`;
   }
 
-  get right(): string {
-    return this.style.right;
+  get right(): number {
+    return this._right;
   }
 
   set right(value: number) {
+    this._right = value;
     this.style.right = `${value}px`;
   }
 
-  get width(): string {
-    return this.style.width;
+  get width(): number {
+    return this._width;
   }
 
   set width(value: number) {
+    this._width = value;
     this.style.width = `${value}px`;
   }
 
-  get height(): string {
-    return this.style.height;
+  get height(): number {
+    return this._height;
   }
 
   set height(value: number) {
+    this._height = value;
     this.style.height = `${value}px`;
   }
 
@@ -153,26 +181,30 @@ class UIView extends HTMLElement implements RCTComponent {
     this.style.opacity = `${value}`;
   }
 
-  get color(): string {
-    return this.style.color;
-  }
-
-  set color(value: string | number) {
-    if (typeof value === "number") {
-      const [a, r, g, b] = ColorArrayFromHexARGB(value);
-      const stringValue = `rgba(${r},${g},${b},${a})`;
-      this.style.color = stringValue;
-    } else {
-      this.style.color = value;
-    }
-  }
-
   get transform(): string {
     return this.style.transform;
   }
 
   set transform(value: Array<number>) {
     this.style.transform = `matrix3d(${value.join(",")})`;
+  }
+
+  get borderRadius(): number {
+    return this._borderRadius;
+  }
+
+  set borderRadius(value: number) {
+    this._borderRadius = value;
+    this.style.borderRadius = `${value}px`;
+  }
+
+  get touchable(): boolean {
+    return this._touchable;
+  }
+
+  set touchable(value: boolean) {
+    this._touchable = value;
+    this.style.cursor = value ? "pointer" : "auto";
   }
 
   insertReactSubviewAtIndex(subview: UIView, index: number) {
@@ -195,6 +227,11 @@ class UIView extends HTMLElement implements RCTComponent {
   purge() {
     this.remove();
   }
+
+  addGestureRecognizer(handler: RCTTouchHandler) {
+    this.addEventListener("mousedown", handler.mouseClickBegan.bind(handler));
+  }
+  removeGestureRecognizer(handler: RCTTouchHandler) {}
 }
 
 export default UIView;

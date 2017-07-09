@@ -2,6 +2,7 @@
  * @providesModule RCTNativeEventEmitter
  * @flow
  */
+
 import invariant from "Invariant";
 import RCTBridge, { RCT_EXPORT_METHOD, RCTFunctionTypeNormal } from "RCTBridge";
 import NotificationCenter from "NotificationCenter";

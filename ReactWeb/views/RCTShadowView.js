@@ -6,8 +6,6 @@
 import type { RCTComponent } from "RCTComponent";
 import YogaNode from "yoga-js";
 
-type RCTUpdateLifecycle = "uninitialized" | "computed" | "dirtied";
-
 export const SHADOW_PROPS = [
   "top",
   "right",
@@ -57,28 +55,19 @@ export const SHADOW_PROPS = [
 const LAYOUT_PROPS = ["top", "left", "width", "height"];
 
 type Layout = {
-  top: ?number,
-  left: ?number,
-  width: ?number,
-  height: ?number
+  top: number,
+  left: number,
+  width: number,
+  height: number
 };
 
 class RCTShadowView implements RCTComponent {
-  _propagationLifecycle: RCTUpdateLifecycle;
-  _textLifecycle: RCTUpdateLifecycle;
-  _lastParentProperties: { [string]: any };
-  _reactSubviews: Array<RCTShadowView> = [];
-  _recomputePadding: boolean;
-  _recomputeMargin: boolean;
-  _recomputeBorder: boolean;
-  _didUpdateSubviews: boolean;
   _backgroundColor: string;
 
   viewName: string;
-  backgroundColor: string;
 
   yogaNode: YogaNode;
-  previousLayout: Layout;
+  previousLayout: ?Layout;
   isNewView: boolean;
   isHidden: boolean;
   isDirty: boolean = true;
@@ -102,12 +91,7 @@ class RCTShadowView implements RCTComponent {
       });
     });
 
-    this.previousLayout = {
-      top: undefined,
-      left: undefined,
-      width: undefined,
-      height: undefined
-    };
+    this.previousLayout = undefined;
   }
 
   get backgroundColor(): string {
@@ -127,13 +111,14 @@ class RCTShadowView implements RCTComponent {
       }
     });
 
-    LAYOUT_PROPS.forEach(propName => {
-      if (this.previousLayout[propName] !== this.yogaNode.layout[propName]) {
-        const value = this.yogaNode.layout[propName];
-        layoutChanges.push([this.reactTag, propName, value]);
-        this.previousLayout[propName] = value;
-      }
-    });
+    const newLayout = this.yogaNode.layout;
+
+    if (JSON.stringify(newLayout) !== JSON.stringify(this.previousLayout)) {
+      const layoutChangeType =
+        this.previousLayout === undefined ? "add" : "update";
+      layoutChanges.push([this.reactTag, newLayout, layoutChangeType]);
+      this.previousLayout = newLayout;
+    }
 
     this.isDirty = false;
     return layoutChanges;
@@ -172,6 +157,7 @@ class RCTShadowView implements RCTComponent {
     this.yogaNode.freeRecursive();
   }
 
+  // TODO: Implement ===========================================
   didSetProps(changedProps: Array<string>) {}
   didUpdateReactSubviews() {}
   reactTagAtPoint(point: { x: number, y: number }): number {

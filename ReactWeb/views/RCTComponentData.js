@@ -5,19 +5,21 @@
 import invariant from "Invariant";
 import RCTBridge, {
   getPropertyNames,
-  bridgeModuleNameForClass,
+  bridgeModuleNameForClass
 } from "RCTBridge";
 import RCTUIManager from "RCTUIManager";
 import RCTViewManager from "RCTViewManager";
-import RCTShadowView from "RCTShadowView";
+import RCTShadowView, { SHADOW_PROPS } from "RCTShadowView";
 import RCTComponent from "RCTComponent";
 import UIView from "UIView";
+import { normalizeInputEventName } from "RCTEventDispatcher";
 
 type Props = { [string]: any };
 
 type ViewConfig = {
   propTypes: Props,
-  uiClassViewName: string,
+  bubblingEvents: Array<string>,
+  uiClassViewName: string
 };
 
 type RCTPropBlock = (view: typeof RCTComponent, { [string]: any }) => void;
@@ -30,7 +32,7 @@ class RCTComponentData {
   viewConfig: { [string]: any };
   bridge: RCTBridge;
   _propConfig: ?Object;
-  _shadowPropConfig: ?Array<string>;
+  _shadowPropConfig: ?Object;
 
   viewPropBlocks: RCTPropBlockDictionary;
   shadowPropBlocks: RCTPropBlockDictionary;
@@ -63,43 +65,67 @@ class RCTComponentData {
   get viewConfig(): ViewConfig {
     const count = 0;
     const propTypes = {};
+    const bubblingEvents = [];
 
-    this.manager.propConfig().forEach(([propName, type]) => {
-      propTypes[propName] = type;
-    });
+    if (this.manager.customBubblingEventTypes) {
+      const events = this.manager.customBubblingEventTypes();
+      for (let event of events) {
+        bubblingEvents.push(normalizeInputEventName(event));
+      }
+    }
 
-    this.manager.shadowPropConfig().forEach(propName => {
-      propTypes[propName] = "";
+    this.manager.__props.forEach(({ name, type, exported }) => {
+      if (exported) {
+        if (type === "RCTBubblingEventBlock") {
+          bubblingEvents.push(normalizeInputEventName(name));
+          propTypes[name] = "BOOL";
+        } else {
+          propTypes[name] = type;
+        }
+      }
     });
 
     return {
       propTypes,
-      uiClassViewName: bridgeModuleNameForClass(this.manager.constructor),
+      bubblingEvents,
+      uiClassViewName: bridgeModuleNameForClass(this.manager.constructor)
     };
   }
 
-  get propConfig(): Object {
+  generatePropConfig(
+    rawPropConfig: Array<any>
+  ): { [string]: { type: string, setter: Function } } {
+    return rawPropConfig.reduce(
+      (propConfig, raw) => ({
+        ...propConfig,
+        [raw.name]: {
+          type: raw.type,
+          setter: raw.setter
+            ? raw.setter
+            : (view, value) => {
+                view[raw.name] = value;
+              }
+        }
+      }),
+      {}
+    );
+  }
+
+  get propConfig(): { [string]: { type: string, setter: Function } } {
     if (this._propConfig == null) {
-      const rawPropConfig = this.manager.propConfig();
-      this._propConfig = rawPropConfig.reduce(
-        (propConfig, raw) => ({
-          ...propConfig,
-          [raw[0]]: {
-            type: raw[1],
-            ...(raw.length >= 3 ? { setter: raw[2] } : {}),
-          },
-        }),
-        {}
-      );
+      this._propConfig = this.generatePropConfig(this.manager.__props);
     }
 
     return this._propConfig;
   }
 
-  get shadowPropConfig(): Array<string> {
+  get shadowPropConfig(): { [string]: { type: string, setter: Function } } {
     if (this._shadowPropConfig == null) {
-      this._shadowPropConfig = this.manager.shadowPropConfig();
+      this._shadowPropConfig = this.generatePropConfig(
+        this.manager.__shadowProps
+      );
     }
+
     return this._shadowPropConfig;
   }
 
@@ -110,32 +136,37 @@ class RCTComponentData {
   }
 
   createShadowView(tag: number): RCTShadowView {
-    const shadowView = new RCTShadowView();
+    const shadowView: RCTShadowView = this.manager.shadowView();
     shadowView.reactTag = tag;
     return shadowView;
   }
 
   setPropsForView(props: Props, view: typeof RCTComponent) {
-    Object.keys(props).forEach(propName => {
-      if (this.propConfig.hasOwnProperty(propName)) {
-        const propConfig = this.propConfig[propName];
-        const propValue = props[propName];
+    if (props) {
+      Object.keys(props).forEach(propName => {
+        if (this.propConfig.hasOwnProperty(propName)) {
+          const propConfig = this.propConfig[propName];
+          const propValue = props[propName];
+          const setter = propConfig.setter;
 
-        if (propConfig.hasOwnProperty("setter")) {
-          propConfig.setter(view, propValue);
-        } else {
-          view[propName] = propValue;
+          setter(view, propValue);
         }
-      }
-    });
+      });
+    }
   }
 
   setPropsForShadowView(props: Props, shadowView: RCTShadowView) {
-    Object.keys(props).forEach(propName => {
-      if (this.shadowPropConfig.includes(propName)) {
-        (shadowView: any)[propName] = props[propName];
-      }
-    });
+    if (props) {
+      Object.keys(props).forEach(propName => {
+        if (this.shadowPropConfig.hasOwnProperty(propName)) {
+          const propConfig = this.shadowPropConfig[propName];
+          const propValue = props[propName];
+          const setter = propConfig.setter;
+
+          setter(shadowView, propValue);
+        }
+      });
+    }
   }
 }
 

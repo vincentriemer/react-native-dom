@@ -7,7 +7,7 @@ import RCTBridge, {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
   bridgeModuleNameForClass,
-  RCTFunctionTypeNormal,
+  RCTFunctionTypeNormal
 } from "RCTBridge";
 import type { RCTComponent } from "RCTComponent";
 import RCTComponentData from "RCTComponentData";
@@ -16,21 +16,40 @@ import UIView from "UIView";
 import RCTRootView from "RCTRootView";
 import RCTDeviceInfo from "RCTDeviceInfo";
 import RCTRootShadowView from "RCTRootShadowView";
+import RCTLayoutAnimationManager from "RCTLayoutAnimationManager";
+
+import type RCTShadowView from "RCTShadowView";
+import type { LayoutAnimationConfig } from "RCTLayoutAnimationManager";
+import type { Frame } from "UIView";
 
 type ShadowView = any;
 type Size = { width: number, height: number };
-type LayoutChange = [number, string, number];
+
+type LayoutChange = [
+  number /* reactTag*/,
+  Frame /* newFrame */,
+  "add" | "update" /* nodeOperation*/
+];
 
 let rootTagCounter = 0;
 
 @RCT_EXPORT_MODULE
 class RCTUIManager {
-  ticking: boolean = false;
   bridge: RCTBridge;
-  rootViewTags: Set<number> = new Set();
-  shadowViewRegistry: Map<number, ShadowView> = new Map();
-  viewRegistry: Map<number, UIView> = new Map();
-  componentDataByName: Map<string, RCTComponentData> = new Map();
+  rootViewTags: Set<number>;
+  shadowViewRegistry: Map<number, RCTShadowView>;
+  viewRegistry: Map<number, UIView>;
+  componentDataByName: Map<string, RCTComponentData>;
+  jsResponder: ?UIView;
+  layoutAnimationManager: RCTLayoutAnimationManager;
+
+  pendingLayoutAnimation: ?{
+    config: LayoutAnimationConfig,
+    callback: Function,
+    addedNodes: { [reactTag: number]: ?Frame },
+    updatedNodes: { [reactTag: number]: ?Frame },
+    removedNodes: number[]
+  };
 
   pendingUIBlocks: Array<Function> = [];
 
@@ -45,15 +64,15 @@ class RCTUIManager {
 
     // Get view managers from bridge
     this.componentDataByName = new Map();
-    this.bridge.moduleClasses.forEach(moduleClass => {
+    this.bridge.moduleClasses.forEach((moduleClass: any) => {
       if (moduleClass.__isViewManager) {
-        const componentData = new RCTComponentData(
-          (moduleClass: any),
-          this.bridge
-        );
+        const componentData = new RCTComponentData(moduleClass, this.bridge);
         this.componentDataByName.set(componentData.name, componentData);
       }
     });
+
+    this.layoutAnimationManager = new RCTLayoutAnimationManager();
+    this.pendingLayoutAnimation = undefined;
 
     invariant(this.bridge, "Bridge must be set");
     const deviceInfoModule: RCTDeviceInfo = (this.bridge.modulesByName[
@@ -105,25 +124,6 @@ class RCTUIManager {
   }
 
   /**
-   * Gets the view name associated with a reactTag.
-   */
-  viewNameForReactTag(reactTag: number): string {
-    return "";
-  }
-
-  /**
-   * Gets the view associated with a reactTag.
-   */
-  viewForReactTag(reactTag: number): ?UIView {
-    return this.viewRegistry.get(reactTag);
-  }
-
-  /**
-   * Gets the shadow view associated with a reactTag.
-   */
-  shadowViewForReactTag(reactTag: number): ShadowView {}
-
-  /**
    * Set the available size (`availableSize` property) for a root view.
    * This might be used in response to changes in external layout constraints.
    * This value will be directly trasmitted to layout engine and defines how big viewport is;
@@ -134,33 +134,10 @@ class RCTUIManager {
     this.pendingUIBlocks.push(() => {
       const reactTag = rootView.reactTag;
       const rootShadowView = this.shadowViewRegistry.get(reactTag);
-      if (rootShadowView) rootShadowView.updateAvailableSize(size);
+      if (rootShadowView && rootShadowView instanceof RCTRootShadowView)
+        rootShadowView.updateAvailableSize(size);
     });
   }
-
-  /**
-   * Set the size of a view. This might be in response to a screen rotation
-   * or some other layout event outside of the React-managed view hierarchy.
-   */
-  setSize(size: Size, view: UIView) {}
-
-  /**
-   * Set the natural size of a view, which is used when no explicit size is set.
-   * Use `UIViewNoIntrinsicMetric` to ignore a dimension.
-   * The `size` must NOT include padding and border.
-   */
-  setIntrinsicContentSize(size: Size, view: UIView) {}
-
-  /**
-   * Update the background color of a view. The source of truth for
-   * backgroundColor is the shadow view, so if to update backgroundColor from
-   * native code you will need to call this method.
-   */
-  setBackgroundColor(size: Size, view: UIView) {}
-
-  // addUIBlock
-  // prependUIBlock
-  // synchronouslyUpdateViewOnUIThread
 
   /**
    * Given a reactTag from a component, find its root view, if possible.
@@ -180,6 +157,10 @@ class RCTUIManager {
     }
 
     this.addUIBlock((uiManager, viewRegistry) => {
+      if (this.pendingLayoutAnimation != undefined) {
+        this.pendingLayoutAnimation.removedNodes.push(reactTag);
+      }
+
       const view = viewRegistry.get(reactTag);
       viewRegistry.delete(reactTag);
       view.purge();
@@ -199,25 +180,111 @@ class RCTUIManager {
     this.rootViewTags.forEach(rootTag => {
       const rootShadowView = this.shadowViewRegistry.get(rootTag);
       if (rootShadowView != null && rootShadowView.isDirty) {
+        invariant(
+          rootShadowView instanceof RCTRootShadowView,
+          "attempting to recalculate from shadowView that isn't root"
+        );
         const layoutChanges = rootShadowView.recalculateLayout();
-        this.addUIBlock(() => {
-          this.applyLayoutChanges(layoutChanges);
-        });
+
+        if (this.pendingLayoutAnimation !== undefined) {
+          this.queueAnimatedLayoutChanges(layoutChanges);
+        } else {
+          this.addUIBlock(() => {
+            this.applyLayoutChanges(layoutChanges);
+          });
+        }
       }
     });
+
+    if (this.pendingLayoutAnimation !== undefined) {
+      console.log(this.pendingLayoutAnimation);
+      this.pendingLayoutAnimation = undefined;
+    }
+  }
+
+  queueAnimatedLayoutChanges(layoutChanges: LayoutChange[]) {
+    layoutChanges.forEach(layoutChange => {
+      const [reactTag, newFrame, type] = layoutChange;
+
+      invariant(
+        this.pendingLayoutAnimation,
+        "Attempted to queue layout animations without a pending layout animation"
+      );
+
+      if (type === "add") {
+        this.pendingLayoutAnimation.addedNodes[reactTag] = newFrame;
+      } else if (type === "update") {
+        this.pendingLayoutAnimation.updatedNodes[reactTag] = newFrame;
+      }
+    });
+
+    this.applyLayoutChanges(layoutChanges);
   }
 
   applyLayoutChanges(layoutChanges: LayoutChange[]) {
     layoutChanges.forEach(layoutChange => {
-      const [reactTag, propName, value] = layoutChange;
+      const [reactTag, newFrame] = layoutChange;
       const view = this.viewRegistry.get(reactTag);
-      (view: any)[propName] = value;
+      invariant(view, `View with reactTag ${reactTag} does not exist`);
+      view.frame = newFrame;
     });
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  configureNextLayoutAnimation(config, onAnimationDidEnd) {
-    console.log(config, onAnimationDidEnd);
+  measure(reactTag: number, callbackId: number) {
+    const cb = this.bridge.callbackFromId(callbackId);
+
+    let view = this.shadowViewRegistry.get(reactTag);
+
+    if (!view || !view.previousLayout) {
+      cb();
+      return;
+    }
+
+    let { width: w, height: h, left: x, top: y } = view.previousLayout;
+
+    view = view.reactSuperview;
+    while (view && view.previousLayout) {
+      const { left, top } = view.previousLayout;
+      x += left;
+      y += top;
+      view = view.reactSuperview;
+    }
+
+    cb(x, y, w, h);
+  }
+
+  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+  setJSResponder(reactTag: number) {
+    this.addUIBlock(() => {
+      this.jsResponder = this.viewRegistry.get(reactTag);
+      if (!this.jsResponder) {
+        console.error(
+          `Invalid view set to be the JS responder - tag ${reactTag}`
+        );
+      }
+    });
+  }
+
+  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+  clearJSResponder() {
+    this.jsResponder = null;
+  }
+
+  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+  configureNextLayoutAnimation(
+    config: LayoutAnimationConfig,
+    onAnimationDidEnd: number
+  ) {
+    this.addUIBlock(() => {
+      this.pendingLayoutAnimation = {
+        config,
+        callback: this.bridge.callbackFromId(onAnimationDidEnd),
+        addedNodes: {},
+        updatedNodes: {},
+        removedNodes: []
+      };
+    });
   }
 
   addUIBlock(block: ?Function) {
@@ -348,7 +415,7 @@ class RCTUIManager {
         const tagToMove = viewToManage.reactSubviews[moveFromIndex].reactTag;
         viewsToAdd[i] = {
           tag: tagToMove,
-          index: moveTo[i],
+          index: moveTo[i]
         };
         indicesToRemove[i] = moveFromIndex;
         tagsToRemove[i] = tagToMove;
@@ -362,7 +429,7 @@ class RCTUIManager {
         const indexToAddAt = addAtIndices[i];
         viewsToAdd[numToMove + i] = {
           tag: viewTagToAdd,
-          index: indexToAddAt,
+          index: indexToAddAt
         };
       }
     }
@@ -433,6 +500,7 @@ class RCTUIManager {
 
   constantsToExport() {
     const constants = {};
+    const bubblingEvents = {};
 
     for (const [name, componentData] of this.componentDataByName) {
       const moduleConstants = {};
@@ -441,14 +509,30 @@ class RCTUIManager {
         componentData.managerClass
       );
 
+      // Add native props
       const viewConfig = componentData.viewConfig;
       moduleConstants.NativeProps = viewConfig.propTypes;
 
-      // Add direct events
+      // TODO: Add direct events
+
       // Add bubbling events
+      for (let eventName of viewConfig.bubblingEvents) {
+        if (!bubblingEvents[eventName]) {
+          const bubbleName = `on${eventName.substring(3)}`;
+          bubblingEvents[eventName] = {
+            phasedRegistrationNames: {
+              bubbled: bubbleName,
+              captured: `${bubbleName}Capture`
+            }
+          };
+        }
+      }
 
       constants[name] = moduleConstants;
     }
+
+    constants["customBubblingEventTypes"] = bubblingEvents;
+    constants["customDirectEventTypes"] = {}; // TODO: direct events
 
     return constants;
   }

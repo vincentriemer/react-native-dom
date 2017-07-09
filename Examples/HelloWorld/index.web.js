@@ -1,72 +1,155 @@
 import React, { Component } from "react";
-import { AppRegistry, View, Animated, LayoutAnimation } from "react-native";
+import {
+  AppRegistry,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  LayoutAnimation
+} from "react-native";
 
-const childrenIds = [1, 2, 3];
+var CustomLayoutAnimation = {
+  duration: 200,
+  create: {
+    type: LayoutAnimation.Types.linear,
+    property: LayoutAnimation.Properties.opacity
+  },
+  update: {
+    type: LayoutAnimation.Types.curveEaseInEaseOut
+  }
+};
 
-class App extends Component {
-  constructor(props) {
-    super(props);
+class AnimationExample extends Component {
+  constructor() {
+    super();
+
     this.state = {
-      anim: new Animated.Value(0),
-      toggle: true
+      index: 0
     };
   }
 
-  componentDidMount() {
-    setInterval(() => {
-      Animated.spring(this.state.anim, {
-        toValue: this.state.toggle ? 1 : 0
-      }).start();
-      // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
-      this.setState({ toggle: !this.state.toggle });
-    }, 1000);
+  onPress(index) {
+    // Uncomment to animate the next state change.
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+
+    // Or use a Custom Layout Animation
+    // LayoutAnimation.configureNext(CustomLayoutAnimation);
+
+    this.setState({ index: index });
+  }
+
+  renderButton(index) {
+    return (
+      <TouchableOpacity
+        key={"button" + index}
+        style={styles.button}
+        onPress={() => this.onPress(index)}
+      >
+        <Text>
+          {index}
+        </Text>
+      </TouchableOpacity>
+    );
+  }
+
+  renderCircle(key) {
+    var size = 50;
+    return (
+      <View
+        key={key}
+        style={{
+          width: size,
+          height: size,
+          borderRadius: size / 2.0,
+          backgroundColor: "sandybrown",
+          margin: 20
+        }}
+      />
+    );
   }
 
   render() {
-    const flexDirection = this.state.toggle ? "row" : "column";
+    var leftStyle = this.state.index === 0 ? { flex: 1 } : { width: 20 };
+    var middleStyle = this.state.index === 2 ? { width: 20 } : { flex: 1 };
+    var rightStyle = { flex: 1 };
+
+    var whiteHeight = this.state.index * 80;
+
+    var circles = [];
+    for (var i = 0; i < 5 + this.state.index; i++) {
+      circles.push(this.renderCircle(i));
+    }
 
     return (
-      <View
-        style={{
-          flex: 1,
-          flexDirection,
-          alignItems: "center",
-          justifyContent: "space-around",
-          backgroundColor: "#E58331"
-        }}
-      >
-        <View style={{ width: 100, height: 100, backgroundColor: "#9EDE9D" }} />
-        <Animated.View
-          style={{
-            width: 40,
-            height: 40,
-            backgroundColor: "#9EDE9D",
-            transform: [
-              {
-                scale: this.state.anim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [1, 5]
-                })
-              },
-              {
-                rotate: this.state.anim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: ["0deg", "180deg"]
-                })
-              },
-              {
-                rotateX: this.state.anim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: ["0deg", "180deg"]
-                })
-              }
-            ]
-          }}
-        />
-        <View style={{ width: 100, height: 100, backgroundColor: "#9EDE9D" }} />
+      <View style={styles.container}>
+        <View style={styles.topButtons}>
+          {this.renderButton(0)}
+          {this.renderButton(1)}
+          {this.renderButton(2)}
+        </View>
+        <View style={styles.content}>
+          <View style={{ flexDirection: "row", height: 100 }}>
+            <View style={[leftStyle, { backgroundColor: "firebrick" }]} />
+            <View style={[middleStyle, { backgroundColor: "seagreen" }]} />
+            <View style={[rightStyle, { backgroundColor: "steelblue" }]} />
+          </View>
+          <View
+            style={{
+              height: whiteHeight,
+              justifyContent: "center",
+              alignItems: "center",
+              overflow: "hidden"
+            }}
+            removeClippedSubviews={true}
+          >
+            <View>
+              <Text>Stuff Goes Here</Text>
+            </View>
+          </View>
+          <View style={styles.circleContainer}>
+            {circles}
+          </View>
+        </View>
       </View>
     );
   }
 }
 
-AppRegistry.registerComponent("helloworld", () => App);
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F5FCFF"
+  },
+  topButtons: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "stretch",
+    backgroundColor: "lightblue"
+  },
+  button: {
+    flex: 1,
+    height: 60,
+    alignSelf: "stretch",
+    backgroundColor: "white",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: 8
+  },
+  content: {
+    flex: 1,
+    alignSelf: "stretch"
+  },
+  circleContainer: {
+    flexDirection: "row",
+    flex: 1,
+    flexWrap: "wrap",
+    padding: 30,
+    justifyContent: "center",
+    alignItems: "center"
+  }
+});
+
+AppRegistry.registerComponent("helloworld", () => AnimationExample);

@@ -1,0 +1,43 @@
+/**
+ * @providesModule RCTTextManager
+ * @flow
+ */
+
+import RCTBridge, { RCT_EXPORT_MODULE } from "RCTBridge";
+import RCTViewManager, {
+  RCT_EXPORT_VIEW_PROP,
+  RCT_EXPORT_MIRRORED_PROP
+} from "RCTViewManager";
+import RCTText from "RCTText";
+import RCTShadowText from "RCTShadowText";
+
+@RCT_EXPORT_MODULE
+class RCTTextManager extends RCTViewManager {
+  view(): RCTText {
+    return new RCTText();
+  }
+
+  shadowView(): RCTShadowText {
+    return new RCTShadowText();
+  }
+
+  @RCT_EXPORT_MIRRORED_PROP("fontFamily", "string")
+  setFontFamily(view: any, value: string) {
+    view.fontFamily = value;
+  }
+
+  @RCT_EXPORT_MIRRORED_PROP("fontSize", "number")
+  setFontSize(view: any, value: number) {
+    view.fontSize = value;
+  }
+
+  @RCT_EXPORT_VIEW_PROP("accessible", "bool")
+  setAccessible(view: RCTText, value: boolean) {}
+
+  @RCT_EXPORT_VIEW_PROP("selectable", "bool")
+  setSelectable(view: RCTText, value: boolean) {
+    view.selectable = value;
+  }
+}
+
+export default RCTTextManager;

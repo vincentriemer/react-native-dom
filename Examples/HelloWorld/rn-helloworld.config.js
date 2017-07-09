@@ -38,13 +38,7 @@ const config = {
       "node_modules",
       "react-native"
     ),
-    "react-native-web": path.resolve(
-      __dirname,
-      "..",
-      "..",
-      "ReactWeb",
-      "index"
-    ),
+    "react-native-web": path.resolve(__dirname, "..", "..", "ReactWeb", "index")
   },
 
   getAssetExts() {
@@ -57,7 +51,7 @@ const config = {
 
   getProvidesModuleNodeModules() {
     return ["react-native"];
-  },
+  }
 };
 
 function getRoots() {

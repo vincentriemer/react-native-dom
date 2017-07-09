@@ -2,17 +2,18 @@
  * @providesModule RCTTiming
  * @flow
  */
+
 import RCTBridge, {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
-  RCTFunctionTypeNormal,
+  RCTFunctionTypeNormal
 } from "RCTBridge";
 
 type Timer = {
   callbackId: number,
   duration: number,
   jsSchedulingTime: number,
-  repeats: boolean,
+  repeats: boolean
 };
 
 @RCT_EXPORT_MODULE
@@ -44,7 +45,7 @@ class RCTTiming {
       callbackId,
       duration,
       jsSchedulingTime: initialTargetTime,
-      repeats,
+      repeats
     };
 
     if (adjustedDuration === 0) {
@@ -53,7 +54,7 @@ class RCTTiming {
         this.timers[String(callbackId)] = timer;
       }
       this.bridge.enqueueJSCall("JSTimersExecution", "callTimers", [
-        [callbackId],
+        [callbackId]
       ]);
     } else {
       this.timers[String(callbackId)] = timer;

@@ -8,6 +8,7 @@ import UIView, { FrameZero } from "UIView";
 import NotificationCenter from "NotificationCenter";
 import RCTDeviceInfo from "RCTDeviceInfo";
 import RCTTiming from "RCTTiming";
+import RCTTouchHandler from "RCTTouchHandler";
 import CustomElement from "CustomElement";
 
 type Size = { width: number, height: number };
@@ -30,6 +31,8 @@ class RCTRootView extends UIView {
   parent: Element;
   uiManager: RCTUIManager;
   timing: RCTTiming;
+
+  touchHandler: RCTTouchHandler;
 
   constructor(bundle: string, moduleName: string, parent: Element) {
     super();
@@ -57,6 +60,11 @@ class RCTRootView extends UIView {
 
     this.uiManager = (this.bridge.modulesByName["UIManager"]: any);
     this.timing = (this.bridge.modulesByName["Timing"]: any);
+
+    this.touchHandler = new RCTTouchHandler(this.bridge);
+    this.touchHandler.attachToView(this);
+
+    this.style.webkitTapHighlightColor = "transparent";
   }
 
   get reactTag(): number {
@@ -84,18 +92,18 @@ class RCTRootView extends UIView {
     ]);
   }
 
-  frame() {
+  renderLoop() {
     this.timing.frame();
     this.bridge.frame();
     this.uiManager.frame();
 
-    window.requestAnimationFrame(this.frame.bind(this));
+    window.requestAnimationFrame(this.renderLoop.bind(this));
   }
 
   render() {
     this.parent.appendChild(this);
     this.bridge.loadBridgeConfig();
-    this.frame();
+    this.renderLoop();
   }
 }
 

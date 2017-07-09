@@ -1,6 +1,6 @@
 {
   "sourceMaps": "inline",
-  "ignore": ["node_modules/yoga-layout"],
+  "ignore": ["node_modules/yoga-layout", "node_modules/yoga-js"],
   "presets": [],
   "plugins": [
     "syntax-flow",

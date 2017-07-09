@@ -18,7 +18,7 @@ var config = {
   },
   getProvidesModuleNodeModules() {
     return ["react-native"];
-  },
+  }
 };
 function getRoots() {
   var root = process.env.REACT_NATIVE_APP_ROOT;

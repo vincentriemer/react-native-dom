@@ -4,11 +4,14 @@ import "proxy-polyfill";
 import RCTRootView from "RCTRootView";
 import bundleFromRoot from "BundleFromRoot";
 
+import "RCTEventDispatcher";
 import "RCTDeviceInfo";
 import "RCTPlatform";
 import "RCTTiming";
 import "RCTUIManager";
 import "RCTViewManager";
+import "RCTTextManager";
+import "RCTRawTextManager";
 
 // React Native Web Entrypoint instance
 export class RNWebInstance {

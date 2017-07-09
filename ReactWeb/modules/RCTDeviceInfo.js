@@ -31,8 +31,8 @@ class RCTDeviceInfo extends RCTEventEmitter {
 
   exportedDimensions() {
     const dims = {
-      width: window.innerWidth,
-      height: window.innerHeight,
+      width: Math.ceil(window.innerWidth),
+      height: Math.ceil(window.innerHeight),
       scale: this.getDevicePixelRatio(),
       fontScale: 1
     };

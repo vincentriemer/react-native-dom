@@ -8,27 +8,27 @@ import {
   RCTFunctionTypeNormal,
   RCTFunctionTypePromise,
   RCTFunctionTypeSync,
-  RCTFunctionType,
+  RCTFunctionType
 } from "RCTBridgeMethod";
 
 export {
   RCTFunctionTypeNormal,
   RCTFunctionTypePromise,
   RCTFunctionTypeSync,
-  RCTFunctionType,
+  RCTFunctionType
 };
 
 type MessagePayload = {
   data: {
     topic: string,
-    payload: any,
-  },
+    payload: any
+  }
 };
 
 type NativeCall = {
   moduleId: number,
   methodId: number,
-  args: Array<any>,
+  args: Array<any>
 };
 
 const MODULE_IDS = 0;
@@ -52,7 +52,7 @@ var Status = undefined;
 
 onmessage = ({ data }) => {
   const { topic, payload } = JSON.parse(data);
-  // console.log("Recieved message from main thread:", topic, payload);
+  //console.log("Recieved message from main thread:", topic, payload);
 
   switch (topic) {
     case "loadBridgeConfig": {
@@ -65,8 +65,14 @@ onmessage = ({ data }) => {
       break;
     }
     case "callFunctionReturnFlushedQueue": {
-      const batchedBridge = __fbBatchedBridge;
-      const flushedQueue = batchedBridge.callFunctionReturnFlushedQueue(
+      const flushedQueue = __fbBatchedBridge.callFunctionReturnFlushedQueue(
+        ...payload
+      );
+      sendMessage("flushedQueue", flushedQueue);
+      break;
+    }
+    case "invokeCallbackAndReturnFlushedQueue": {
+      const flushedQueue = __fbBatchedBridge.invokeCallbackAndReturnFlushedQueue(
         ...payload
       );
       sendMessage("flushedQueue", flushedQueue);
@@ -98,7 +104,7 @@ export interface ModuleClass {
   static __moduleName: ?string,
   setBridge?: RCTBridge => void,
   constantsToExport?: () => { [string]: any },
-  [string]: ?Function,
+  [string]: ?Function
 }
 
 export function getPropertyNames(obj: ?Object): Array<string> {
@@ -127,7 +133,7 @@ export function bridgeModuleNameForClass(cls: Class<ModuleClass>): string {
 
 function generateModuleConfig(name: string, bridgeModule: ModuleClass) {
   const methodNames = [
-    ...new Set(getPropertyNames(bridgeModule)),
+    ...new Set(getPropertyNames(bridgeModule))
   ].filter(methodName => methodName.startsWith("__rct_export__"));
 
   const constants = bridgeModule.constantsToExport
@@ -209,7 +215,6 @@ export default class RCTBridge {
     invariant(functions, `Module ${name} has no methods to call`);
     const functionName = functions[methodId];
 
-    // console.log(name, functionName, params);
     invariant(
       functionName,
       `No such function in module ${name} with id ${methodId}`
@@ -221,14 +226,12 @@ export default class RCTBridge {
       nativeModule[functionName],
       `No such method ${functionName} on module ${name}`
     );
+
     nativeModule[functionName].apply(nativeModule, params);
   }
 
   onMessage(message: any) {
-    const { topic, payload } = (JSON.parse(message.data): {
-      topic: string,
-      payload: ?any,
-    });
+    const { topic, payload } = JSON.parse(message.data);
 
     switch (topic) {
       case "bundleFinishedLoading": {
@@ -244,7 +247,7 @@ export default class RCTBridge {
             this.messages.push({
               moduleId: moduleIds[i],
               methodId: methodIds[i],
-              args: params[i],
+              args: params[i]
             });
           }
         }
@@ -267,7 +270,7 @@ export default class RCTBridge {
 
   generateModuleConfig(name: string, bridgeModule: ModuleClass) {
     const methodNames = [
-      ...new Set(getPropertyNames(bridgeModule)),
+      ...new Set(getPropertyNames(bridgeModule))
     ].filter(methodName => methodName.startsWith("__rct_export__"));
 
     const constants = bridgeModule.constantsToExport
@@ -310,7 +313,7 @@ export default class RCTBridge {
     const config = this.getInitialModuleConfig();
     this.sendMessage("loadBridgeConfig", {
       config,
-      bundle: this.bundleLocation,
+      bundle: this.bundleLocation
     });
   }
 
@@ -324,17 +327,30 @@ export default class RCTBridge {
     return { remoteModuleConfig };
   };
 
-  enqueueJSCall = (
-    moduleName: string,
-    methodName: string,
-    args: Array<any>
-  ) => {
+  enqueueJSCall(moduleName: string, methodName: string, args: Array<any>) {
     this.sendMessage("callFunctionReturnFlushedQueue", [
       moduleName,
       methodName,
-      args,
+      args
     ]);
-  };
+  }
+
+  enqueueJSCallWithDotMethod(moduleDotMethod: string, args: Array<any>) {
+    const ids = moduleDotMethod.split(".");
+    const module = ids[0];
+    const method = ids[1];
+    this.enqueueJSCall(module, method, args);
+  }
+
+  enqueueJSCallback(id: number, args: Array<any>) {
+    this.sendMessage("invokeCallbackAndReturnFlushedQueue", [id, args]);
+  }
+
+  callbackFromId(id: number) {
+    return (...args: Array<any>) => {
+      this.enqueueJSCallback(id, args);
+    };
+  }
 
   frame() {
     this.sendMessage("flush");
@@ -357,7 +373,7 @@ export function RCT_EXPORT_METHOD(type: RCTFunctionType) {
         `__rct_export__${key}`,
         {
           ...descriptor,
-          value: () => [key, type],
+          value: () => [key, type]
         }
       );
     }

@@ -14,5 +14,5 @@ export interface RCTComponent {
   ): void,
   removeReactSubview(subview: $Subtype<RCTComponent>): void,
 
-  purge(): void,
+  purge(): void
 }

@@ -6,6 +6,7 @@
   "dependencies": {
     "babel-polyfill": "^6.23.0",
     "babel-preset-react-native-stage-0": "^1.0.1",
+    "cuid": "^1.3.8",
     "fbjs": "^0.8.12",
     "flow-bin": "^0.47.0",
     "fs": "^0.0.1-security",
@@ -16,13 +17,13 @@
     "react": "16.0.0-alpha.12",
     "react-native": "facebook/react-native",
     "wolfy87-eventemitter": "^5.1.0",
-    "yoga-js": "1.3.0",
+    "yoga-js": "1.4.2",
     "yoga-layout": "file:../yoga/javascript"
   },
   "scripts": {
     "flow": "flow",
-    "build": "webpack",
-    "devbuild": "webpack-dev-server"
+    "build": "cd Examples/HelloWorld && npm install",
+    "start": "cd Examples/HelloWorld && npm run start"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

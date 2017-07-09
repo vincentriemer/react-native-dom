@@ -2,76 +2,208 @@
  * @providesModule RCTViewManager
  * @flow
  */
+
 import RCTBridge, { RCT_EXPORT_MODULE, RCT_EXPORT_METHOD } from "RCTBridge";
 import UIView from "UIView";
 import RCTShadowView from "RCTShadowView";
 import RCTView from "RCTView";
 
+import type { Frame } from "UIView";
+
+type PropDef = {
+  name: string,
+  type: string,
+  setter: (view: UIView, value: any) => void,
+  exported: boolean
+};
+
+export function RCT_EXPORT_VIEW_PROP(
+  name: string,
+  type: string,
+  exported: boolean = true
+) {
+  return (target: RCTViewManager, key: any, descriptor: any) => {
+    if (typeof descriptor.value === "function") {
+      if (target.__props == null) {
+        target.__props = [];
+      }
+
+      target.__props = target.__props.concat([
+        {
+          name,
+          type,
+          setter: descriptor.value,
+          exported
+        }
+      ]);
+    }
+
+    return descriptor;
+  };
+}
+
+export function RCT_EXPORT_SHADOW_PROP(
+  name: string,
+  type: string,
+  exported: boolean = true
+) {
+  return (target: RCTViewManager, key: any, descriptor: any) => {
+    if (typeof descriptor.value === "function") {
+      if (target.__shadowProps == null) {
+        target.__shadowProps = [];
+      }
+
+      target.__shadowProps = target.__shadowProps.concat([
+        {
+          name,
+          type,
+          setter: descriptor.value,
+          exported
+        }
+      ]);
+    }
+
+    return descriptor;
+  };
+}
+
+export function RCT_EXPORT_MIRRORED_PROP(...exportArgs: any[]) {
+  return (...descriptorArgs: any[]) => {
+    RCT_EXPORT_VIEW_PROP(...exportArgs)(...descriptorArgs);
+    RCT_EXPORT_SHADOW_PROP(...exportArgs)(...descriptorArgs);
+    return descriptorArgs[2];
+  };
+}
+
+export function RCT_EXPORT_DIRECT_SHADOW_PROPS(
+  target: RCTViewManager,
+  key: any,
+  descriptor: any
+) {
+  if (typeof descriptor.value === "function") {
+    if (target.__shadowProps == null) {
+      target.__shadowProps = [];
+    }
+
+    const directPropConfigs = descriptor.value().map(([name, type]) => ({
+      name,
+      type,
+      exported: false
+    }));
+
+    target.__shadowProps = target.__shadowProps.concat(directPropConfigs);
+  }
+
+  return descriptor;
+}
+
 @RCT_EXPORT_MODULE
 class RCTViewManager {
   static __moduleName: string;
   static __isViewManager = true;
+  static __props = [];
 
-  view(): RCTView {
+  __props: Array<PropDef>;
+  __shadowProps: Array<PropDef>;
+
+  view(): UIView {
     return new RCTView();
   }
 
-  propConfig() {
+  shadowView(): RCTShadowView {
+    return new RCTShadowView();
+  }
+
+  customBubblingEventTypes(): Array<string> {
     return [
-      ["backgroundColor", "string"],
-      ["opacity", "string"],
-      ["overflow", "string"],
-      ["testID", "string"],
-      ["transform", "array"],
+      // Generic events
+      "press",
+      "change",
+      "focus",
+      "blur",
+      "submitEditing",
+      "endEditing",
+      "keyPress",
+
+      // Touch events
+      "touchStart",
+      "touchMove",
+      "touchCancel",
+      "touchEnd"
     ];
   }
 
-  shadowPropConfig() {
+  @RCT_EXPORT_VIEW_PROP("backgroundColor", "Color")
+  setBackgroundColor(view: RCTView, value: number) {
+    view.backgroundColor = value;
+  }
+
+  @RCT_EXPORT_VIEW_PROP("opacity", "number")
+  setOpacity(view: RCTView, value: number) {
+    view.opacity = value;
+  }
+
+  @RCT_EXPORT_VIEW_PROP("transform", "array")
+  setTransform(view: RCTView, value: Array<number>) {
+    view.transform = value;
+  }
+
+  @RCT_EXPORT_VIEW_PROP("borderRadius", "number")
+  setBorderRadius(view: RCTView, value: number) {
+    view.borderRadius = value;
+  }
+
+  @RCT_EXPORT_VIEW_PROP("onStartShouldSetResponder", "bool")
+  setOnStartShouldSetResponder(view: RCTView, value: boolean) {
+    view.touchable = value;
+  }
+
+  @RCT_EXPORT_DIRECT_SHADOW_PROPS
+  getDirectShadowViewProps() {
     return [
-      "backgroundColor",
-      "top",
-      "right",
-      "bottom",
-      "left",
-      "width",
-      "height",
-      "minWidth",
-      "maxWidth",
-      "minHeight",
-      "minWidth",
-      "borderTopWidth",
-      "borderRightWidth",
-      "borderBottomWidth",
-      "borderLeftWidth",
-      "borderWidth",
-      "marginTop",
-      "marginRight",
-      "marginBottom",
-      "marginLeft",
-      "marginVertical",
-      "marginHorizontal",
-      "margin",
-      "paddingTop",
-      "paddingRight",
-      "paddingBottom",
-      "paddingLeft",
-      "paddingVertical",
-      "paddingHorizontal",
-      "padding",
-      "flex",
-      "flexGrow",
-      "flexShrink",
-      "flexBasis",
-      "flexDirection",
-      "flexWrap",
-      "justifyContent",
-      "alignItems",
-      "alignSelf",
-      "alignContent",
-      "position",
-      "aspectRatio",
-      "overflow",
-      "display",
+      ["top", "string"],
+      ["right", "string"],
+      ["bottom", "string"],
+      ["left", "string"],
+      ["width", "string"],
+      ["height", "string"],
+      ["minWidth", "string"],
+      ["maxWidth", "string"],
+      ["minHeight", "string"],
+      ["minWidth", "string"],
+      ["borderTopWidth", "string"],
+      ["borderRightWidth", "string"],
+      ["borderBottomWidth", "string"],
+      ["borderLeftWidth", "string"],
+      ["borderWidth", "string"],
+      ["marginTop", "string"],
+      ["marginRight", "string"],
+      ["marginBottom", "string"],
+      ["marginLeft", "string"],
+      ["marginVertical", "string"],
+      ["marginHorizontal", "string"],
+      ["margin", "string"],
+      ["paddingTop", "string"],
+      ["paddingRight", "string"],
+      ["paddingBottom", "string"],
+      ["paddingLeft", "string"],
+      ["paddingVertical", "string"],
+      ["paddingHorizontal", "string"],
+      ["padding", "string"],
+      ["flex", "string"],
+      ["flexGrow", "string"],
+      ["flexShrink", "string"],
+      ["flexBasis", "string"],
+      ["flexDirection", "string"],
+      ["flexWrap", "string"],
+      ["justifyContent", "string"],
+      ["alignItems", "string"],
+      ["alignSelf", "string"],
+      ["alignContent", "string"],
+      ["position", "string"],
+      ["aspectRatio", "string"],
+      ["overflow", "string"],
+      ["display", "string"]
     ];
   }
 }
