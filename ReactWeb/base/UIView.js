@@ -67,6 +67,7 @@ class UIView extends HTMLElement implements RCTComponent {
   _height: number;
   _borderRadius: number;
   _touchable: boolean;
+  _opacity: number;
 
   reactTag: number;
   reactSubviews: Array<UIView>;
@@ -81,6 +82,7 @@ class UIView extends HTMLElement implements RCTComponent {
 
     this.position = "absolute";
     this.backgroundColor = "transparent";
+    this.opacity = 1;
     this.style.overflow = "hidden";
   }
 
@@ -173,11 +175,12 @@ class UIView extends HTMLElement implements RCTComponent {
     }
   }
 
-  get opacity(): string {
-    return this.style.opacity;
+  get opacity(): number {
+    return this._opacity;
   }
 
   set opacity(value: number) {
+    this._opacity = value;
     this.style.opacity = `${value}`;
   }
 

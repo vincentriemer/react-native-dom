@@ -19,7 +19,10 @@ import RCTRootShadowView from "RCTRootShadowView";
 import RCTLayoutAnimationManager from "RCTLayoutAnimationManager";
 
 import type RCTShadowView from "RCTShadowView";
-import type { LayoutAnimationConfig } from "RCTLayoutAnimationManager";
+import type {
+  LayoutAnimationConfig,
+  PendingLayoutAnimation
+} from "RCTLayoutAnimationManager";
 import type { Frame } from "UIView";
 
 type ShadowView = any;
@@ -43,13 +46,7 @@ class RCTUIManager {
   jsResponder: ?UIView;
   layoutAnimationManager: RCTLayoutAnimationManager;
 
-  pendingLayoutAnimation: ?{
-    config: LayoutAnimationConfig,
-    callback: Function,
-    addedNodes: { [reactTag: number]: ?Frame },
-    updatedNodes: { [reactTag: number]: ?Frame },
-    removedNodes: number[]
-  };
+  pendingLayoutAnimation: ?PendingLayoutAnimation;
 
   pendingUIBlocks: Array<Function> = [];
 
@@ -71,7 +68,7 @@ class RCTUIManager {
       }
     });
 
-    this.layoutAnimationManager = new RCTLayoutAnimationManager();
+    this.layoutAnimationManager = new RCTLayoutAnimationManager(this);
     this.pendingLayoutAnimation = undefined;
 
     invariant(this.bridge, "Bridge must be set");
@@ -159,11 +156,11 @@ class RCTUIManager {
     this.addUIBlock((uiManager, viewRegistry) => {
       if (this.pendingLayoutAnimation != undefined) {
         this.pendingLayoutAnimation.removedNodes.push(reactTag);
+      } else {
+        const view = viewRegistry.get(reactTag);
+        viewRegistry.delete(reactTag);
+        view.purge();
       }
-
-      const view = viewRegistry.get(reactTag);
-      viewRegistry.delete(reactTag);
-      view.purge();
     });
   }
 
@@ -196,9 +193,12 @@ class RCTUIManager {
       }
     });
 
-    if (this.pendingLayoutAnimation !== undefined) {
-      console.log(this.pendingLayoutAnimation);
+    if (this.pendingLayoutAnimation != null) {
+      const pendingLayoutAnimation: PendingLayoutAnimation = this
+        .pendingLayoutAnimation;
       this.pendingLayoutAnimation = undefined;
+
+      this.layoutAnimationManager.startLayoutAnimations(pendingLayoutAnimation);
     }
   }
 
@@ -218,7 +218,7 @@ class RCTUIManager {
       }
     });
 
-    this.applyLayoutChanges(layoutChanges);
+    // this.applyLayoutChanges(layoutChanges);
   }
 
   applyLayoutChanges(layoutChanges: LayoutChange[]) {
