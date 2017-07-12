@@ -33,6 +33,7 @@
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-plugin-inline-import": "^2.0.5",
     "babel-plugin-module-alias": "^1.6.0",
+    "babel-plugin-preval": "^1.3.2",
     "babel-plugin-proxy": "^1.1.0",
     "babel-plugin-replace-require": "^0.0.4",
     "babel-plugin-syntax-flow": "^6.18.0",

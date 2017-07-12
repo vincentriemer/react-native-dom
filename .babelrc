@@ -10,7 +10,8 @@
     "transform-decorators-legacy",
     "transform-class-properties",
     "transform-object-rest-spread",
-    "transform-inline-environment-variables"
+    "transform-inline-environment-variables",
+    "preval"
   ],
   "parserOpts": {
     "sourceType": "module"

@@ -301,7 +301,7 @@ babel-code-frame@^6.22.0, babel-code-frame@^6.3.13:
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-babel-core@6, babel-core@^6.24.0, babel-core@^6.24.1, babel-core@^6.3.17, babel-core@^6.7.2, babel-core@~6:
+babel-core@6, babel-core@^6.24.0, babel-core@^6.24.1, babel-core@^6.25.0, babel-core@^6.3.17, babel-core@^6.7.2, babel-core@~6:
   version "6.25.0"
   resolved "https://registry.yarnpkg.com/babel-core/-/babel-core-6.25.0.tgz#7dd42b0463c742e9d5296deb3ec67a9322dad729"
   dependencies:
@@ -509,6 +509,14 @@ babel-plugin-inline-import@^2.0.5:
 babel-plugin-module-alias@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-module-alias/-/babel-plugin-module-alias-1.6.0.tgz#df7e3aaba3544f4c06a9d3314a26bbbff6d87b61"
+
+babel-plugin-preval@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/babel-plugin-preval/-/babel-plugin-preval-1.3.2.tgz#44192e6e97b58661bf2c5bcae90bba2a366e0134"
+  dependencies:
+    babel-core "^6.25.0"
+    babylon "^6.17.4"
+    require-from-string "^1.2.1"
 
 babel-plugin-proxy@^1.1.0:
   version "1.1.0"
@@ -1198,6 +1206,10 @@ babylon@6.3.26:
 babylon@^6.14.1, babylon@^6.17.0, babylon@^6.17.2, babylon@^6.3.26:
   version "6.17.3"
   resolved "https://registry.yarnpkg.com/babylon/-/babylon-6.17.3.tgz#1327d709950b558f204e5352587fd0290f8d8e48"
+
+babylon@^6.17.4:
+  version "6.17.4"
+  resolved "https://registry.yarnpkg.com/babylon/-/babylon-6.17.4.tgz#3e8b7402b88d22c3423e137a1577883b15ff869a"
 
 balanced-match@^0.4.1:
   version "0.4.2"
@@ -4898,6 +4910,10 @@ request@2, request@^2.65.0, request@^2.79.0, request@^2.81.0:
 require-directory@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/require-directory/-/require-directory-2.1.1.tgz#8c64ad5fd30dab1c976e2344ffe7f792a6a6df42"
+
+require-from-string@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/require-from-string/-/require-from-string-1.2.1.tgz#529c9ccef27380adfec9a2f965b649bbee636418"
 
 require-main-filename@^1.0.1:
   version "1.0.1"
