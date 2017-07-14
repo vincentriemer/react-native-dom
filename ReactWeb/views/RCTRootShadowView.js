@@ -4,6 +4,7 @@
  */
 
 import type { Size } from "UIView";
+import type { LayoutChange } from "RCTShadowView";
 import RCTShadowView from "RCTShadowView";
 
 class RCTRootShadowView extends RCTShadowView {
@@ -20,10 +21,15 @@ class RCTRootShadowView extends RCTShadowView {
     this.makeDirtyRecursive();
   }
 
-  recalculateLayout() {
+  recalculateLayout(): Array<LayoutChange> {
     const { width, height } = this.availableSize;
     this.yogaNode.calculateLayout(width, height);
-    const layoutChanges = this.getLayoutChanges();
+
+    const layoutChanges = this.getLayoutChanges({
+      top: 0,
+      left: 0
+    });
+
     return layoutChanges;
   }
 }

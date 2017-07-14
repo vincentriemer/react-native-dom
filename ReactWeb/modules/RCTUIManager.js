@@ -18,7 +18,7 @@ import RCTDeviceInfo from "RCTDeviceInfo";
 import RCTRootShadowView from "RCTRootShadowView";
 import RCTLayoutAnimationManager from "RCTLayoutAnimationManager";
 
-import type RCTShadowView from "RCTShadowView";
+import type RCTShadowView, { LayoutChange } from "RCTShadowView";
 import type {
   LayoutAnimationConfig,
   PendingLayoutAnimation
@@ -27,12 +27,6 @@ import type { Frame } from "UIView";
 
 type ShadowView = any;
 type Size = { width: number, height: number };
-
-type LayoutChange = [
-  number /* reactTag*/,
-  Frame /* newFrame */,
-  "add" | "update" /* nodeOperation*/
-];
 
 let rootTagCounter = 0;
 
@@ -45,8 +39,6 @@ class RCTUIManager {
   componentDataByName: Map<string, RCTComponentData>;
   jsResponder: ?UIView;
   layoutAnimationManager: RCTLayoutAnimationManager;
-
-  pendingLayoutAnimation: ?PendingLayoutAnimation;
 
   pendingUIBlocks: Array<Function> = [];
 
@@ -69,7 +61,6 @@ class RCTUIManager {
     });
 
     this.layoutAnimationManager = new RCTLayoutAnimationManager(this);
-    this.pendingLayoutAnimation = undefined;
 
     invariant(this.bridge, "Bridge must be set");
     const deviceInfoModule: RCTDeviceInfo = (this.bridge.modulesByName[
@@ -154,8 +145,8 @@ class RCTUIManager {
     }
 
     this.addUIBlock((uiManager, viewRegistry) => {
-      if (this.pendingLayoutAnimation != undefined) {
-        this.pendingLayoutAnimation.removedNodes.push(reactTag);
+      if (this.layoutAnimationManager.isPending()) {
+        this.layoutAnimationManager.queueRemovedNode(reactTag);
       } else {
         const view = viewRegistry.get(reactTag);
         viewRegistry.delete(reactTag);
@@ -183,8 +174,10 @@ class RCTUIManager {
         );
         const layoutChanges = rootShadowView.recalculateLayout();
 
-        if (this.pendingLayoutAnimation !== undefined) {
-          this.queueAnimatedLayoutChanges(layoutChanges);
+        if (this.layoutAnimationManager.isPending()) {
+          this.addUIBlock(() => {
+            this.layoutAnimationManager.addLayoutChanges(layoutChanges);
+          });
         } else {
           this.addUIBlock(() => {
             this.applyLayoutChanges(layoutChanges);
@@ -193,40 +186,19 @@ class RCTUIManager {
       }
     });
 
-    if (this.pendingLayoutAnimation != null) {
-      const pendingLayoutAnimation: PendingLayoutAnimation = this
-        .pendingLayoutAnimation;
-      this.pendingLayoutAnimation = undefined;
-
-      this.layoutAnimationManager.startLayoutAnimations(pendingLayoutAnimation);
+    if (this.layoutAnimationManager.isPending()) {
+      this.addUIBlock(() => {
+        this.layoutAnimationManager.applyLayoutChanges();
+      });
     }
-  }
-
-  queueAnimatedLayoutChanges(layoutChanges: LayoutChange[]) {
-    layoutChanges.forEach(layoutChange => {
-      const [reactTag, newFrame, type] = layoutChange;
-
-      invariant(
-        this.pendingLayoutAnimation,
-        "Attempted to queue layout animations without a pending layout animation"
-      );
-
-      if (type === "add") {
-        this.pendingLayoutAnimation.addedNodes[reactTag] = newFrame;
-      } else if (type === "update") {
-        this.pendingLayoutAnimation.updatedNodes[reactTag] = newFrame;
-      }
-    });
-
-    // this.applyLayoutChanges(layoutChanges);
   }
 
   applyLayoutChanges(layoutChanges: LayoutChange[]) {
     layoutChanges.forEach(layoutChange => {
-      const [reactTag, newFrame] = layoutChange;
+      const { reactTag, layout } = layoutChange;
       const view = this.viewRegistry.get(reactTag);
       invariant(view, `View with reactTag ${reactTag} does not exist`);
-      view.frame = newFrame;
+      view.frame = layout;
     });
   }
 
@@ -234,24 +206,16 @@ class RCTUIManager {
   measure(reactTag: number, callbackId: number) {
     const cb = this.bridge.callbackFromId(callbackId);
 
-    let view = this.shadowViewRegistry.get(reactTag);
+    let shadowView = this.shadowViewRegistry.get(reactTag);
 
-    if (!view || !view.previousLayout) {
+    if (!shadowView || !shadowView.measurement) {
       cb();
       return;
     }
 
-    let { width: w, height: h, left: x, top: y } = view.previousLayout;
+    let { left, top, width, height } = shadowView.measurement;
 
-    view = view.reactSuperview;
-    while (view && view.previousLayout) {
-      const { left, top } = view.previousLayout;
-      x += left;
-      y += top;
-      view = view.reactSuperview;
-    }
-
-    cb(x, y, w, h);
+    cb(left, top, width, height);
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
@@ -277,13 +241,10 @@ class RCTUIManager {
     onAnimationDidEnd: number
   ) {
     this.addUIBlock(() => {
-      this.pendingLayoutAnimation = {
+      this.layoutAnimationManager.configureNext(
         config,
-        callback: this.bridge.callbackFromId(onAnimationDidEnd),
-        addedNodes: {},
-        updatedNodes: {},
-        removedNodes: []
-      };
+        this.bridge.callbackFromId(onAnimationDidEnd)
+      );
     });
   }
 

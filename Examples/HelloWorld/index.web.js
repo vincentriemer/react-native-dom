@@ -9,13 +9,17 @@ import {
 } from "react-native";
 
 var CustomLayoutAnimation = {
-  duration: 200,
+  duration: 1000,
   create: {
-    type: LayoutAnimation.Types.linear,
+    type: LayoutAnimation.Types.easeIn,
     property: LayoutAnimation.Properties.opacity
   },
   update: {
-    type: LayoutAnimation.Types.curveEaseInEaseOut
+    type: LayoutAnimation.Types.easeOut
+  },
+  delete: {
+    type: LayoutAnimation.Types.easeOut,
+    property: LayoutAnimation.Properties.opacity
   }
 };
 
@@ -30,7 +34,7 @@ class AnimationExample extends Component {
 
   onPress(index) {
     // Uncomment to animate the next state change.
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+    // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
 
     // Or use a Custom Layout Animation
     // LayoutAnimation.configureNext(CustomLayoutAnimation);
@@ -91,7 +95,16 @@ class AnimationExample extends Component {
           <View style={{ flexDirection: "row", height: 100 }}>
             <View style={[leftStyle, { backgroundColor: "firebrick" }]} />
             <View style={[middleStyle, { backgroundColor: "seagreen" }]} />
-            <View style={[rightStyle, { backgroundColor: "steelblue" }]} />
+            <View
+              style={[
+                rightStyle,
+                {
+                  backgroundColor: "steelblue",
+                  justifyContent: "center",
+                  alignItems: "center"
+                }
+              ]}
+            />
           </View>
           <View
             style={{

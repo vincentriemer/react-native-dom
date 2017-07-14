@@ -3,8 +3,11 @@
  * @flow
  */
 
+import type { Frame } from "UIView";
 import type { RCTComponent } from "RCTComponent";
+
 import YogaNode from "yoga-js";
+import invariant from "Invariant";
 
 export const SHADOW_PROPS = [
   "top",
@@ -54,20 +57,21 @@ export const SHADOW_PROPS = [
 
 const LAYOUT_PROPS = ["top", "left", "width", "height"];
 
-type Layout = {
-  top: number,
-  left: number,
-  width: number,
-  height: number
+export type LayoutChange = {
+  reactTag: number,
+  layout: Frame,
+  previousMeasurement: ?Frame,
+  nextMeasurement: Frame
 };
 
 class RCTShadowView implements RCTComponent {
   _backgroundColor: string;
+  _transform: Array<number>;
 
   viewName: string;
 
   yogaNode: YogaNode;
-  previousLayout: ?Layout;
+  previousLayout: ?Frame;
   isNewView: boolean;
   isHidden: boolean;
   isDirty: boolean = true;
@@ -75,6 +79,8 @@ class RCTShadowView implements RCTComponent {
   reactTag: number;
   reactSubviews: Array<RCTShadowView> = [];
   reactSuperview: ?RCTShadowView;
+
+  measurement: ?Frame;
 
   constructor() {
     this.yogaNode = new YogaNode();
@@ -92,6 +98,7 @@ class RCTShadowView implements RCTComponent {
     });
 
     this.previousLayout = undefined;
+    this.measurement = undefined;
   }
 
   get backgroundColor(): string {
@@ -102,34 +109,78 @@ class RCTShadowView implements RCTComponent {
     this._backgroundColor = value;
   }
 
-  getLayoutChanges() {
+  getLayoutChanges(previousPosition: {
+    top: number,
+    left: number
+  }): Array<LayoutChange> {
     let layoutChanges = [];
-
-    this.reactSubviews.forEach(subView => {
-      if (subView.isDirty) {
-        layoutChanges = layoutChanges.concat(subView.getLayoutChanges());
-      }
-    });
 
     const newLayout = this.yogaNode.layout;
 
+    const currentPosition = {
+      top: previousPosition.top + newLayout.top,
+      left: previousPosition.left + newLayout.left
+    };
+
+    const previousMeasurement = this.measurement
+      ? { ...this.measurement }
+      : null;
+
+    const nextMeasurement = {
+      ...currentPosition,
+      width: newLayout.width,
+      height: newLayout.height
+    };
+
     if (JSON.stringify(newLayout) !== JSON.stringify(this.previousLayout)) {
-      const layoutChangeType =
-        this.previousLayout === undefined ? "add" : "update";
-      layoutChanges.push([this.reactTag, newLayout, layoutChangeType]);
+      layoutChanges.push({
+        reactTag: this.reactTag,
+        layout: newLayout,
+        previousMeasurement,
+        nextMeasurement
+      });
+
       this.previousLayout = newLayout;
+
+      this.reactSubviews.forEach(subView => {
+        layoutChanges = layoutChanges.concat(
+          subView.getLayoutChanges(currentPosition)
+        );
+      });
+    } else {
+      const shouldUpdateChildren: boolean = (() => {
+        let result = false;
+        this.reactSubviews.forEach(subView => {
+          if (subView.isDirty) {
+            result = true;
+          }
+        });
+        return result;
+      })();
+
+      if (shouldUpdateChildren) {
+        this.reactSubviews.forEach(subView => {
+          layoutChanges = layoutChanges.concat(
+            subView.getLayoutChanges(currentPosition)
+          );
+        });
+      }
     }
 
+    this.measurement = { ...nextMeasurement };
     this.isDirty = false;
     return layoutChanges;
   }
 
   makeDirty(): void {
+    this.isDirty = true;
+
     let view = this;
     while (view.reactSuperview) {
       view = view.reactSuperview;
+      view.isDirty = true;
     }
-    view.makeDirtyRecursive();
+    // view.makeDirtyRecursive();
   }
 
   makeDirtyRecursive(): void {

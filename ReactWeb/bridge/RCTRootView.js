@@ -85,7 +85,6 @@ class RCTRootView extends UIView {
       initialProps: {}
     };
 
-    // console.log(`Running application: ${this.moduleName}`);
     this.bridge.enqueueJSCall("AppRegistry", "runApplication", [
       this.moduleName,
       appParameters

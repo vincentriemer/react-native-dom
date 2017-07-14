@@ -15,6 +15,9 @@ class RCTRawText extends RCTView {
       position: "static",
       display: "inline"
     });
+
+    this.hasBeenFramed = true;
+    this.opacity = 1;
   }
 
   get text(): string {

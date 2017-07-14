@@ -92,7 +92,7 @@ class RCTShadowText extends RCTShadowView {
   }
 
   markTextDirty() {
-    this.yogaNode.markDirty();
+    this.makeDirty();
     this.textDirty = true;
   }
 
@@ -178,11 +178,6 @@ class RCTShadowText extends RCTShadowView {
     this.textDirty = false;
 
     return this._testTree;
-  }
-
-  makeDirtyRecursive(): void {
-    this.isDirty = true;
-    this.markTextDirty();
   }
 
   insertReactSubviewAtIndex(

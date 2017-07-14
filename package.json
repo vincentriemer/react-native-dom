@@ -6,7 +6,9 @@
   "dependencies": {
     "babel-polyfill": "^6.23.0",
     "babel-preset-react-native-stage-0": "^1.0.1",
+    "bezier-easing": "^2.0.3",
     "cuid": "^1.3.8",
+    "fast-memoize": "^2.2.7",
     "fbjs": "^0.8.12",
     "flow-bin": "^0.47.0",
     "fs": "^0.0.1-security",
@@ -16,19 +18,35 @@
     "proxy-polyfill": "^0.1.7",
     "react": "16.0.0-alpha.12",
     "react-native": "facebook/react-native",
+    "rebound": "^0.0.15",
+    "rematrix": "^0.1.1",
+    "transformation-matrix": "^1.4.0",
     "wolfy87-eventemitter": "^5.1.0",
     "yoga-js": "1.4.2",
-    "yoga-layout": "file:../yoga/javascript"
+    "yoga-layout": "^1.6.0"
   },
   "scripts": {
     "flow": "flow",
     "build": "cd Examples/HelloWorld && npm install",
-    "start": "cd Examples/HelloWorld && npm run start"
+    "start": "cd Examples/HelloWorld && npm run start",
+    "test": "jest"
+  },
+  "jest": {
+    "haste": {
+      "defaultPlatform": "web",
+      "providesModuleNodeModules": [
+        "react-native-webapp"
+      ],
+      "platforms": [
+        "web"
+      ]
+    }
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-core": "^6.24.1",
     "babel-helpers": "^6.24.1",
+    "babel-jest": "^20.0.3",
     "babel-loader": "6",
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-plugin-inline-import": "^2.0.5",
@@ -56,6 +74,7 @@
     "haul": "vincentriemer/haul",
     "html-webpack-plugin": "^2.28.0",
     "inject-loader": "^3.0.0",
+    "jest": "^20.0.4",
     "json-loader": "^0.5.4",
     "metro-bundler": "^0.8.1",
     "prettier": "^1.5.2",

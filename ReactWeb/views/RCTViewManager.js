@@ -143,7 +143,7 @@ class RCTViewManager {
     view.opacity = value;
   }
 
-  @RCT_EXPORT_VIEW_PROP("transform", "array")
+  @RCT_EXPORT_MIRRORED_PROP("transform", "array")
   setTransform(view: RCTView, value: Array<number>) {
     view.transform = value;
   }

@@ -3,8 +3,8 @@
  * @flow
  */
 import type { RCTComponent } from "RCTComponent";
-import RCTTouchHandler from "RCTTouchHandler";
 import CustomElement from "CustomElement";
+import type RCTTouchHandler from "RCTTouchHandler";
 
 export type Frame = {
   top: number,
@@ -57,6 +57,8 @@ const ColorArrayFromHexARGB = function(hex) {
   ];
 };
 
+const baseDimension = 1000;
+
 @CustomElement("ui-view")
 class UIView extends HTMLElement implements RCTComponent {
   _top: number;
@@ -73,17 +75,19 @@ class UIView extends HTMLElement implements RCTComponent {
   reactSubviews: Array<UIView>;
   reactSuperview: ?UIView;
 
-  touchHandler: ?RCTTouchHandler;
+  hasBeenFramed: boolean;
 
   constructor() {
     super();
 
     this.reactSubviews = [];
+    this.hasBeenFramed = false;
+    this.opacity = 0;
 
     this.position = "absolute";
     this.backgroundColor = "transparent";
-    this.opacity = 1;
     this.style.overflow = "hidden";
+    this.borderRadius = 0;
   }
 
   get frame(): Frame {
@@ -97,6 +101,10 @@ class UIView extends HTMLElement implements RCTComponent {
 
   set frame(value: Frame) {
     Object.assign(this, value);
+    if (!this.hasBeenFramed) {
+      this.hasBeenFramed = true;
+      this.opacity = 1;
+    }
   }
 
   get position(): string {
@@ -113,7 +121,8 @@ class UIView extends HTMLElement implements RCTComponent {
 
   set top(value: number) {
     this._top = value;
-    this.style.top = `${value}px`;
+    // this.style.top = `${value}px`;
+    this.updatePosition();
   }
 
   get left(): number {
@@ -122,7 +131,8 @@ class UIView extends HTMLElement implements RCTComponent {
 
   set left(value: number) {
     this._left = value;
-    this.style.left = `${value}px`;
+    // this.style.left = `${value}px`;
+    this.updatePosition();
   }
 
   get bottom(): number {
@@ -143,13 +153,45 @@ class UIView extends HTMLElement implements RCTComponent {
     this.style.right = `${value}px`;
   }
 
+  updatePosition() {
+    let transformString = "";
+
+    if (this._left) transformString += `translateX(${this._left}px)`;
+    if (this._top) transformString += `translateY(${this._top}px)`;
+
+    this.style.transform = transformString;
+  }
+
+  updateDimensions() {
+    // this.style.width = `${baseDimension}px`;
+    // this.style.height = `${baseDimension}px`;
+    // this.style.clip = `rect(0px ${this.width}px ${this.height}px 0px)`;
+
+    const rightInset = baseDimension - this.width;
+    const bottomInset = baseDimension - this.height;
+    const clipPathText = `inset(0px ${rightInset}px ${bottomInset}px 0px round ${this
+      .borderRadius}px)`;
+
+    // $FlowFixMe
+    Object.assign(this.style, {
+      webkitClipPath: clipPathText,
+      clipPath: clipPathText
+    });
+
+    Object.assign(this.style, {
+      width: `${baseDimension}px`,
+      height: `${baseDimension}px`
+    });
+  }
+
   get width(): number {
     return this._width;
   }
 
   set width(value: number) {
     this._width = value;
-    this.style.width = `${value}px`;
+    // this.style.width = `${value}px`;
+    this.updateDimensions();
   }
 
   get height(): number {
@@ -158,7 +200,8 @@ class UIView extends HTMLElement implements RCTComponent {
 
   set height(value: number) {
     this._height = value;
-    this.style.height = `${value}px`;
+    // this.style.height = `${value}px`;
+    this.updateDimensions();
   }
 
   get backgroundColor(): string {
@@ -184,21 +227,23 @@ class UIView extends HTMLElement implements RCTComponent {
     this.style.opacity = `${value}`;
   }
 
-  get transform(): string {
-    return this.style.transform;
-  }
+  // get transform(): string {
+  //   return this.style.transform;
+  // }
 
-  set transform(value: Array<number>) {
-    this.style.transform = `matrix3d(${value.join(",")})`;
-  }
+  // set transform(value: Array<number>) {
+  //   this.style.transform = `matrix3d(${value.join(",")})`;
+  // }
 
   get borderRadius(): number {
     return this._borderRadius;
   }
 
   set borderRadius(value: number) {
-    this._borderRadius = value;
-    this.style.borderRadius = `${value}px`;
+    if (this._borderRadius !== value) {
+      this._borderRadius = value;
+      this.updateDimensions();
+    }
   }
 
   get touchable(): boolean {
@@ -234,7 +279,10 @@ class UIView extends HTMLElement implements RCTComponent {
   addGestureRecognizer(handler: RCTTouchHandler) {
     this.addEventListener("mousedown", handler.mouseClickBegan.bind(handler));
   }
-  removeGestureRecognizer(handler: RCTTouchHandler) {}
+
+  removeGestureRecognizer(handler: RCTTouchHandler) {
+    // TODO: Implement
+  }
 }
 
 export default UIView;
