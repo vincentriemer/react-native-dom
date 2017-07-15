@@ -20,15 +20,14 @@
     "react-native": "facebook/react-native",
     "rebound": "^0.0.15",
     "rematrix": "^0.1.1",
-    "transformation-matrix": "^1.4.0",
     "wolfy87-eventemitter": "^5.1.0",
     "yoga-js": "1.4.2",
     "yoga-layout": "^1.6.0"
   },
   "scripts": {
     "flow": "flow",
-    "build": "cd Examples/HelloWorld && npm install",
-    "start": "cd Examples/HelloWorld && npm run start",
+    "start": "npm run start:layout",
+    "start:layout": "cd Examples/LayoutAnimations && npm run start",
     "test": "jest"
   },
   "jest": {
@@ -64,6 +63,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-babili": "^0.1.4",
     "babel-preset-env": "^1.5.1",
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.24.1",

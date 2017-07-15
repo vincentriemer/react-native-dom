@@ -9,7 +9,7 @@ import {
 } from "react-native";
 
 var CustomLayoutAnimation = {
-  duration: 1000,
+  duration: 400,
   create: {
     type: LayoutAnimation.Types.easeIn,
     property: LayoutAnimation.Properties.opacity
@@ -34,7 +34,7 @@ class AnimationExample extends Component {
 
   onPress(index) {
     // Uncomment to animate the next state change.
-    // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
 
     // Or use a Custom Layout Animation
     // LayoutAnimation.configureNext(CustomLayoutAnimation);
@@ -165,4 +165,4 @@ const styles = StyleSheet.create({
   }
 });
 
-AppRegistry.registerComponent("helloworld", () => AnimationExample);
+AppRegistry.registerComponent("layoutanimations", () => AnimationExample);

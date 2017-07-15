@@ -19,10 +19,7 @@ import RCTRootShadowView from "RCTRootShadowView";
 import RCTLayoutAnimationManager from "RCTLayoutAnimationManager";
 
 import type RCTShadowView, { LayoutChange } from "RCTShadowView";
-import type {
-  LayoutAnimationConfig,
-  PendingLayoutAnimation
-} from "RCTLayoutAnimationManager";
+import type { LayoutAnimationConfig } from "RCTLayoutAnimationManager";
 import type { Frame } from "UIView";
 
 type ShadowView = any;
@@ -144,15 +141,15 @@ class RCTUIManager {
       shadowView.purge();
     }
 
-    this.addUIBlock((uiManager, viewRegistry) => {
-      if (this.layoutAnimationManager.isPending()) {
-        this.layoutAnimationManager.queueRemovedNode(reactTag);
-      } else {
+    if (this.layoutAnimationManager.isPending()) {
+      this.layoutAnimationManager.queueRemovedNode(reactTag);
+    } else {
+      this.addUIBlock((uiManager, viewRegistry) => {
         const view = viewRegistry.get(reactTag);
         viewRegistry.delete(reactTag);
         view.purge();
-      }
-    });
+      });
+    }
   }
 
   frame() {
@@ -175,9 +172,7 @@ class RCTUIManager {
         const layoutChanges = rootShadowView.recalculateLayout();
 
         if (this.layoutAnimationManager.isPending()) {
-          this.addUIBlock(() => {
-            this.layoutAnimationManager.addLayoutChanges(layoutChanges);
-          });
+          this.layoutAnimationManager.addLayoutChanges(layoutChanges);
         } else {
           this.addUIBlock(() => {
             this.applyLayoutChanges(layoutChanges);
@@ -187,9 +182,7 @@ class RCTUIManager {
     });
 
     if (this.layoutAnimationManager.isPending()) {
-      this.addUIBlock(() => {
-        this.layoutAnimationManager.applyLayoutChanges();
-      });
+      this.layoutAnimationManager.applyLayoutChanges();
     }
   }
 

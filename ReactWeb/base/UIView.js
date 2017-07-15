@@ -121,7 +121,6 @@ class UIView extends HTMLElement implements RCTComponent {
 
   set top(value: number) {
     this._top = value;
-    // this.style.top = `${value}px`;
     this.updatePosition();
   }
 
@@ -131,7 +130,6 @@ class UIView extends HTMLElement implements RCTComponent {
 
   set left(value: number) {
     this._left = value;
-    // this.style.left = `${value}px`;
     this.updatePosition();
   }
 
@@ -162,36 +160,13 @@ class UIView extends HTMLElement implements RCTComponent {
     this.style.transform = transformString;
   }
 
-  updateDimensions() {
-    // this.style.width = `${baseDimension}px`;
-    // this.style.height = `${baseDimension}px`;
-    // this.style.clip = `rect(0px ${this.width}px ${this.height}px 0px)`;
-
-    const rightInset = baseDimension - this.width;
-    const bottomInset = baseDimension - this.height;
-    const clipPathText = `inset(0px ${rightInset}px ${bottomInset}px 0px round ${this
-      .borderRadius}px)`;
-
-    // $FlowFixMe
-    Object.assign(this.style, {
-      webkitClipPath: clipPathText,
-      clipPath: clipPathText
-    });
-
-    Object.assign(this.style, {
-      width: `${baseDimension}px`,
-      height: `${baseDimension}px`
-    });
-  }
-
   get width(): number {
     return this._width;
   }
 
   set width(value: number) {
     this._width = value;
-    // this.style.width = `${value}px`;
-    this.updateDimensions();
+    this.style.width = `${value}px`;
   }
 
   get height(): number {
@@ -200,8 +175,7 @@ class UIView extends HTMLElement implements RCTComponent {
 
   set height(value: number) {
     this._height = value;
-    // this.style.height = `${value}px`;
-    this.updateDimensions();
+    this.style.height = `${value}px`;
   }
 
   get backgroundColor(): string {
@@ -240,10 +214,8 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   set borderRadius(value: number) {
-    if (this._borderRadius !== value) {
-      this._borderRadius = value;
-      this.updateDimensions();
-    }
+    this._borderRadius = value;
+    this.style.borderRadius = `${value}px`;
   }
 
   get touchable(): boolean {

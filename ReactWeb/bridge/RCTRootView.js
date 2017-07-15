@@ -67,6 +67,16 @@ class RCTRootView extends UIView {
     this.style.webkitTapHighlightColor = "transparent";
   }
 
+  set width(value: number) {
+    this._width = value;
+    this.style.width = `${value}px`;
+  }
+
+  set height(value: number) {
+    this._height = value;
+    this.style.height = `${value}px`;
+  }
+
   get reactTag(): number {
     if (!this._reactTag) {
       this._reactTag = this.uiManager.allocateRootTag;

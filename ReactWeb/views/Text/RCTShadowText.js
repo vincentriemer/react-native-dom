@@ -78,7 +78,7 @@ class RCTShadowText extends RCTShadowView {
       // create dom node for measuring text
       const domElement = document.createElement("div");
       domElement.id = guid();
-      domElement.id = Object.assign(domElement.style, {
+      Object.assign(domElement.style, {
         position: "absolute",
         visibility: "hidden",
         maxHeight: "auto",
