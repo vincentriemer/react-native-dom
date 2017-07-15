@@ -206,9 +206,12 @@ class RCTUIManager {
       return;
     }
 
-    let { left, top, width, height } = shadowView.measurement;
+    let { left: globalX, top: globalY, width, height } = shadowView.measurement;
 
-    cb(left, top, width, height);
+    invariant(shadowView.previousLayout, "Shadow view has no previous layout");
+    let { left, top } = shadowView.previousLayout;
+
+    cb(left, top, width, height, globalX, globalY);
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)

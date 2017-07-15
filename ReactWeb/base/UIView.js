@@ -249,7 +249,8 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   addGestureRecognizer(handler: RCTTouchHandler) {
-    this.addEventListener("mousedown", handler.mouseClickBegan.bind(handler));
+    this.addEventListener("mousedown", handler.mouseClickBegan);
+    this.addEventListener("touchstart", handler.nativeTouchBegan);
   }
 
   removeGestureRecognizer(handler: RCTTouchHandler) {

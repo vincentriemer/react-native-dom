@@ -80,9 +80,37 @@ class RCTTouchHandler {
           timestamp: rawEvent.timeStamp
         }
       ];
-    } else {
-      throw new Error("Invalid Event");
+    } else if (rawEvent.changedTouches) {
+      rawEvent.preventDefault();
+
+      const rawTouches = rawEvent.changedTouches;
+      const resultingTouchList = [];
+
+      for (let i = 0; i < rawTouches.length; i++) {
+        const rawTouch = rawTouches[i];
+        const target = rawTouch.target;
+
+        invariant(
+          target instanceof UIView,
+          "Cannot normalize interaction event on object which does not inherit from UIView"
+        );
+
+        resultingTouchList.push({
+          view: target,
+          identifier: rawTouch.identifier,
+          pageX: rawTouch.pageX,
+          pageY: rawTouch.pageY,
+          locationX: rawTouch.clientX,
+          locationY: rawTouch.clientY,
+          timestamp: rawEvent.timeStamp
+        });
+      }
+
+      return resultingTouchList;
     }
+
+    console.error(rawEvent);
+    throw new Error("Invalid Event");
   }
 
   attachToView(view: UIView) {
@@ -219,7 +247,7 @@ class RCTTouchHandler {
     const view = this.view;
     if (view) {
       view.addEventListener("mouseup", this.mouseClickEnded);
-      // view.addEventListener("mousemove", this.mouseClickMoved);
+      view.addEventListener("mousemove", this.mouseClickMoved);
     }
   };
 
@@ -239,7 +267,40 @@ class RCTTouchHandler {
     const view = this.view;
     if (view) {
       view.removeEventListener("mouseup", this.mouseClickEnded);
-      // view.removeEventListener("mousemove", this.mouseClickMoved);
+      view.removeEventListener("mousemove", this.mouseClickMoved);
+    }
+  };
+
+  nativeTouchBegan = (event: TouchEvent) => {
+    const touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
+    if (!touches) return;
+
+    this.touchesBegan(touches);
+
+    const view = this.view;
+    if (view) {
+      view.addEventListener("touchend", this.nativeTouchEnded);
+      view.addEventListener("touchmove", this.nativeTouchMoved);
+    }
+  };
+
+  nativeTouchMoved = (event: TouchEvent) => {
+    const touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
+    if (!touches) return;
+
+    this.touchesMoved(touches);
+  };
+
+  nativeTouchEnded = (event: TouchEvent) => {
+    const touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
+    if (!touches) return;
+
+    this.touchesEnded(touches);
+
+    const view = this.view;
+    if (view) {
+      view.removeEventListener("touchend", this.nativeTouchEnded);
+      view.removeEventListener("touchmove", this.nativeTouchMoved);
     }
   };
 
