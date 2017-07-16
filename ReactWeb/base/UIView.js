@@ -2,9 +2,11 @@
  * @providesModule UIView
  * @flow
  */
+
+import type RCTTouchHandler from "RCTTouchHandler";
 import type { RCTComponent } from "RCTComponent";
 import CustomElement from "CustomElement";
-import type RCTTouchHandler from "RCTTouchHandler";
+import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 
 export type Frame = {
   top: number,
@@ -47,16 +49,6 @@ export const FrameZero: Frame = {
   height: 0
 };
 
-const ColorArrayFromHexARGB = function(hex) {
-  hex = Math.floor(hex);
-  return [
-    ((hex >> 24) & 255) / 255, // a
-    (hex >> 16) & 255, // r
-    (hex >> 8) & 255, // g
-    hex & 255 //b
-  ];
-};
-
 const baseDimension = 1000;
 
 @CustomElement("ui-view")
@@ -68,6 +60,8 @@ class UIView extends HTMLElement implements RCTComponent {
   _width: number;
   _height: number;
   _borderRadius: number;
+  _borderColor: number;
+  _borderWidth: number;
   _touchable: boolean;
   _opacity: number;
 
@@ -87,6 +81,7 @@ class UIView extends HTMLElement implements RCTComponent {
     this.position = "absolute";
     this.backgroundColor = "transparent";
     this.style.overflow = "hidden";
+    this.style.boxSizing = "border-box";
     this.borderRadius = 0;
   }
 
@@ -216,6 +211,29 @@ class UIView extends HTMLElement implements RCTComponent {
   set borderRadius(value: number) {
     this._borderRadius = value;
     this.style.borderRadius = `${value}px`;
+  }
+
+  get borderColor(): number {
+    return this._borderColor;
+  }
+
+  set borderColor(value: number) {
+    if (typeof value === "number") {
+      const [a, r, g, b] = ColorArrayFromHexARGB(value);
+      const stringValue = `rgba(${r},${g},${b},${a})`;
+      this.style.borderColor = stringValue;
+    } else {
+      this.style.borderColor = value;
+    }
+  }
+
+  get borderWidth(): number {
+    return this._borderWidth;
+  }
+
+  set borderWidth(value: number) {
+    this._borderWidth = value;
+    this.style.borderWidth = `${value}px`;
   }
 
   get touchable(): boolean {

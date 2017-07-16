@@ -38,6 +38,11 @@ class RCTTextManager extends RCTViewManager {
   setSelectable(view: RCTText, value: boolean) {
     view.selectable = value;
   }
+
+  @RCT_EXPORT_VIEW_PROP("color", "number")
+  setColor(view: RCTText, value: number) {
+    view.color = value;
+  }
 }
 
 export default RCTTextManager;

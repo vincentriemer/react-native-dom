@@ -143,10 +143,10 @@ class RCTViewManager {
     view.opacity = value;
   }
 
-  @RCT_EXPORT_MIRRORED_PROP("transform", "array")
-  setTransform(view: RCTView, value: Array<number>) {
-    view.transform = value;
-  }
+  // @RCT_EXPORT_MIRRORED_PROP("transform", "array")
+  // setTransform(view: RCTView, value: Array<number>) {
+  //   view.transform = value;
+  // }
 
   @RCT_EXPORT_VIEW_PROP("borderRadius", "number")
   setBorderRadius(view: RCTView, value: number) {
@@ -156,6 +156,21 @@ class RCTViewManager {
   @RCT_EXPORT_VIEW_PROP("onStartShouldSetResponder", "bool")
   setOnStartShouldSetResponder(view: RCTView, value: boolean) {
     view.touchable = value;
+  }
+
+  @RCT_EXPORT_VIEW_PROP("borderWidth", "number")
+  setBorderWidth(view: RCTView, value: number) {
+    view.borderWidth = value;
+  }
+
+  @RCT_EXPORT_VIEW_PROP("borderColor", "number")
+  setBorderColor(view: RCTView, value: number) {
+    view.borderColor = value;
+  }
+
+  @RCT_EXPORT_VIEW_PROP("borderStyle", "string")
+  setBorderStyle(view: RCTView, value: string) {
+    view.style.borderStyle = value;
   }
 
   @RCT_EXPORT_DIRECT_SHADOW_PROPS

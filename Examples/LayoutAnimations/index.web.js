@@ -5,7 +5,8 @@ import {
   Text,
   View,
   TouchableOpacity,
-  LayoutAnimation
+  LayoutAnimation,
+  Button
 } from "react-native";
 
 var CustomLayoutAnimation = {

@@ -20,7 +20,7 @@ const Platform = {
     const constants = NativeModules.PlatformConstants;
     return constants ? !!constants.forceTouchAvailable : false;
   },
-  select: (obj: Object) => ("web" in obj ? obj.web : obj.default),
+  select: (obj: Object) => ("web" in obj ? obj.web : obj.default)
 };
 
 module.exports = Platform;
