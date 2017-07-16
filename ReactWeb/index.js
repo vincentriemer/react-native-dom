@@ -12,6 +12,7 @@ import "RCTUIManager";
 import "RCTViewManager";
 import "RCTTextManager";
 import "RCTRawTextManager";
+import "RCTScrollViewManager";
 
 // React Native Web Entrypoint instance
 export class RNWebInstance {

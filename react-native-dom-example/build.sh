@@ -14,4 +14,6 @@
   --platform web \
   --reset-cache
 
-now
+# now
+
+# now alias react-native-dom-example-hfqmncxtui.now.sh layout-animation-example

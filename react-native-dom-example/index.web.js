@@ -11,7 +11,7 @@ global.__BUNDLE_START_TIME__ = global.nativePerformanceNow ? global.nativePerfor
 global.require = _require;
 global.__d = define;
 
-const modules = Object.create(null);
+var modules = Object.create(null);
 if (__DEV__) {
   var verboseNamesToModuleIds = Object.create(null);
 }
@@ -21,16 +21,16 @@ function define(factory, moduleId, dependencyMap) {
     return;
   }
   modules[moduleId] = {
-    dependencyMap,
+    dependencyMap: dependencyMap,
     exports: undefined,
-    factory,
+    factory: factory,
     hasError: false,
     isInitialized: false };
 
   if (__DEV__) {
     modules[moduleId].hot = createHotReloadingObject();
 
-    const verboseName = arguments[3];
+    var verboseName = arguments[3];
     if (verboseName) {
       modules[moduleId].verboseName = verboseName;
       verboseNamesToModuleIds[verboseName] = moduleId;
@@ -40,25 +40,25 @@ function define(factory, moduleId, dependencyMap) {
 
 function _require(moduleId) {
   if (__DEV__ && typeof moduleId === 'string') {
-    const verboseName = moduleId;
+    var verboseName = moduleId;
     moduleId = verboseNamesToModuleIds[moduleId];
     if (moduleId == null) {
-      throw new Error(`Unknown named module: '${verboseName}'`);
+      throw new Error('Unknown named module: \'' + verboseName + '\'');
     } else {
-      console.warn(`Requiring module '${verboseName}' by name is only supported for ` + 'debugging purposes and will BREAK IN PRODUCTION!');
+      console.warn('Requiring module \'' + verboseName + '\' by name is only supported for ' + 'debugging purposes and will BREAK IN PRODUCTION!');
     }
   }
 
-  const moduleIdReallyIsNumber = moduleId;
-  const module = modules[moduleIdReallyIsNumber];
+  var moduleIdReallyIsNumber = moduleId;
+  var module = modules[moduleIdReallyIsNumber];
   return module && module.isInitialized ? module.exports : guardedLoadModule(moduleIdReallyIsNumber, module);
 }
 
-let inGuard = false;
+var inGuard = false;
 function guardedLoadModule(moduleId, module) {
   if (!inGuard && global.ErrorUtils) {
     inGuard = true;
-    let returnValue;
+    var returnValue = void 0;
     try {
       returnValue = loadModuleImplementation(moduleId, module);
     } catch (e) {
@@ -72,7 +72,7 @@ function guardedLoadModule(moduleId, module) {
 }
 
 function loadModuleImplementation(moduleId, module) {
-  const nativeRequire = global.nativeRequire;
+  var nativeRequire = global.nativeRequire;
   if (!module && nativeRequire) {
     nativeRequire(moduleId);
     module = modules[moduleId];
@@ -91,14 +91,14 @@ function loadModuleImplementation(moduleId, module) {
   }
 
   module.isInitialized = true;
-  const exports = module.exports = {};var _module = module;const factory = _module.factory,
-        dependencyMap = _module.dependencyMap;
+  var exports = module.exports = {};var _module = module;var factory = _module.factory,
+      dependencyMap = _module.dependencyMap;
   try {
     if (__DEV__) {
       Systrace.beginEvent('JS_require_' + (module.verboseName || moduleId));
     }
 
-    const moduleObject = { exports };
+    var moduleObject = { exports: exports };
     if (__DEV__ && module.hot) {
       moduleObject.hot = module.hot;
     }
@@ -124,7 +124,7 @@ function loadModuleImplementation(moduleId, module) {
 }
 
 function unknownModuleError(id) {
-  let message = 'Requiring unknown module "' + id + '".';
+  var message = 'Requiring unknown module "' + id + '".';
   if (__DEV__) {
     message += 'If you are sure the module is there, try restarting the packager. ' + 'You may also want to run `npm install`, or `yarn` (depending on your environment).';
   }
@@ -132,49 +132,51 @@ function unknownModuleError(id) {
 }
 
 function moduleThrewError(id, error) {
-  const displayName = __DEV__ && modules[id] && modules[id].verboseName || id;
+  var displayName = __DEV__ && modules[id] && modules[id].verboseName || id;
   return Error('Requiring module "' + displayName + '", which threw an exception: ' + error);
 }
 
 if (__DEV__) {
-  _require.Systrace = { beginEvent: () => {}, endEvent: () => {} };
+  _require.Systrace = { beginEvent: function () {}, endEvent: function () {} };
 
   var createHotReloadingObject = function () {
-    const hot = {
+    var hot = {
       acceptCallback: null,
-      accept: callback => {
+      accept: function (callback) {
         hot.acceptCallback = callback;
       } };
 
     return hot;
   };
 
-  const acceptAll = function (dependentModules, inverseDependencies) {
+  var acceptAll = function (dependentModules, inverseDependencies) {
     if (!dependentModules || dependentModules.length === 0) {
       return true;
     }
 
-    const notAccepted = dependentModules.filter(module => !accept(module, undefined, inverseDependencies));
+    var notAccepted = dependentModules.filter(function (module) {
+      return !accept(module, undefined, inverseDependencies);
+    });
 
-    const parents = [];
-    for (let i = 0; i < notAccepted.length; i++) {
+    var parents = [];
+    for (var i = 0; i < notAccepted.length; i++) {
       if (inverseDependencies[notAccepted[i]].length === 0) {
         return false;
       }
 
-      parents.push(...inverseDependencies[notAccepted[i]]);
+      parents.push.apply(parents, babelHelpers.toConsumableArray(inverseDependencies[notAccepted[i]]));
     }
 
     return acceptAll(parents, inverseDependencies);
   };
 
-  const accept = function (id, factory, inverseDependencies) {
-    const mod = modules[id];
+  var accept = function (id, factory, inverseDependencies) {
+    var mod = modules[id];
 
     if (!mod && factory) {
       define(factory, id);
       return true;
-    }const hot = mod.hot;
+    }var hot = mod.hot;
     if (!hot) {
       console.warn('Cannot accept module because Hot Module Replacement ' + 'API was not installed.');
 
@@ -243,7 +245,7 @@ Object.assign = function (target, sources) {
 })(typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : this);
 (function(global) {'use strict';
 
-const inspect = function () {
+var inspect = function () {
 
   function inspect(obj, opts) {
     var ctx = {
@@ -521,20 +523,20 @@ const inspect = function () {
   return inspect;
 }();
 
-const OBJECT_COLUMN_NAME = '(index)';
-const LOG_LEVELS = {
+var OBJECT_COLUMN_NAME = '(index)';
+var LOG_LEVELS = {
   trace: 0,
   info: 1,
   warn: 2,
   error: 3 };
 
-const INSPECTOR_LEVELS = [];
+var INSPECTOR_LEVELS = [];
 INSPECTOR_LEVELS[LOG_LEVELS.trace] = 'debug';
 INSPECTOR_LEVELS[LOG_LEVELS.info] = 'log';
 INSPECTOR_LEVELS[LOG_LEVELS.warn] = 'warning';
 INSPECTOR_LEVELS[LOG_LEVELS.error] = 'error';
 
-const INSPECTOR_FRAMES_TO_SKIP = __DEV__ ? 2 : 1;
+var INSPECTOR_FRAMES_TO_SKIP = __DEV__ ? 2 : 1;
 
 function setupConsole(global) {
   if (!global.nativeLoggingHook) {
@@ -543,7 +545,7 @@ function setupConsole(global) {
 
   function getNativeLogFunction(level) {
     return function () {
-      let str;
+      var str = void 0;
       if (arguments.length === 1 && typeof arguments[0] === 'string') {
         str = arguments[0];
       } else {
@@ -552,7 +554,7 @@ function setupConsole(global) {
         }).join(', ');
       }
 
-      let logLevel = level;
+      var logLevel = level;
       if (str.slice(0, 9) === 'Warning: ' && logLevel >= LOG_LEVELS.error) {
         logLevel = LOG_LEVELS.warn;
       }
@@ -639,11 +641,11 @@ function setupConsole(global) {
     table: consoleTablePolyfill };
 
   if (__DEV__ && originalConsole) {
-    Object.keys(console).forEach(methodName => {
+    Object.keys(console).forEach(function (methodName) {
       var reactNativeMethod = console[methodName];
       if (originalConsole[methodName]) {
         console[methodName] = function () {
-          originalConsole[methodName](...arguments);
+          originalConsole[methodName].apply(originalConsole, arguments);
           reactNativeMethod.apply(console, arguments);
         };
       }
@@ -659,26 +661,26 @@ if (typeof module !== 'undefined') {
 })(typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : this);
 (function(global) {'use strict';
 
-let _inGuard = 0;
+var _inGuard = 0;
 
-let _globalHandler = function onError(e) {
+var _globalHandler = function onError(e) {
   throw e;
 };
 
-const ErrorUtils = {
-  setGlobalHandler(fun) {
+var ErrorUtils = {
+  setGlobalHandler: function (fun) {
     _globalHandler = fun;
   },
-  getGlobalHandler() {
+  getGlobalHandler: function () {
     return _globalHandler;
   },
-  reportError(error) {
+  reportError: function (error) {
     _globalHandler && _globalHandler(error);
   },
-  reportFatalError(error) {
+  reportFatalError: function (error) {
     _globalHandler && _globalHandler(error, true);
   },
-  applyWithGuard(fun, context, args) {
+  applyWithGuard: function (fun, context, args) {
     try {
       _inGuard++;
       return fun.apply(context, args);
@@ -689,7 +691,7 @@ const ErrorUtils = {
     }
     return null;
   },
-  applyWithGuardIfNeeded(fun, context, args) {
+  applyWithGuardIfNeeded: function (fun, context, args) {
     if (ErrorUtils.inGuard()) {
       return fun.apply(context, args);
     } else {
@@ -697,10 +699,10 @@ const ErrorUtils = {
     }
     return null;
   },
-  inGuard() {
+  inGuard: function () {
     return _inGuard;
   },
-  guard(fun, name, context) {
+  guard: function (fun, name, context) {
     if (typeof fun !== 'function') {
       console.warn('A function must be passed to ErrorUtils.guard, got ', fun);
       return null;
@@ -711,7 +713,8 @@ const ErrorUtils = {
     }
 
     return guarded;
-  } };
+  }
+};
 
 global.ErrorUtils = ErrorUtils;
 })(typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : this);
@@ -730,7 +733,7 @@ if (Number.MIN_SAFE_INTEGER === undefined) {
     value: -(Math.pow(2, 53) - 1) });
 }
 if (!Number.isNaN) {
-  const globalIsNaN = global.isNaN;
+  var globalIsNaN = global.isNaN;
   Object.defineProperty(Number, 'isNaN', {
     configurable: true,
     enumerable: false,
@@ -963,7 +966,7 @@ if (!Array.from) {
 (function () {
   'use strict';
 
-  const hasOwnProperty = Object.prototype.hasOwnProperty;
+  var hasOwnProperty = Object.prototype.hasOwnProperty;
 
   if (typeof Object.entries !== 'function') {
     Object.entries = function (object) {
@@ -971,8 +974,8 @@ if (!Array.from) {
         throw new TypeError('Object.entries called on non-object');
       }
 
-      const entries = [];
-      for (const key in object) {
+      var entries = [];
+      for (var key in object) {
         if (hasOwnProperty.call(object, key)) {
           entries.push([key, object[key]]);
         }
@@ -987,8 +990,8 @@ if (!Array.from) {
         throw new TypeError('Object.values called on non-object');
       }
 
-      const values = [];
-      for (const key in object) {
+      var values = [];
+      for (var key in object) {
         if (hasOwnProperty.call(object, key)) {
           values.push(object[key]);
         }
@@ -1215,9 +1218,9 @@ babelHelpers.toArray = function (arr) {
 
 babelHelpers.toConsumableArray = function (arr) {
   if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
-    return arr2;
+    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }return arr2;
   } else {
     return Array.from(arr);
   }
@@ -1246,7 +1249,7 @@ var CustomLayoutAnimation = {
   }
 };
 
-let AnimationExample = class AnimationExample extends _react.Component {
+var AnimationExample = class AnimationExample extends _react.Component {
   constructor() {
     super();
 
@@ -1262,12 +1265,16 @@ let AnimationExample = class AnimationExample extends _react.Component {
   }
 
   renderButton(index) {
+    var _this = this;
+
     return _react2.default.createElement(
       _reactNative.TouchableOpacity,
       {
         key: "button" + index,
         style: styles.button,
-        onPress: () => this.onPress(index)
+        onPress: function () {
+          return _this.onPress(index);
+        }
       },
       _react2.default.createElement(
         _reactNative.Text,
@@ -1361,7 +1368,7 @@ let AnimationExample = class AnimationExample extends _react.Component {
 };
 
 
-const styles = _reactNative.StyleSheet.create({
+var styles = _reactNative.StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
@@ -1398,7 +1405,9 @@ const styles = _reactNative.StyleSheet.create({
   }
 });
 
-_reactNative.AppRegistry.registerComponent("layoutanimations", () => AnimationExample);
+_reactNative.AppRegistry.registerComponent("layoutanimations", function () {
+  return AnimationExample;
+});
 }, 0, null, "layout-animations-example/index.web.js");
 __d(/* react/index.js */function(global, require, module, exports) {'use strict';
 
@@ -1410,7 +1419,9 @@ if ('development' === 'production') {
 }, 12, null, "react/index.js");
 __d(/* react/cjs/react.production.min.js */function(global, require, module, exports) {"use strict";
 function e(e) {
-  for (var t = arguments.length - 1, r = "Minified React error #" + e + "; visit http://facebook.github.io/react/docs/error-decoder.html?invariant=" + e, n = 0; n < t; n++) r += "&args[]=" + encodeURIComponent(arguments[n + 1]);r += " for the full message or use the non-minified dev environment for full errors and additional helpful warnings.";var o = new Error(r);throw o.name = "Invariant Violation", o.framesToPop = 1, o;
+  for (var t = arguments.length - 1, r = "Minified React error #" + e + "; visit http://facebook.github.io/react/docs/error-decoder.html?invariant=" + e, n = 0; n < t; n++) {
+    r += "&args[]=" + encodeURIComponent(arguments[n + 1]);
+  }r += " for the full message or use the non-minified dev environment for full errors and additional helpful warnings.";var o = new Error(r);throw o.name = "Invariant Violation", o.framesToPop = 1, o;
 }function t(e, t) {}function r(e, t, r) {
   this.props = e, this.context = t, this.refs = A, this.updater = r || T;
 }function n(e, t, r) {
@@ -1435,8 +1446,12 @@ function e(e) {
   var o = typeof e;if ("undefined" !== o && "boolean" !== o || (e = null), null === e || "string" === o || "number" === o || "object" === o && e.$$typeof === Y) return r(n, e, "" === t ? oe + s(e, 0) : t), 1;var i,
       a,
       l = 0,
-      u = "" === t ? oe : t + ie;if (Array.isArray(e)) for (var c = 0; c < e.length; c++) i = e[c], a = u + s(i, c), l += p(i, a, r, n);else {
-    var f = te(e);if (f) for (var d, h = f.call(e), y = 0; !(d = h.next()).done;) i = d.value, a = u + s(i, y++), l += p(i, a, r, n);else if ("object" === o) {
+      u = "" === t ? oe : t + ie;if (Array.isArray(e)) for (var c = 0; c < e.length; c++) {
+    i = e[c], a = u + s(i, c), l += p(i, a, r, n);
+  } else {
+    var f = te(e);if (f) for (var d, h = f.call(e), y = 0; !(d = h.next()).done;) {
+      i = d.value, a = u + s(i, y++), l += p(i, a, r, n);
+    } else if ("object" === o) {
       var m = "" + e;R("31", "[object Object]" === m ? "object with keys {" + Object.keys(e).join(", ") + "}" : m, "");
     }
   }return l;
@@ -1535,11 +1550,17 @@ function e(e) {
       u = null,
       c = null,
       s = null;if (null != t) {
-    i(t) && (u = t.ref), a(t) && (l = "" + t.key), c = void 0 === t.__self ? null : t.__self, s = void 0 === t.__source ? null : t.__source;for (n in t) H.call(t, n) && !J.hasOwnProperty(n) && (o[n] = t[n]);
+    i(t) && (u = t.ref), a(t) && (l = "" + t.key), c = void 0 === t.__self ? null : t.__self, s = void 0 === t.__source ? null : t.__source;for (n in t) {
+      H.call(t, n) && !J.hasOwnProperty(n) && (o[n] = t[n]);
+    }
   }var p = arguments.length - 2;if (1 === p) o.children = r;else if (p > 1) {
-    for (var f = Array(p), d = 0; d < p; d++) f[d] = arguments[d + 2];o.children = f;
+    for (var f = Array(p), d = 0; d < p; d++) {
+      f[d] = arguments[d + 2];
+    }o.children = f;
   }if (e && e.defaultProps) {
-    var h = e.defaultProps;for (n in h) void 0 === o[n] && (o[n] = h[n]);
+    var h = e.defaultProps;for (n in h) {
+      void 0 === o[n] && (o[n] = h[n]);
+    }
   }return Q(e, l, u, c, s, W.current, o);
 }, Q.createFactory = function (e) {
   var t = Q.createElement.bind(null, e);return t.type = e, t;
@@ -1553,9 +1574,13 @@ function e(e) {
       c = e._self,
       s = e._source,
       p = e._owner;if (null != t) {
-    i(t) && (u = t.ref, p = W.current), a(t) && (l = "" + t.key);var f;e.type && e.type.defaultProps && (f = e.type.defaultProps);for (n in t) H.call(t, n) && !J.hasOwnProperty(n) && (void 0 === t[n] && void 0 !== f ? o[n] = f[n] : o[n] = t[n]);
+    i(t) && (u = t.ref, p = W.current), a(t) && (l = "" + t.key);var f;e.type && e.type.defaultProps && (f = e.type.defaultProps);for (n in t) {
+      H.call(t, n) && !J.hasOwnProperty(n) && (void 0 === t[n] && void 0 !== f ? o[n] = f[n] : o[n] = t[n]);
+    }
   }var d = arguments.length - 2;if (1 === d) o.children = r;else if (d > 1) {
-    for (var h = Array(d), y = 0; y < d; y++) h[y] = arguments[y + 2];o.children = h;
+    for (var h = Array(d), y = 0; y < d; y++) {
+      h[y] = arguments[y + 2];
+    }o.children = h;
   }return Q(e.type, l, u, c, s, p, o);
 }, Q.isValidElement = function (e) {
   return "object" == typeof e && null !== e && e.$$typeof === Y;
@@ -4241,9 +4266,9 @@ module.exports = React_1;
 __d(/* react-native-implementation */function(global, require, module, exports) {
 'use strict';
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-const ReactNative = {
+var ReactNative = {
   get AccessibilityInfo() {
     return require(27                 ); // 27 = AccessibilityInfo
   },
@@ -4538,20 +4563,20 @@ module.exports = {};
 __d(/* ActivityIndicator */function(global, require, module, exports) {
 'use strict';
 
-const ColorPropType = require(29             ); // 29 = ColorPropType
-const NativeMethodsMixin = require(31                  ); // 31 = NativeMethodsMixin
-const Platform = require(46        ); // 46 = Platform
-const React = require(125    ); // 125 = React
-const PropTypes = require(19          ); // 19 = prop-types
-const StyleSheet = require(151         ); // 151 = StyleSheet
-const View = require(124   ); // 124 = View
-const ViewPropTypes = require(140            ); // 140 = ViewPropTypes
+var ColorPropType = require(29             ); // 29 = ColorPropType
+var NativeMethodsMixin = require(31                  ); // 31 = NativeMethodsMixin
+var Platform = require(46        ); // 46 = Platform
+var React = require(125    ); // 125 = React
+var PropTypes = require(19          ); // 19 = prop-types
+var StyleSheet = require(151         ); // 151 = StyleSheet
+var View = require(124   ); // 124 = View
+var ViewPropTypes = require(140            ); // 140 = ViewPropTypes
 
-const requireNativeComponent = require(149                     ); // 149 = requireNativeComponent
+var requireNativeComponent = require(149                     ); // 149 = requireNativeComponent
 
-const GRAY = '#999999';
+var GRAY = '#999999';
 
-const ActivityIndicator = React.createClass({
+var ActivityIndicator = React.createClass({
   mixins: [NativeMethodsMixin],
 
   propTypes: babelHelpers.extends({}, ViewPropTypes, {
@@ -4564,7 +4589,7 @@ const ActivityIndicator = React.createClass({
     hidesWhenStopped: PropTypes.bool
   }),
 
-  getDefaultProps() {
+  getDefaultProps: function () {
     return {
       animating: true,
       color: Platform.OS === 'ios' ? GRAY : undefined,
@@ -4572,12 +4597,11 @@ const ActivityIndicator = React.createClass({
       size: 'small'
     };
   },
-
-  render() {
-    const _props = this.props,
-          { onLayout, style } = _props,
-          props = babelHelpers.objectWithoutProperties(_props, ['onLayout', 'style']);
-    let sizeStyle;
+  render: function () {
+    var _props = this.props,
+        { onLayout: onLayout, style: style } = _props,
+        props = babelHelpers.objectWithoutProperties(_props, ['onLayout', 'style']);
+    var sizeStyle = void 0;
 
     switch (props.size) {
       case 'small':
@@ -4605,7 +4629,7 @@ const ActivityIndicator = React.createClass({
   }
 });
 
-const styles = StyleSheet.create({
+var styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center'
@@ -4651,19 +4675,7 @@ var colorPropType = function (isRequired, props, propName, componentName, locati
   }
 
   if (normalizeColor(color) === null) {
-    return new Error('Invalid ' + location + ' `' + (propFullName || propName) + '` supplied to `' + componentName + '`: ' + color + '\n' + `Valid color formats are
-  - '#f0f' (#rgb)
-  - '#f0fc' (#rgba)
-  - '#ff00ff' (#rrggbb)
-  - '#ff00ff00' (#rrggbbaa)
-  - 'rgb(255, 255, 255)'
-  - 'rgba(255, 255, 255, 1.0)'
-  - 'hsl(360, 100%, 100%)'
-  - 'hsla(360, 100%, 100%, 1.0)'
-  - 'transparent'
-  - 'red'
-  - 0xff00ff00 (0xrrggbbaa)
-`);
+    return new Error('Invalid ' + location + ' `' + (propFullName || propName) + '` supplied to `' + componentName + '`: ' + color + '\n' + 'Valid color formats are\n  - \'#f0f\' (#rgb)\n  - \'#f0fc\' (#rgba)\n  - \'#ff00ff\' (#rrggbb)\n  - \'#ff00ff00\' (#rrggbbaa)\n  - \'rgb(255, 255, 255)\'\n  - \'rgba(255, 255, 255, 1.0)\'\n  - \'hsl(360, 100%, 100%)\'\n  - \'hsla(360, 100%, 100%, 1.0)\'\n  - \'transparent\'\n  - \'red\'\n  - 0xff00ff00 (0xrrggbbaa)\n');
   }
 };
 
@@ -4969,20 +4981,20 @@ __d(/* NativeMethodsMixin */function(global, require, module, exports) {
 
 'use strict';
 
-const {
-  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
+var {
+  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED: __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
 } = require(32           ); // 32 = ReactNative
 
-const { NativeMethodsMixin } = __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+var { NativeMethodsMixin: NativeMethodsMixin } = __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
 
 module.exports = NativeMethodsMixin;
 }, 31, null, "NativeMethodsMixin");
 __d(/* ReactNative */function(global, require, module, exports) {
 'use strict';
 
-const ReactNativeFeatureFlags = require(33                       ); // 33 = ReactNativeFeatureFlags
+var ReactNativeFeatureFlags = require(33                       ); // 33 = ReactNativeFeatureFlags
 
-let ReactNative;
+var ReactNative = void 0;
 
 if (__DEV__) {
   ReactNative = ReactNativeFeatureFlags.useFiber ? require(34                    ) : require(123                   ); // 123 = ReactNativeStack-dev // 34 = ReactNativeFiber-dev
@@ -5159,7 +5171,9 @@ function executeDispatch(event, simulated, listener, inst) {
 function executeDispatchesInOrder(event, simulated) {
     var dispatchListeners = event._dispatchListeners,
         dispatchInstances = event._dispatchInstances;
-    if (validateEventDispatches(event), Array.isArray(dispatchListeners)) for (var i = 0; i < dispatchListeners.length && !event.isPropagationStopped(); i++) executeDispatch(event, simulated, dispatchListeners[i], dispatchInstances[i]);else dispatchListeners && executeDispatch(event, simulated, dispatchListeners, dispatchInstances);
+    if (validateEventDispatches(event), Array.isArray(dispatchListeners)) for (var i = 0; i < dispatchListeners.length && !event.isPropagationStopped(); i++) {
+        executeDispatch(event, simulated, dispatchListeners[i], dispatchInstances[i]);
+    } else dispatchListeners && executeDispatch(event, simulated, dispatchListeners, dispatchInstances);
     event._dispatchListeners = null, event._dispatchInstances = null;
 }
 
@@ -5167,7 +5181,9 @@ function executeDispatchesInOrderStopAtTrueImpl(event) {
     var dispatchListeners = event._dispatchListeners,
         dispatchInstances = event._dispatchInstances;
     if (validateEventDispatches(event), Array.isArray(dispatchListeners)) {
-        for (var i = 0; i < dispatchListeners.length && !event.isPropagationStopped(); i++) if (dispatchListeners[i](event, dispatchInstances[i])) return dispatchInstances[i];
+        for (var i = 0; i < dispatchListeners.length && !event.isPropagationStopped(); i++) {
+            if (dispatchListeners[i](event, dispatchInstances[i])) return dispatchInstances[i];
+        }
     } else if (dispatchListeners && dispatchListeners(event, dispatchInstances)) return dispatchInstances;
     return null;
 }
@@ -5240,7 +5256,9 @@ var ReactControlledComponent = {
         if (restoreTarget) {
             var target = restoreTarget,
                 queuedTargets = restoreQueue;
-            if (restoreTarget = null, restoreQueue = null, restoreStateOfTarget(target), queuedTargets) for (var i = 0; i < queuedTargets.length; i++) restoreStateOfTarget(queuedTargets[i]);
+            if (restoreTarget = null, restoreQueue = null, restoreStateOfTarget(target), queuedTargets) for (var i = 0; i < queuedTargets.length; i++) {
+                restoreStateOfTarget(queuedTargets[i]);
+            }
         }
     }
 },
@@ -5315,7 +5333,9 @@ function recomputePluginOrdering() {
         if (invariant(pluginIndex > -1, "EventPluginRegistry: Cannot inject event plugins that do not exist in " + "the plugin ordering, `%s`.", pluginName), !EventPluginRegistry.plugins[pluginIndex]) {
             invariant(pluginModule.extractEvents, "EventPluginRegistry: Event plugins must implement an `extractEvents` " + "method, but `%s` does not.", pluginName), EventPluginRegistry.plugins[pluginIndex] = pluginModule;
             var publishedEvents = pluginModule.eventTypes;
-            for (var eventName in publishedEvents) invariant(publishEventForPlugin(publishedEvents[eventName], pluginModule, eventName), "EventPluginRegistry: Failed to publish event `%s` for plugin `%s`.", eventName, pluginName);
+            for (var eventName in publishedEvents) {
+                invariant(publishEventForPlugin(publishedEvents[eventName], pluginModule, eventName), "EventPluginRegistry: Failed to publish event `%s` for plugin `%s`.", eventName, pluginName);
+            }
         }
     }
 }
@@ -5324,11 +5344,12 @@ function publishEventForPlugin(dispatchConfig, pluginModule, eventName) {
     invariant(!EventPluginRegistry.eventNameDispatchConfigs.hasOwnProperty(eventName), "EventPluginHub: More than one plugin attempted to publish the same " + "event name, `%s`.", eventName), EventPluginRegistry.eventNameDispatchConfigs[eventName] = dispatchConfig;
     var phasedRegistrationNames = dispatchConfig.phasedRegistrationNames;
     if (phasedRegistrationNames) {
-        for (var phaseName in phasedRegistrationNames) if (phasedRegistrationNames.hasOwnProperty(phaseName)) {
-            var phasedRegistrationName = phasedRegistrationNames[phaseName];
-            publishRegistrationName(phasedRegistrationName, pluginModule, eventName);
-        }
-        return !0;
+        for (var phaseName in phasedRegistrationNames) {
+            if (phasedRegistrationNames.hasOwnProperty(phaseName)) {
+                var phasedRegistrationName = phasedRegistrationNames[phaseName];
+                publishRegistrationName(phasedRegistrationName, pluginModule, eventName);
+            }
+        }return !0;
     }
     return !!dispatchConfig.registrationName && (publishRegistrationName(dispatchConfig.registrationName, pluginModule, eventName), !0);
 }
@@ -5350,11 +5371,12 @@ var EventPluginRegistry = {
     },
     injectEventPluginsByName: function (injectedNamesToPlugins) {
         var isOrderingDirty = !1;
-        for (var pluginName in injectedNamesToPlugins) if (injectedNamesToPlugins.hasOwnProperty(pluginName)) {
-            var pluginModule = injectedNamesToPlugins[pluginName];
-            namesToPlugins.hasOwnProperty(pluginName) && namesToPlugins[pluginName] === pluginModule || (invariant(!namesToPlugins[pluginName], "EventPluginRegistry: Cannot inject two different event plugins " + "using the same name, `%s`.", pluginName), namesToPlugins[pluginName] = pluginModule, isOrderingDirty = !0);
-        }
-        isOrderingDirty && recomputePluginOrdering();
+        for (var pluginName in injectedNamesToPlugins) {
+            if (injectedNamesToPlugins.hasOwnProperty(pluginName)) {
+                var pluginModule = injectedNamesToPlugins[pluginName];
+                namesToPlugins.hasOwnProperty(pluginName) && namesToPlugins[pluginName] === pluginModule || (invariant(!namesToPlugins[pluginName], "EventPluginRegistry: Cannot inject two different event plugins " + "using the same name, `%s`.", pluginName), namesToPlugins[pluginName] = pluginModule, isOrderingDirty = !0);
+            }
+        }isOrderingDirty && recomputePluginOrdering();
     }
 },
     EventPluginRegistry_1 = EventPluginRegistry;
@@ -5472,11 +5494,15 @@ function getParent(inst) {
 }
 
 function getLowestCommonAncestor(instA, instB) {
-    for (var depthA = 0, tempA = instA; tempA; tempA = getParent(tempA)) depthA++;
-    for (var depthB = 0, tempB = instB; tempB; tempB = getParent(tempB)) depthB++;
-    for (; depthA - depthB > 0;) instA = getParent(instA), depthA--;
-    for (; depthB - depthA > 0;) instB = getParent(instB), depthB--;
-    for (var depth = depthA; depth--;) {
+    for (var depthA = 0, tempA = instA; tempA; tempA = getParent(tempA)) {
+        depthA++;
+    }for (var depthB = 0, tempB = instB; tempB; tempB = getParent(tempB)) {
+        depthB++;
+    }for (; depthA - depthB > 0;) {
+        instA = getParent(instA), depthA--;
+    }for (; depthB - depthA > 0;) {
+        instB = getParent(instB), depthB--;
+    }for (var depth = depthA; depth--;) {
         if (instA === instB || instA === instB.alternate) return instA;
         instA = getParent(instA), instB = getParent(instB);
     }
@@ -5496,18 +5522,27 @@ function getParentInstance(inst) {
 }
 
 function traverseTwoPhase(inst, fn, arg) {
-    for (var path = []; inst;) path.push(inst), inst = getParent(inst);
-    var i;
-    for (i = path.length; i-- > 0;) fn(path[i], "captured", arg);
-    for (i = 0; i < path.length; i++) fn(path[i], "bubbled", arg);
+    for (var path = []; inst;) {
+        path.push(inst), inst = getParent(inst);
+    }var i;
+    for (i = path.length; i-- > 0;) {
+        fn(path[i], "captured", arg);
+    }for (i = 0; i < path.length; i++) {
+        fn(path[i], "bubbled", arg);
+    }
 }
 
 function traverseEnterLeave(from, to, fn, argFrom, argTo) {
-    for (var common = from && to ? getLowestCommonAncestor(from, to) : null, pathFrom = []; from && from !== common;) pathFrom.push(from), from = getParent(from);
-    for (var pathTo = []; to && to !== common;) pathTo.push(to), to = getParent(to);
-    var i;
-    for (i = 0; i < pathFrom.length; i++) fn(pathFrom[i], "bubbled", argFrom);
-    for (i = pathTo.length; i-- > 0;) fn(pathTo[i], "captured", argTo);
+    for (var common = from && to ? getLowestCommonAncestor(from, to) : null, pathFrom = []; from && from !== common;) {
+        pathFrom.push(from), from = getParent(from);
+    }for (var pathTo = []; to && to !== common;) {
+        pathTo.push(to), to = getParent(to);
+    }var i;
+    for (i = 0; i < pathFrom.length; i++) {
+        fn(pathFrom[i], "bubbled", argFrom);
+    }for (i = pathTo.length; i-- > 0;) {
+        fn(pathTo[i], "captured", argTo);
+    }
 }
 
 var ReactTreeTraversal = {
@@ -5647,12 +5682,13 @@ var EventPropagators = {
 function SyntheticEvent(dispatchConfig, targetInst, nativeEvent, nativeEventTarget) {
     delete this.nativeEvent, delete this.preventDefault, delete this.stopPropagation, this.dispatchConfig = dispatchConfig, this._targetInst = targetInst, this.nativeEvent = nativeEvent;
     var Interface = this.constructor.Interface;
-    for (var propName in Interface) if (Interface.hasOwnProperty(propName)) {
-        delete this[propName];
-        var normalize = Interface[propName];
-        normalize ? this[propName] = normalize(nativeEvent) : "target" === propName ? this.target = nativeEventTarget : this[propName] = nativeEvent[propName];
-    }
-    var defaultPrevented = null != nativeEvent.defaultPrevented ? nativeEvent.defaultPrevented : !1 === nativeEvent.returnValue;
+    for (var propName in Interface) {
+        if (Interface.hasOwnProperty(propName)) {
+            delete this[propName];
+            var normalize = Interface[propName];
+            normalize ? this[propName] = normalize(nativeEvent) : "target" === propName ? this.target = nativeEventTarget : this[propName] = nativeEvent[propName];
+        }
+    }var defaultPrevented = null != nativeEvent.defaultPrevented ? nativeEvent.defaultPrevented : !1 === nativeEvent.returnValue;
     return this.isDefaultPrevented = defaultPrevented ? emptyFunction.thatReturnsTrue : emptyFunction.thatReturnsFalse, this.isPropagationStopped = emptyFunction.thatReturnsFalse, this;
 }
 
@@ -5672,9 +5708,11 @@ Object.assign(SyntheticEvent.prototype, {
     isPersistent: emptyFunction.thatReturnsFalse,
     destructor: function () {
         var Interface = this.constructor.Interface;
-        for (var propName in Interface) Object.defineProperty(this, propName, getPooledWarningPropertyDefinition(propName, Interface[propName]));
-        for (var i = 0; i < shouldBeReleasedProperties.length; i++) this[shouldBeReleasedProperties[i]] = null;
-        Object.defineProperty(this, "nativeEvent", getPooledWarningPropertyDefinition("nativeEvent", null)), Object.defineProperty(this, "preventDefault", getPooledWarningPropertyDefinition("preventDefault", emptyFunction)), Object.defineProperty(this, "stopPropagation", getPooledWarningPropertyDefinition("stopPropagation", emptyFunction));
+        for (var propName in Interface) {
+            Object.defineProperty(this, propName, getPooledWarningPropertyDefinition(propName, Interface[propName]));
+        }for (var i = 0; i < shouldBeReleasedProperties.length; i++) {
+            this[shouldBeReleasedProperties[i]] = null;
+        }Object.defineProperty(this, "nativeEvent", getPooledWarningPropertyDefinition("nativeEvent", null)), Object.defineProperty(this, "preventDefault", getPooledWarningPropertyDefinition("preventDefault", emptyFunction)), Object.defineProperty(this, "stopPropagation", getPooledWarningPropertyDefinition("stopPropagation", emptyFunction));
     }
 }), SyntheticEvent.Interface = EventInterface, isProxySupported && (SyntheticEvent = new Proxy(SyntheticEvent, {
     construct: function (target, args) {
@@ -5718,7 +5756,9 @@ function getPooledWarningPropertyDefinition(propName, getVal) {
 var _extends = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
         var source = arguments[i];
-        for (var key in source) Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        for (var key in source) {
+            Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        }
     }
     return target;
 },
@@ -5726,11 +5766,11 @@ var _extends = Object.assign || function (target) {
     customDirectEventTypes = UIManager.customDirectEventTypes,
     allTypesByEventName = {};
 
-for (var bubblingTypeName in customBubblingEventTypes) allTypesByEventName[bubblingTypeName] = customBubblingEventTypes[bubblingTypeName];
-
-for (var directTypeName in customDirectEventTypes) warning(!customBubblingEventTypes[directTypeName], "Event cannot be both direct and bubbling: %s", directTypeName), allTypesByEventName[directTypeName] = customDirectEventTypes[directTypeName];
-
-var ReactNativeBridgeEventPlugin = {
+for (var bubblingTypeName in customBubblingEventTypes) {
+    allTypesByEventName[bubblingTypeName] = customBubblingEventTypes[bubblingTypeName];
+}for (var directTypeName in customDirectEventTypes) {
+    warning(!customBubblingEventTypes[directTypeName], "Event cannot be both direct and bubbling: %s", directTypeName), allTypesByEventName[directTypeName] = customDirectEventTypes[directTypeName];
+}var ReactNativeBridgeEventPlugin = {
     eventTypes: _extends({}, customBubblingEventTypes, customDirectEventTypes),
     extractEvents: function (topLevelType, targetInst, nativeEvent, nativeEventTarget) {
         var bubbleDispatchConfig = customBubblingEventTypes[topLevelType],
@@ -5748,8 +5788,9 @@ var ReactNativeBridgeEventPlugin = {
     instanceProps = {};
 
 function getRenderedHostOrTextFromComponent(component) {
-    for (var rendered; rendered = component._renderedComponent;) component = rendered;
-    return component;
+    for (var rendered; rendered = component._renderedComponent;) {
+        component = rendered;
+    }return component;
 }
 
 function precacheNode(inst, tag) {
@@ -5815,8 +5856,9 @@ var ReactEventEmitterMixin = {
     tagsStartAt: INITIAL_TAG_COUNT,
     tagCount: INITIAL_TAG_COUNT,
     allocateTag: function () {
-        for (; this.reactTagIsNativeTopRootID(ReactNativeTagHandles.tagCount);) ReactNativeTagHandles.tagCount++;
-        var tag = ReactNativeTagHandles.tagCount;
+        for (; this.reactTagIsNativeTopRootID(ReactNativeTagHandles.tagCount);) {
+            ReactNativeTagHandles.tagCount++;
+        }var tag = ReactNativeTagHandles.tagCount;
         return ReactNativeTagHandles.tagCount++, tag;
     },
     assertRootTag: function (tag) {
@@ -5830,14 +5872,17 @@ var ReactEventEmitterMixin = {
     _extends$1 = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
         var source = arguments[i];
-        for (var key in source) Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        for (var key in source) {
+            Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        }
     }
     return target;
 },
     EMPTY_NATIVE_EVENT = {},
     touchSubsequence = function (touches, indices) {
-    for (var ret = [], i = 0; i < indices.length; i++) ret.push(touches[indices[i]]);
-    return ret;
+    for (var ret = [], i = 0; i < indices.length; i++) {
+        ret.push(touches[indices[i]]);
+    }return ret;
 },
     removeTouchesAtIndices = function (touches, indices) {
     for (var rippedOut = [], temp = touches, i = 0; i < indices.length; i++) {
@@ -6253,8 +6298,9 @@ function findInsertionPosition(queue, update) {
     var priorityLevel = update.priorityLevel,
         insertAfter = null,
         insertBefore = null;
-    if (null !== queue.last && comparePriority(queue.last.priorityLevel, priorityLevel) <= 0) insertAfter = queue.last;else for (insertBefore = queue.first; null !== insertBefore && comparePriority(insertBefore.priorityLevel, priorityLevel) <= 0;) insertAfter = insertBefore, insertBefore = insertBefore.next;
-    return insertAfter;
+    if (null !== queue.last && comparePriority(queue.last.priorityLevel, priorityLevel) <= 0) insertAfter = queue.last;else for (insertBefore = queue.first; null !== insertBefore && comparePriority(insertBefore.priorityLevel, priorityLevel) <= 0;) {
+        insertAfter = insertBefore, insertBefore = insertBefore.next;
+    }return insertAfter;
 }
 
 function insertUpdate(fiber, update) {
@@ -6436,9 +6482,13 @@ var ReactGlobalSharedState_1 = ReactGlobalSharedState,
 
 function isFiberMountedImpl(fiber) {
     var node = fiber;
-    if (fiber.alternate) for (; node.return;) node = node.return;else {
+    if (fiber.alternate) for (; node.return;) {
+        node = node.return;
+    } else {
         if ((node.effectTag & Placement) !== NoEffect) return MOUNTING;
-        for (; node.return;) if (node = node.return, (node.effectTag & Placement) !== NoEffect) return MOUNTING;
+        for (; node.return;) {
+            if (node = node.return, (node.effectTag & Placement) !== NoEffect) return MOUNTING;
+        }
     }
     return node.tag === HostRoot$1 ? MOUNTED : UNMOUNTED;
 }
@@ -6553,7 +6603,9 @@ var findCurrentFiberUsingSlowPath_1 = findCurrentFiberUsingSlowPath,
     index++, valueStack[index] = cursor.current, fiberStack[index] = fiber, cursor.current = value;
 },
     reset = function () {
-    for (; index > -1;) valueStack[index] = null, fiberStack[index] = null, index--;
+    for (; index > -1;) {
+        valueStack[index] = null, fiberStack[index] = null, index--;
+    }
 },
     ReactFiberStack = {
     createCursor: createCursor$1,
@@ -6713,7 +6765,9 @@ var ReactDebugCurrentFiber$2 = {
     null !== currentPhase && null !== currentPhaseFiber && clearFiberMark(currentPhaseFiber, currentPhase), currentPhaseFiber = null, currentPhase = null, hasScheduledUpdateInCurrentPhase = !1;
 },
     pauseTimers = function () {
-    for (var fiber = currentFiber; fiber;) fiber._debugIsCurrentlyTiming && endFiberMark(fiber, null, null), fiber = fiber.return;
+    for (var fiber = currentFiber; fiber;) {
+        fiber._debugIsCurrentlyTiming && endFiberMark(fiber, null, null), fiber = fiber.return;
+    }
 },
     resumeTimersRecursively = function (fiber) {
     null !== fiber.return && resumeTimersRecursively(fiber.return), fiber._debugIsCurrentlyTiming && beginFiberMark(fiber, null);
@@ -6791,7 +6845,9 @@ var ReactDebugFiberPerf_1 = ReactDebugFiberPerf,
     _extends$2 = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
         var source = arguments[i];
-        for (var key in source) Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        for (var key in source) {
+            Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        }
     }
     return target;
 },
@@ -6831,8 +6887,9 @@ var cacheContext_1 = cacheContext,
     var instance = workInProgress.stateNode;
     if (instance && instance.__reactInternalMemoizedUnmaskedChildContext === unmaskedContext) return instance.__reactInternalMemoizedMaskedChildContext;
     var context = {};
-    for (var key in contextTypes) context[key] = unmaskedContext[key];
-    var name = getComponentName_1(workInProgress) || "Unknown";
+    for (var key in contextTypes) {
+        context[key] = unmaskedContext[key];
+    }var name = getComponentName_1(workInProgress) || "Unknown";
     return ReactDebugCurrentFrame.current = workInProgress, checkPropTypes(contextTypes, context, "context", name, ReactDebugCurrentFrame.getStackAddendum), ReactDebugCurrentFrame.current = null, instance && cacheContext(workInProgress, unmaskedContext, context), context;
 },
     hasContextChanged = function () {
@@ -6869,8 +6926,9 @@ function processChildContext$1(fiber, parentContext, isReconciling) {
     }
     var childContext = void 0;
     ReactDebugCurrentFiber$1.phase = "getChildContext", startPhaseTimer(fiber, "getChildContext"), childContext = instance.getChildContext(), stopPhaseTimer(), ReactDebugCurrentFiber$1.phase = null;
-    for (var contextKey in childContext) invariant(contextKey in childContextTypes, '%s.getChildContext(): key "%s" is not defined in childContextTypes.', getComponentName_1(fiber) || "Unknown", contextKey);
-    var name = getComponentName_1(fiber) || "Unknown",
+    for (var contextKey in childContext) {
+        invariant(contextKey in childContextTypes, '%s.getChildContext(): key "%s" is not defined in childContextTypes.', getComponentName_1(fiber) || "Unknown", contextKey);
+    }var name = getComponentName_1(fiber) || "Unknown",
         workInProgress = isReconciling ? fiber : null;
     return ReactDebugCurrentFrame.current = workInProgress, checkPropTypes(childContextTypes, childContext, "child context", name, ReactDebugCurrentFrame.getStackAddendum), ReactDebugCurrentFrame.current = null, _extends$2({}, parentContext, childContext);
 }
@@ -7182,12 +7240,14 @@ function ChildReconciler(shouldClone, shouldTrackSideEffects) {
     }
     function deleteRemainingChildren(returnFiber, currentFirstChild) {
         if (!shouldTrackSideEffects) return null;
-        for (var childToDelete = currentFirstChild; null !== childToDelete;) deleteChild(returnFiber, childToDelete), childToDelete = childToDelete.sibling;
-        return null;
+        for (var childToDelete = currentFirstChild; null !== childToDelete;) {
+            deleteChild(returnFiber, childToDelete), childToDelete = childToDelete.sibling;
+        }return null;
     }
     function mapRemainingChildren(returnFiber, currentFirstChild) {
-        for (var existingChildren = new Map(), existingChild = currentFirstChild; null !== existingChild;) null !== existingChild.key ? existingChildren.set(existingChild.key, existingChild) : existingChildren.set(existingChild.index, existingChild), existingChild = existingChild.sibling;
-        return existingChildren;
+        for (var existingChildren = new Map(), existingChild = currentFirstChild; null !== existingChild;) {
+            null !== existingChild.key ? existingChildren.set(existingChild.key, existingChild) : existingChildren.set(existingChild.index, existingChild), existingChild = existingChild.sibling;
+        }return existingChildren;
     }
     function useFiber(fiber, priority) {
         if (shouldClone) {
@@ -7548,9 +7608,12 @@ var reconcileChildFibers$1 = ChildReconciler(!0, !0),
     if (workInProgress.child) if (null !== current && workInProgress.child === current.child) {
         var currentChild = workInProgress.child,
             newChild = cloneFiber$2(currentChild, currentChild.pendingWorkPriority);
-        for (workInProgress.child = newChild, newChild.return = workInProgress; null !== currentChild.sibling;) currentChild = currentChild.sibling, newChild = newChild.sibling = cloneFiber$2(currentChild, currentChild.pendingWorkPriority), newChild.return = workInProgress;
-        newChild.sibling = null;
-    } else for (var child = workInProgress.child; null !== child;) child.return = workInProgress, child = child.sibling;
+        for (workInProgress.child = newChild, newChild.return = workInProgress; null !== currentChild.sibling;) {
+            currentChild = currentChild.sibling, newChild = newChild.sibling = cloneFiber$2(currentChild, currentChild.pendingWorkPriority), newChild.return = workInProgress;
+        }newChild.sibling = null;
+    } else for (var child = workInProgress.child; null !== child;) {
+        child.return = workInProgress, child = child.sibling;
+    }
 },
     ReactChildFiber = {
     reconcileChildFibers: reconcileChildFibers$1,
@@ -7839,15 +7902,17 @@ var reconcileChildFibers$1 = ChildReconciler(!0, !0),
             memoizedProps = workInProgress.memoizedProps;
         if (hasContextChanged$1()) null === nextProps && (nextProps = memoizedProps, invariant(null !== nextProps, "We should always have pending or current props. This error is " + "likely caused by a bug in React. Please file an issue."));else if (null === nextProps || memoizedProps === nextProps) {
             if (!useSyncScheduling && shouldDeprioritizeSubtree(type, memoizedProps) && workInProgress.pendingWorkPriority !== OffscreenPriority$1) {
-                for (var child = workInProgress.progressedChild; null !== child;) child.pendingWorkPriority = OffscreenPriority$1, child = child.sibling;
-                return null;
+                for (var child = workInProgress.progressedChild; null !== child;) {
+                    child.pendingWorkPriority = OffscreenPriority$1, child = child.sibling;
+                }return null;
             }
             return bailoutOnAlreadyFinishedWork(current, workInProgress);
         }
         var nextChildren = nextProps.children;
         if (shouldSetTextContent(type, nextProps) ? nextChildren = null : prevProps && shouldSetTextContent(type, prevProps) && (workInProgress.effectTag |= ContentReset$1), markRef(current, workInProgress), !useSyncScheduling && shouldDeprioritizeSubtree(workInProgress.type, nextProps) && workInProgress.pendingWorkPriority !== OffscreenPriority$1) {
-            if (workInProgress.progressedPriority === OffscreenPriority$1 && (workInProgress.child = workInProgress.progressedChild), reconcileChildrenAtPriority(current, workInProgress, nextChildren, OffscreenPriority$1), memoizeProps(workInProgress, nextProps), workInProgress.child = null !== current ? current.child : null, null === current) for (var _child = workInProgress.progressedChild; null !== _child;) _child.effectTag = Placement$2, _child = _child.sibling;
-            return null;
+            if (workInProgress.progressedPriority === OffscreenPriority$1 && (workInProgress.child = workInProgress.progressedChild), reconcileChildrenAtPriority(current, workInProgress, nextChildren, OffscreenPriority$1), memoizeProps(workInProgress, nextProps), workInProgress.child = null !== current ? current.child : null, null === current) for (var _child = workInProgress.progressedChild; null !== _child;) {
+                _child.effectTag = Placement$2, _child = _child.sibling;
+            }return null;
         }
         return reconcileChildren(current, workInProgress, nextChildren), memoizeProps(workInProgress, nextProps), workInProgress.child;
     }
@@ -8261,14 +8326,16 @@ var injectInternals_1 = injectInternals$1,
         }
     }
     function commitNestedUnmounts(root) {
-        for (var node = root; !0;) if (commitUnmount(node), null === node.child || node.tag === HostPortal$6) {
-            if (node === root) return;
-            for (; null === node.sibling;) {
-                if (null === node.return || node.return === root) return;
-                node = node.return;
-            }
-            node.sibling.return = node.return, node = node.sibling;
-        } else node.child.return = node, node = node.child;
+        for (var node = root; !0;) {
+            if (commitUnmount(node), null === node.child || node.tag === HostPortal$6) {
+                if (node === root) return;
+                for (; null === node.sibling;) {
+                    if (null === node.return || node.return === root) return;
+                    node = node.return;
+                }
+                node.sibling.return = node.return, node = node.sibling;
+            } else node.child.return = node, node = node.child;
+        }
     }
     function unmountHostComponents(parent, current) {
         for (var node = current; !0;) {
@@ -8528,15 +8595,17 @@ var injectInternals_1 = injectInternals$1,
         return hydrateTextInstance(textInstance, fiber.memoizedProps, fiber);
     }
     function popToNextHostParent(fiber) {
-        for (var parent = fiber.return; null !== parent && parent.tag !== HostComponent$10 && parent.tag !== HostRoot$8;) parent = parent.return;
-        hydrationParentFiber = parent;
+        for (var parent = fiber.return; null !== parent && parent.tag !== HostComponent$10 && parent.tag !== HostRoot$8;) {
+            parent = parent.return;
+        }hydrationParentFiber = parent;
     }
     function popHydrationState(fiber) {
         if (fiber !== hydrationParentFiber) return !1;
         if (!isHydrating) return popToNextHostParent(fiber), isHydrating = !0, !1;
         var type = fiber.type;
-        if (fiber.tag !== HostComponent$10 || "head" !== type && "body" !== type && !shouldSetTextContent(type, fiber.memoizedProps)) for (var nextInstance = nextHydratableInstance; nextInstance;) deleteHydratableInstance(fiber, nextInstance), nextInstance = getNextHydratableSibling(nextInstance);
-        return popToNextHostParent(fiber), nextHydratableInstance = hydrationParentFiber ? getNextHydratableSibling(fiber.stateNode) : null, !0;
+        if (fiber.tag !== HostComponent$10 || "head" !== type && "body" !== type && !shouldSetTextContent(type, fiber.memoizedProps)) for (var nextInstance = nextHydratableInstance; nextInstance;) {
+            deleteHydratableInstance(fiber, nextInstance), nextInstance = getNextHydratableSibling(nextInstance);
+        }return popToNextHostParent(fiber), nextHydratableInstance = hydrationParentFiber ? getNextHydratableSibling(fiber.stateNode) : null, !0;
     }
     function resetHydrationState() {
         hydrationParentFiber = null, nextHydratableInstance = null, isHydrating = !1;
@@ -8676,8 +8745,9 @@ var injectInternals_1 = injectInternals$1,
             if (nextScheduledRoot.nextScheduledRoot = null, nextScheduledRoot === lastScheduledRoot) return nextScheduledRoot = null, lastScheduledRoot = null, nextPriorityLevel = NoWork$2, null;
             nextScheduledRoot = next;
         }
-        for (var root = nextScheduledRoot, highestPriorityRoot = null, highestPriorityLevel = NoWork$2; null !== root;) root.current.pendingWorkPriority !== NoWork$2 && (highestPriorityLevel === NoWork$2 || highestPriorityLevel > root.current.pendingWorkPriority) && (highestPriorityLevel = root.current.pendingWorkPriority, highestPriorityRoot = root), root = root.nextScheduledRoot;
-        return null !== highestPriorityRoot ? (nextPriorityLevel = highestPriorityLevel, priorityContext = nextPriorityLevel, resetContextStack(), cloneFiber$1(highestPriorityRoot.current, highestPriorityLevel)) : (nextPriorityLevel = NoWork$2, null);
+        for (var root = nextScheduledRoot, highestPriorityRoot = null, highestPriorityLevel = NoWork$2; null !== root;) {
+            root.current.pendingWorkPriority !== NoWork$2 && (highestPriorityLevel === NoWork$2 || highestPriorityLevel > root.current.pendingWorkPriority) && (highestPriorityLevel = root.current.pendingWorkPriority, highestPriorityRoot = root), root = root.nextScheduledRoot;
+        }return null !== highestPriorityRoot ? (nextPriorityLevel = highestPriorityLevel, priorityContext = nextPriorityLevel, resetContextStack(), cloneFiber$1(highestPriorityRoot.current, highestPriorityLevel)) : (nextPriorityLevel = NoWork$2, null);
     }
     function commitAllHostEffects() {
         for (; null !== nextEffect;) {
@@ -8745,8 +8815,9 @@ var injectInternals_1 = injectInternals$1,
             queue = workInProgress.updateQueue,
             tag = workInProgress.tag;
         null === queue || tag !== ClassComponent$4 && tag !== HostRoot$4 || (newPriority = getPendingPriority$1(queue));
-        for (var child = workInProgress.progressedChild; null !== child;) child.pendingWorkPriority !== NoWork$2 && (newPriority === NoWork$2 || newPriority > child.pendingWorkPriority) && (newPriority = child.pendingWorkPriority), child = child.sibling;
-        workInProgress.pendingWorkPriority = newPriority;
+        for (var child = workInProgress.progressedChild; null !== child;) {
+            child.pendingWorkPriority !== NoWork$2 && (newPriority === NoWork$2 || newPriority > child.pendingWorkPriority) && (newPriority = child.pendingWorkPriority), child = child.sibling;
+        }workInProgress.pendingWorkPriority = newPriority;
     }
     function completeUnitOfWork(workInProgress) {
         for (; !0;) {
@@ -8784,10 +8855,16 @@ var injectInternals_1 = injectInternals$1,
         isAnimationCallbackScheduled = !1, performWork(AnimationPriority, null);
     }
     function clearErrors() {
-        for (null === nextUnitOfWork && (nextUnitOfWork = findNextUnitOfWork()); null !== capturedErrors && capturedErrors.size && null !== nextUnitOfWork && nextPriorityLevel !== NoWork$2 && nextPriorityLevel <= TaskPriority$1;) null === (nextUnitOfWork = hasCapturedError(nextUnitOfWork) ? performFailedUnitOfWork(nextUnitOfWork) : performUnitOfWork(nextUnitOfWork)) && (nextUnitOfWork = findNextUnitOfWork());
+        for (null === nextUnitOfWork && (nextUnitOfWork = findNextUnitOfWork()); null !== capturedErrors && capturedErrors.size && null !== nextUnitOfWork && nextPriorityLevel !== NoWork$2 && nextPriorityLevel <= TaskPriority$1;) {
+            null === (nextUnitOfWork = hasCapturedError(nextUnitOfWork) ? performFailedUnitOfWork(nextUnitOfWork) : performUnitOfWork(nextUnitOfWork)) && (nextUnitOfWork = findNextUnitOfWork());
+        }
     }
     function workLoop(priorityLevel, deadline) {
-        if (clearErrors(), null === nextUnitOfWork && (nextUnitOfWork = findNextUnitOfWork()), null !== deadline && priorityLevel > TaskPriority$1) for (; null !== nextUnitOfWork && !deadlineHasExpired;) deadline.timeRemaining() > timeHeuristicForUnitOfWork ? null === (nextUnitOfWork = performUnitOfWork(nextUnitOfWork)) && null !== pendingCommit && (deadline.timeRemaining() > timeHeuristicForUnitOfWork ? (commitAllWork(pendingCommit), nextUnitOfWork = findNextUnitOfWork(), clearErrors()) : deadlineHasExpired = !0) : deadlineHasExpired = !0;else for (; null !== nextUnitOfWork && nextPriorityLevel !== NoWork$2 && nextPriorityLevel <= priorityLevel;) null === (nextUnitOfWork = performUnitOfWork(nextUnitOfWork)) && (nextUnitOfWork = findNextUnitOfWork(), clearErrors());
+        if (clearErrors(), null === nextUnitOfWork && (nextUnitOfWork = findNextUnitOfWork()), null !== deadline && priorityLevel > TaskPriority$1) for (; null !== nextUnitOfWork && !deadlineHasExpired;) {
+            deadline.timeRemaining() > timeHeuristicForUnitOfWork ? null === (nextUnitOfWork = performUnitOfWork(nextUnitOfWork)) && null !== pendingCommit && (deadline.timeRemaining() > timeHeuristicForUnitOfWork ? (commitAllWork(pendingCommit), nextUnitOfWork = findNextUnitOfWork(), clearErrors()) : deadlineHasExpired = !0) : deadlineHasExpired = !0;
+        } else for (; null !== nextUnitOfWork && nextPriorityLevel !== NoWork$2 && nextPriorityLevel <= priorityLevel;) {
+            null === (nextUnitOfWork = performUnitOfWork(nextUnitOfWork)) && (nextUnitOfWork = findNextUnitOfWork(), clearErrors());
+        }
     }
     function performWork(priorityLevel, deadline) {
         startWorkLoopTimer(), invariant(!isPerformingWork, "performWork was called recursively. This error is likely caused " + "by a bug in React. Please file an issue."), isPerformingWork = !0;
@@ -9117,18 +9194,22 @@ function resolveObject(idOrObject) {
 }
 
 function restoreDeletedValuesInNestedArray(updatePayload, node, validAttributes) {
-    if (Array.isArray(node)) for (var i = node.length; i-- && removedKeyCount > 0;) restoreDeletedValuesInNestedArray(updatePayload, node[i], validAttributes);else if (node && removedKeyCount > 0) {
+    if (Array.isArray(node)) for (var i = node.length; i-- && removedKeyCount > 0;) {
+        restoreDeletedValuesInNestedArray(updatePayload, node[i], validAttributes);
+    } else if (node && removedKeyCount > 0) {
         var obj = resolveObject(node);
-        for (var propKey in removedKeys) if (removedKeys[propKey]) {
-            var nextProp = obj[propKey];
-            if (void 0 !== nextProp) {
-                var attributeConfig = validAttributes[propKey];
-                if (attributeConfig) {
-                    if ("function" == typeof nextProp && (nextProp = !0), void 0 === nextProp && (nextProp = null), "object" != typeof attributeConfig) updatePayload[propKey] = nextProp;else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
-                        var nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp;
-                        updatePayload[propKey] = nextValue;
+        for (var propKey in removedKeys) {
+            if (removedKeys[propKey]) {
+                var nextProp = obj[propKey];
+                if (void 0 !== nextProp) {
+                    var attributeConfig = validAttributes[propKey];
+                    if (attributeConfig) {
+                        if ("function" == typeof nextProp && (nextProp = !0), void 0 === nextProp && (nextProp = null), "object" != typeof attributeConfig) updatePayload[propKey] = nextProp;else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
+                            var nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp;
+                            updatePayload[propKey] = nextValue;
+                        }
+                        removedKeys[propKey] = !1, removedKeyCount--;
                     }
-                    removedKeys[propKey] = !1, removedKeyCount--;
                 }
             }
         }
@@ -9138,10 +9219,13 @@ function restoreDeletedValuesInNestedArray(updatePayload, node, validAttributes)
 function diffNestedArrayProperty(updatePayload, prevArray, nextArray, validAttributes) {
     var i,
         minLength = prevArray.length < nextArray.length ? prevArray.length : nextArray.length;
-    for (i = 0; i < minLength; i++) updatePayload = diffNestedProperty(updatePayload, prevArray[i], nextArray[i], validAttributes);
-    for (; i < prevArray.length; i++) updatePayload = clearNestedProperty(updatePayload, prevArray[i], validAttributes);
-    for (; i < nextArray.length; i++) updatePayload = addNestedProperty(updatePayload, nextArray[i], validAttributes);
-    return updatePayload;
+    for (i = 0; i < minLength; i++) {
+        updatePayload = diffNestedProperty(updatePayload, prevArray[i], nextArray[i], validAttributes);
+    }for (; i < prevArray.length; i++) {
+        updatePayload = clearNestedProperty(updatePayload, prevArray[i], validAttributes);
+    }for (; i < nextArray.length; i++) {
+        updatePayload = addNestedProperty(updatePayload, nextArray[i], validAttributes);
+    }return updatePayload;
 }
 
 function diffNestedProperty(updatePayload, prevProp, nextProp, validAttributes) {
@@ -9151,30 +9235,34 @@ function diffNestedProperty(updatePayload, prevProp, nextProp, validAttributes) 
 function addNestedProperty(updatePayload, nextProp, validAttributes) {
     if (!nextProp) return updatePayload;
     if (!Array.isArray(nextProp)) return addProperties(updatePayload, resolveObject(nextProp), validAttributes);
-    for (var i = 0; i < nextProp.length; i++) updatePayload = addNestedProperty(updatePayload, nextProp[i], validAttributes);
-    return updatePayload;
+    for (var i = 0; i < nextProp.length; i++) {
+        updatePayload = addNestedProperty(updatePayload, nextProp[i], validAttributes);
+    }return updatePayload;
 }
 
 function clearNestedProperty(updatePayload, prevProp, validAttributes) {
     if (!prevProp) return updatePayload;
     if (!Array.isArray(prevProp)) return clearProperties(updatePayload, resolveObject(prevProp), validAttributes);
-    for (var i = 0; i < prevProp.length; i++) updatePayload = clearNestedProperty(updatePayload, prevProp[i], validAttributes);
-    return updatePayload;
+    for (var i = 0; i < prevProp.length; i++) {
+        updatePayload = clearNestedProperty(updatePayload, prevProp[i], validAttributes);
+    }return updatePayload;
 }
 
 function diffProperties(updatePayload, prevProps, nextProps, validAttributes) {
     var attributeConfig, nextProp, prevProp;
-    for (var propKey in nextProps) if (attributeConfig = validAttributes[propKey]) if (prevProp = prevProps[propKey], nextProp = nextProps[propKey], "function" == typeof nextProp && (nextProp = !0, "function" == typeof prevProp && (prevProp = !0)), void 0 === nextProp && (nextProp = null, void 0 === prevProp && (prevProp = null)), removedKeys && (removedKeys[propKey] = !1), updatePayload && void 0 !== updatePayload[propKey]) {
-        if ("object" != typeof attributeConfig) updatePayload[propKey] = nextProp;else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
-            var nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp;
-            updatePayload[propKey] = nextValue;
-        }
-    } else if (prevProp !== nextProp) if ("object" != typeof attributeConfig) defaultDiffer(prevProp, nextProp) && ((updatePayload || (updatePayload = {}))[propKey] = nextProp);else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
-        var shouldUpdate = void 0 === prevProp || ("function" == typeof attributeConfig.diff ? attributeConfig.diff(prevProp, nextProp) : defaultDiffer(prevProp, nextProp));
-        shouldUpdate && (nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp, (updatePayload || (updatePayload = {}))[propKey] = nextValue);
-    } else removedKeys = null, removedKeyCount = 0, updatePayload = diffNestedProperty(updatePayload, prevProp, nextProp, attributeConfig), removedKeyCount > 0 && updatePayload && (restoreDeletedValuesInNestedArray(updatePayload, nextProp, attributeConfig), removedKeys = null);
-    for (propKey in prevProps) void 0 === nextProps[propKey] && (attributeConfig = validAttributes[propKey]) && (updatePayload && void 0 !== updatePayload[propKey] || void 0 !== (prevProp = prevProps[propKey]) && ("object" != typeof attributeConfig || "function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process ? ((updatePayload || (updatePayload = {}))[propKey] = null, removedKeys || (removedKeys = {}), removedKeys[propKey] || (removedKeys[propKey] = !0, removedKeyCount++)) : updatePayload = clearNestedProperty(updatePayload, prevProp, attributeConfig)));
-    return updatePayload;
+    for (var propKey in nextProps) {
+        if (attributeConfig = validAttributes[propKey]) if (prevProp = prevProps[propKey], nextProp = nextProps[propKey], "function" == typeof nextProp && (nextProp = !0, "function" == typeof prevProp && (prevProp = !0)), void 0 === nextProp && (nextProp = null, void 0 === prevProp && (prevProp = null)), removedKeys && (removedKeys[propKey] = !1), updatePayload && void 0 !== updatePayload[propKey]) {
+            if ("object" != typeof attributeConfig) updatePayload[propKey] = nextProp;else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
+                var nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp;
+                updatePayload[propKey] = nextValue;
+            }
+        } else if (prevProp !== nextProp) if ("object" != typeof attributeConfig) defaultDiffer(prevProp, nextProp) && ((updatePayload || (updatePayload = {}))[propKey] = nextProp);else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
+            var shouldUpdate = void 0 === prevProp || ("function" == typeof attributeConfig.diff ? attributeConfig.diff(prevProp, nextProp) : defaultDiffer(prevProp, nextProp));
+            shouldUpdate && (nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp, (updatePayload || (updatePayload = {}))[propKey] = nextValue);
+        } else removedKeys = null, removedKeyCount = 0, updatePayload = diffNestedProperty(updatePayload, prevProp, nextProp, attributeConfig), removedKeyCount > 0 && updatePayload && (restoreDeletedValuesInNestedArray(updatePayload, nextProp, attributeConfig), removedKeys = null);
+    }for (propKey in prevProps) {
+        void 0 === nextProps[propKey] && (attributeConfig = validAttributes[propKey]) && (updatePayload && void 0 !== updatePayload[propKey] || void 0 !== (prevProp = prevProps[propKey]) && ("object" != typeof attributeConfig || "function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process ? ((updatePayload || (updatePayload = {}))[propKey] = null, removedKeys || (removedKeys = {}), removedKeys[propKey] || (removedKeys[propKey] = !0, removedKeyCount++)) : updatePayload = clearNestedProperty(updatePayload, prevProp, attributeConfig)));
+    }return updatePayload;
 }
 
 function addProperties(updatePayload, props, validAttributes) {
@@ -9216,7 +9304,9 @@ function throwOnStylesProp(component, props) {
 }
 
 function warnForStyleProps$1(props, validAttributes) {
-    for (var key in validAttributes.style) validAttributes[key] || void 0 === props[key] || console.error("You are setting the style `{ " + key + ": ... }` as a prop. You " + "should nest it in a style object. " + "E.g. `{ style: { " + key + ": ... } }`");
+    for (var key in validAttributes.style) {
+        validAttributes[key] || void 0 === props[key] || console.error("You are setting the style `{ " + key + ": ... }` as a prop. You " + "should nest it in a style object. " + "E.g. `{ style: { " + key + ": ... } }`");
+    }
 }
 
 var NativeMethodsMixinUtils = {
@@ -9299,8 +9389,9 @@ var NativeRenderer = ReactFiberReconciler({
     createInstance: function (type, props, rootContainerInstance, hostContext, internalInstanceHandle) {
         var tag = ReactNativeTagHandles_1.allocateTag(),
             viewConfig = ReactNativeViewConfigRegistry_1.get(type);
-        for (var key in viewConfig.validAttributes) props.hasOwnProperty(key) && deepFreezeAndThrowOnMutationInDev(props[key]);
-        var updatePayload = ReactNativeAttributePayload_1.create(props, viewConfig.validAttributes);
+        for (var key in viewConfig.validAttributes) {
+            props.hasOwnProperty(key) && deepFreezeAndThrowOnMutationInDev(props[key]);
+        }var updatePayload = ReactNativeAttributePayload_1.create(props, viewConfig.validAttributes);
         UIManager.createView(tag, viewConfig.uiViewClassName, rootContainerInstance, updatePayload);
         var component = new ReactNativeFiberHostComponent_1(tag, viewConfig);
         return precacheFiberNode$1(internalInstanceHandle, tag), updateFiberProps$1(tag, props), component;
@@ -9523,8 +9614,9 @@ function setNativePropsStack(componentOrHandle, nativeProps) {
     if (null != maybeInstance) {
         var viewConfig = void 0;
         if (void 0 !== maybeInstance.viewConfig) viewConfig = maybeInstance.viewConfig;else if (void 0 !== maybeInstance._instance && void 0 !== maybeInstance._instance.viewConfig) viewConfig = maybeInstance._instance.viewConfig;else {
-            for (; void 0 !== maybeInstance._renderedComponent;) maybeInstance = maybeInstance._renderedComponent;
-            viewConfig = maybeInstance.viewConfig;
+            for (; void 0 !== maybeInstance._renderedComponent;) {
+                maybeInstance = maybeInstance._renderedComponent;
+            }viewConfig = maybeInstance.viewConfig;
         }
         var tag = "function" == typeof maybeInstance.getHostNode ? maybeInstance.getHostNode() : maybeInstance._rootNodeID,
             updatePayload = ReactNativeAttributePayload_1.create(nativeProps, viewConfig.validAttributes);
@@ -9580,8 +9672,9 @@ function setNativePropsStack$1(componentOrHandle, nativeProps) {
     if (null != maybeInstance) {
         var viewConfig = void 0;
         if (void 0 !== maybeInstance.viewConfig) viewConfig = maybeInstance.viewConfig;else if (void 0 !== maybeInstance._instance && void 0 !== maybeInstance._instance.viewConfig) viewConfig = maybeInstance._instance.viewConfig;else {
-            for (; void 0 !== maybeInstance._renderedComponent;) maybeInstance = maybeInstance._renderedComponent;
-            viewConfig = maybeInstance.viewConfig;
+            for (; void 0 !== maybeInstance._renderedComponent;) {
+                maybeInstance = maybeInstance._renderedComponent;
+            }viewConfig = maybeInstance.viewConfig;
         }
         var tag = "function" == typeof maybeInstance.getHostNode ? maybeInstance.getHostNode() : maybeInstance._rootNodeID;
         warnForStyleProps$2(nativeProps, viewConfig.validAttributes);
@@ -9809,7 +9902,9 @@ ReactDebugTool = {
         hooks.push(hook);
     },
     removeHook: function (hook) {
-        for (var i = 0; i < hooks.length; i++) hooks[i] === hook && (hooks.splice(i, 1), i--);
+        for (var i = 0; i < hooks.length; i++) {
+            hooks[i] === hook && (hooks.splice(i, 1), i--);
+        }
     },
     isProfiling: function () {
         return isProfiling;
@@ -9880,8 +9975,9 @@ var url = ExecutionEnvironment.canUseDOM && window.location.href || "";
 var ReactDebugTool_1 = ReactDebugTool,
     lowPriorityWarning = function () {},
     printWarning = function (format) {
-    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) args[_key - 1] = arguments[_key];
-    var argIndex = 0,
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+    }var argIndex = 0,
         message = "Warning: " + format.replace(/%s/g, function () {
         return args[argIndex++];
     });
@@ -9894,8 +9990,9 @@ var ReactDebugTool_1 = ReactDebugTool,
 lowPriorityWarning = function (condition, format) {
     if (void 0 === format) throw new Error("`warning(condition, format, ...args)` requires a warning " + "message argument");
     if (!condition) {
-        for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) args[_key2 - 2] = arguments[_key2];
-        printWarning.apply(void 0, [format].concat(args));
+        for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+            args[_key2 - 2] = arguments[_key2];
+        }printWarning.apply(void 0, [format].concat(args));
     }
 };
 
@@ -9903,7 +10000,9 @@ var lowPriorityWarning_1 = lowPriorityWarning,
     _extends$3 = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
         var source = arguments[i];
-        for (var key in source) Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        for (var key in source) {
+            Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        }
     }
     return target;
 };
@@ -9992,9 +10091,11 @@ function getInclusive() {
                 updateAggregatedStats(treeSnapshot, instanceID, function (stats) {
                     stats.renderCount++;
                 });
-                for (var nextParentID = instanceID; nextParentID;) isCompositeByID[nextParentID] && updateAggregatedStats(treeSnapshot, nextParentID, function (stats) {
-                    stats.inclusiveRenderDuration += duration;
-                }), nextParentID = treeSnapshot[nextParentID].parentID;
+                for (var nextParentID = instanceID; nextParentID;) {
+                    isCompositeByID[nextParentID] && updateAggregatedStats(treeSnapshot, nextParentID, function (stats) {
+                        stats.inclusiveRenderDuration += duration;
+                    }), nextParentID = treeSnapshot[nextParentID].parentID;
+                }
             }
         });
     }), Object.keys(aggregatedStats).map(function (key) {
@@ -10030,7 +10131,9 @@ function getWasted() {
             operations = flush.operations,
             isDefinitelyNotWastedByID = {};
         operations.forEach(function (operation) {
-            for (var instanceID = operation.instanceID, nextParentID = instanceID; nextParentID;) isDefinitelyNotWastedByID[nextParentID] = !0, nextParentID = treeSnapshot[nextParentID].parentID;
+            for (var instanceID = operation.instanceID, nextParentID = instanceID; nextParentID;) {
+                isDefinitelyNotWastedByID[nextParentID] = !0, nextParentID = treeSnapshot[nextParentID].parentID;
+            }
         });
         var renderedCompositeIDs = {};
         measurements.forEach(function (measurement) {
@@ -10045,9 +10148,11 @@ function getWasted() {
                     updateAggregatedStats(treeSnapshot, instanceID, function (stats) {
                         stats.renderCount++;
                     });
-                    for (var nextParentID = instanceID; nextParentID;) renderedCompositeIDs[nextParentID] && !isDefinitelyNotWastedByID[nextParentID] && updateAggregatedStats(treeSnapshot, nextParentID, function (stats) {
-                        stats.inclusiveRenderDuration += duration;
-                    }), nextParentID = treeSnapshot[nextParentID].parentID;
+                    for (var nextParentID = instanceID; nextParentID;) {
+                        renderedCompositeIDs[nextParentID] && !isDefinitelyNotWastedByID[nextParentID] && updateAggregatedStats(treeSnapshot, nextParentID, function (stats) {
+                            stats.inclusiveRenderDuration += duration;
+                        }), nextParentID = treeSnapshot[nextParentID].parentID;
+                    }
                 }
             }
         });
@@ -10248,27 +10353,29 @@ module.exports = ReactNativeFiber;
 __d(/* ExceptionsManager */function(global, require, module, exports) {
 'use strict';
 
-let exceptionID = 0;
+var exceptionID = 0;
 function reportException(e, isFatal) {
-  const { ExceptionsManager } = require(36             ); // 36 = NativeModules
+  var { ExceptionsManager: ExceptionsManager } = require(36             ); // 36 = NativeModules
   if (ExceptionsManager) {
-    const parseErrorStack = require(47               ); // 47 = parseErrorStack
-    const stack = parseErrorStack(e);
-    const currentExceptionID = ++exceptionID;
+    var parseErrorStack = require(47               ); // 47 = parseErrorStack
+    var stack = parseErrorStack(e);
+    var currentExceptionID = ++exceptionID;
     if (isFatal) {
       ExceptionsManager.reportFatalException(e.message, stack, currentExceptionID);
     } else {
       ExceptionsManager.reportSoftException(e.message, stack, currentExceptionID);
     }
     if (__DEV__) {
-      const symbolicateStackTrace = require(53                     ); // 53 = symbolicateStackTrace
-      symbolicateStackTrace(stack).then(prettyStack => {
+      var symbolicateStackTrace = require(53                     ); // 53 = symbolicateStackTrace
+      symbolicateStackTrace(stack).then(function (prettyStack) {
         if (prettyStack) {
           ExceptionsManager.updateExceptionMessage(e.message, prettyStack, currentExceptionID);
         } else {
           throw new Error('The stack is null');
         }
-      }).catch(error => console.warn('Unable to symbolicate stack trace: ' + error.message));
+      }).catch(function (error) {
+        return console.warn('Unable to symbolicate stack trace: ' + error.message);
+      });
     }
   }
 }
@@ -10294,12 +10401,12 @@ function reactConsoleErrorHandler() {
   if (arguments[0] && arguments[0].stack) {
     reportException(arguments[0], false);
   } else {
-    const stringifySafe = require(51             ); // 51 = stringifySafe
-    const str = Array.prototype.map.call(arguments, stringifySafe).join(', ');
+    var stringifySafe = require(51             ); // 51 = stringifySafe
+    var str = Array.prototype.map.call(arguments, stringifySafe).join(', ');
     if (str.slice(0, 10) === '"Warning: ') {
       return;
     }
-    const error = new Error('console.error: ' + str);
+    var error = new Error('console.error: ' + str);
     error.framesToPop = 1;
     reportException(error, false);
   }
@@ -10317,33 +10424,33 @@ function installConsoleErrorReporter() {
   }
 }
 
-module.exports = { handleException, installConsoleErrorReporter };
+module.exports = { handleException: handleException, installConsoleErrorReporter: installConsoleErrorReporter };
 }, 35, null, "ExceptionsManager");
 __d(/* NativeModules */function(global, require, module, exports) {
 'use strict';
 
-const BatchedBridge = require(37             ); // 37 = BatchedBridge
+var BatchedBridge = require(37             ); // 37 = BatchedBridge
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
 function genModule(config, moduleID) {
   if (!config) {
     return null;
   }
 
-  const [moduleName, constants, methods, promiseMethods, syncMethods] = config;
+  var [moduleName, constants, methods, promiseMethods, syncMethods] = config;
   invariant(!moduleName.startsWith('RCT') && !moduleName.startsWith('RK'), 'Module name prefixes should\'ve been stripped by the native side ' + 'but wasn\'t for ' + moduleName);
 
   if (!constants && !methods) {
     return { name: moduleName };
   }
 
-  const module = {};
-  methods && methods.forEach((methodName, methodID) => {
-    const isPromise = promiseMethods && arrayContains(promiseMethods, methodID);
-    const isSync = syncMethods && arrayContains(syncMethods, methodID);
+  var module = {};
+  methods && methods.forEach(function (methodName, methodID) {
+    var isPromise = promiseMethods && arrayContains(promiseMethods, methodID);
+    var isSync = syncMethods && arrayContains(syncMethods, methodID);
     invariant(!isPromise || !isSync, 'Cannot have a method that is both async and a sync hook');
-    const methodType = isPromise ? 'promise' : isSync ? 'sync' : 'async';
+    var methodType = isPromise ? 'promise' : isSync ? 'sync' : 'async';
     module[methodName] = genMethod(moduleID, methodID, methodType);
   });
   Object.assign(module, constants);
@@ -10352,24 +10459,28 @@ function genModule(config, moduleID) {
     BatchedBridge.createDebugLookup(moduleID, moduleName, methods);
   }
 
-  return { name: moduleName, module };
+  return { name: moduleName, module: module };
 }
 
 global.__fbGenNativeModule = genModule;
 
 function loadModule(name, moduleID) {
   invariant(global.nativeRequireModuleConfig, 'Can\'t lazily create module without nativeRequireModuleConfig');
-  const config = global.nativeRequireModuleConfig(name);
-  const info = genModule(config, moduleID);
+  var config = global.nativeRequireModuleConfig(name);
+  var info = genModule(config, moduleID);
   return info && info.module;
 }
 
 function genMethod(moduleID, methodID, type) {
-  let fn = null;
+  var fn = null;
   if (type === 'promise') {
     fn = function (...args) {
-      return new Promise((resolve, reject) => {
-        BatchedBridge.enqueueNativeCall(moduleID, methodID, args, data => resolve(data), errorData => reject(createErrorFromErrorData(errorData)));
+      return new Promise(function (resolve, reject) {
+        BatchedBridge.enqueueNativeCall(moduleID, methodID, args, function (data) {
+          return resolve(data);
+        }, function (errorData) {
+          return reject(createErrorFromErrorData(errorData));
+        });
       });
     };
   } else if (type === 'sync') {
@@ -10381,14 +10492,14 @@ function genMethod(moduleID, methodID, type) {
     };
   } else {
     fn = function (...args) {
-      const lastArg = args.length > 0 ? args[args.length - 1] : null;
-      const secondLastArg = args.length > 1 ? args[args.length - 2] : null;
-      const hasSuccessCallback = typeof lastArg === 'function';
-      const hasErrorCallback = typeof secondLastArg === 'function';
+      var lastArg = args.length > 0 ? args[args.length - 1] : null;
+      var secondLastArg = args.length > 1 ? args[args.length - 2] : null;
+      var hasSuccessCallback = typeof lastArg === 'function';
+      var hasErrorCallback = typeof secondLastArg === 'function';
       hasErrorCallback && invariant(hasSuccessCallback, 'Cannot have a non-function arg after a function arg.');
-      const onSuccess = hasSuccessCallback ? lastArg : null;
-      const onFail = hasErrorCallback ? secondLastArg : null;
-      const callbackCount = hasSuccessCallback + hasErrorCallback;
+      var onSuccess = hasSuccessCallback ? lastArg : null;
+      var onFail = hasErrorCallback ? secondLastArg : null;
+      var callbackCount = hasSuccessCallback + hasErrorCallback;
       args = args.slice(0, args.length - callbackCount);
       BatchedBridge.enqueueNativeCall(moduleID, methodID, args, onFail, onSuccess);
     };
@@ -10402,25 +10513,25 @@ function arrayContains(array, value) {
 }
 
 function createErrorFromErrorData(errorData) {
-  const {
-    message
+  var {
+    message: message
   } = errorData,
-        extraErrorInfo = babelHelpers.objectWithoutProperties(errorData, ['message']);
-  const error = new Error(message);
+      extraErrorInfo = babelHelpers.objectWithoutProperties(errorData, ['message']);
+  var error = new Error(message);
   error.framesToPop = 1;
   return Object.assign(error, extraErrorInfo);
 }
 
-let NativeModules = {};
+var NativeModules = {};
 if (global.nativeModuleProxy) {
   NativeModules = global.nativeModuleProxy;
 } else {
-  const bridgeConfig = global.__fbBatchedBridgeConfig;
+  var bridgeConfig = global.__fbBatchedBridgeConfig;
   invariant(bridgeConfig, '__fbBatchedBridgeConfig is not set, cannot invoke native modules');
 
-  const defineLazyObjectProperty = require(52                        ); // 52 = defineLazyObjectProperty
-  (bridgeConfig.remoteModuleConfig || []).forEach((config, moduleID) => {
-    const info = genModule(config, moduleID);
+  var defineLazyObjectProperty = require(52                        ); // 52 = defineLazyObjectProperty
+  (bridgeConfig.remoteModuleConfig || []).forEach(function (config, moduleID) {
+    var info = genModule(config, moduleID);
     if (!info) {
       return;
     }
@@ -10429,7 +10540,9 @@ if (global.nativeModuleProxy) {
       NativeModules[info.name] = info.module;
     } else {
         defineLazyObjectProperty(NativeModules, info.name, {
-          get: () => loadModule(info.name, moduleID)
+          get: function () {
+            return loadModule(info.name, moduleID);
+          }
         });
       }
   });
@@ -10440,8 +10553,8 @@ module.exports = NativeModules;
 __d(/* BatchedBridge */function(global, require, module, exports) {
 'use strict';
 
-const MessageQueue = require(38            ); // 38 = MessageQueue
-const BatchedBridge = new MessageQueue();
+var MessageQueue = require(38            ); // 38 = MessageQueue
+var BatchedBridge = new MessageQueue();
 
 Object.defineProperty(global, '__fbBatchedBridge', {
   configurable: true,
@@ -10454,27 +10567,27 @@ __d(/* MessageQueue */function(global, require, module, exports) {
 
 'use strict';
 
-const ErrorUtils = require(39          ); // 39 = ErrorUtils
-const JSTimersExecution = require(40                 ); // 40 = JSTimersExecution
-const Systrace = require(41        ); // 41 = Systrace
+var ErrorUtils = require(39          ); // 39 = ErrorUtils
+var JSTimersExecution = require(40                 ); // 40 = JSTimersExecution
+var Systrace = require(41        ); // 41 = Systrace
 
-const deepFreezeAndThrowOnMutationInDev = require(50                                 ); // 50 = deepFreezeAndThrowOnMutationInDev
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
-const stringifySafe = require(51             ); // 51 = stringifySafe
+var deepFreezeAndThrowOnMutationInDev = require(50                                 ); // 50 = deepFreezeAndThrowOnMutationInDev
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var stringifySafe = require(51             ); // 51 = stringifySafe
 
-const TO_JS = 0;
-const TO_NATIVE = 1;
+var TO_JS = 0;
+var TO_NATIVE = 1;
 
-const MODULE_IDS = 0;
-const METHOD_IDS = 1;
-const PARAMS = 2;
-const MIN_TIME_BETWEEN_FLUSHES_MS = 5;
+var MODULE_IDS = 0;
+var METHOD_IDS = 1;
+var PARAMS = 2;
+var MIN_TIME_BETWEEN_FLUSHES_MS = 5;
 
-const TRACE_TAG_REACT_APPS = 1 << 17;
+var TRACE_TAG_REACT_APPS = 1 << 17;
 
-const DEBUG_INFO_LIMIT = 32;
+var DEBUG_INFO_LIMIT = 32;
 
-let MessageQueue = class MessageQueue {
+var MessageQueue = class MessageQueue {
 
   constructor() {
     this._lazyCallableModules = {};
@@ -10499,8 +10612,8 @@ let MessageQueue = class MessageQueue {
 
   static spy(spyOrToggle) {
     if (spyOrToggle === true) {
-      MessageQueue.prototype.__spy = info => {
-        console.log(`${info.type === TO_JS ? 'N->JS' : 'JS->N'} : ` + `${info.module ? info.module + '.' : ''}${info.method}` + `(${JSON.stringify(info.args)})`);
+      MessageQueue.prototype.__spy = function (info) {
+        console.log((info.type === TO_JS ? 'N->JS' : 'JS->N') + ' : ' + ('' + (info.module ? info.module + '.' : '') + info.method) + ('(' + JSON.stringify(info.args) + ')'));
       };
     } else if (spyOrToggle === false) {
       MessageQueue.prototype.__spy = null;
@@ -10510,36 +10623,44 @@ let MessageQueue = class MessageQueue {
   }
 
   callFunctionReturnFlushedQueue(module, method, args) {
-    this.__guard(() => {
-      this.__callFunction(module, method, args);
+    var _this = this;
+
+    this.__guard(function () {
+      _this.__callFunction(module, method, args);
     });
 
     return this.flushedQueue();
   }
 
   callFunctionReturnResultAndFlushedQueue(module, method, args) {
-    let result;
-    this.__guard(() => {
-      result = this.__callFunction(module, method, args);
+    var _this2 = this;
+
+    var result = void 0;
+    this.__guard(function () {
+      result = _this2.__callFunction(module, method, args);
     });
 
     return [result, this.flushedQueue()];
   }
 
   invokeCallbackAndReturnFlushedQueue(cbID, args) {
-    this.__guard(() => {
-      this.__invokeCallback(cbID, args);
+    var _this3 = this;
+
+    this.__guard(function () {
+      _this3.__invokeCallback(cbID, args);
     });
 
     return this.flushedQueue();
   }
 
   flushedQueue() {
-    this.__guard(() => {
-      this.__callImmediates();
+    var _this4 = this;
+
+    this.__guard(function () {
+      _this4.__callImmediates();
     });
 
-    const queue = this._queue;
+    var queue = this._queue;
     this._queue = [[], [], [], this._callID];
     return queue[0].length ? queue : null;
   }
@@ -10549,13 +10670,15 @@ let MessageQueue = class MessageQueue {
   }
 
   registerCallableModule(name, module) {
-    this._lazyCallableModules[name] = () => module;
+    this._lazyCallableModules[name] = function () {
+      return module;
+    };
   }
 
   registerLazyCallableModule(name, factory) {
-    let module;
-    let getValue = factory;
-    this._lazyCallableModules[name] = () => {
+    var module = void 0;
+    var getValue = factory;
+    this._lazyCallableModules[name] = function () {
       if (getValue) {
         module = getValue();
         getValue = null;
@@ -10565,7 +10688,7 @@ let MessageQueue = class MessageQueue {
   }
 
   _getCallableModule(name) {
-    const getValue = this._lazyCallableModules[name];
+    var getValue = this._lazyCallableModules[name];
     return getValue ? getValue() : null;
   }
 
@@ -10599,7 +10722,7 @@ let MessageQueue = class MessageQueue {
     }
     this._queue[PARAMS].push(params);
 
-    const now = new Date().getTime();
+    var now = new Date().getTime();
     if (global.nativeFlushQueueImmediate && (now - this._lastFlush >= MIN_TIME_BETWEEN_FLUSHES_MS || this._inCall === 0)) {
       var queue = this._queue;
       this._queue = [[], [], [], this._callID];
@@ -10644,14 +10767,14 @@ let MessageQueue = class MessageQueue {
   __callFunction(module, method, args) {
     this._lastFlush = new Date().getTime();
     this._eventLoopStartTime = this._lastFlush;
-    Systrace.beginEvent(`${module}.${method}()`);
+    Systrace.beginEvent(module + '.' + method + '()');
     if (this.__spy) {
-      this.__spy({ type: TO_JS, module, method, args });
+      this.__spy({ type: TO_JS, module: module, method: method, args: args });
     }
-    const moduleMethods = this._getCallableModule(module);
+    var moduleMethods = this._getCallableModule(module);
     invariant(!!moduleMethods, 'Module %s is not a registered callable module (calling %s)', module, method);
     invariant(!!moduleMethods[method], 'Method %s does not exist on module %s', method, module);
-    const result = moduleMethods[method].apply(moduleMethods, args);
+    var result = moduleMethods[method].apply(moduleMethods, args);
     Systrace.endEvent();
     return result;
   }
@@ -10660,25 +10783,25 @@ let MessageQueue = class MessageQueue {
     this._lastFlush = new Date().getTime();
     this._eventLoopStartTime = this._lastFlush;
 
-    const callID = cbID >>> 1;
-    const callback = cbID & 1 ? this._successCallbacks[callID] : this._failureCallbacks[callID];
+    var callID = cbID >>> 1;
+    var callback = cbID & 1 ? this._successCallbacks[callID] : this._failureCallbacks[callID];
 
     if (__DEV__) {
-      const debug = this._debugInfo[callID];
-      const module = debug && this._remoteModuleTable[debug[0]];
-      const method = debug && this._remoteMethodTable[debug[0]][debug[1]];
+      var debug = this._debugInfo[callID];
+      var _module = debug && this._remoteModuleTable[debug[0]];
+      var _method = debug && this._remoteMethodTable[debug[0]][debug[1]];
       if (!callback) {
-        let errorMessage = `Callback with id ${cbID}: ${module}.${method}() not found`;
-        if (method) {
-          errorMessage = `The callback ${method}() exists in module ${module}, ` + 'but only one callback may be registered to a function in a native module.';
+        var errorMessage = 'Callback with id ' + cbID + ': ' + _module + '.' + _method + '() not found';
+        if (_method) {
+          errorMessage = 'The callback ' + _method + '() exists in module ' + _module + ', ' + 'but only one callback may be registered to a function in a native module.';
         }
         invariant(callback, errorMessage);
       }
-      const profileName = debug ? '<callback for ' + module + '.' + method + '>' : cbID;
+      var profileName = debug ? '<callback for ' + _module + '.' + _method + '>' : cbID;
       if (callback && this.__spy) {
-        this.__spy({ type: TO_JS, module: null, method: profileName, args });
+        this.__spy({ type: TO_JS, module: null, method: profileName, args: args });
       }
-      Systrace.beginEvent(`MessageQueue.invokeCallback(${profileName}, ${stringifySafe(args)})`);
+      Systrace.beginEvent('MessageQueue.invokeCallback(' + profileName + ', ' + stringifySafe(args) + ')');
     }
 
     if (!callback) {
@@ -10704,18 +10827,18 @@ module.exports = global.ErrorUtils;
 __d(/* JSTimersExecution */function(global, require, module, exports) {
 'use strict';
 
-const Systrace = require(41        ); // 41 = Systrace
+var Systrace = require(41        ); // 41 = Systrace
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
-const performanceNow = require(42                       ); // 42 = fbjs/lib/performanceNow
-const warning = require(15                ); // 15 = fbjs/lib/warning
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var performanceNow = require(42                       ); // 42 = fbjs/lib/performanceNow
+var warning = require(15                ); // 15 = fbjs/lib/warning
 
-const FRAME_DURATION = 1000 / 60;
-const IDLE_CALLBACK_FRAME_DEADLINE = 1;
+var FRAME_DURATION = 1000 / 60;
+var IDLE_CALLBACK_FRAME_DEADLINE = 1;
 
-let hasEmittedTimeDriftWarning = false;
+var hasEmittedTimeDriftWarning = false;
 
-const JSTimersExecution = {
+var JSTimersExecution = {
   GUID: 1,
 
   callbacks: [],
@@ -10728,23 +10851,23 @@ const JSTimersExecution = {
 
   errors: null,
 
-  callTimer(timerID, frameTime, didTimeout) {
+  callTimer: function (timerID, frameTime, didTimeout) {
     warning(timerID <= JSTimersExecution.GUID, 'Tried to call timer with ID %s but no such timer exists.', timerID);
 
-    const timerIndex = JSTimersExecution.timerIDs.indexOf(timerID);
+    var timerIndex = JSTimersExecution.timerIDs.indexOf(timerID);
     if (timerIndex === -1) {
       return;
     }
 
-    const type = JSTimersExecution.types[timerIndex];
-    const callback = JSTimersExecution.callbacks[timerIndex];
+    var type = JSTimersExecution.types[timerIndex];
+    var callback = JSTimersExecution.callbacks[timerIndex];
     if (!callback || !type) {
       console.error('No callback found for timerID ' + timerID);
       return;
     }
 
     if (__DEV__) {
-      const identifier = JSTimersExecution.identifiers[timerIndex] || {};
+      var identifier = JSTimersExecution.identifiers[timerIndex] || {};
       Systrace.beginEvent('Systrace.callTimer: ' + identifier.methodName);
     }
 
@@ -10779,28 +10902,28 @@ const JSTimersExecution = {
       Systrace.endEvent();
     }
   },
-
-  callTimers(timerIDs) {
+  callTimers: function (timerIDs) {
     invariant(timerIDs.length !== 0, 'Cannot call `callTimers` with an empty list of IDs.');
 
     JSTimersExecution.errors = null;
-    for (let i = 0; i < timerIDs.length; i++) {
+    for (var i = 0; i < timerIDs.length; i++) {
       JSTimersExecution.callTimer(timerIDs[i], 0);
     }
 
-    const errors = JSTimersExecution.errors;
+    var errors = JSTimersExecution.errors;
     if (errors) {
-      const errorCount = errors.length;
+      var errorCount = errors.length;
       if (errorCount > 1) {
-        for (let ii = 1; ii < errorCount; ii++) {
-          require(45        ).setTimeout((error => { // 45 = JSTimers
+        for (var ii = 1; ii < errorCount; ii++) {
+          require(45        ).setTimeout(function (error) { // 45 = JSTimers
             throw error;
-          }).bind(null, errors[ii]), 0);
+          }.bind(null, errors[ii]), 0);
         }
       }
       throw errors[0];
     }
   },
+
 
   callIdleCallbacks: function (frameTime) {
     if (FRAME_DURATION - (performanceNow() - frameTime) < IDLE_CALLBACK_FRAME_DEADLINE) {
@@ -10809,36 +10932,38 @@ const JSTimersExecution = {
 
     JSTimersExecution.errors = null;
     if (JSTimersExecution.requestIdleCallbacks.length > 0) {
-      const passIdleCallbacks = JSTimersExecution.requestIdleCallbacks.slice();
+      var passIdleCallbacks = JSTimersExecution.requestIdleCallbacks.slice();
       JSTimersExecution.requestIdleCallbacks = [];
 
-      for (let i = 0; i < passIdleCallbacks.length; ++i) {
+      for (var i = 0; i < passIdleCallbacks.length; ++i) {
         JSTimersExecution.callTimer(passIdleCallbacks[i], frameTime);
       }
     }
 
     if (JSTimersExecution.requestIdleCallbacks.length === 0) {
-      const { Timing } = require(36             ); // 36 = NativeModules
+      var { Timing: Timing } = require(36             ); // 36 = NativeModules
       Timing.setSendIdleEvents(false);
     }
 
     if (JSTimersExecution.errors) {
-      JSTimersExecution.errors.forEach(error => require(45        ).setTimeout(() => { // 45 = JSTimers
-        throw error;
-      }, 0));
+      JSTimersExecution.errors.forEach(function (error) {
+        return require(45        ).setTimeout(function () { // 45 = JSTimers
+          throw error;
+        }, 0);
+      });
     }
   },
 
-  callImmediatesPass() {
+  callImmediatesPass: function () {
     if (__DEV__) {
       Systrace.beginEvent('JSTimersExecution.callImmediatesPass()');
     }
 
     if (JSTimersExecution.immediates.length > 0) {
-      const passImmediates = JSTimersExecution.immediates.slice();
+      var passImmediates = JSTimersExecution.immediates.slice();
       JSTimersExecution.immediates = [];
 
-      for (let i = 0; i < passImmediates.length; ++i) {
+      for (var i = 0; i < passImmediates.length; ++i) {
         JSTimersExecution.callTimer(passImmediates[i], 0);
       }
     }
@@ -10848,26 +10973,25 @@ const JSTimersExecution = {
     }
     return JSTimersExecution.immediates.length > 0;
   },
-
-  callImmediates() {
+  callImmediates: function () {
     JSTimersExecution.errors = null;
     while (JSTimersExecution.callImmediatesPass()) {}
     if (JSTimersExecution.errors) {
-      JSTimersExecution.errors.forEach(error => require(45        ).setTimeout(() => { // 45 = JSTimers
-        throw error;
-      }, 0));
+      JSTimersExecution.errors.forEach(function (error) {
+        return require(45        ).setTimeout(function () { // 45 = JSTimers
+          throw error;
+        }, 0);
+      });
     }
   },
-
-  emitTimeDriftWarning(warningMessage) {
+  emitTimeDriftWarning: function (warningMessage) {
     if (hasEmittedTimeDriftWarning) {
       return;
     }
     hasEmittedTimeDriftWarning = true;
     console.warn(warningMessage);
   },
-
-  _clearIndex(i) {
+  _clearIndex: function (i) {
     JSTimersExecution.timerIDs[i] = null;
     JSTimersExecution.callbacks[i] = null;
     JSTimersExecution.types[i] = null;
@@ -10880,28 +11004,28 @@ module.exports = JSTimersExecution;
 __d(/* Systrace */function(global, require, module, exports) {
 'use strict';
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-const TRACE_TAG_REACT_APPS = 1 << 17;
-const TRACE_TAG_JSC_CALLS = 1 << 27;
+var TRACE_TAG_REACT_APPS = 1 << 17;
+var TRACE_TAG_JSC_CALLS = 1 << 27;
 
-let _enabled = false;
-let _asyncCookie = 0;
-const _markStack = [];
-let _markStackIndex = -1;
+var _enabled = false;
+var _asyncCookie = 0;
+var _markStack = [];
+var _markStackIndex = -1;
 
-const REACT_MARKER = '\u269B';
-const userTimingPolyfill = {
-  mark(markName) {
+var REACT_MARKER = '\u269B';
+var userTimingPolyfill = {
+  mark: function (markName) {
     if (__DEV__) {
       if (_enabled) {
         _markStackIndex++;
         _markStack[_markStackIndex] = markName;
-        let systraceLabel = markName;
+        var systraceLabel = markName;
 
         if (markName[0] === REACT_MARKER) {
-          const indexOfId = markName.lastIndexOf(' (#');
-          const cutoffIndex = indexOfId !== -1 ? indexOfId : markName.length;
+          var indexOfId = markName.lastIndexOf(' (#');
+          var cutoffIndex = indexOfId !== -1 ? indexOfId : markName.length;
 
           systraceLabel = markName.slice(2, cutoffIndex);
         }
@@ -10909,11 +11033,11 @@ const userTimingPolyfill = {
       }
     }
   },
-  measure(measureName, startMark, endMark) {
+  measure: function (measureName, startMark, endMark) {
     if (__DEV__) {
       if (_enabled) {
         invariant(typeof measureName === 'string' && typeof startMark === 'string' && typeof endMark === 'undefined', 'Only performance.measure(string, string) overload is supported.');
-        const topMark = _markStack[_markStackIndex];
+        var topMark = _markStack[_markStackIndex];
         invariant(startMark === topMark, 'There was a mismatching performance.measure() call. ' + 'Expected "%s" but got "%s."', topMark, startMark);
         _markStackIndex--;
 
@@ -10921,7 +11045,7 @@ const userTimingPolyfill = {
       }
     }
   },
-  clearMarks(markName) {
+  clearMarks: function (markName) {
     if (__DEV__) {
       if (_enabled) {
         if (_markStackIndex === -1) {
@@ -10933,15 +11057,14 @@ const userTimingPolyfill = {
       }
     }
   },
-  clearMeasures() {}
+  clearMeasures: function () {}
 };
 
-const Systrace = {
-  getUserTimingPolyfill() {
+var Systrace = {
+  getUserTimingPolyfill: function () {
     return userTimingPolyfill;
   },
-
-  setEnabled(enabled) {
+  setEnabled: function (enabled) {
     if (_enabled !== enabled) {
       if (__DEV__) {
         if (enabled) {
@@ -10953,26 +11076,22 @@ const Systrace = {
       _enabled = enabled;
     }
   },
-
-  isEnabled() {
+  isEnabled: function () {
     return _enabled;
   },
-
-  beginEvent(profileName, args) {
+  beginEvent: function (profileName, args) {
     if (_enabled) {
       profileName = typeof profileName === 'function' ? profileName() : profileName;
       global.nativeTraceBeginSection(TRACE_TAG_REACT_APPS, profileName, args);
     }
   },
-
-  endEvent() {
+  endEvent: function () {
     if (_enabled) {
       global.nativeTraceEndSection(TRACE_TAG_REACT_APPS);
     }
   },
-
-  beginAsyncEvent(profileName) {
-    const cookie = _asyncCookie;
+  beginAsyncEvent: function (profileName) {
+    var cookie = _asyncCookie;
     if (_enabled) {
       _asyncCookie++;
       profileName = typeof profileName === 'function' ? profileName() : profileName;
@@ -10980,63 +11099,57 @@ const Systrace = {
     }
     return cookie;
   },
-
-  endAsyncEvent(profileName, cookie) {
+  endAsyncEvent: function (profileName, cookie) {
     if (_enabled) {
       profileName = typeof profileName === 'function' ? profileName() : profileName;
       global.nativeTraceEndAsyncSection(TRACE_TAG_REACT_APPS, profileName, cookie, 0);
     }
   },
-
-  counterEvent(profileName, value) {
+  counterEvent: function (profileName, value) {
     if (_enabled) {
       profileName = typeof profileName === 'function' ? profileName() : profileName;
       global.nativeTraceCounter && global.nativeTraceCounter(TRACE_TAG_REACT_APPS, profileName, value);
     }
   },
-
-  attachToRelayProfiler(relayProfiler) {
-    relayProfiler.attachProfileHandler('*', name => {
-      const cookie = Systrace.beginAsyncEvent(name);
-      return () => {
+  attachToRelayProfiler: function (relayProfiler) {
+    relayProfiler.attachProfileHandler('*', function (name) {
+      var cookie = Systrace.beginAsyncEvent(name);
+      return function () {
         Systrace.endAsyncEvent(name, cookie);
       };
     });
 
-    relayProfiler.attachAggregateHandler('*', (name, callback) => {
+    relayProfiler.attachAggregateHandler('*', function (name, callback) {
       Systrace.beginEvent(name);
       callback();
       Systrace.endEvent();
     });
   },
-
-  swizzleJSON() {
+  swizzleJSON: function () {
     Systrace.measureMethods(JSON, 'JSON', ['parse', 'stringify']);
   },
-
-  measureMethods(object, objectName, methodNames) {
+  measureMethods: function (object, objectName, methodNames) {
     if (!__DEV__) {
       return;
     }
 
-    methodNames.forEach(methodName => {
+    methodNames.forEach(function (methodName) {
       object[methodName] = Systrace.measure(objectName, methodName, object[methodName]);
     });
   },
-
-  measure(objName, fnName, func) {
+  measure: function (objName, fnName, func) {
     if (!__DEV__) {
       return func;
     }
 
-    const profileName = `${objName}.${fnName}`;
+    var profileName = objName + '.' + fnName;
     return function () {
       if (!_enabled) {
         return func.apply(this, arguments);
       }
 
       Systrace.beginEvent(profileName);
-      const ret = func.apply(this, arguments);
+      var ret = func.apply(this, arguments);
       Systrace.endEvent();
       return ret;
     };
@@ -11104,14 +11217,14 @@ module.exports = ExecutionEnvironment;
 __d(/* JSTimers */function(global, require, module, exports) {
 'use strict';
 
-const JSTimersExecution = require(40                 ); // 40 = JSTimersExecution
-const Platform = require(46        ); // 46 = Platform
+var JSTimersExecution = require(40                 ); // 40 = JSTimersExecution
+var Platform = require(46        ); // 46 = Platform
 
-const { Timing } = require(36             ); // 36 = NativeModules
-const performanceNow = require(42                       ); // 42 = fbjs/lib/performanceNow
+var { Timing: Timing } = require(36             ); // 36 = NativeModules
+var performanceNow = require(42                       ); // 42 = fbjs/lib/performanceNow
 
 function _getFreeIndex() {
-  let freeIndex = JSTimersExecution.timerIDs.indexOf(null);
+  var freeIndex = JSTimersExecution.timerIDs.indexOf(null);
   if (freeIndex === -1) {
     freeIndex = JSTimersExecution.timerIDs.length;
   }
@@ -11119,16 +11232,16 @@ function _getFreeIndex() {
 }
 
 function _allocateCallback(func, type) {
-  const id = JSTimersExecution.GUID++;
-  const freeIndex = _getFreeIndex();
+  var id = JSTimersExecution.GUID++;
+  var freeIndex = _getFreeIndex();
   JSTimersExecution.timerIDs[freeIndex] = id;
   JSTimersExecution.callbacks[freeIndex] = func;
   JSTimersExecution.types[freeIndex] = type;
   if (__DEV__) {
-    const parseErrorStack = require(47               ); // 47 = parseErrorStack
-    const e = new Error();
+    var parseErrorStack = require(47               ); // 47 = parseErrorStack
+    var e = new Error();
     e.framesToPop = 1;
-    const stack = parseErrorStack(e);
+    var stack = parseErrorStack(e);
     if (stack) {
       JSTimersExecution.identifiers[freeIndex] = stack.shift();
     }
@@ -11141,27 +11254,29 @@ function _freeCallback(timerID) {
     return;
   }
 
-  const index = JSTimersExecution.timerIDs.indexOf(timerID);
+  var index = JSTimersExecution.timerIDs.indexOf(timerID);
 
   if (index !== -1) {
     JSTimersExecution._clearIndex(index);
-    const type = JSTimersExecution.types[index];
+    var type = JSTimersExecution.types[index];
     if (type !== 'setImmediate' && type !== 'requestIdleCallback') {
       Timing.deleteTimer(timerID);
     }
   }
 }
 
-const MAX_TIMER_DURATION_MS = 60 * 1000;
-const IS_ANDROID = Platform.OS === 'android';
-const ANDROID_LONG_TIMER_MESSAGE = 'Setting a timer for a long period of time, i.e. multiple minutes, is a ' + 'performance and correctness issue on Android as it keeps the timer ' + 'module awake, and timers can only be called when the app is in the foreground. ' + 'See https://github.com/facebook/react-native/issues/12981 for more info.';
+var MAX_TIMER_DURATION_MS = 60 * 1000;
+var IS_ANDROID = Platform.OS === 'android';
+var ANDROID_LONG_TIMER_MESSAGE = 'Setting a timer for a long period of time, i.e. multiple minutes, is a ' + 'performance and correctness issue on Android as it keeps the timer ' + 'module awake, and timers can only be called when the app is in the foreground. ' + 'See https://github.com/facebook/react-native/issues/12981 for more info.';
 
-const JSTimers = {
+var JSTimers = {
   setTimeout: function (func, duration, ...args) {
     if (__DEV__ && IS_ANDROID && duration > MAX_TIMER_DURATION_MS) {
       console.warn(ANDROID_LONG_TIMER_MESSAGE + '\n' + '(Saw setTimeout with duration ' + duration + 'ms)');
     }
-    const id = _allocateCallback(() => func.apply(undefined, args), 'setTimeout');
+    var id = _allocateCallback(function () {
+      return func.apply(undefined, args);
+    }, 'setTimeout');
     Timing.createTimer(id, duration || 0, Date.now(), false);
     return id;
   },
@@ -11170,19 +11285,23 @@ const JSTimers = {
     if (__DEV__ && IS_ANDROID && duration > MAX_TIMER_DURATION_MS) {
       console.warn(ANDROID_LONG_TIMER_MESSAGE + '\n' + '(Saw setInterval with duration ' + duration + 'ms)');
     }
-    const id = _allocateCallback(() => func.apply(undefined, args), 'setInterval');
+    var id = _allocateCallback(function () {
+      return func.apply(undefined, args);
+    }, 'setInterval');
     Timing.createTimer(id, duration || 0, Date.now(), true);
     return id;
   },
 
   setImmediate: function (func, ...args) {
-    const id = _allocateCallback(() => func.apply(undefined, args), 'setImmediate');
+    var id = _allocateCallback(function () {
+      return func.apply(undefined, args);
+    }, 'setImmediate');
     JSTimersExecution.immediates.push(id);
     return id;
   },
 
   requestAnimationFrame: function (func) {
-    const id = _allocateCallback(func, 'requestAnimationFrame');
+    var id = _allocateCallback(func, 'requestAnimationFrame');
     Timing.createTimer(id, 1, Date.now(), false);
     return id;
   },
@@ -11192,9 +11311,9 @@ const JSTimers = {
       Timing.setSendIdleEvents(true);
     }
 
-    const timeout = options && options.timeout;
-    const id = _allocateCallback(timeout != null ? deadline => {
-      const timeoutId = JSTimersExecution.requestIdleCallbackTimeouts.get(id);
+    var timeout = options && options.timeout;
+    var id = _allocateCallback(timeout != null ? function (deadline) {
+      var timeoutId = JSTimersExecution.requestIdleCallbackTimeouts.get(id);
       if (timeoutId) {
         JSTimers.clearTimeout(timeoutId);
         JSTimersExecution.requestIdleCallbackTimeouts.delete(id);
@@ -11204,8 +11323,8 @@ const JSTimers = {
     JSTimersExecution.requestIdleCallbacks.push(id);
 
     if (timeout != null) {
-      const timeoutId = JSTimers.setTimeout(() => {
-        const index = JSTimersExecution.requestIdleCallbacks.indexOf(id);
+      var timeoutId = JSTimers.setTimeout(function () {
+        var index = JSTimersExecution.requestIdleCallbacks.indexOf(id);
         if (index > -1) {
           JSTimersExecution.requestIdleCallbacks.splice(index, 1);
           JSTimersExecution.callTimer(id, performanceNow(), true);
@@ -11222,12 +11341,12 @@ const JSTimers = {
 
   cancelIdleCallback: function (timerID) {
     _freeCallback(timerID);
-    const index = JSTimersExecution.requestIdleCallbacks.indexOf(timerID);
+    var index = JSTimersExecution.requestIdleCallbacks.indexOf(timerID);
     if (index !== -1) {
       JSTimersExecution.requestIdleCallbacks.splice(index, 1);
     }
 
-    const timeoutId = JSTimersExecution.requestIdleCallbackTimeouts.get(timerID);
+    var timeoutId = JSTimersExecution.requestIdleCallbackTimeouts.get(timerID);
     if (timeoutId) {
       JSTimers.clearTimeout(timeoutId);
       JSTimersExecution.requestIdleCallbackTimeouts.delete(timerID);
@@ -11248,7 +11367,7 @@ const JSTimers = {
 
   clearImmediate: function (timerID) {
     _freeCallback(timerID);
-    const index = JSTimersExecution.immediates.indexOf(timerID);
+    var index = JSTimersExecution.immediates.indexOf(timerID);
     if (index !== -1) {
       JSTimersExecution.immediates.splice(index, 1);
     }
@@ -11265,15 +11384,17 @@ __d(/* Platform */function(global, require, module, exports) {
 
 "use strict";
 
-const NativeModules = require(36             ); // 36 = NativeModules
+var NativeModules = require(36             ); // 36 = NativeModules
 
-const Platform = {
+var Platform = {
   OS: "web",
   get ForceTouchAvailable() {
-    const constants = NativeModules.PlatformConstants;
+    var constants = NativeModules.PlatformConstants;
     return constants ? !!constants.forceTouchAvailable : false;
   },
-  select: obj => "web" in obj ? obj.web : obj.default
+  select: function (obj) {
+    return "web" in obj ? obj.web : obj.default;
+  }
 };
 
 module.exports = Platform;
@@ -11434,12 +11555,12 @@ __d(/* defineLazyObjectProperty */function(global, require, module, exports) {
 'use strict';
 
 function defineLazyObjectProperty(object, name, descriptor) {
-  const { get } = descriptor;
-  const enumerable = descriptor.enumerable !== false;
-  const writable = descriptor.writable !== false;
+  var { get: get } = descriptor;
+  var enumerable = descriptor.enumerable !== false;
+  var writable = descriptor.writable !== false;
 
-  let value;
-  let valueSet = false;
+  var value = void 0;
+  var valueSet = false;
   function getValue() {
     if (!valueSet) {
       valueSet = true;
@@ -11453,8 +11574,8 @@ function defineLazyObjectProperty(object, name, descriptor) {
     Object.defineProperty(object, name, {
       value: newValue,
       configurable: true,
-      enumerable,
-      writable
+      enumerable: enumerable,
+      writable: writable
     });
   }
 
@@ -11462,7 +11583,7 @@ function defineLazyObjectProperty(object, name, descriptor) {
     get: getValue,
     set: setValue,
     configurable: true,
-    enumerable
+    enumerable: enumerable
   });
 }
 
@@ -11471,11 +11592,11 @@ module.exports = defineLazyObjectProperty;
 __d(/* symbolicateStackTrace */function(global, require, module, exports) {
 'use strict';
 
-const getDevServer = require(54            ); // 54 = getDevServer
+var getDevServer = require(54            ); // 54 = getDevServer
 
-const { SourceCode } = require(36             ); // 36 = NativeModules
+var { SourceCode: SourceCode } = require(36             ); // 36 = NativeModules
 
-let fetch;
+var fetch = void 0;
 
 function isSourcedFromDisk(sourcePath) {
   return !/^http/.test(sourcePath) && /[\\/]/.test(sourcePath);
@@ -11486,16 +11607,16 @@ async function symbolicateStackTrace(stack) {
     fetch = global.fetch || require(55     ).fetch; // 55 = fetch
   }
 
-  const devServer = getDevServer();
+  var devServer = getDevServer();
   if (!devServer.bundleLoadedFromServer) {
     throw new Error('Bundle was not loaded from the packager');
   }
 
-  let stackCopy = stack;
+  var stackCopy = stack;
 
   if (SourceCode.scriptURL) {
-    let foundInternalSource = false;
-    stackCopy = stack.map(frame => {
+    var foundInternalSource = false;
+    stackCopy = stack.map(function (frame) {
       if (!foundInternalSource && isSourcedFromDisk(frame.file)) {
         return babelHelpers.extends({}, frame, { file: SourceCode.scriptURL });
       }
@@ -11505,11 +11626,11 @@ async function symbolicateStackTrace(stack) {
     });
   }
 
-  const response = await fetch(devServer.url + 'symbolicate', {
+  var response = await fetch(devServer.url + 'symbolicate', {
     method: 'POST',
     body: JSON.stringify({ stack: stackCopy })
   });
-  const json = await response.json();
+  var json = await response.json();
   return json.stack;
 }
 
@@ -11518,14 +11639,14 @@ module.exports = symbolicateStackTrace;
 __d(/* getDevServer */function(global, require, module, exports) {
 'use strict';
 
-const { SourceCode } = require(36             ); // 36 = NativeModules
+var { SourceCode: SourceCode } = require(36             ); // 36 = NativeModules
 
-let _cachedDevServerURL;
-const FALLBACK = 'http://localhost:8081/';
+var _cachedDevServerURL = void 0;
+var FALLBACK = 'http://localhost:8081/';
 
 function getDevServer() {
   if (_cachedDevServerURL === undefined) {
-    const match = SourceCode.scriptURL && SourceCode.scriptURL.match(/^https?:\/\/.*?\//);
+    var match = SourceCode.scriptURL && SourceCode.scriptURL.match(/^https?:\/\/.*?\//);
     _cachedDevServerURL = match ? match[0] : null;
   }
 
@@ -11542,7 +11663,7 @@ __d(/* fetch */function(global, require, module, exports) {
 
 require(56            ); // 56 = whatwg-fetch
 
-module.exports = { fetch, Headers, Request, Response };
+module.exports = { fetch: fetch, Headers: Headers, Request: Request, Response: Response };
 }, 55, null, "fetch");
 __d(/* whatwg-fetch/fetch.js */function(global, require, module, exports) {'use strict';
 
@@ -12017,18 +12138,18 @@ if (global.window === undefined) {
   global.window = global;
 }
 
-const defineLazyObjectProperty = require(52                        ); // 52 = defineLazyObjectProperty
+var defineLazyObjectProperty = require(52                        ); // 52 = defineLazyObjectProperty
 
 function defineProperty(object, name, getValue, eager) {
-  const descriptor = Object.getOwnPropertyDescriptor(object, name);
+  var descriptor = Object.getOwnPropertyDescriptor(object, name);
   if (descriptor) {
-    const backupName = `original${name[0].toUpperCase()}${name.substr(1)}`;
+    var backupName = 'original' + name[0].toUpperCase() + name.substr(1);
     Object.defineProperty(object, backupName, babelHelpers.extends({}, descriptor, {
       value: object[name]
     }));
   }
 
-  const { enumerable, writable, configurable } = descriptor || {};
+  var { enumerable: enumerable, writable: writable, configurable: configurable } = descriptor || {};
   if (descriptor && !configurable) {
     console.error('Failed to set polyfill. ' + name + ' is not configurable.');
     return;
@@ -12056,7 +12177,7 @@ if (!global.process.env.NODE_ENV) {
   global.process.env.NODE_ENV = __DEV__ ? 'development' : 'production';
 }
 
-const Systrace = require(41        ); // 41 = Systrace
+var Systrace = require(41        ); // 41 = Systrace
 Systrace.setEnabled(global.__RCTProfileIsProfiling || false);
 if (__DEV__) {
   if (global.performance === undefined) {
@@ -12064,15 +12185,25 @@ if (__DEV__) {
   }
 }
 
-const ExceptionsManager = require(35                 ); // 35 = ExceptionsManager
+var ExceptionsManager = require(35                 ); // 35 = ExceptionsManager
 ExceptionsManager.installConsoleErrorReporter();
 
-const BatchedBridge = require(37             ); // 37 = BatchedBridge
-BatchedBridge.registerLazyCallableModule('Systrace', () => require(41        )); // 41 = Systrace
-BatchedBridge.registerLazyCallableModule('JSTimersExecution', () => require(40                 )); // 40 = JSTimersExecution
-BatchedBridge.registerLazyCallableModule('HeapCapture', () => require(58           )); // 58 = HeapCapture
-BatchedBridge.registerLazyCallableModule('SamplingProfiler', () => require(59                )); // 59 = SamplingProfiler
-BatchedBridge.registerLazyCallableModule('RCTLog', () => require(60      )); // 60 = RCTLog
+var BatchedBridge = require(37             ); // 37 = BatchedBridge
+BatchedBridge.registerLazyCallableModule('Systrace', function () {
+  return require(41        ); // 41 = Systrace
+});
+BatchedBridge.registerLazyCallableModule('JSTimersExecution', function () {
+  return require(40                 ); // 40 = JSTimersExecution
+});
+BatchedBridge.registerLazyCallableModule('HeapCapture', function () {
+  return require(58           ); // 58 = HeapCapture
+});
+BatchedBridge.registerLazyCallableModule('SamplingProfiler', function () {
+  return require(59                ); // 59 = SamplingProfiler
+});
+BatchedBridge.registerLazyCallableModule('RCTLog', function () {
+  return require(60      ); // 60 = RCTLog
+});
 
 if (__DEV__) {
   if (!global.__RCTProfileIsProfiling) {
@@ -12081,7 +12212,7 @@ if (__DEV__) {
 }
 
 if (!global.__fbDisableExceptionsManager) {
-  const handleError = (e, isFatal) => {
+  var handleError = function (e, isFatal) {
     try {
       ExceptionsManager.handleException(e, isFatal);
     } catch (ee) {
@@ -12091,12 +12222,14 @@ if (!global.__fbDisableExceptionsManager) {
     }
   };
 
-  const ErrorUtils = require(39          ); // 39 = ErrorUtils
+  var ErrorUtils = require(39          ); // 39 = ErrorUtils
   ErrorUtils.setGlobalHandler(handleError);
 }
 
-const defineLazyTimer = name => {
-  defineProperty(global, name, () => require(45        )[name]); // 45 = JSTimers
+var defineLazyTimer = function (name) {
+  defineProperty(global, name, function () {
+    return require(45        )[name]; // 45 = JSTimers
+  });
 };
 defineLazyTimer('setTimeout');
 defineLazyTimer('setInterval');
@@ -12115,33 +12248,57 @@ if (!global.alert) {
   };
 }
 
-defineProperty(global, 'Promise', () => require(88       )); // 88 = Promise
+defineProperty(global, 'Promise', function () {
+  return require(88       ); // 88 = Promise
+});
 
-defineProperty(global, 'regeneratorRuntime', () => {
+defineProperty(global, 'regeneratorRuntime', function () {
   delete global.regeneratorRuntime;
   require(96                           ); // 96 = regenerator-runtime/runtime
   return global.regeneratorRuntime;
 });
 
-defineProperty(global, 'XMLHttpRequest', () => require(97              )); // 97 = XMLHttpRequest
-defineProperty(global, 'FormData', () => require(99        )); // 99 = FormData
+defineProperty(global, 'XMLHttpRequest', function () {
+  return require(97              ); // 97 = XMLHttpRequest
+});
+defineProperty(global, 'FormData', function () {
+  return require(99        ); // 99 = FormData
+});
 
-defineProperty(global, 'fetch', () => require(55     ).fetch); // 55 = fetch
-defineProperty(global, 'Headers', () => require(55     ).Headers); // 55 = fetch
-defineProperty(global, 'Request', () => require(55     ).Request); // 55 = fetch
-defineProperty(global, 'Response', () => require(55     ).Response); // 55 = fetch
-defineProperty(global, 'WebSocket', () => require(62         )); // 62 = WebSocket
+defineProperty(global, 'fetch', function () {
+  return require(55     ).fetch; // 55 = fetch
+});
+defineProperty(global, 'Headers', function () {
+  return require(55     ).Headers; // 55 = fetch
+});
+defineProperty(global, 'Request', function () {
+  return require(55     ).Request; // 55 = fetch
+});
+defineProperty(global, 'Response', function () {
+  return require(55     ).Response; // 55 = fetch
+});
+defineProperty(global, 'WebSocket', function () {
+  return require(62         ); // 62 = WebSocket
+});
 
-let navigator = global.navigator;
+var navigator = global.navigator;
 if (navigator === undefined) {
   global.navigator = navigator = {};
 }
 
-defineProperty(navigator, 'product', () => 'ReactNative', true);
-defineProperty(navigator, 'geolocation', () => require(100          )); // 100 = Geolocation
+defineProperty(navigator, 'product', function () {
+  return 'ReactNative';
+}, true);
+defineProperty(navigator, 'geolocation', function () {
+  return require(100          ); // 100 = Geolocation
+});
 
-defineProperty(global, 'Map', () => require(102  ), true); // 102 = Map
-defineProperty(global, 'Set', () => require(107  ), true); // 107 = Set
+defineProperty(global, 'Map', function () {
+  return require(102  ); // 102 = Map
+}, true);
+defineProperty(global, 'Set', function () {
+  return require(107  ); // 107 = Set
+}, true);
 
 if (__DEV__) {
   if (!global.__RCTProfileIsProfiling) {
@@ -12153,14 +12310,20 @@ if (__DEV__) {
 
     require(113               ); // 113 = RCTRenderingPerf
 
-    const JSInspector = require(114          ); // 114 = JSInspector
+    var JSInspector = require(114          ); // 114 = JSInspector
     JSInspector.registerAgent(require(115           )); // 115 = NetworkAgent
   }
 }
 
-BatchedBridge.registerLazyCallableModule('RCTDeviceEventEmitter', () => require(68                     )); // 68 = RCTDeviceEventEmitter
-BatchedBridge.registerLazyCallableModule('RCTNativeAppEventEmitter', () => require(117                       )); // 117 = RCTNativeAppEventEmitter
-BatchedBridge.registerLazyCallableModule('PerformanceLogger', () => require(118                )); // 118 = PerformanceLogger
+BatchedBridge.registerLazyCallableModule('RCTDeviceEventEmitter', function () {
+  return require(68                     ); // 68 = RCTDeviceEventEmitter
+});
+BatchedBridge.registerLazyCallableModule('RCTNativeAppEventEmitter', function () {
+  return require(117                       ); // 117 = RCTNativeAppEventEmitter
+});
+BatchedBridge.registerLazyCallableModule('PerformanceLogger', function () {
+  return require(118                ); // 118 = PerformanceLogger
+});
 }, 57, null, "InitializeCore");
 __d(/* HeapCapture */function(global, require, module, exports) {
 'use strict';
@@ -12208,9 +12371,9 @@ module.exports = SamplingProfiler;
 __d(/* RCTLog */function(global, require, module, exports) {
 'use strict';
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-const levelsMap = {
+var levelsMap = {
   log: 'log',
   info: 'info',
   warn: 'warn',
@@ -12218,20 +12381,22 @@ const levelsMap = {
   fatal: 'error'
 };
 
-let RCTLog = class RCTLog {
+var RCTLog = class RCTLog {
   static logIfNoNativeHook(...args) {
     if (typeof global.nativeLoggingHook === 'undefined') {
-      RCTLog.logToConsole(...args);
+      RCTLog.logToConsole.apply(RCTLog, args);
     }
 
     return true;
   }
 
   static logToConsole(level, ...args) {
-    const logFn = levelsMap[level];
+    var _console;
+
+    var logFn = levelsMap[level];
     invariant(logFn, 'Level "' + level + '" not one of ' + Object.keys(levelsMap));
 
-    console[logFn](...args);
+    (_console = console)[logFn].apply(_console, args);
 
     return true;
   }
@@ -12243,48 +12408,37 @@ module.exports = RCTLog;
 __d(/* HMRClient */function(global, require, module, exports) {
 'use strict';
 
-const Platform = require(46        ); // 46 = Platform
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var Platform = require(46        ); // 46 = Platform
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-const HMRClient = {
-  enable(platform, bundleEntry, host, port) {
+var HMRClient = {
+  enable: function (platform, bundleEntry, host, port) {
     invariant(platform, 'Missing required parameter `platform`');
     invariant(bundleEntry, 'Missing required paramenter `bundleEntry`');
     invariant(host, 'Missing required paramenter `host`');
 
-    const WebSocket = require(62         ); // 62 = WebSocket
+    var WebSocket = require(62         ); // 62 = WebSocket
 
-    const wsHostPort = port !== null && port !== '' ? `${host}:${port}` : host;
+    var wsHostPort = port !== null && port !== '' ? host + ':' + port : host;
 
-    const wsUrl = `ws://${wsHostPort}/hot?` + `platform=${platform}&` + `bundleEntry=${bundleEntry.replace('.bundle', '.js')}`;
+    var wsUrl = 'ws://' + wsHostPort + '/hot?' + ('platform=' + platform + '&') + ('bundleEntry=' + bundleEntry.replace('.bundle', '.js'));
 
-    const activeWS = new WebSocket(wsUrl);
-    activeWS.onerror = e => {
-      let error = `Hot loading isn't working because it cannot connect to the development server.
-
-Try the following to fix the issue:
-- Ensure that the packager server is running and available on the same network`;
+    var activeWS = new WebSocket(wsUrl);
+    activeWS.onerror = function (e) {
+      var error = 'Hot loading isn\'t working because it cannot connect to the development server.\n\nTry the following to fix the issue:\n- Ensure that the packager server is running and available on the same network';
 
       if (Platform.OS === 'ios') {
-        error += `
-- Ensure that the Packager server URL is correctly set in AppDelegate`;
+        error += '\n- Ensure that the Packager server URL is correctly set in AppDelegate';
       } else {
-        error += `
-- Ensure that your device/emulator is connected to your machine and has USB debugging enabled - run 'adb devices' to see a list of connected devices
-- If you're on a physical device connected to the same machine, run 'adb reverse tcp:8081 tcp:8081' to forward requests from your device
-- If your device is on the same Wi-Fi network, set 'Debug server host & port for device' in 'Dev settings' to your machine's IP address and the port of the local dev server - e.g. 10.0.1.1:8081`;
+        error += '\n- Ensure that your device/emulator is connected to your machine and has USB debugging enabled - run \'adb devices\' to see a list of connected devices\n- If you\'re on a physical device connected to the same machine, run \'adb reverse tcp:8081 tcp:8081\' to forward requests from your device\n- If your device is on the same Wi-Fi network, set \'Debug server host & port for device\' in \'Dev settings\' to your machine\'s IP address and the port of the local dev server - e.g. 10.0.1.1:8081';
       }
 
-      error += `
-
-URL: ${host}:${port}
-
-Error: ${e.message}`;
+      error += '\n\nURL: ' + host + ':' + port + '\n\nError: ' + e.message;
 
       throw new Error(error);
     };
-    activeWS.onmessage = ({ data }) => {
-      const HMRLoadingView = require(84              ); // 84 = HMRLoadingView
+    activeWS.onmessage = function ({ data: data }) {
+      var HMRLoadingView = require(84              ); // 84 = HMRLoadingView
 
       data = JSON.parse(data);
 
@@ -12296,27 +12450,27 @@ Error: ${e.message}`;
           }
         case 'update':
           {
-            const {
-              modules,
-              sourceMappingURLs,
-              sourceURLs,
-              inverseDependencies
+            var {
+              modules: modules,
+              sourceMappingURLs: sourceMappingURLs,
+              sourceURLs: sourceURLs,
+              inverseDependencies: inverseDependencies
             } = data.body;
 
             if (Platform.OS === 'ios') {
-              const RCTRedBox = require(36             ).RedBox; // 36 = NativeModules
+              var RCTRedBox = require(36             ).RedBox; // 36 = NativeModules
               RCTRedBox && RCTRedBox.dismiss && RCTRedBox.dismiss();
             } else {
-              const RCTExceptionsManager = require(36             ).ExceptionsManager; // 36 = NativeModules
+              var RCTExceptionsManager = require(36             ).ExceptionsManager; // 36 = NativeModules
               RCTExceptionsManager && RCTExceptionsManager.dismissRedbox && RCTExceptionsManager.dismissRedbox();
             }
 
-            modules.forEach(({ id, code }, i) => {
+            modules.forEach(function ({ id: id, code: code }, i) {
               code = code + '\n\n' + sourceMappingURLs[i];
 
-              const injectFunction = typeof global.nativeInjectHMRUpdate === 'function' ? global.nativeInjectHMRUpdate : eval;
+              var injectFunction = typeof global.nativeInjectHMRUpdate === 'function' ? global.nativeInjectHMRUpdate : eval;
 
-              code = ['__accept(', `${id},`, 'function(global,require,module,exports){', `${code}`, '\n},', `${JSON.stringify(inverseDependencies)}`, ');'].join('');
+              code = ['__accept(', id + ',', 'function(global,require,module,exports){', '' + code, '\n},', '' + JSON.stringify(inverseDependencies), ');'].join('');
 
               injectFunction(code, sourceURLs[i]);
             });
@@ -12336,7 +12490,7 @@ Error: ${e.message}`;
           }
         default:
           {
-            throw new Error(`Unexpected message: ${data}`);
+            throw new Error('Unexpected message: ' + data);
           }
       }
     };
@@ -12350,27 +12504,27 @@ __d(/* WebSocket */function(global, require, module, exports) {
 
 var _class, _temp;
 
-const NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
-const Platform = require(46        ); // 46 = Platform
-const RCTWebSocketModule = require(36             ).WebSocketModule; // 36 = NativeModules
-const WebSocketEvent = require(77              ); // 77 = WebSocketEvent
-const binaryToBase64 = require(78              ); // 78 = binaryToBase64
+var NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
+var Platform = require(46        ); // 46 = Platform
+var RCTWebSocketModule = require(36             ).WebSocketModule; // 36 = NativeModules
+var WebSocketEvent = require(77              ); // 77 = WebSocketEvent
+var binaryToBase64 = require(78              ); // 78 = binaryToBase64
 
-const EventTarget = require(80                 ); // 80 = event-target-shim
-const base64 = require(79         ); // 79 = base64-js
+var EventTarget = require(80                 ); // 80 = event-target-shim
+var base64 = require(79         ); // 79 = base64-js
 
-const CONNECTING = 0;
-const OPEN = 1;
-const CLOSING = 2;
-const CLOSED = 3;
+var CONNECTING = 0;
+var OPEN = 1;
+var CLOSING = 2;
+var CLOSED = 3;
 
-const CLOSE_NORMAL = 1000;
+var CLOSE_NORMAL = 1000;
 
-const WEBSOCKET_EVENTS = ['close', 'error', 'message', 'open'];
+var WEBSOCKET_EVENTS = ['close', 'error', 'message', 'open'];
 
-let nextWebSocketId = 0;
+var nextWebSocketId = 0;
 
-let WebSocket = (_temp = _class = class WebSocket extends EventTarget(...WEBSOCKET_EVENTS) {
+var WebSocket = (_temp = _class = class WebSocket extends EventTarget.apply(undefined, WEBSOCKET_EVENTS) {
 
   constructor(url, protocols, options) {
     super();
@@ -12434,8 +12588,8 @@ let WebSocket = (_temp = _class = class WebSocket extends EventTarget(...WEBSOCK
 
   _close(code, reason) {
     if (Platform.OS === 'android') {
-      const statusCode = typeof code === 'number' ? code : CLOSE_NORMAL;
-      const closeReason = typeof reason === 'string' ? reason : '';
+      var statusCode = typeof code === 'number' ? code : CLOSE_NORMAL;
+      var closeReason = typeof reason === 'string' ? reason : '';
       RCTWebSocketModule.close(statusCode, closeReason, this._socketId);
     } else {
       RCTWebSocketModule.close(this._socketId);
@@ -12443,48 +12597,52 @@ let WebSocket = (_temp = _class = class WebSocket extends EventTarget(...WEBSOCK
   }
 
   _unregisterEvents() {
-    this._subscriptions.forEach(e => e.remove());
+    this._subscriptions.forEach(function (e) {
+      return e.remove();
+    });
     this._subscriptions = [];
   }
 
   _registerEvents() {
-    this._subscriptions = [this._eventEmitter.addListener('websocketMessage', ev => {
-      if (ev.id !== this._socketId) {
+    var _this = this;
+
+    this._subscriptions = [this._eventEmitter.addListener('websocketMessage', function (ev) {
+      if (ev.id !== _this._socketId) {
         return;
       }
-      this.dispatchEvent(new WebSocketEvent('message', {
+      _this.dispatchEvent(new WebSocketEvent('message', {
         data: ev.type === 'binary' ? base64.toByteArray(ev.data).buffer : ev.data
       }));
-    }), this._eventEmitter.addListener('websocketOpen', ev => {
-      if (ev.id !== this._socketId) {
+    }), this._eventEmitter.addListener('websocketOpen', function (ev) {
+      if (ev.id !== _this._socketId) {
         return;
       }
-      this.readyState = this.OPEN;
-      this.dispatchEvent(new WebSocketEvent('open'));
-    }), this._eventEmitter.addListener('websocketClosed', ev => {
-      if (ev.id !== this._socketId) {
+      _this.readyState = _this.OPEN;
+      _this.dispatchEvent(new WebSocketEvent('open'));
+    }), this._eventEmitter.addListener('websocketClosed', function (ev) {
+      if (ev.id !== _this._socketId) {
         return;
       }
-      this.readyState = this.CLOSED;
-      this.dispatchEvent(new WebSocketEvent('close', {
+      _this.readyState = _this.CLOSED;
+      _this.dispatchEvent(new WebSocketEvent('close', {
         code: ev.code,
         reason: ev.reason
       }));
-      this._unregisterEvents();
-      this.close();
-    }), this._eventEmitter.addListener('websocketFailed', ev => {
-      if (ev.id !== this._socketId) {
+      _this._unregisterEvents();
+      _this.close();
+    }), this._eventEmitter.addListener('websocketFailed', function (ev) {
+      if (ev.id !== _this._socketId) {
         return;
       }
-      this.readyState = this.CLOSED;
-      this.dispatchEvent(new WebSocketEvent('error', {
+      _this.readyState = _this.CLOSED;
+      _this.dispatchEvent(new WebSocketEvent('error', {
         message: ev.message
       }));
-      this.dispatchEvent(new WebSocketEvent('close', {
+      _this.dispatchEvent(new WebSocketEvent('close', {
         message: ev.message
       }));
-      this._unregisterEvents();
-      this.close();
+      _this._unregisterEvents();
+      _this.close();
     })];
   }
 }, _class.CONNECTING = CONNECTING, _class.OPEN = OPEN, _class.CLOSING = CLOSING, _class.CLOSED = CLOSED, _class.isAvailable = !!RCTWebSocketModule, _temp);
@@ -12495,12 +12653,12 @@ module.exports = WebSocket;
 __d(/* NativeEventEmitter */function(global, require, module, exports) {
 'use strict';
 
-const EventEmitter = require(64            ); // 64 = EventEmitter
-const Platform = require(46        ); // 46 = Platform
-const RCTDeviceEventEmitter = require(68                     ); // 68 = RCTDeviceEventEmitter
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var EventEmitter = require(64            ); // 64 = EventEmitter
+var Platform = require(46        ); // 46 = Platform
+var RCTDeviceEventEmitter = require(68                     ); // 68 = RCTDeviceEventEmitter
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-let NativeEventEmitter = class NativeEventEmitter extends EventEmitter {
+var NativeEventEmitter = class NativeEventEmitter extends EventEmitter {
 
   constructor(nativeModule) {
     super(RCTDeviceEventEmitter.sharedSubscriber);
@@ -12520,7 +12678,7 @@ let NativeEventEmitter = class NativeEventEmitter extends EventEmitter {
   removeAllListeners(eventType) {
     invariant(eventType, 'eventType argument is required.');
     if (Platform.OS === 'ios') {
-      const count = this.listeners(eventType).length;
+      var count = this.listeners(eventType).length;
       this._nativeModule.removeListeners(count);
     }
     super.removeAllListeners(eventType);
@@ -12540,13 +12698,13 @@ module.exports = NativeEventEmitter;
 __d(/* EventEmitter */function(global, require, module, exports) {
 'use strict';
 
-const EmitterSubscription = require(65                   ); // 65 = EmitterSubscription
-const EventSubscriptionVendor = require(67                       ); // 67 = EventSubscriptionVendor
+var EmitterSubscription = require(65                   ); // 65 = EmitterSubscription
+var EventSubscriptionVendor = require(67                       ); // 67 = EventSubscriptionVendor
 
-const emptyFunction = require(16                      ); // 16 = fbjs/lib/emptyFunction
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var emptyFunction = require(16                      ); // 16 = fbjs/lib/emptyFunction
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-let EventEmitter = class EventEmitter {
+var EventEmitter = class EventEmitter {
   constructor(subscriber) {
     this._subscriber = subscriber || new EventSubscriptionVendor();
   }
@@ -12557,8 +12715,10 @@ let EventEmitter = class EventEmitter {
   }
 
   once(eventType, listener, context) {
-    return this.addListener(eventType, (...args) => {
-      this.removeCurrentListener();
+    var _this = this;
+
+    return this.addListener(eventType, function (...args) {
+      _this.removeCurrentListener();
       listener.apply(context, args);
     });
   }
@@ -12578,17 +12738,17 @@ let EventEmitter = class EventEmitter {
   }
 
   listeners(eventType) {
-    const subscriptions = this._subscriber.getSubscriptionsForType(eventType);
+    var subscriptions = this._subscriber.getSubscriptionsForType(eventType);
     return subscriptions ? subscriptions.filter(emptyFunction.thatReturnsTrue).map(function (subscription) {
       return subscription.listener;
     }) : [];
   }
 
   emit(eventType) {
-    const subscriptions = this._subscriber.getSubscriptionsForType(eventType);
+    var subscriptions = this._subscriber.getSubscriptionsForType(eventType);
     if (subscriptions) {
-      for (let i = 0, l = subscriptions.length; i < l; i++) {
-        const subscription = subscriptions[i];
+      for (var i = 0, l = subscriptions.length; i < l; i++) {
+        var subscription = subscriptions[i];
 
         if (subscription) {
           this._currentSubscription = subscription;
@@ -12600,10 +12760,10 @@ let EventEmitter = class EventEmitter {
   }
 
   removeListener(eventType, listener) {
-    const subscriptions = this._subscriber.getSubscriptionsForType(eventType);
+    var subscriptions = this._subscriber.getSubscriptionsForType(eventType);
     if (subscriptions) {
-      for (let i = 0, l = subscriptions.length; i < l; i++) {
-        const subscription = subscriptions[i];
+      for (var i = 0, l = subscriptions.length; i < l; i++) {
+        var subscription = subscriptions[i];
 
         if (subscription && subscription.listener === listener) {
           subscription.remove();
@@ -12619,9 +12779,9 @@ module.exports = EventEmitter;
 __d(/* EmitterSubscription */function(global, require, module, exports) {
 'use strict';
 
-const EventSubscription = require(66                 ); // 66 = EventSubscription
+var EventSubscription = require(66                 ); // 66 = EventSubscription
 
-let EmitterSubscription = class EmitterSubscription extends EventSubscription {
+var EmitterSubscription = class EmitterSubscription extends EventSubscription {
   constructor(emitter, subscriber, listener, context) {
     super(subscriber);
     this.emitter = emitter;
@@ -12640,7 +12800,7 @@ module.exports = EmitterSubscription;
 __d(/* EventSubscription */function(global, require, module, exports) {
 'use strict';
 
-let EventSubscription = class EventSubscription {
+var EventSubscription = class EventSubscription {
   constructor(subscriber) {
     this.subscriber = subscriber;
   }
@@ -12656,9 +12816,9 @@ module.exports = EventSubscription;
 __d(/* EventSubscriptionVendor */function(global, require, module, exports) {
 'use strict';
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-let EventSubscriptionVendor = class EventSubscriptionVendor {
+var EventSubscriptionVendor = class EventSubscriptionVendor {
 
   constructor() {
     this._subscriptionsForType = {};
@@ -12670,7 +12830,7 @@ let EventSubscriptionVendor = class EventSubscriptionVendor {
     if (!this._subscriptionsForType[eventType]) {
       this._subscriptionsForType[eventType] = [];
     }
-    const key = this._subscriptionsForType[eventType].length;
+    var key = this._subscriptionsForType[eventType].length;
     this._subscriptionsForType[eventType].push(subscription);
     subscription.eventType = eventType;
     subscription.key = key;
@@ -12686,10 +12846,10 @@ let EventSubscriptionVendor = class EventSubscriptionVendor {
   }
 
   removeSubscription(subscription) {
-    const eventType = subscription.eventType;
-    const key = subscription.key;
+    var eventType = subscription.eventType;
+    var key = subscription.key;
 
-    const subscriptionsForType = this._subscriptionsForType[eventType];
+    var subscriptionsForType = this._subscriptionsForType[eventType];
     if (subscriptionsForType) {
       delete subscriptionsForType[key];
     }
@@ -12706,13 +12866,13 @@ module.exports = EventSubscriptionVendor;
 __d(/* RCTDeviceEventEmitter */function(global, require, module, exports) {
 'use strict';
 
-const EventEmitter = require(64            ); // 64 = EventEmitter
-const EventSubscriptionVendor = require(67                       ); // 67 = EventSubscriptionVendor
+var EventEmitter = require(64            ); // 64 = EventEmitter
+var EventSubscriptionVendor = require(67                       ); // 67 = EventSubscriptionVendor
 
-let RCTDeviceEventEmitter = class RCTDeviceEventEmitter extends EventEmitter {
+var RCTDeviceEventEmitter = class RCTDeviceEventEmitter extends EventEmitter {
 
   constructor() {
-    const sharedSubscriber = new EventSubscriptionVendor();
+    var sharedSubscriber = new EventSubscriptionVendor();
     super(sharedSubscriber);
     this.sharedSubscriber = sharedSubscriber;
   }
@@ -12736,12 +12896,12 @@ let RCTDeviceEventEmitter = class RCTDeviceEventEmitter extends EventEmitter {
   }
 
   addListener(eventType, listener, context) {
-    const eventModule = this._nativeEventModule(eventType);
+    var eventModule = this._nativeEventModule(eventType);
     return eventModule ? eventModule.addListener(eventType, listener, context) : super.addListener(eventType, listener, context);
   }
 
   removeAllListeners(eventType) {
-    const eventModule = this._nativeEventModule(eventType);
+    var eventModule = this._nativeEventModule(eventType);
     eventModule && eventType ? eventModule.removeAllListeners(eventType) : super.removeAllListeners(eventType);
   }
 
@@ -12760,33 +12920,30 @@ module.exports = new RCTDeviceEventEmitter();
 __d(/* StatusBarIOS */function(global, require, module, exports) {
 'use strict';
 
-const NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
+var NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
 
 module.exports = new NativeEventEmitter('StatusBarManager');
 }, 69, null, "StatusBarIOS");
 __d(/* Keyboard */function(global, require, module, exports) {
 'use strict';
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
-const NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
-const KeyboardObserver = require(36             ).KeyboardObserver; // 36 = NativeModules
-const dismissKeyboard = require(71               ); // 71 = dismissKeyboard
-const KeyboardEventEmitter = new NativeEventEmitter(KeyboardObserver);
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
+var KeyboardObserver = require(36             ).KeyboardObserver; // 36 = NativeModules
+var dismissKeyboard = require(71               ); // 71 = dismissKeyboard
+var KeyboardEventEmitter = new NativeEventEmitter(KeyboardObserver);
 
-let Keyboard = {
-  addListener(eventName, callback) {
+var Keyboard = {
+  addListener: function (eventName, callback) {
     invariant(false, 'Dummy method used for documentation');
   },
-
-  removeListener(eventName, callback) {
+  removeListener: function (eventName, callback) {
     invariant(false, 'Dummy method used for documentation');
   },
-
-  removeAllListeners(eventName) {
+  removeAllListeners: function (eventName) {
     invariant(false, 'Dummy method used for documentation');
   },
-
-  dismiss() {
+  dismiss: function () {
     invariant(false, 'Dummy method used for documentation');
   }
 };
@@ -12848,13 +13005,13 @@ module.exports = TextInputState;
 __d(/* UIManager */function(global, require, module, exports) {
 'use strict';
 
-const NativeModules = require(36             ); // 36 = NativeModules
-const Platform = require(46        ); // 46 = Platform
+var NativeModules = require(36             ); // 36 = NativeModules
+var Platform = require(46        ); // 46 = Platform
 
-const defineLazyObjectProperty = require(52                        ); // 52 = defineLazyObjectProperty
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var defineLazyObjectProperty = require(52                        ); // 52 = defineLazyObjectProperty
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-const { UIManager } = NativeModules;
+var { UIManager: UIManager } = NativeModules;
 
 invariant(UIManager, 'UIManager is undefined. The native module config is probably incorrect.');
 
@@ -12864,15 +13021,15 @@ UIManager.takeSnapshot = function () {
 };
 
 if (Platform.OS === 'ios') {
-  Object.keys(UIManager).forEach(viewName => {
-    const viewConfig = UIManager[viewName];
+  Object.keys(UIManager).forEach(function (viewName) {
+    var viewConfig = UIManager[viewName];
     if (viewConfig.Manager) {
       defineLazyObjectProperty(viewConfig, 'Constants', {
-        get: () => {
-          const viewManager = NativeModules[viewConfig.Manager];
-          const constants = {};
-          viewManager && Object.keys(viewManager).forEach(key => {
-            const value = viewManager[key];
+        get: function () {
+          var viewManager = NativeModules[viewConfig.Manager];
+          var constants = {};
+          viewManager && Object.keys(viewManager).forEach(function (key) {
+            var value = viewManager[key];
             if (typeof value !== 'function') {
               constants[key] = value;
             }
@@ -12881,12 +13038,12 @@ if (Platform.OS === 'ios') {
         }
       });
       defineLazyObjectProperty(viewConfig, 'Commands', {
-        get: () => {
-          const viewManager = NativeModules[viewConfig.Manager];
-          const commands = {};
-          let index = 0;
-          viewManager && Object.keys(viewManager).forEach(key => {
-            const value = viewManager[key];
+        get: function () {
+          var viewManager = NativeModules[viewConfig.Manager];
+          var commands = {};
+          var index = 0;
+          viewManager && Object.keys(viewManager).forEach(function (key) {
+            var value = viewManager[key];
             if (typeof value === 'function') {
               commands[key] = index++;
             }
@@ -12897,9 +13054,11 @@ if (Platform.OS === 'ios') {
     }
   });
 } else if (Platform.OS === 'android' && UIManager.AndroidLazyViewManagersEnabled) {
-  UIManager.ViewManagerNames.forEach(viewManagerName => {
+  UIManager.ViewManagerNames.forEach(function (viewManagerName) {
     defineLazyObjectProperty(UIManager, viewManagerName, {
-      get: () => NativeModules[viewManagerName.replace(/^(RCT|RK)/, '')]
+      get: function () {
+        return NativeModules[viewManagerName.replace(/^(RCT|RK)/, '')];
+      }
     });
   });
 }
@@ -12909,18 +13068,20 @@ module.exports = UIManager;
 __d(/* AppState */function(global, require, module, exports) {
 'use strict';
 
-const MissingNativeEventEmitterShim = require(75                             ); // 75 = MissingNativeEventEmitterShim
-const NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
-const NativeModules = require(36             ); // 36 = NativeModules
-const RCTAppState = NativeModules.AppState;
+var MissingNativeEventEmitterShim = require(75                             ); // 75 = MissingNativeEventEmitterShim
+var NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
+var NativeModules = require(36             ); // 36 = NativeModules
+var RCTAppState = NativeModules.AppState;
 
-const logError = require(76        ); // 76 = logError
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var logError = require(76        ); // 76 = logError
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-let AppState = class AppState extends NativeEventEmitter {
+var AppState = class AppState extends NativeEventEmitter {
 
   constructor() {
-    super(RCTAppState);
+    var _this;
+
+    _this = super(RCTAppState);
 
     this.isAvailable = true;
     this.isAvailable = true;
@@ -12931,19 +13092,19 @@ let AppState = class AppState extends NativeEventEmitter {
 
     this.currentState = RCTAppState.initialAppState || 'active';
 
-    this.addListener('appStateDidChange', appStateData => {
-      this.currentState = appStateData.app_state;
+    this.addListener('appStateDidChange', function (appStateData) {
+      _this.currentState = appStateData.app_state;
     });
 
-    RCTAppState.getCurrentAppState(appStateData => {
-      this.currentState = appStateData.app_state;
+    RCTAppState.getCurrentAppState(function (appStateData) {
+      _this.currentState = appStateData.app_state;
     }, logError);
   }
 
   addEventListener(type, handler) {
     invariant(['change', 'memoryWarning'].indexOf(type) !== -1, 'Trying to subscribe to unknown event: "%s"', type);
     if (type === 'change') {
-      this._eventHandlers[type].set(handler, this.addListener('appStateDidChange', appStateData => {
+      this._eventHandlers[type].set(handler, this.addListener('appStateDidChange', function (appStateData) {
         handler(appStateData.app_state);
       }));
     } else if (type === 'memoryWarning') {
@@ -12963,7 +13124,7 @@ let AppState = class AppState extends NativeEventEmitter {
 
 
 if (__DEV__ && !RCTAppState) {
-  let MissingNativeAppStateShim = class MissingNativeAppStateShim extends MissingNativeEventEmitterShim {
+  var MissingNativeAppStateShim = class MissingNativeAppStateShim extends MissingNativeEventEmitterShim {
     constructor() {
       super('RCTAppState', 'AppState');
     }
@@ -12991,12 +13152,12 @@ module.exports = AppState;
 __d(/* MissingNativeEventEmitterShim */function(global, require, module, exports) {
 'use strict';
 
-const EmitterSubscription = require(65                   ); // 65 = EmitterSubscription
-const EventEmitter = require(64            ); // 64 = EventEmitter
+var EmitterSubscription = require(65                   ); // 65 = EmitterSubscription
+var EventEmitter = require(64            ); // 64 = EventEmitter
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-let MissingNativeEventEmitterShim = class MissingNativeEventEmitterShim extends EventEmitter {
+var MissingNativeEventEmitterShim = class MissingNativeEventEmitterShim extends EventEmitter {
 
   constructor(nativeModuleName, nativeEventEmitterName) {
     super(null);
@@ -13006,7 +13167,7 @@ let MissingNativeEventEmitterShim = class MissingNativeEventEmitterShim extends 
   }
 
   throwMissingNativeModule() {
-    invariant(false, `Cannot use '${this._nativeEventEmitterName}' module when ` + `native '${this._nativeModuleName}' is not included in the build. ` + `Either include it, or check '${this._nativeEventEmitterName}'.isAvailable ` + 'before calling any methods.');
+    invariant(false, 'Cannot use \'' + this._nativeEventEmitterName + '\' module when ' + ('native \'' + this._nativeModuleName + '\' is not included in the build. ') + ('Either include it, or check \'' + this._nativeEventEmitterName + '\'.isAvailable ') + 'before calling any methods.');
   }
 
   addListener(eventType, listener, context) {
@@ -13043,7 +13204,7 @@ __d(/* WebSocketEvent */function(global, require, module, exports) {
 
 'use strict';
 
-let WebSocketEvent = class WebSocketEvent {
+var WebSocketEvent = class WebSocketEvent {
   constructor(type, eventInitDict) {
     this.type = type.toString();
     Object.assign(this, eventInitDict);
@@ -13056,7 +13217,7 @@ module.exports = WebSocketEvent;
 __d(/* binaryToBase64 */function(global, require, module, exports) {
 'use strict';
 
-const base64 = require(79         ); // 79 = base64-js
+var base64 = require(79         ); // 79 = base64-js
 
 function binaryToBase64(data) {
   if (data instanceof ArrayBuffer) {
@@ -13068,7 +13229,7 @@ function binaryToBase64(data) {
   if (!ArrayBuffer.isView(data)) {
     throw new Error('data must be ArrayBuffer or typed array');
   }
-  const { buffer, byteOffset, byteLength } = data;
+  var { buffer: buffer, byteOffset: byteOffset, byteLength: byteLength } = data;
   return base64.fromByteArray(new Uint8Array(buffer, byteOffset, byteLength));
 }
 
@@ -13502,10 +13663,10 @@ __d(/* HMRLoadingView */function(global, require, module, exports) {
 
 "use strict";
 
-const processColor = require(85            ); // 85 = processColor
-const { DevLoadingView } = require(36             ); // 36 = NativeModules
+var processColor = require(85            ); // 85 = processColor
+var { DevLoadingView: DevLoadingView } = require(36             ); // 36 = NativeModules
 
-let HMRLoadingView = class HMRLoadingView {
+var HMRLoadingView = class HMRLoadingView {
   static showMessage(message) {
     DevLoadingView.showMessage(message, processColor("#000000"), processColor("#aaaaaa"));
   }
@@ -13521,16 +13682,16 @@ module.exports = HMRLoadingView;
 __d(/* processColor */function(global, require, module, exports) {
 'use strict';
 
-const Platform = require(46        ); // 46 = Platform
+var Platform = require(46        ); // 46 = Platform
 
-const normalizeColor = require(30              ); // 30 = normalizeColor
+var normalizeColor = require(30              ); // 30 = normalizeColor
 
 function processColor(color) {
   if (color === undefined || color === null) {
     return color;
   }
 
-  let int32Color = normalizeColor(color);
+  var int32Color = normalizeColor(color);
   if (int32Color === null || int32Color === undefined) {
     return undefined;
   }
@@ -13548,11 +13709,11 @@ module.exports = processColor;
 __d(/* Alert */function(global, require, module, exports) {
 'use strict';
 
-const AlertIOS = require(87        ); // 87 = AlertIOS
-const NativeModules = require(36             ); // 36 = NativeModules
-const Platform = require(46        ); // 46 = Platform
+var AlertIOS = require(87        ); // 87 = AlertIOS
+var NativeModules = require(36             ); // 36 = NativeModules
+var Platform = require(46        ); // 46 = Platform
 
-let Alert = class Alert {
+var Alert = class Alert {
 
   static alert(title, message, buttons, options, type) {
     if (Platform.OS === 'ios') {
@@ -13567,7 +13728,7 @@ let Alert = class Alert {
     }
   }
 };
-let AlertAndroid = class AlertAndroid {
+var AlertAndroid = class AlertAndroid {
 
   static alert(title, message, buttons, options) {
     var config = {
@@ -13592,7 +13753,9 @@ let AlertAndroid = class AlertAndroid {
     if (buttonPositive) {
       config = babelHelpers.extends({}, config, { buttonPositive: buttonPositive.text || '' });
     }
-    NativeModules.DialogManagerAndroid.showAlert(config, errorMessage => console.warn(errorMessage), (action, buttonKey) => {
+    NativeModules.DialogManagerAndroid.showAlert(config, function (errorMessage) {
+      return console.warn(errorMessage);
+    }, function (action, buttonKey) {
       if (action === NativeModules.DialogManagerAndroid.buttonClicked) {
         if (buttonKey === NativeModules.DialogManagerAndroid.buttonNeutral) {
           buttonNeutral.onPress && buttonNeutral.onPress();
@@ -13616,7 +13779,7 @@ __d(/* AlertIOS */function(global, require, module, exports) {
 
 var RCTAlertManager = require(36             ).AlertManager; // 36 = NativeModules
 
-let AlertIOS = class AlertIOS {
+var AlertIOS = class AlertIOS {
   static alert(title, message, callbackOrButtons, type) {
     if (typeof type !== 'undefined') {
       console.warn('AlertIOS.alert() with a 4th "type" parameter is deprecated and will be removed. Use AlertIOS.prompt() instead.');
@@ -13635,8 +13798,8 @@ let AlertIOS = class AlertIOS {
       RCTAlertManager.alertWithArgs({
         title: title || undefined,
         type: 'plain-text',
-        defaultValue
-      }, (id, value) => {
+        defaultValue: defaultValue
+      }, function (id, value) {
         callback(value);
       });
       return;
@@ -13649,7 +13812,7 @@ let AlertIOS = class AlertIOS {
     if (typeof callbackOrButtons === 'function') {
       callbacks = [callbackOrButtons];
     } else if (callbackOrButtons instanceof Array) {
-      callbackOrButtons.forEach((btn, index) => {
+      callbackOrButtons.forEach(function (btn, index) {
         callbacks[index] = btn.onPress;
         if (btn.style === 'cancel') {
           cancelButtonKey = String(index);
@@ -13667,13 +13830,13 @@ let AlertIOS = class AlertIOS {
     RCTAlertManager.alertWithArgs({
       title: title || undefined,
       message: message || undefined,
-      buttons,
+      buttons: buttons,
       type: type || undefined,
-      defaultValue,
-      cancelButtonKey,
-      destructiveButtonKey,
-      keyboardType
-    }, (id, value) => {
+      defaultValue: defaultValue,
+      cancelButtonKey: cancelButtonKey,
+      destructiveButtonKey: destructiveButtonKey,
+      keyboardType: keyboardType
+    }, function (id, value) {
       var cb = callbacks[id];
       cb && cb(value);
     });
@@ -13686,18 +13849,18 @@ module.exports = AlertIOS;
 __d(/* Promise */function(global, require, module, exports) {
 'use strict';
 
-const Promise = require(89                       ); // 89 = fbjs/lib/Promise.native
+var Promise = require(89                       ); // 89 = fbjs/lib/Promise.native
 
-const prettyFormat = require(93             ); // 93 = pretty-format
+var prettyFormat = require(93             ); // 93 = pretty-format
 
 if (__DEV__) {
   require(95                                       ).enable({ // 95 = promise/setimmediate/rejection-tracking
     allRejections: true,
-    onUnhandled: (id, error = {}) => {
-      let message;
-      let stack;
+    onUnhandled: function (id, error = {}) {
+      var message = void 0;
+      var stack = void 0;
 
-      const stringValue = Object.prototype.toString.call(error);
+      var stringValue = Object.prototype.toString.call(error);
       if (stringValue === '[object Error]') {
         message = Error.prototype.toString.call(error);
         stack = error.stack;
@@ -13705,11 +13868,11 @@ if (__DEV__) {
         message = prettyFormat(error);
       }
 
-      const warning = `Possible Unhandled Promise Rejection (id: ${id}):\n` + `${message}\n` + (stack == null ? '' : stack);
+      var warning = 'Possible Unhandled Promise Rejection (id: ' + id + '):\n' + (message + '\n') + (stack == null ? '' : stack);
       console.warn(warning);
     },
-    onHandled: id => {
-      const warning = `Promise Rejection Handled (id: ${id})\n` + 'This means you can ignore any previous messages of the form ' + `"Possible Unhandled Promise Rejection (id: ${id}):"`;
+    onHandled: function (id) {
+      var warning = 'Promise Rejection Handled (id: ' + id + ')\n' + 'This means you can ignore any previous messages of the form ' + ('"Possible Unhandled Promise Rejection (id: ' + id + '):"');
       console.warn(warning);
     }
   });
@@ -14027,18 +14190,20 @@ Promise.prototype.done = function (onFulfilled, onRejected) {
 }, 92, null, "promise/setimmediate/done.js");
 __d(/* pretty-format/index.js */function(global, require, module, exports) {'use strict';
 
-const printString = require(94             ); // 94 = ./printString
+var printString = require(94             ); // 94 = ./printString
 
-const toString = Object.prototype.toString;
-const toISOString = Date.prototype.toISOString;
-const errorToString = Error.prototype.toString;
-const regExpToString = RegExp.prototype.toString;
-const symbolToString = Symbol.prototype.toString;
+var toString = Object.prototype.toString;
+var toISOString = Date.prototype.toISOString;
+var errorToString = Error.prototype.toString;
+var regExpToString = RegExp.prototype.toString;
+var symbolToString = Symbol.prototype.toString;
 
-const SYMBOL_REGEXP = /^Symbol\((.*)\)(.*)$/;
-const NEWLINE_REGEXP = /\n/ig;
+var SYMBOL_REGEXP = /^Symbol\((.*)\)(.*)$/;
+var NEWLINE_REGEXP = /\n/ig;
 
-const getSymbols = Object.getOwnPropertySymbols || (obj => []);
+var getSymbols = Object.getOwnPropertySymbols || function (obj) {
+  return [];
+};
 
 function isToStringedArrayType(toStringed) {
   return toStringed === '[object Array]' || toStringed === '[object ArrayBuffer]' || toStringed === '[object DataView]' || toStringed === '[object Float32Array]' || toStringed === '[object Float64Array]' || toStringed === '[object Int8Array]' || toStringed === '[object Int16Array]' || toStringed === '[object Int32Array]' || toStringed === '[object Uint8Array]' || toStringed === '[object Uint8ClampedArray]' || toStringed === '[object Uint16Array]' || toStringed === '[object Uint32Array]';
@@ -14046,7 +14211,7 @@ function isToStringedArrayType(toStringed) {
 
 function printNumber(val) {
   if (val != +val) return 'NaN';
-  const isNegativeZero = val === 0 && 1 / val < 0;
+  var isNegativeZero = val === 0 && 1 / val < 0;
   return isNegativeZero ? '-0' : '' + val;
 }
 
@@ -14073,14 +14238,14 @@ function printBasicValue(val, printFunctionName, escapeRegex) {
   if (val === undefined) return 'undefined';
   if (val === null) return 'null';
 
-  const typeOf = typeof val;
+  var typeOf = typeof val;
 
   if (typeOf === 'number') return printNumber(val);
   if (typeOf === 'string') return '"' + printString(val) + '"';
   if (typeOf === 'function') return printFunction(val, printFunctionName);
   if (typeOf === 'symbol') return printSymbol(val);
 
-  const toStringed = toString.call(val);
+  var toStringed = toString.call(val);
 
   if (toStringed === '[object WeakMap]') return 'WeakMap {}';
   if (toStringed === '[object WeakSet]') return 'WeakSet {}';
@@ -14103,14 +14268,14 @@ function printBasicValue(val, printFunctionName, escapeRegex) {
 }
 
 function printList(list, indent, prevIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex) {
-  let body = '';
+  var body = '';
 
   if (list.length) {
     body += edgeSpacing;
 
-    const innerIndent = prevIndent + indent;
+    var innerIndent = prevIndent + indent;
 
-    for (let i = 0; i < list.length; i++) {
+    for (var i = 0; i < list.length; i++) {
       body += innerIndent + print(list[i], indent, innerIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex);
 
       if (i < list.length - 1) {
@@ -14133,18 +14298,18 @@ function printArray(val, indent, prevIndent, spacing, edgeSpacing, refs, maxDept
 }
 
 function printMap(val, indent, prevIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex) {
-  let result = 'Map {';
-  const iterator = val.entries();
-  let current = iterator.next();
+  var result = 'Map {';
+  var iterator = val.entries();
+  var current = iterator.next();
 
   if (!current.done) {
     result += edgeSpacing;
 
-    const innerIndent = prevIndent + indent;
+    var innerIndent = prevIndent + indent;
 
     while (!current.done) {
-      const key = print(current.value[0], indent, innerIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex);
-      const value = print(current.value[1], indent, innerIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex);
+      var key = print(current.value[0], indent, innerIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex);
+      var value = print(current.value[1], indent, innerIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex);
 
       result += innerIndent + key + ' => ' + value;
 
@@ -14162,24 +14327,26 @@ function printMap(val, indent, prevIndent, spacing, edgeSpacing, refs, maxDepth,
 }
 
 function printObject(val, indent, prevIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex) {
-  const constructor = min ? '' : val.constructor ? val.constructor.name + ' ' : 'Object ';
-  let result = constructor + '{';
-  let keys = Object.keys(val).sort();
-  const symbols = getSymbols(val);
+  var constructor = min ? '' : val.constructor ? val.constructor.name + ' ' : 'Object ';
+  var result = constructor + '{';
+  var keys = Object.keys(val).sort();
+  var symbols = getSymbols(val);
 
   if (symbols.length) {
-    keys = keys.filter(key => !(typeof key === 'symbol' || toString.call(key) === '[object Symbol]')).concat(symbols);
+    keys = keys.filter(function (key) {
+      return !(typeof key === 'symbol' || toString.call(key) === '[object Symbol]');
+    }).concat(symbols);
   }
 
   if (keys.length) {
     result += edgeSpacing;
 
-    const innerIndent = prevIndent + indent;
+    var innerIndent = prevIndent + indent;
 
-    for (let i = 0; i < keys.length; i++) {
-      const key = keys[i];
-      const name = print(key, indent, innerIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex);
-      const value = print(val[key], indent, innerIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex);
+    for (var i = 0; i < keys.length; i++) {
+      var key = keys[i];
+      var name = print(key, indent, innerIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex);
+      var value = print(val[key], indent, innerIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex);
 
       result += innerIndent + name + ': ' + value;
 
@@ -14195,14 +14362,14 @@ function printObject(val, indent, prevIndent, spacing, edgeSpacing, refs, maxDep
 }
 
 function printSet(val, indent, prevIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex) {
-  let result = 'Set {';
-  const iterator = val.entries();
-  let current = iterator.next();
+  var result = 'Set {';
+  var iterator = val.entries();
+  var current = iterator.next();
 
   if (!current.done) {
     result += edgeSpacing;
 
-    const innerIndent = prevIndent + indent;
+    var innerIndent = prevIndent + indent;
 
     while (!current.done) {
       result += innerIndent + print(current.value[1], indent, innerIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex);
@@ -14230,13 +14397,13 @@ function printComplexValue(val, indent, prevIndent, spacing, edgeSpacing, refs, 
 
   currentDepth++;
 
-  const hitMaxDepth = currentDepth > maxDepth;
+  var hitMaxDepth = currentDepth > maxDepth;
 
   if (callToJSON && !hitMaxDepth && val.toJSON && typeof val.toJSON === 'function') {
     return print(val.toJSON(), indent, prevIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex);
   }
 
-  const toStringed = toString.call(val);
+  var toStringed = toString.call(val);
   if (toStringed === '[object Arguments]') {
     return hitMaxDepth ? '[Arguments]' : printArguments(val, indent, prevIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex);
   } else if (isToStringedArrayType(toStringed)) {
@@ -14251,10 +14418,10 @@ function printComplexValue(val, indent, prevIndent, spacing, edgeSpacing, refs, 
 }
 
 function printPlugin(val, indent, prevIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex) {
-  let match = false;
-  let plugin;
+  var match = false;
+  var plugin = void 0;
 
-  for (let p = 0; p < plugins.length; p++) {
+  for (var p = 0; p < plugins.length; p++) {
     plugin = plugins[p];
 
     if (plugin.test(val)) {
@@ -14272,7 +14439,7 @@ function printPlugin(val, indent, prevIndent, spacing, edgeSpacing, refs, maxDep
   }
 
   function boundIndent(str) {
-    const indentation = prevIndent + indent;
+    var indentation = prevIndent + indent;
     return indentation + str.replace(NEWLINE_REGEXP, '\n' + indentation);
   }
 
@@ -14283,16 +14450,16 @@ function printPlugin(val, indent, prevIndent, spacing, edgeSpacing, refs, maxDep
 }
 
 function print(val, indent, prevIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex) {
-  const basic = printBasicValue(val, printFunctionName, escapeRegex);
+  var basic = printBasicValue(val, printFunctionName, escapeRegex);
   if (basic) return basic;
 
-  const plugin = printPlugin(val, indent, prevIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex);
+  var plugin = printPlugin(val, indent, prevIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex);
   if (plugin) return plugin;
 
   return printComplexValue(val, indent, prevIndent, spacing, edgeSpacing, refs, maxDepth, currentDepth, plugins, min, callToJSON, printFunctionName, escapeRegex);
 }
 
-const DEFAULTS = {
+var DEFAULTS = {
   callToJSON: true,
   indent: 2,
   maxDepth: Infinity,
@@ -14303,7 +14470,7 @@ const DEFAULTS = {
 };
 
 function validateOptions(opts) {
-  Object.keys(opts).forEach(key => {
+  Object.keys(opts).forEach(function (key) {
     if (!DEFAULTS.hasOwnProperty(key)) {
       throw new Error('prettyFormat: Invalid option: ' + key);
     }
@@ -14315,9 +14482,11 @@ function validateOptions(opts) {
 }
 
 function normalizeOptions(opts) {
-  const result = {};
+  var result = {};
 
-  Object.keys(DEFAULTS).forEach(key => result[key] = opts.hasOwnProperty(key) ? opts[key] : DEFAULTS[key]);
+  Object.keys(DEFAULTS).forEach(function (key) {
+    return result[key] = opts.hasOwnProperty(key) ? opts[key] : DEFAULTS[key];
+  });
 
   if (result.min) {
     result.indent = 0;
@@ -14338,12 +14507,12 @@ function prettyFormat(val, opts) {
     opts = normalizeOptions(opts);
   }
 
-  let indent;
-  let refs;
-  const prevIndent = '';
-  const currentDepth = 0;
-  const spacing = opts.min ? ' ' : '\n';
-  const edgeSpacing = opts.min ? '' : '\n';
+  var indent = void 0;
+  var refs = void 0;
+  var prevIndent = '';
+  var currentDepth = 0;
+  var spacing = opts.min ? ' ' : '\n';
+  var edgeSpacing = opts.min ? '' : '\n';
 
   if (opts && opts.plugins.length) {
     indent = createIndent(opts.indent);
@@ -14364,7 +14533,7 @@ module.exports = prettyFormat;
 }, 93, null, "pretty-format/index.js");
 __d(/* pretty-format/printString.js */function(global, require, module, exports) {'use strict';
 
-const ESCAPED_CHARACTERS = /(\\|\"|\')/g;
+var ESCAPED_CHARACTERS = /(\\|\"|\')/g;
 
 module.exports = function printString(val) {
   return val.replace(ESCAPED_CHARACTERS, '\\$1');
@@ -14968,20 +15137,20 @@ __d(/* XMLHttpRequest */function(global, require, module, exports) {
 
 var _class, _temp;
 
-const EventTarget = require(80                 ); // 80 = event-target-shim
-const RCTNetworking = require(98             ); // 98 = RCTNetworking
+var EventTarget = require(80                 ); // 80 = event-target-shim
+var RCTNetworking = require(98             ); // 98 = RCTNetworking
 
-const base64 = require(79         ); // 79 = base64-js
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
-const warning = require(15                ); // 15 = fbjs/lib/warning
+var base64 = require(79         ); // 79 = base64-js
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var warning = require(15                ); // 15 = fbjs/lib/warning
 
-const UNSENT = 0;
-const OPENED = 1;
-const HEADERS_RECEIVED = 2;
-const LOADING = 3;
-const DONE = 4;
+var UNSENT = 0;
+var OPENED = 1;
+var HEADERS_RECEIVED = 2;
+var LOADING = 3;
+var DONE = 4;
 
-const SUPPORTED_RESPONSE_TYPES = {
+var SUPPORTED_RESPONSE_TYPES = {
   arraybuffer: typeof global.ArrayBuffer === 'function',
   blob: typeof global.Blob === 'function',
   document: false,
@@ -14990,12 +15159,12 @@ const SUPPORTED_RESPONSE_TYPES = {
   '': true
 };
 
-const REQUEST_EVENTS = ['abort', 'error', 'load', 'loadstart', 'progress', 'timeout', 'loadend'];
+var REQUEST_EVENTS = ['abort', 'error', 'load', 'loadstart', 'progress', 'timeout', 'loadend'];
 
-const XHR_EVENTS = REQUEST_EVENTS.concat('readystatechange');
+var XHR_EVENTS = REQUEST_EVENTS.concat('readystatechange');
 
-let XMLHttpRequestEventTarget = class XMLHttpRequestEventTarget extends EventTarget(...REQUEST_EVENTS) {};
-let XMLHttpRequest = (_temp = _class = class XMLHttpRequest extends EventTarget(...XHR_EVENTS) {
+var XMLHttpRequestEventTarget = class XMLHttpRequestEventTarget extends EventTarget.apply(undefined, REQUEST_EVENTS) {};
+var XMLHttpRequest = (_temp = _class = class XMLHttpRequest extends EventTarget.apply(undefined, babelHelpers.toConsumableArray(XHR_EVENTS)) {
 
   static setInterceptor(interceptor) {
     XMLHttpRequest._interceptor = interceptor;
@@ -15053,17 +15222,17 @@ let XMLHttpRequest = (_temp = _class = class XMLHttpRequest extends EventTarget(
       throw new Error('Failed to set the \'responseType\' property on \'XMLHttpRequest\': The ' + 'response type cannot be set after the request has been sent.');
     }
     if (!SUPPORTED_RESPONSE_TYPES.hasOwnProperty(responseType)) {
-      warning(false, `The provided value '${responseType}' is not a valid 'responseType'.`);
+      warning(false, 'The provided value \'' + responseType + '\' is not a valid \'responseType\'.');
       return;
     }
 
-    invariant(SUPPORTED_RESPONSE_TYPES[responseType] || responseType === 'document', `The provided value '${responseType}' is unsupported in this environment.`);
+    invariant(SUPPORTED_RESPONSE_TYPES[responseType] || responseType === 'document', 'The provided value \'' + responseType + '\' is unsupported in this environment.');
     this._responseType = responseType;
   }
 
   get responseText() {
     if (this._responseType !== '' && this._responseType !== 'text') {
-      throw new Error("The 'responseText' property is only available if 'responseType' " + `is set to '' or 'text', but it is '${this._responseType}'.`);
+      throw new Error("The 'responseText' property is only available if 'responseType' " + ('is set to \'\' or \'text\', but it is \'' + this._responseType + '\'.'));
     }
     if (this.readyState < LOADING) {
       return '';
@@ -15072,7 +15241,7 @@ let XMLHttpRequest = (_temp = _class = class XMLHttpRequest extends EventTarget(
   }
 
   get response() {
-    const { responseType } = this;
+    var { responseType: responseType } = this;
     if (responseType === '' || responseType === 'text') {
       return this.readyState < LOADING || this._hasError ? '' : this._response;
     }
@@ -15125,7 +15294,7 @@ let XMLHttpRequest = (_temp = _class = class XMLHttpRequest extends EventTarget(
         type: 'progress',
         lengthComputable: true,
         loaded: progress,
-        total
+        total: total
       });
     }
   }
@@ -15179,8 +15348,8 @@ let XMLHttpRequest = (_temp = _class = class XMLHttpRequest extends EventTarget(
     this.dispatchEvent({
       type: 'progress',
       lengthComputable: total >= 0,
-      loaded,
-      total
+      loaded: loaded,
+      total: total
     });
   }
 
@@ -15208,7 +15377,7 @@ let XMLHttpRequest = (_temp = _class = class XMLHttpRequest extends EventTarget(
   }
 
   _clearSubscriptions() {
-    (this._subscriptions || []).forEach(sub => {
+    (this._subscriptions || []).forEach(function (sub) {
       sub.remove();
     });
     this._subscriptions = [];
@@ -15219,7 +15388,7 @@ let XMLHttpRequest = (_temp = _class = class XMLHttpRequest extends EventTarget(
       return null;
     }
     var headers = this.responseHeaders || {};
-    return Object.keys(headers).map(headerName => {
+    return Object.keys(headers).map(function (headerName) {
       return headerName + ': ' + headers[headerName];
     }).join('\r\n');
   }
@@ -15258,6 +15427,8 @@ let XMLHttpRequest = (_temp = _class = class XMLHttpRequest extends EventTarget(
   }
 
   send(data) {
+    var _this = this;
+
     if (this.readyState !== this.OPENED) {
       throw new Error('Request has not been opened');
     }
@@ -15265,16 +15436,28 @@ let XMLHttpRequest = (_temp = _class = class XMLHttpRequest extends EventTarget(
       throw new Error('Request has already been sent');
     }
     this._sent = true;
-    const incrementalEvents = this._incrementalEvents || !!this.onreadystatechange || !!this.onprogress;
+    var incrementalEvents = this._incrementalEvents || !!this.onreadystatechange || !!this.onprogress;
 
-    this._subscriptions.push(RCTNetworking.addListener('didSendNetworkData', args => this.__didUploadProgress(...args)));
-    this._subscriptions.push(RCTNetworking.addListener('didReceiveNetworkResponse', args => this.__didReceiveResponse(...args)));
-    this._subscriptions.push(RCTNetworking.addListener('didReceiveNetworkData', args => this.__didReceiveData(...args)));
-    this._subscriptions.push(RCTNetworking.addListener('didReceiveNetworkIncrementalData', args => this.__didReceiveIncrementalData(...args)));
-    this._subscriptions.push(RCTNetworking.addListener('didReceiveNetworkDataProgress', args => this.__didReceiveDataProgress(...args)));
-    this._subscriptions.push(RCTNetworking.addListener('didCompleteNetworkResponse', args => this.__didCompleteResponse(...args)));
+    this._subscriptions.push(RCTNetworking.addListener('didSendNetworkData', function (args) {
+      return _this.__didUploadProgress.apply(_this, babelHelpers.toConsumableArray(args));
+    }));
+    this._subscriptions.push(RCTNetworking.addListener('didReceiveNetworkResponse', function (args) {
+      return _this.__didReceiveResponse.apply(_this, babelHelpers.toConsumableArray(args));
+    }));
+    this._subscriptions.push(RCTNetworking.addListener('didReceiveNetworkData', function (args) {
+      return _this.__didReceiveData.apply(_this, babelHelpers.toConsumableArray(args));
+    }));
+    this._subscriptions.push(RCTNetworking.addListener('didReceiveNetworkIncrementalData', function (args) {
+      return _this.__didReceiveIncrementalData.apply(_this, babelHelpers.toConsumableArray(args));
+    }));
+    this._subscriptions.push(RCTNetworking.addListener('didReceiveNetworkDataProgress', function (args) {
+      return _this.__didReceiveDataProgress.apply(_this, babelHelpers.toConsumableArray(args));
+    }));
+    this._subscriptions.push(RCTNetworking.addListener('didCompleteNetworkResponse', function (args) {
+      return _this.__didCompleteResponse.apply(_this, babelHelpers.toConsumableArray(args));
+    }));
 
-    let nativeResponseType = 'text';
+    var nativeResponseType = 'text';
     if (this._responseType === 'arraybuffer' || this._responseType === 'blob') {
       nativeResponseType = 'base64';
     }
@@ -15301,7 +15484,7 @@ let XMLHttpRequest = (_temp = _class = class XMLHttpRequest extends EventTarget(
   setResponseHeaders(responseHeaders) {
     this.responseHeaders = responseHeaders || null;
     var headers = responseHeaders || {};
-    this._lowerCaseResponseHeaders = Object.keys(headers).reduce((lcaseHeaders, headerName) => {
+    this._lowerCaseResponseHeaders = Object.keys(headers).reduce(function (lcaseHeaders, headerName) {
       lcaseHeaders[headerName.toLowerCase()] = headers[headerName];
       return lcaseHeaders;
     }, {});
@@ -15345,7 +15528,7 @@ module.exports = {};
 __d(/* FormData */function(global, require, module, exports) {
 'use strict';
 
-let FormData = class FormData {
+var FormData = class FormData {
 
   constructor() {
     this._parts = [];
@@ -15356,7 +15539,7 @@ let FormData = class FormData {
   }
 
   getParts() {
-    return this._parts.map(([name, value]) => {
+    return this._parts.map(function ([name, value]) {
       var contentDisposition = 'form-data; name="' + name + '"';
 
       var headers = { 'content-disposition': contentDisposition };
@@ -15368,10 +15551,10 @@ let FormData = class FormData {
         if (typeof value.type === 'string') {
           headers['content-type'] = value.type;
         }
-        return babelHelpers.extends({}, value, { headers, fieldName: name });
+        return babelHelpers.extends({}, value, { headers: headers, fieldName: name });
       }
 
-      return { string: String(value), headers, fieldName: name };
+      return { string: String(value), headers: headers, fieldName: name };
     });
   }
 };
@@ -15382,17 +15565,17 @@ module.exports = FormData;
 __d(/* Geolocation */function(global, require, module, exports) {
 'use strict';
 
-const NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
-const RCTLocationObserver = require(36             ).LocationObserver; // 36 = NativeModules
+var NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
+var RCTLocationObserver = require(36             ).LocationObserver; // 36 = NativeModules
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
-const logError = require(76        ); // 76 = logError
-const warning = require(15                ); // 15 = fbjs/lib/warning
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var logError = require(76        ); // 76 = logError
+var warning = require(15                ); // 15 = fbjs/lib/warning
 
-const LocationEventEmitter = new NativeEventEmitter(RCTLocationObserver);
+var LocationEventEmitter = new NativeEventEmitter(RCTLocationObserver);
 
-const Platform = require(46        ); // 46 = Platform
-const PermissionsAndroid = require(101                 ); // 101 = PermissionsAndroid
+var Platform = require(46        ); // 46 = Platform
+var PermissionsAndroid = require(101                 ); // 101 = PermissionsAndroid
 
 var subscriptions = [];
 var updatesEnabled = false;
@@ -15404,12 +15587,12 @@ var Geolocation = {
 
   getCurrentPosition: async function (geo_success, geo_error, geo_options) {
     invariant(typeof geo_success === 'function', 'Must provide a valid geo_success callback.');
-    let hasPermission = true;
+    var hasPermission = true;
 
     if (Platform.OS === 'android' && Platform.Version >= 23) {
       hasPermission = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
       if (!hasPermission) {
-        const status = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+        var status = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
         hasPermission = status === PermissionsAndroid.RESULTS.GRANTED;
       }
     }
@@ -15472,9 +15655,9 @@ module.exports = Geolocation;
 __d(/* PermissionsAndroid */function(global, require, module, exports) {
 'use strict';
 
-const NativeModules = require(36             ); // 36 = NativeModules
+var NativeModules = require(36             ); // 36 = NativeModules
 
-let PermissionsAndroid = class PermissionsAndroid {
+var PermissionsAndroid = class PermissionsAndroid {
 
   constructor() {
     this.PERMISSIONS = {
@@ -15522,17 +15705,21 @@ let PermissionsAndroid = class PermissionsAndroid {
 
   async requestPermission(permission, rationale) {
     console.warn('"PermissionsAndroid.requestPermission" is deprecated. Use "PermissionsAndroid.request" instead');
-    const response = await this.request(permission, rationale);
+    var response = await this.request(permission, rationale);
     return response === this.RESULTS.GRANTED;
   }
 
   async request(permission, rationale) {
     if (rationale) {
-      const shouldShowRationale = await NativeModules.PermissionsAndroid.shouldShowRequestPermissionRationale(permission);
+      var shouldShowRationale = await NativeModules.PermissionsAndroid.shouldShowRequestPermissionRationale(permission);
 
       if (shouldShowRationale) {
-        return new Promise((resolve, reject) => {
-          NativeModules.DialogManagerAndroid.showAlert(rationale, () => reject(new Error('Error showing rationale')), () => resolve(NativeModules.PermissionsAndroid.requestPermission(permission)));
+        return new Promise(function (resolve, reject) {
+          NativeModules.DialogManagerAndroid.showAlert(rationale, function () {
+            return reject(new Error('Error showing rationale'));
+          }, function () {
+            return resolve(NativeModules.PermissionsAndroid.requestPermission(permission));
+          });
         });
       }
     }
@@ -15576,7 +15763,7 @@ module.exports = function (global, undefined) {
 
   var OLD_IE_HASH_PREFIX = 'IE_HASH_';
 
-  let Map = class Map {
+  var Map = class Map {
     constructor(iterable) {
       if (!isObject(this)) {
         throw new TypeError('Wrong map object type.');
@@ -15679,7 +15866,7 @@ module.exports = function (global, undefined) {
 
   Map.prototype[toIterator.ITERATOR_SYMBOL] = Map.prototype.entries;
 
-  let MapIterator = class MapIterator {
+  var MapIterator = class MapIterator {
     constructor(map, kind) {
       if (!(isObject(map) && map._mapData)) {
         throw new TypeError('Object is not a map.');
@@ -15797,11 +15984,13 @@ module.exports = function (global, undefined) {
             writable: true
           });
           Object.defineProperty(map, 'size', {
-            set: v => {
+            set: function (v) {
               console.error('PLEASE FIX ME: You are changing the map size property which ' + 'should not be writable and will break in production.');
               throw new Error('The map size property is not writable.');
             },
-            get: () => map[SECRET_SIZE_PROP]
+            get: function () {
+              return map[SECRET_SIZE_PROP];
+            }
           });
         }
 
@@ -15817,7 +16006,7 @@ module.exports = function (global, undefined) {
   }
 
   function createIterResultObject(value, done) {
-    return { value, done };
+    return { value: value, done: done };
   }
 
   var isES5 = function () {
@@ -15954,7 +16143,7 @@ var ITERATOR_SYMBOL = typeof Symbol === 'function' ? Symbol.iterator : '@@iterat
 var toIterator = function () {
   if (!(Array.prototype[ITERATOR_SYMBOL] && String.prototype[ITERATOR_SYMBOL])) {
     return function () {
-      let ArrayIterator = class ArrayIterator {
+      var ArrayIterator = class ArrayIterator {
         constructor(array, kind) {
           if (!Array.isArray(array)) {
             throw new TypeError('Object is not an Array');
@@ -15998,7 +16187,7 @@ var toIterator = function () {
           return this;
         }
       };
-      let StringIterator = class StringIterator {
+      var StringIterator = class StringIterator {
         constructor(string) {
           if (typeof string !== 'string') {
             throw new TypeError('Object is not a string');
@@ -16071,10 +16260,10 @@ var toIterator = function () {
 }();
 
 Object.assign(toIterator, {
-  KIND_KEY,
-  KIND_VALUE,
-  KIND_KEY_VAL,
-  ITERATOR_SYMBOL
+  KIND_KEY: KIND_KEY,
+  KIND_VALUE: KIND_VALUE,
+  KIND_KEY_VAL: KIND_KEY_VAL,
+  ITERATOR_SYMBOL: ITERATOR_SYMBOL
 });
 
 module.exports = toIterator;
@@ -16093,7 +16282,7 @@ module.exports = function (global) {
     return global.Set;
   }
 
-  let Set = class Set {
+  var Set = class Set {
     constructor(iterable) {
       if (this == null || typeof this !== 'object' && typeof this !== 'function') {
         throw new TypeError('Wrong set object type.');
@@ -16164,14 +16353,14 @@ __d(/* setupDevtools */function(global, require, module, exports) {
 'use strict';
 
 if (__DEV__) {
-  const AppState = require(74        ); // 74 = AppState
-  const WebSocket = require(62         ); // 62 = WebSocket
-  const { PlatformConstants } = require(36             ); // 36 = NativeModules
-  const { connectToDevTools } = require(109                  ); // 109 = react-devtools-core
+  var AppState = require(74        ); // 74 = AppState
+  var WebSocket = require(62         ); // 62 = WebSocket
+  var { PlatformConstants: PlatformConstants } = require(36             ); // 36 = NativeModules
+  var { connectToDevTools: connectToDevTools } = require(109                  ); // 109 = react-devtools-core
 
   if (WebSocket.isAvailable) {
     connectToDevTools({
-      isAppActive() {
+      isAppActive: function () {
         return AppState.currentState !== 'background';
       },
 
@@ -16650,8 +16839,9 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
 
                 default:
                     args = Array.prototype.slice.call(arguments, 1), handler.apply(this, args);
-            } else if (isObject(handler)) for (args = Array.prototype.slice.call(arguments, 1), listeners = handler.slice(), len = listeners.length, i = 0; i < len; i++) listeners[i].apply(this, args);
-            return !0;
+            } else if (isObject(handler)) for (args = Array.prototype.slice.call(arguments, 1), listeners = handler.slice(), len = listeners.length, i = 0; i < len; i++) {
+                listeners[i].apply(this, args);
+            }return !0;
         }, EventEmitter.prototype.addListener = function (type, listener) {
             var m;
             if (!isFunction(listener)) throw TypeError("listener must be a function");
@@ -16668,11 +16858,12 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
             if (!isFunction(listener)) throw TypeError("listener must be a function");
             if (!this._events || !this._events[type]) return this;
             if (list = this._events[type], length = list.length, position = -1, list === listener || isFunction(list.listener) && list.listener === listener) delete this._events[type], this._events.removeListener && this.emit("removeListener", type, listener);else if (isObject(list)) {
-                for (i = length; i-- > 0;) if (list[i] === listener || list[i].listener && list[i].listener === listener) {
-                    position = i;
-                    break;
-                }
-                if (position < 0) return this;
+                for (i = length; i-- > 0;) {
+                    if (list[i] === listener || list[i].listener && list[i].listener === listener) {
+                        position = i;
+                        break;
+                    }
+                }if (position < 0) return this;
                 1 === list.length ? (list.length = 0, delete this._events[type]) : list.splice(position, 1), this._events.removeListener && this.emit("removeListener", type, listener);
             }
             return this;
@@ -16681,11 +16872,13 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
             if (!this._events) return this;
             if (!this._events.removeListener) return 0 === arguments.length ? this._events = {} : this._events[type] && delete this._events[type], this;
             if (0 === arguments.length) {
-                for (key in this._events) "removeListener" !== key && this.removeAllListeners(key);
-                return this.removeAllListeners("removeListener"), this._events = {}, this;
+                for (key in this._events) {
+                    "removeListener" !== key && this.removeAllListeners(key);
+                }return this.removeAllListeners("removeListener"), this._events = {}, this;
             }
-            if (listeners = this._events[type], isFunction(listeners)) this.removeListener(type, listeners);else if (listeners) for (; listeners.length;) this.removeListener(type, listeners[listeners.length - 1]);
-            return delete this._events[type], this;
+            if (listeners = this._events[type], isFunction(listeners)) this.removeListener(type, listeners);else if (listeners) for (; listeners.length;) {
+                this.removeListener(type, listeners[listeners.length - 1]);
+            }return delete this._events[type], this;
         }, EventEmitter.prototype.listeners = function (type) {
             var ret;
             return ret = this._events && this._events[type] ? isFunction(this._events[type]) ? [this._events[type]] : this._events[type].slice() : [];
@@ -16711,10 +16904,13 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
         module.exports = Object.assign || function (target, source) {
             for (var from, symbols, to = toObject(target), s = 1; s < arguments.length; s++) {
                 from = Object(arguments[s]);
-                for (var key in from) hasOwnProperty.call(from, key) && (to[key] = from[key]);
-                if (Object.getOwnPropertySymbols) {
+                for (var key in from) {
+                    hasOwnProperty.call(from, key) && (to[key] = from[key]);
+                }if (Object.getOwnPropertySymbols) {
                     symbols = Object.getOwnPropertySymbols(from);
-                    for (var i = 0; i < symbols.length; i++) propIsEnumerable.call(from, symbols[i]) && (to[symbols[i]] = from[symbols[i]]);
+                    for (var i = 0; i < symbols.length; i++) {
+                        propIsEnumerable.call(from, symbols[i]) && (to[symbols[i]] = from[symbols[i]]);
+                    }
                 }
             }
             return to;
@@ -16731,8 +16927,9 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
 
         function _toConsumableArray(arr) {
             if (Array.isArray(arr)) {
-                for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-                return arr2;
+                for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+                    arr2[i] = arr[i];
+                }return arr2;
             }
             return Array.from(arr);
         }
@@ -16751,8 +16948,9 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
 
         function _toConsumableArray(arr) {
             if (Array.isArray(arr)) {
-                for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-                return arr2;
+                for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+                    arr2[i] = arr[i];
+                }return arr2;
             }
             return Array.from(arr);
         }
@@ -16765,7 +16963,9 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
         var _extends = Object.assign || function (target) {
             for (var i = 1; i < arguments.length; i++) {
                 var source = arguments[i];
-                for (var key in source) Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+                for (var key in source) {
+                    Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+                }
             }
             return target;
         },
@@ -17082,8 +17282,9 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
         var generateName = function () {
             var created = create(null);
             return function (desc) {
-                for (var name, ie11BugWorkaround, postfix = 0; created[desc + (postfix || "")];) ++postfix;
-                return desc += postfix || "", created[desc] = !0, name = "@@" + desc, defineProperty(objPrototype, name, d.gs(null, function (value) {
+                for (var name, ie11BugWorkaround, postfix = 0; created[desc + (postfix || "")];) {
+                    ++postfix;
+                }return desc += postfix || "", created[desc] = !0, name = "@@" + desc, defineProperty(objPrototype, name, d.gs(null, function (value) {
                     ie11BugWorkaround || (ie11BugWorkaround = !0, defineProperty(this, name, d(value)), ie11BugWorkaround = !1);
                 })), name;
             };
@@ -17105,7 +17306,9 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
             keyFor: d(function (s) {
                 var key;
                 validateSymbol(s);
-                for (key in globalSymbols) if (globalSymbols[key] === s) return key;
+                for (key in globalSymbols) {
+                    if (globalSymbols[key] === s) return key;
+                }
             }),
             hasInstance: d("", NativeSymbol && NativeSymbol.hasInstance || SymbolPolyfill("hasInstance")),
             isConcatSpreadable: d("", NativeSymbol && NativeSymbol.isConcatSpreadable || SymbolPolyfill("isConcatSpreadable")),
@@ -17193,8 +17396,9 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
                 } catch (e) {
                     error || (error = e);
                 }
-            }, i = 1; i < l; ++i) src = arguments[i], keys(src).forEach(assign);
-            if (void 0 !== error) throw error;
+            }, i = 1; i < l; ++i) {
+                src = arguments[i], keys(src).forEach(assign);
+            }if (void 0 !== error) throw error;
             return dest;
         };
     }, function (module, exports, __webpack_require__) {
@@ -17232,7 +17436,9 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
             create = Object.create,
             process = function (src, obj) {
             var key;
-            for (key in src) obj[key] = src[key];
+            for (key in src) {
+                obj[key] = src[key];
+            }
         };
         module.exports = function (options) {
             var result = create(null);
@@ -17374,8 +17580,9 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
                 case "object":
                     if (level > 2 || data.constructor && "function" == typeof data.constructor && "Object" !== data.constructor.name) return createDehydrated(type, data, cleaned, path);
                     var res = {};
-                    for (var name in data) res[name] = dehydrate(data[name], cleaned, path.concat([name]), level + 1);
-                    return res;
+                    for (var name in data) {
+                        res[name] = dehydrate(data[name], cleaned, path.concat([name]), level + 1);
+                    }return res;
 
                 default:
                     return data;
@@ -17533,8 +17740,9 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
                         error: error
                     });
                 });
-                for (var textChunks = [], text = request.getQueryString(); text.length > 0;) textChunks.push(text.substr(0, TEXT_CHUNK_LENGTH)), text = text.substr(TEXT_CHUNK_LENGTH);
-                return {
+                for (var textChunks = [], text = request.getQueryString(); text.length > 0;) {
+                    textChunks.push(text.substr(0, TEXT_CHUNK_LENGTH)), text = text.substr(TEXT_CHUNK_LENGTH);
+                }return {
                     id: id,
                     name: request.getDebugName(),
                     requestNumber: requestNumber,
@@ -17556,8 +17764,9 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
                     }));
                 });
                 var instrumented = {};
-                for (var key in relayInternals) relayInternals.hasOwnProperty(key) && (instrumented[key] = relayInternals[key]);
-                return instrumented.setRequestListener = setRequestListener, instrumented;
+                for (var key in relayInternals) {
+                    relayInternals.hasOwnProperty(key) && (instrumented[key] = relayInternals[key]);
+                }return instrumented.setRequestListener = setRequestListener, instrumented;
             }
             var performanceNow,
                 performance = window.performance;
@@ -17625,12 +17834,13 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
         module.exports = function (hook) {
             var oldReact = window.React && window.React.__internals;
             oldReact && 0 === Object.keys(hook._renderers).length && hook.inject(oldReact);
-            for (var rid in hook._renderers) hook.helpers[rid] = attachRenderer(hook, rid, hook._renderers[rid]), hook.emit("renderer-attached", {
-                id: rid,
-                renderer: hook._renderers[rid],
-                helpers: hook.helpers[rid]
-            });
-            hook.on("renderer", function (_ref) {
+            for (var rid in hook._renderers) {
+                hook.helpers[rid] = attachRenderer(hook, rid, hook._renderers[rid]), hook.emit("renderer-attached", {
+                    id: rid,
+                    renderer: hook._renderers[rid],
+                    helpers: hook.helpers[rid]
+                });
+            }hook.on("renderer", function (_ref) {
                 var id = _ref.id,
                     renderer = _ref.renderer;
                 hook.helpers[id] = attachRenderer(hook, id, renderer), hook.emit("renderer-attached", {
@@ -17640,8 +17850,9 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
                 });
             });
             var shutdown = function shutdown() {
-                for (var id in hook.helpers) hook.helpers[id].cleanup();
-                hook.off("shutdown", shutdown);
+                for (var id in hook.helpers) {
+                    hook.helpers[id].cleanup();
+                }hook.off("shutdown", shutdown);
             };
             return hook.on("shutdown", shutdown), !0;
         };
@@ -17669,8 +17880,9 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
                     return;
                 }
             }, extras.getReactElementFromNative = function (node) {
-                for (var id = renderer.Mount.getID(node); node && node.parentNode && !id;) node = node.parentNode, id = renderer.Mount.getID(node);
-                return rootNodeIDMap.get(id);
+                for (var id = renderer.Mount.getID(node); node && node.parentNode && !id;) {
+                    node = node.parentNode, id = renderer.Mount.getID(node);
+                }return rootNodeIDMap.get(id);
             }) : console.warn("Unknown react version (does not have getID), probably an unshimmed React Native");
             var oldMethods, oldRenderComponent, oldRenderRoot;
             return renderer.Mount._renderNewRootComponent ? oldRenderRoot = decorateResult(renderer.Mount, "_renderNewRootComponent", function (internalInstance) {
@@ -17749,7 +17961,9 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
             }, extras;
         }
         function walkRoots(roots, onMount, onRoot, isPre013) {
-            for (var name in roots) walkNode(roots[name], onMount, isPre013), onRoot(roots[name]);
+            for (var name in roots) {
+                walkNode(roots[name], onMount, isPre013), onRoot(roots[name]);
+            }
         }
         function walkNode(internalInstance, onMount, isPre013) {
             var data = isPre013 ? getData012(internalInstance) : getData(internalInstance);
@@ -17773,11 +17987,14 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
         }
         function decorateMany(source, fns) {
             var olds = {};
-            for (var name in fns) olds[name] = decorate(source, name, fns[name]);
-            return olds;
+            for (var name in fns) {
+                olds[name] = decorate(source, name, fns[name]);
+            }return olds;
         }
         function restoreMany(source, olds) {
-            for (var name in olds) source[name] = olds[name];
+            for (var name in olds) {
+                source[name] = olds[name];
+            }
         }
         var getData = __webpack_require__(36),
             getData012 = __webpack_require__(39),
@@ -17851,13 +18068,16 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
         }
         function childrenList(children) {
             var res = [];
-            for (var name in children) res.push(children[name]);
-            return res;
+            for (var name in children) {
+                res.push(children[name]);
+            }return res;
         }
         var _extends = Object.assign || function (target) {
             for (var i = 1; i < arguments.length; i++) {
                 var source = arguments[i];
-                for (var key in source) Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+                for (var key in source) {
+                    Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+                }
             }
             return target;
         },
@@ -17884,7 +18104,9 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
         var _extends = Object.assign || function (target) {
             for (var i = 1; i < arguments.length; i++) {
                 var source = arguments[i];
-                for (var key in source) Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+                for (var key in source) {
+                    Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+                }
             }
             return target;
         };
@@ -17962,8 +18184,9 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
         }
         function childrenList(children) {
             var res = [];
-            for (var name in children) res.push(children[name]);
-            return res;
+            for (var name in children) {
+                res.push(children[name]);
+            }return res;
         }
         var copyWithSet = __webpack_require__(37);
         module.exports = getData012;
@@ -18025,19 +18248,21 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
             }
             function mountFiber(fiber) {
                 var node = fiber;
-                outer: for (;;) if (node.child) node.child["return"] = node, node = node.child;else {
-                    if (enqueueMount(node), node == fiber) return;
-                    if (!node.sibling) {
-                        for (; node["return"];) {
-                            if (node = node["return"], enqueueMount(node), node == fiber) return;
-                            if (node.sibling) {
-                                node.sibling["return"] = node["return"], node = node.sibling;
-                                continue outer;
+                outer: for (;;) {
+                    if (node.child) node.child["return"] = node, node = node.child;else {
+                        if (enqueueMount(node), node == fiber) return;
+                        if (!node.sibling) {
+                            for (; node["return"];) {
+                                if (node = node["return"], enqueueMount(node), node == fiber) return;
+                                if (node.sibling) {
+                                    node.sibling["return"] = node["return"], node = node.sibling;
+                                    continue outer;
+                                }
                             }
+                            return;
                         }
-                        return;
+                        node.sibling["return"] = node["return"], node = node.sibling;
                     }
-                    node.sibling["return"] = node["return"], node = node.sibling;
                 }
             }
             function updateFiber(nextFiber, prevFiber) {
@@ -18166,8 +18391,9 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
                 default:
                     nodeType = "Native", props = fiber.memoizedProps, name = "TODO_NOT_IMPLEMENTED_YET", children = [];
             }
-            if (Array.isArray(children)) for (var child = fiber.child; child;) children.push(getOpaqueNode(child)), child = child.sibling;
-            return {
+            if (Array.isArray(children)) for (var child = fiber.child; child;) {
+                children.push(getOpaqueNode(child)), child = child.sibling;
+            }return {
                 nodeType: nodeType,
                 type: type,
                 key: key,
@@ -18269,8 +18495,9 @@ __d(/* react-devtools-core/build/backend.js */function(global, require, module, 
         }
         function shallowClone(obj) {
             var nobj = {};
-            for (var n in obj) nobj[n] = obj[n];
-            return nobj;
+            for (var n in obj) {
+                nobj[n] = obj[n];
+            }return nobj;
         }
         function renameStyle(agent, id, oldName, newName, val) {
             var _ref3,
@@ -18819,8 +19046,8 @@ __d(/* ReactNativePropRegistry */function(global, require, module, exports) {
 
 'use strict';
 
-const {
-  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
+var {
+  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED: __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
 } = require(32           ); // 32 = ReactNative
 
 module.exports = __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactNativePropRegistry;
@@ -18861,7 +19088,9 @@ var RCTRenderingPerf = {
       return;
     }
 
-    perfModules.forEach(module => module.start());
+    perfModules.forEach(function (module) {
+      return module.start();
+    });
   },
 
   stop: function () {
@@ -18869,7 +19098,9 @@ var RCTRenderingPerf = {
       return;
     }
 
-    perfModules.forEach(module => module.stop());
+    perfModules.forEach(function (module) {
+      return module.stop();
+    });
   },
 
   register: function (module) {
@@ -18884,13 +19115,13 @@ module.exports = RCTRenderingPerf;
 __d(/* JSInspector */function(global, require, module, exports) {
 'use strict';
 
-const JSInspector = {
-  registerAgent(type) {
+var JSInspector = {
+  registerAgent: function (type) {
     if (global.__registerInspectorAgent) {
       global.__registerInspectorAgent(type);
     }
   },
-  getTimestamp() {
+  getTimestamp: function () {
     return global.__inspectorTimestamp();
   }
 };
@@ -18902,12 +19133,12 @@ __d(/* NetworkAgent */function(global, require, module, exports) {
 
 var _class, _temp;
 
-const InspectorAgent = require(116             ); // 116 = InspectorAgent
-const JSInspector = require(114          ); // 114 = JSInspector
-const Map = require(102  ); // 102 = Map
-const XMLHttpRequest = require(97              ); // 97 = XMLHttpRequest
+var InspectorAgent = require(116             ); // 116 = InspectorAgent
+var JSInspector = require(114          ); // 114 = JSInspector
+var Map = require(102  ); // 102 = Map
+var XMLHttpRequest = require(97              ); // 97 = XMLHttpRequest
 
-let Interceptor = class Interceptor {
+var Interceptor = class Interceptor {
 
   constructor(agent) {
     this._agent = agent;
@@ -18919,21 +19150,21 @@ let Interceptor = class Interceptor {
   }
 
   requestSent(id, url, method, headers) {
-    const requestId = String(id);
+    var requestId = String(id);
     this._requests.set(requestId, '');
 
-    const request = {
-      url,
-      method,
-      headers,
+    var request = {
+      url: url,
+      method: method,
+      headers: headers,
       initialPriority: 'Medium'
     };
-    const event = {
-      requestId,
+    var event = {
+      requestId: requestId,
       documentURL: '',
       frameId: '1',
       loaderId: '1',
-      request,
+      request: request,
       timestamp: JSInspector.getTimestamp(),
       initiator: {
         type: 'other'
@@ -18944,12 +19175,12 @@ let Interceptor = class Interceptor {
   }
 
   responseReceived(id, url, status, headers) {
-    const requestId = String(id);
-    const response = {
-      url,
-      status,
+    var requestId = String(id);
+    var response = {
+      url: url,
+      status: status,
       statusText: String(status),
-      headers,
+      headers: headers,
 
       requestHeaders: {},
       mimeType: this._getMimeType(headers),
@@ -18959,23 +19190,23 @@ let Interceptor = class Interceptor {
       securityState: 'unknown'
     };
 
-    const event = {
-      requestId,
+    var event = {
+      requestId: requestId,
       frameId: '1',
       loaderId: '1',
       timestamp: JSInspector.getTimestamp(),
       type: 'Other',
-      response
+      response: response
     };
     this._agent.sendEvent('responseReceived', event);
   }
 
   dataReceived(id, data) {
-    const requestId = String(id);
-    const existingData = this._requests.get(requestId) || '';
+    var requestId = String(id);
+    var existingData = this._requests.get(requestId) || '';
     this._requests.set(requestId, existingData.concat(data));
-    const event = {
-      requestId,
+    var event = {
+      requestId: requestId,
       timestamp: JSInspector.getTimestamp(),
       dataLength: data.length,
       encodedDataLength: data.length
@@ -18984,7 +19215,7 @@ let Interceptor = class Interceptor {
   }
 
   loadingFinished(id, encodedDataLength) {
-    const event = {
+    var event = {
       requestId: String(id),
       timestamp: JSInspector.getTimestamp(),
       encodedDataLength: encodedDataLength
@@ -18993,7 +19224,7 @@ let Interceptor = class Interceptor {
   }
 
   loadingFailed(id, error) {
-    const event = {
+    var event = {
       requestId: String(id),
       timestamp: JSInspector.getTimestamp(),
       type: 'Other',
@@ -19003,13 +19234,13 @@ let Interceptor = class Interceptor {
   }
 
   _getMimeType(headers) {
-    const contentType = headers['Content-Type'] || '';
+    var contentType = headers['Content-Type'] || '';
     return contentType.split(';')[0];
   }
 };
-let NetworkAgent = (_temp = _class = class NetworkAgent extends InspectorAgent {
+var NetworkAgent = (_temp = _class = class NetworkAgent extends InspectorAgent {
 
-  enable({ maxResourceBufferSize, maxTotalBufferSize }) {
+  enable({ maxResourceBufferSize: maxResourceBufferSize, maxTotalBufferSize: maxTotalBufferSize }) {
     this._interceptor = new Interceptor(this);
     XMLHttpRequest.setInterceptor(this._interceptor);
   }
@@ -19019,7 +19250,7 @@ let NetworkAgent = (_temp = _class = class NetworkAgent extends InspectorAgent {
     this._interceptor = null;
   }
 
-  getResponseBody({ requestId }) {
+  getResponseBody({ requestId: requestId }) {
     return { body: this.interceptor().getData(requestId), base64Encoded: false };
   }
 
@@ -19038,7 +19269,7 @@ module.exports = NetworkAgent;
 __d(/* InspectorAgent */function(global, require, module, exports) {
 'use strict';
 
-let InspectorAgent = class InspectorAgent {
+var InspectorAgent = class InspectorAgent {
 
   constructor(eventSender) {
     this._eventSender = eventSender;
@@ -19055,27 +19286,27 @@ module.exports = InspectorAgent;
 __d(/* RCTNativeAppEventEmitter */function(global, require, module, exports) {
 'use strict';
 
-const RCTDeviceEventEmitter = require(68                     ); // 68 = RCTDeviceEventEmitter
+var RCTDeviceEventEmitter = require(68                     ); // 68 = RCTDeviceEventEmitter
 
-const RCTNativeAppEventEmitter = RCTDeviceEventEmitter;
+var RCTNativeAppEventEmitter = RCTDeviceEventEmitter;
 module.exports = RCTNativeAppEventEmitter;
 }, 117, null, "RCTNativeAppEventEmitter");
 __d(/* PerformanceLogger */function(global, require, module, exports) {
 'use strict';
 
-const Systrace = require(41        ); // 41 = Systrace
+var Systrace = require(41        ); // 41 = Systrace
 
-const infoLog = require(119      ); // 119 = infoLog
-const performanceNow = global.nativePerformanceNow || require(42                       ); // 42 = fbjs/lib/performanceNow
+var infoLog = require(119      ); // 119 = infoLog
+var performanceNow = global.nativePerformanceNow || require(42                       ); // 42 = fbjs/lib/performanceNow
 
-let timespans = {};
-let extras = {};
-const cookies = {};
+var timespans = {};
+var extras = {};
+var cookies = {};
 
-const PRINT_TO_CONSOLE = false;
+var PRINT_TO_CONSOLE = false;
 
-const PerformanceLogger = {
-  addTimespan(key, lengthInMs, description) {
+var PerformanceLogger = {
+  addTimespan: function (key, lengthInMs, description) {
     if (timespans[key]) {
       if (__DEV__) {
         infoLog('PerformanceLogger: Attempting to add a timespan that already exists ', key);
@@ -19088,8 +19319,7 @@ const PerformanceLogger = {
       totalTime: lengthInMs
     };
   },
-
-  startTimespan(key, description) {
+  startTimespan: function (key, description) {
     if (timespans[key]) {
       if (__DEV__) {
         infoLog('PerformanceLogger: Attempting to start a timespan that already exists ', key);
@@ -19106,9 +19336,8 @@ const PerformanceLogger = {
       infoLog('PerformanceLogger.js', 'start: ' + key);
     }
   },
-
-  stopTimespan(key) {
-    const timespan = timespans[key];
+  stopTimespan: function (key) {
+    var timespan = timespans[key];
     if (!timespan || !timespan.startTime) {
       if (__DEV__) {
         infoLog('PerformanceLogger: Attempting to end a timespan that has not started ', key);
@@ -19131,22 +19360,19 @@ const PerformanceLogger = {
     Systrace.endAsyncEvent(key, cookies[key]);
     delete cookies[key];
   },
-
-  clear() {
+  clear: function () {
     timespans = {};
     extras = {};
   },
-
-  clearCompleted() {
-    for (const key in timespans) {
-      if (timespans[key].totalTime) {
-        delete timespans[key];
+  clearCompleted: function () {
+    for (var _key in timespans) {
+      if (timespans[_key].totalTime) {
+        delete timespans[_key];
       }
     }
     extras = {};
   },
-
-  clearExceptTimespans(keys) {
+  clearExceptTimespans: function (keys) {
     timespans = Object.keys(timespans).reduce(function (previous, key) {
       if (keys.indexOf(key) !== -1) {
         previous[key] = timespans[key];
@@ -19155,45 +19381,38 @@ const PerformanceLogger = {
     }, {});
     extras = {};
   },
-
-  currentTimestamp() {
+  currentTimestamp: function () {
     return performanceNow();
   },
-
-  getTimespans() {
+  getTimespans: function () {
     return timespans;
   },
-
-  hasTimespan(key) {
+  hasTimespan: function (key) {
     return !!timespans[key];
   },
-
-  logTimespans() {
-    for (const key in timespans) {
-      if (timespans[key].totalTime) {
-        infoLog(key + ': ' + timespans[key].totalTime + 'ms');
+  logTimespans: function () {
+    for (var _key2 in timespans) {
+      if (timespans[_key2].totalTime) {
+        infoLog(_key2 + ': ' + timespans[_key2].totalTime + 'ms');
       }
     }
   },
-
-  addTimespans(newTimespans, labels) {
-    for (let ii = 0, l = newTimespans.length; ii < l; ii += 2) {
-      const label = labels[ii / 2];
+  addTimespans: function (newTimespans, labels) {
+    for (var ii = 0, l = newTimespans.length; ii < l; ii += 2) {
+      var label = labels[ii / 2];
       PerformanceLogger.addTimespan(label, newTimespans[ii + 1] - newTimespans[ii], label);
     }
   },
-
-  setExtra(key, value) {
+  setExtra: function (key, value) {
     if (extras[key]) {
       if (__DEV__) {
-        infoLog('PerformanceLogger: Attempting to set an extra that already exists ', { key, currentValue: extras[key], attemptedValue: value });
+        infoLog('PerformanceLogger: Attempting to set an extra that already exists ', { key: key, currentValue: extras[key], attemptedValue: value });
       }
       return;
     }
     extras[key] = value;
   },
-
-  getExtras() {
+  getExtras: function () {
     return extras;
   }
 };
@@ -19204,7 +19423,9 @@ __d(/* infoLog */function(global, require, module, exports) {
 'use strict';
 
 function infoLog(...args) {
-  return console.log(...args);
+  var _console;
+
+  return (_console = console).log.apply(_console, args);
 }
 
 module.exports = infoLog;
@@ -19212,10 +19433,10 @@ module.exports = infoLog;
 __d(/* RCTEventEmitter */function(global, require, module, exports) {
 'use strict';
 
-const BatchedBridge = require(37             ); // 37 = BatchedBridge
+var BatchedBridge = require(37             ); // 37 = BatchedBridge
 
-const RCTEventEmitter = {
-  register(eventEmitter) {
+var RCTEventEmitter = {
+  register: function (eventEmitter) {
     BatchedBridge.registerCallableModule('RCTEventEmitter', eventEmitter);
   }
 };
@@ -19337,8 +19558,9 @@ var deepDiffer = require(122         ), // 122 = deepDiffer
     instanceProps = {};
 
 function getRenderedHostOrTextFromComponent(component) {
-    for (var rendered; rendered = component._renderedComponent;) component = rendered;
-    return component;
+    for (var rendered; rendered = component._renderedComponent;) {
+        component = rendered;
+    }return component;
 }
 
 function precacheNode(inst, tag) {
@@ -19398,7 +19620,9 @@ function recomputePluginOrdering() {
         if (invariant(pluginIndex > -1, "EventPluginRegistry: Cannot inject event plugins that do not exist in " + "the plugin ordering, `%s`.", pluginName), !EventPluginRegistry.plugins[pluginIndex]) {
             invariant(pluginModule.extractEvents, "EventPluginRegistry: Event plugins must implement an `extractEvents` " + "method, but `%s` does not.", pluginName), EventPluginRegistry.plugins[pluginIndex] = pluginModule;
             var publishedEvents = pluginModule.eventTypes;
-            for (var eventName in publishedEvents) invariant(publishEventForPlugin(publishedEvents[eventName], pluginModule, eventName), "EventPluginRegistry: Failed to publish event `%s` for plugin `%s`.", eventName, pluginName);
+            for (var eventName in publishedEvents) {
+                invariant(publishEventForPlugin(publishedEvents[eventName], pluginModule, eventName), "EventPluginRegistry: Failed to publish event `%s` for plugin `%s`.", eventName, pluginName);
+            }
         }
     }
 }
@@ -19407,11 +19631,12 @@ function publishEventForPlugin(dispatchConfig, pluginModule, eventName) {
     invariant(!EventPluginRegistry.eventNameDispatchConfigs.hasOwnProperty(eventName), "EventPluginHub: More than one plugin attempted to publish the same " + "event name, `%s`.", eventName), EventPluginRegistry.eventNameDispatchConfigs[eventName] = dispatchConfig;
     var phasedRegistrationNames = dispatchConfig.phasedRegistrationNames;
     if (phasedRegistrationNames) {
-        for (var phaseName in phasedRegistrationNames) if (phasedRegistrationNames.hasOwnProperty(phaseName)) {
-            var phasedRegistrationName = phasedRegistrationNames[phaseName];
-            publishRegistrationName(phasedRegistrationName, pluginModule, eventName);
-        }
-        return !0;
+        for (var phaseName in phasedRegistrationNames) {
+            if (phasedRegistrationNames.hasOwnProperty(phaseName)) {
+                var phasedRegistrationName = phasedRegistrationNames[phaseName];
+                publishRegistrationName(phasedRegistrationName, pluginModule, eventName);
+            }
+        }return !0;
     }
     return !!dispatchConfig.registrationName && (publishRegistrationName(dispatchConfig.registrationName, pluginModule, eventName), !0);
 }
@@ -19433,11 +19658,12 @@ var EventPluginRegistry = {
     },
     injectEventPluginsByName: function (injectedNamesToPlugins) {
         var isOrderingDirty = !1;
-        for (var pluginName in injectedNamesToPlugins) if (injectedNamesToPlugins.hasOwnProperty(pluginName)) {
-            var pluginModule = injectedNamesToPlugins[pluginName];
-            namesToPlugins.hasOwnProperty(pluginName) && namesToPlugins[pluginName] === pluginModule || (invariant(!namesToPlugins[pluginName], "EventPluginRegistry: Cannot inject two different event plugins " + "using the same name, `%s`.", pluginName), namesToPlugins[pluginName] = pluginModule, isOrderingDirty = !0);
-        }
-        isOrderingDirty && recomputePluginOrdering();
+        for (var pluginName in injectedNamesToPlugins) {
+            if (injectedNamesToPlugins.hasOwnProperty(pluginName)) {
+                var pluginModule = injectedNamesToPlugins[pluginName];
+                namesToPlugins.hasOwnProperty(pluginName) && namesToPlugins[pluginName] === pluginModule || (invariant(!namesToPlugins[pluginName], "EventPluginRegistry: Cannot inject two different event plugins " + "using the same name, `%s`.", pluginName), namesToPlugins[pluginName] = pluginModule, isOrderingDirty = !0);
+            }
+        }isOrderingDirty && recomputePluginOrdering();
     }
 },
     EventPluginRegistry_1 = EventPluginRegistry,
@@ -19536,7 +19762,9 @@ function executeDispatch(event, simulated, listener, inst) {
 function executeDispatchesInOrder(event, simulated) {
     var dispatchListeners = event._dispatchListeners,
         dispatchInstances = event._dispatchInstances;
-    if (validateEventDispatches(event), Array.isArray(dispatchListeners)) for (var i = 0; i < dispatchListeners.length && !event.isPropagationStopped(); i++) executeDispatch(event, simulated, dispatchListeners[i], dispatchInstances[i]);else dispatchListeners && executeDispatch(event, simulated, dispatchListeners, dispatchInstances);
+    if (validateEventDispatches(event), Array.isArray(dispatchListeners)) for (var i = 0; i < dispatchListeners.length && !event.isPropagationStopped(); i++) {
+        executeDispatch(event, simulated, dispatchListeners[i], dispatchInstances[i]);
+    } else dispatchListeners && executeDispatch(event, simulated, dispatchListeners, dispatchInstances);
     event._dispatchListeners = null, event._dispatchInstances = null;
 }
 
@@ -19544,7 +19772,9 @@ function executeDispatchesInOrderStopAtTrueImpl(event) {
     var dispatchListeners = event._dispatchListeners,
         dispatchInstances = event._dispatchInstances;
     if (validateEventDispatches(event), Array.isArray(dispatchListeners)) {
-        for (var i = 0; i < dispatchListeners.length && !event.isPropagationStopped(); i++) if (dispatchListeners[i](event, dispatchInstances[i])) return dispatchInstances[i];
+        for (var i = 0; i < dispatchListeners.length && !event.isPropagationStopped(); i++) {
+            if (dispatchListeners[i](event, dispatchInstances[i])) return dispatchInstances[i];
+        }
     } else if (dispatchListeners && dispatchListeners(event, dispatchInstances)) return dispatchInstances;
     return null;
 }
@@ -19701,11 +19931,15 @@ function getParent(inst) {
 }
 
 function getLowestCommonAncestor(instA, instB) {
-    for (var depthA = 0, tempA = instA; tempA; tempA = getParent(tempA)) depthA++;
-    for (var depthB = 0, tempB = instB; tempB; tempB = getParent(tempB)) depthB++;
-    for (; depthA - depthB > 0;) instA = getParent(instA), depthA--;
-    for (; depthB - depthA > 0;) instB = getParent(instB), depthB--;
-    for (var depth = depthA; depth--;) {
+    for (var depthA = 0, tempA = instA; tempA; tempA = getParent(tempA)) {
+        depthA++;
+    }for (var depthB = 0, tempB = instB; tempB; tempB = getParent(tempB)) {
+        depthB++;
+    }for (; depthA - depthB > 0;) {
+        instA = getParent(instA), depthA--;
+    }for (; depthB - depthA > 0;) {
+        instB = getParent(instB), depthB--;
+    }for (var depth = depthA; depth--;) {
         if (instA === instB || instA === instB.alternate) return instA;
         instA = getParent(instA), instB = getParent(instB);
     }
@@ -19725,18 +19959,27 @@ function getParentInstance(inst) {
 }
 
 function traverseTwoPhase(inst, fn, arg) {
-    for (var path = []; inst;) path.push(inst), inst = getParent(inst);
-    var i;
-    for (i = path.length; i-- > 0;) fn(path[i], "captured", arg);
-    for (i = 0; i < path.length; i++) fn(path[i], "bubbled", arg);
+    for (var path = []; inst;) {
+        path.push(inst), inst = getParent(inst);
+    }var i;
+    for (i = path.length; i-- > 0;) {
+        fn(path[i], "captured", arg);
+    }for (i = 0; i < path.length; i++) {
+        fn(path[i], "bubbled", arg);
+    }
 }
 
 function traverseEnterLeave(from, to, fn, argFrom, argTo) {
-    for (var common = from && to ? getLowestCommonAncestor(from, to) : null, pathFrom = []; from && from !== common;) pathFrom.push(from), from = getParent(from);
-    for (var pathTo = []; to && to !== common;) pathTo.push(to), to = getParent(to);
-    var i;
-    for (i = 0; i < pathFrom.length; i++) fn(pathFrom[i], "bubbled", argFrom);
-    for (i = pathTo.length; i-- > 0;) fn(pathTo[i], "captured", argTo);
+    for (var common = from && to ? getLowestCommonAncestor(from, to) : null, pathFrom = []; from && from !== common;) {
+        pathFrom.push(from), from = getParent(from);
+    }for (var pathTo = []; to && to !== common;) {
+        pathTo.push(to), to = getParent(to);
+    }var i;
+    for (i = 0; i < pathFrom.length; i++) {
+        fn(pathFrom[i], "bubbled", argFrom);
+    }for (i = pathTo.length; i-- > 0;) {
+        fn(pathTo[i], "captured", argTo);
+    }
 }
 
 var ReactTreeTraversal = {
@@ -19876,12 +20119,13 @@ var EventPropagators = {
 function SyntheticEvent(dispatchConfig, targetInst, nativeEvent, nativeEventTarget) {
     delete this.nativeEvent, delete this.preventDefault, delete this.stopPropagation, this.dispatchConfig = dispatchConfig, this._targetInst = targetInst, this.nativeEvent = nativeEvent;
     var Interface = this.constructor.Interface;
-    for (var propName in Interface) if (Interface.hasOwnProperty(propName)) {
-        delete this[propName];
-        var normalize = Interface[propName];
-        normalize ? this[propName] = normalize(nativeEvent) : "target" === propName ? this.target = nativeEventTarget : this[propName] = nativeEvent[propName];
-    }
-    var defaultPrevented = null != nativeEvent.defaultPrevented ? nativeEvent.defaultPrevented : !1 === nativeEvent.returnValue;
+    for (var propName in Interface) {
+        if (Interface.hasOwnProperty(propName)) {
+            delete this[propName];
+            var normalize = Interface[propName];
+            normalize ? this[propName] = normalize(nativeEvent) : "target" === propName ? this.target = nativeEventTarget : this[propName] = nativeEvent[propName];
+        }
+    }var defaultPrevented = null != nativeEvent.defaultPrevented ? nativeEvent.defaultPrevented : !1 === nativeEvent.returnValue;
     return this.isDefaultPrevented = defaultPrevented ? emptyFunction.thatReturnsTrue : emptyFunction.thatReturnsFalse, this.isPropagationStopped = emptyFunction.thatReturnsFalse, this;
 }
 
@@ -19901,9 +20145,11 @@ Object.assign(SyntheticEvent.prototype, {
     isPersistent: emptyFunction.thatReturnsFalse,
     destructor: function () {
         var Interface = this.constructor.Interface;
-        for (var propName in Interface) Object.defineProperty(this, propName, getPooledWarningPropertyDefinition(propName, Interface[propName]));
-        for (var i = 0; i < shouldBeReleasedProperties.length; i++) this[shouldBeReleasedProperties[i]] = null;
-        Object.defineProperty(this, "nativeEvent", getPooledWarningPropertyDefinition("nativeEvent", null)), Object.defineProperty(this, "preventDefault", getPooledWarningPropertyDefinition("preventDefault", emptyFunction)), Object.defineProperty(this, "stopPropagation", getPooledWarningPropertyDefinition("stopPropagation", emptyFunction));
+        for (var propName in Interface) {
+            Object.defineProperty(this, propName, getPooledWarningPropertyDefinition(propName, Interface[propName]));
+        }for (var i = 0; i < shouldBeReleasedProperties.length; i++) {
+            this[shouldBeReleasedProperties[i]] = null;
+        }Object.defineProperty(this, "nativeEvent", getPooledWarningPropertyDefinition("nativeEvent", null)), Object.defineProperty(this, "preventDefault", getPooledWarningPropertyDefinition("preventDefault", emptyFunction)), Object.defineProperty(this, "stopPropagation", getPooledWarningPropertyDefinition("stopPropagation", emptyFunction));
     }
 }), SyntheticEvent.Interface = EventInterface, isProxySupported && (SyntheticEvent = new Proxy(SyntheticEvent, {
     construct: function (target, args) {
@@ -19947,7 +20193,9 @@ function getPooledWarningPropertyDefinition(propName, getVal) {
 var _extends = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
         var source = arguments[i];
-        for (var key in source) Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        for (var key in source) {
+            Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        }
     }
     return target;
 },
@@ -19955,11 +20203,11 @@ var _extends = Object.assign || function (target) {
     customDirectEventTypes = UIManager.customDirectEventTypes,
     allTypesByEventName = {};
 
-for (var bubblingTypeName in customBubblingEventTypes) allTypesByEventName[bubblingTypeName] = customBubblingEventTypes[bubblingTypeName];
-
-for (var directTypeName in customDirectEventTypes) warning(!customBubblingEventTypes[directTypeName], "Event cannot be both direct and bubbling: %s", directTypeName), allTypesByEventName[directTypeName] = customDirectEventTypes[directTypeName];
-
-var ReactNativeBridgeEventPlugin = {
+for (var bubblingTypeName in customBubblingEventTypes) {
+    allTypesByEventName[bubblingTypeName] = customBubblingEventTypes[bubblingTypeName];
+}for (var directTypeName in customDirectEventTypes) {
+    warning(!customBubblingEventTypes[directTypeName], "Event cannot be both direct and bubbling: %s", directTypeName), allTypesByEventName[directTypeName] = customDirectEventTypes[directTypeName];
+}var ReactNativeBridgeEventPlugin = {
     eventTypes: _extends({}, customBubblingEventTypes, customDirectEventTypes),
     extractEvents: function (topLevelType, targetInst, nativeEvent, nativeEventTarget) {
         var bubbleDispatchConfig = customBubblingEventTypes[topLevelType],
@@ -19989,8 +20237,9 @@ var ReactEventEmitterMixin = {
     tagsStartAt: INITIAL_TAG_COUNT,
     tagCount: INITIAL_TAG_COUNT,
     allocateTag: function () {
-        for (; this.reactTagIsNativeTopRootID(ReactNativeTagHandles.tagCount);) ReactNativeTagHandles.tagCount++;
-        var tag = ReactNativeTagHandles.tagCount;
+        for (; this.reactTagIsNativeTopRootID(ReactNativeTagHandles.tagCount);) {
+            ReactNativeTagHandles.tagCount++;
+        }var tag = ReactNativeTagHandles.tagCount;
         return ReactNativeTagHandles.tagCount++, tag;
     },
     assertRootTag: function (tag) {
@@ -20031,7 +20280,9 @@ var ReactControlledComponent = {
         if (restoreTarget) {
             var target = restoreTarget,
                 queuedTargets = restoreQueue;
-            if (restoreTarget = null, restoreQueue = null, restoreStateOfTarget(target), queuedTargets) for (var i = 0; i < queuedTargets.length; i++) restoreStateOfTarget(queuedTargets[i]);
+            if (restoreTarget = null, restoreQueue = null, restoreStateOfTarget(target), queuedTargets) for (var i = 0; i < queuedTargets.length; i++) {
+                restoreStateOfTarget(queuedTargets[i]);
+            }
         }
     }
 },
@@ -20079,14 +20330,17 @@ var ReactGenericBatchingInjection = {
     _extends$1 = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
         var source = arguments[i];
-        for (var key in source) Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        for (var key in source) {
+            Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        }
     }
     return target;
 },
     EMPTY_NATIVE_EVENT = {},
     touchSubsequence = function (touches, indices) {
-    for (var ret = [], i = 0; i < indices.length; i++) ret.push(touches[indices[i]]);
-    return ret;
+    for (var ret = [], i = 0; i < indices.length; i++) {
+        ret.push(touches[indices[i]]);
+    }return ret;
 },
     removeTouchesAtIndices = function (touches, indices) {
     for (var rippedOut = [], temp = touches, i = 0; i < indices.length; i++) {
@@ -20573,7 +20827,9 @@ ReactDebugTool$1 = {
         hooks.push(hook);
     },
     removeHook: function (hook) {
-        for (var i = 0; i < hooks.length; i++) hooks[i] === hook && (hooks.splice(i, 1), i--);
+        for (var i = 0; i < hooks.length; i++) {
+            hooks[i] === hook && (hooks.splice(i, 1), i--);
+        }
     },
     isProfiling: function () {
         return isProfiling;
@@ -21056,7 +21312,9 @@ var nextMountID = 1,
         var callbacks = this._pendingCallbacks;
         if (callbacks) {
             this._pendingCallbacks = null;
-            for (var i = 0; i < callbacks.length; i++) transaction.getReactMountReady().enqueue(callbacks[i], inst);
+            for (var i = 0; i < callbacks.length; i++) {
+                transaction.getReactMountReady().enqueue(callbacks[i], inst);
+            }
         }
         return markup;
     },
@@ -21123,8 +21381,9 @@ var nextMountID = 1,
             contextTypes = Component.contextTypes;
         if (!contextTypes) return emptyObject;
         var maskedContext = {};
-        for (var contextName in contextTypes) maskedContext[contextName] = context[contextName];
-        return maskedContext;
+        for (var contextName in contextTypes) {
+            maskedContext[contextName] = context[contextName];
+        }return maskedContext;
     },
     _processContext: function (context) {
         var maskedContext = this._maskContext(context),
@@ -21143,8 +21402,9 @@ var nextMountID = 1,
                 ReactInstrumentation.debugTool.onEndProcessingChildContext();
             }
             invariant("object" == typeof Component.childContextTypes, "%s.getChildContext(): childContextTypes must be defined in order to " + "use getChildContext().", this.getName() || "ReactCompositeComponent"), this._checkContextTypes(Component.childContextTypes, childContext, "child context");
-            for (var name in childContext) invariant(name in Component.childContextTypes, '%s.getChildContext(): key "%s" is not defined in childContextTypes.', this.getName() || "ReactCompositeComponent", name);
-            return Object.assign({}, currentContext, childContext);
+            for (var name in childContext) {
+                invariant(name in Component.childContextTypes, '%s.getChildContext(): key "%s" is not defined in childContextTypes.', this.getName() || "ReactCompositeComponent", name);
+            }return Object.assign({}, currentContext, childContext);
         }
         var componentName = this.getName();
         return warningAboutMissingGetChildContext[componentName] || (warningAboutMissingGetChildContext[componentName] = !0, warning(!Component.childContextTypes, "%s.childContextTypes is specified but there is no getChildContext() method " + "on the instance. You can either define getChildContext() on %s or remove " + "childContextTypes from it.", componentName, componentName)), currentContext;
@@ -21160,8 +21420,9 @@ var nextMountID = 1,
     performUpdateIfNecessary: function (transaction) {
         if (null != this._pendingElement) ReactReconciler_1.receiveComponent(this, this._pendingElement, transaction, this._context);else if (null !== this._pendingStateQueue || this._pendingForceUpdate) this.updateComponent(transaction, this._currentElement, this._currentElement, this._context, this._context);else {
             var callbacks = this._pendingCallbacks;
-            if (this._pendingCallbacks = null, callbacks) for (var j = 0; j < callbacks.length; j++) transaction.getReactMountReady().enqueue(callbacks[j], this.getPublicInstance());
-            this._updateBatchNumber = null;
+            if (this._pendingCallbacks = null, callbacks) for (var j = 0; j < callbacks.length; j++) {
+                transaction.getReactMountReady().enqueue(callbacks[j], this.getPublicInstance());
+            }this._updateBatchNumber = null;
         }
     },
     updateComponent: function (transaction, prevParentElement, nextParentElement, prevUnmaskedContext, nextUnmaskedContext) {
@@ -21190,7 +21451,9 @@ var nextMountID = 1,
                 return inst.shouldComponentUpdate(nextProps, nextState, nextContext);
             }, this._debugID, "shouldComponentUpdate") : this._compositeType === ReactCompositeComponentTypes$1.PureClass && (shouldUpdate = !shallowEqual(prevProps, nextProps) || !shallowEqual(inst.state, nextState));
         }
-        if (warning(void 0 !== shouldUpdate, "%s.shouldComponentUpdate(): Returned undefined instead of a " + "boolean value. Make sure to return true or false.", this.getName() || "ReactCompositeComponent"), this._updateBatchNumber = null, shouldUpdate ? (this._pendingForceUpdate = !1, this._performComponentUpdate(nextParentElement, nextProps, nextState, nextContext, transaction, nextUnmaskedContext)) : (this._currentElement = nextParentElement, this._context = nextUnmaskedContext, inst.props = nextProps, inst.state = nextState, inst.context = nextContext), callbacks) for (var j = 0; j < callbacks.length; j++) transaction.getReactMountReady().enqueue(callbacks[j], this.getPublicInstance());
+        if (warning(void 0 !== shouldUpdate, "%s.shouldComponentUpdate(): Returned undefined instead of a " + "boolean value. Make sure to return true or false.", this.getName() || "ReactCompositeComponent"), this._updateBatchNumber = null, shouldUpdate ? (this._pendingForceUpdate = !1, this._performComponentUpdate(nextParentElement, nextProps, nextState, nextContext, transaction, nextUnmaskedContext)) : (this._currentElement = nextParentElement, this._context = nextUnmaskedContext, inst.props = nextProps, inst.state = nextState, inst.context = nextContext), callbacks) for (var j = 0; j < callbacks.length; j++) {
+            transaction.getReactMountReady().enqueue(callbacks[j], this.getPublicInstance());
+        }
     },
     _processPendingState: function (props, context) {
         var inst = this._instance,
@@ -21538,8 +21801,9 @@ var CallbackQueue = function () {
             arg = this._arg;
         if (callbacks && contexts) {
             invariant(callbacks.length === contexts.length, "Mismatched list of contexts in callback queue"), this._callbacks = null, this._contexts = null;
-            for (var i = 0; i < callbacks.length; i++) validateCallback_1(callbacks[i]), callbacks[i].call(contexts[i], arg);
-            callbacks.length = 0, contexts.length = 0;
+            for (var i = 0; i < callbacks.length; i++) {
+                validateCallback_1(callbacks[i]), callbacks[i].call(contexts[i], arg);
+            }callbacks.length = 0, contexts.length = 0;
         }
     }, CallbackQueue.prototype.checkpoint = function () {
         return this._callbacks ? this._callbacks.length : 0;
@@ -21781,18 +22045,22 @@ function resolveObject(idOrObject) {
 }
 
 function restoreDeletedValuesInNestedArray(updatePayload, node, validAttributes) {
-    if (Array.isArray(node)) for (var i = node.length; i-- && removedKeyCount > 0;) restoreDeletedValuesInNestedArray(updatePayload, node[i], validAttributes);else if (node && removedKeyCount > 0) {
+    if (Array.isArray(node)) for (var i = node.length; i-- && removedKeyCount > 0;) {
+        restoreDeletedValuesInNestedArray(updatePayload, node[i], validAttributes);
+    } else if (node && removedKeyCount > 0) {
         var obj = resolveObject(node);
-        for (var propKey in removedKeys) if (removedKeys[propKey]) {
-            var nextProp = obj[propKey];
-            if (void 0 !== nextProp) {
-                var attributeConfig = validAttributes[propKey];
-                if (attributeConfig) {
-                    if ("function" == typeof nextProp && (nextProp = !0), void 0 === nextProp && (nextProp = null), "object" != typeof attributeConfig) updatePayload[propKey] = nextProp;else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
-                        var nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp;
-                        updatePayload[propKey] = nextValue;
+        for (var propKey in removedKeys) {
+            if (removedKeys[propKey]) {
+                var nextProp = obj[propKey];
+                if (void 0 !== nextProp) {
+                    var attributeConfig = validAttributes[propKey];
+                    if (attributeConfig) {
+                        if ("function" == typeof nextProp && (nextProp = !0), void 0 === nextProp && (nextProp = null), "object" != typeof attributeConfig) updatePayload[propKey] = nextProp;else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
+                            var nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp;
+                            updatePayload[propKey] = nextValue;
+                        }
+                        removedKeys[propKey] = !1, removedKeyCount--;
                     }
-                    removedKeys[propKey] = !1, removedKeyCount--;
                 }
             }
         }
@@ -21802,10 +22070,13 @@ function restoreDeletedValuesInNestedArray(updatePayload, node, validAttributes)
 function diffNestedArrayProperty(updatePayload, prevArray, nextArray, validAttributes) {
     var i,
         minLength = prevArray.length < nextArray.length ? prevArray.length : nextArray.length;
-    for (i = 0; i < minLength; i++) updatePayload = diffNestedProperty(updatePayload, prevArray[i], nextArray[i], validAttributes);
-    for (; i < prevArray.length; i++) updatePayload = clearNestedProperty(updatePayload, prevArray[i], validAttributes);
-    for (; i < nextArray.length; i++) updatePayload = addNestedProperty(updatePayload, nextArray[i], validAttributes);
-    return updatePayload;
+    for (i = 0; i < minLength; i++) {
+        updatePayload = diffNestedProperty(updatePayload, prevArray[i], nextArray[i], validAttributes);
+    }for (; i < prevArray.length; i++) {
+        updatePayload = clearNestedProperty(updatePayload, prevArray[i], validAttributes);
+    }for (; i < nextArray.length; i++) {
+        updatePayload = addNestedProperty(updatePayload, nextArray[i], validAttributes);
+    }return updatePayload;
 }
 
 function diffNestedProperty(updatePayload, prevProp, nextProp, validAttributes) {
@@ -21815,30 +22086,34 @@ function diffNestedProperty(updatePayload, prevProp, nextProp, validAttributes) 
 function addNestedProperty(updatePayload, nextProp, validAttributes) {
     if (!nextProp) return updatePayload;
     if (!Array.isArray(nextProp)) return addProperties(updatePayload, resolveObject(nextProp), validAttributes);
-    for (var i = 0; i < nextProp.length; i++) updatePayload = addNestedProperty(updatePayload, nextProp[i], validAttributes);
-    return updatePayload;
+    for (var i = 0; i < nextProp.length; i++) {
+        updatePayload = addNestedProperty(updatePayload, nextProp[i], validAttributes);
+    }return updatePayload;
 }
 
 function clearNestedProperty(updatePayload, prevProp, validAttributes) {
     if (!prevProp) return updatePayload;
     if (!Array.isArray(prevProp)) return clearProperties(updatePayload, resolveObject(prevProp), validAttributes);
-    for (var i = 0; i < prevProp.length; i++) updatePayload = clearNestedProperty(updatePayload, prevProp[i], validAttributes);
-    return updatePayload;
+    for (var i = 0; i < prevProp.length; i++) {
+        updatePayload = clearNestedProperty(updatePayload, prevProp[i], validAttributes);
+    }return updatePayload;
 }
 
 function diffProperties(updatePayload, prevProps, nextProps, validAttributes) {
     var attributeConfig, nextProp, prevProp;
-    for (var propKey in nextProps) if (attributeConfig = validAttributes[propKey]) if (prevProp = prevProps[propKey], nextProp = nextProps[propKey], "function" == typeof nextProp && (nextProp = !0, "function" == typeof prevProp && (prevProp = !0)), void 0 === nextProp && (nextProp = null, void 0 === prevProp && (prevProp = null)), removedKeys && (removedKeys[propKey] = !1), updatePayload && void 0 !== updatePayload[propKey]) {
-        if ("object" != typeof attributeConfig) updatePayload[propKey] = nextProp;else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
-            var nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp;
-            updatePayload[propKey] = nextValue;
-        }
-    } else if (prevProp !== nextProp) if ("object" != typeof attributeConfig) defaultDiffer(prevProp, nextProp) && ((updatePayload || (updatePayload = {}))[propKey] = nextProp);else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
-        var shouldUpdate = void 0 === prevProp || ("function" == typeof attributeConfig.diff ? attributeConfig.diff(prevProp, nextProp) : defaultDiffer(prevProp, nextProp));
-        shouldUpdate && (nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp, (updatePayload || (updatePayload = {}))[propKey] = nextValue);
-    } else removedKeys = null, removedKeyCount = 0, updatePayload = diffNestedProperty(updatePayload, prevProp, nextProp, attributeConfig), removedKeyCount > 0 && updatePayload && (restoreDeletedValuesInNestedArray(updatePayload, nextProp, attributeConfig), removedKeys = null);
-    for (propKey in prevProps) void 0 === nextProps[propKey] && (attributeConfig = validAttributes[propKey]) && (updatePayload && void 0 !== updatePayload[propKey] || void 0 !== (prevProp = prevProps[propKey]) && ("object" != typeof attributeConfig || "function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process ? ((updatePayload || (updatePayload = {}))[propKey] = null, removedKeys || (removedKeys = {}), removedKeys[propKey] || (removedKeys[propKey] = !0, removedKeyCount++)) : updatePayload = clearNestedProperty(updatePayload, prevProp, attributeConfig)));
-    return updatePayload;
+    for (var propKey in nextProps) {
+        if (attributeConfig = validAttributes[propKey]) if (prevProp = prevProps[propKey], nextProp = nextProps[propKey], "function" == typeof nextProp && (nextProp = !0, "function" == typeof prevProp && (prevProp = !0)), void 0 === nextProp && (nextProp = null, void 0 === prevProp && (prevProp = null)), removedKeys && (removedKeys[propKey] = !1), updatePayload && void 0 !== updatePayload[propKey]) {
+            if ("object" != typeof attributeConfig) updatePayload[propKey] = nextProp;else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
+                var nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp;
+                updatePayload[propKey] = nextValue;
+            }
+        } else if (prevProp !== nextProp) if ("object" != typeof attributeConfig) defaultDiffer(prevProp, nextProp) && ((updatePayload || (updatePayload = {}))[propKey] = nextProp);else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
+            var shouldUpdate = void 0 === prevProp || ("function" == typeof attributeConfig.diff ? attributeConfig.diff(prevProp, nextProp) : defaultDiffer(prevProp, nextProp));
+            shouldUpdate && (nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp, (updatePayload || (updatePayload = {}))[propKey] = nextValue);
+        } else removedKeys = null, removedKeyCount = 0, updatePayload = diffNestedProperty(updatePayload, prevProp, nextProp, attributeConfig), removedKeyCount > 0 && updatePayload && (restoreDeletedValuesInNestedArray(updatePayload, nextProp, attributeConfig), removedKeys = null);
+    }for (propKey in prevProps) {
+        void 0 === nextProps[propKey] && (attributeConfig = validAttributes[propKey]) && (updatePayload && void 0 !== updatePayload[propKey] || void 0 !== (prevProp = prevProps[propKey]) && ("object" != typeof attributeConfig || "function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process ? ((updatePayload || (updatePayload = {}))[propKey] = null, removedKeys || (removedKeys = {}), removedKeys[propKey] || (removedKeys[propKey] = !0, removedKeyCount++)) : updatePayload = clearNestedProperty(updatePayload, prevProp, attributeConfig)));
+    }return updatePayload;
 }
 
 function addProperties(updatePayload, props, validAttributes) {
@@ -21880,7 +22155,9 @@ function throwOnStylesProp(component, props) {
 }
 
 function warnForStyleProps(props, validAttributes) {
-    for (var key in validAttributes.style) validAttributes[key] || void 0 === props[key] || console.error("You are setting the style `{ " + key + ": ... }` as a prop. You " + "should nest it in a style object. " + "E.g. `{ style: { " + key + ": ... } }`");
+    for (var key in validAttributes.style) {
+        validAttributes[key] || void 0 === props[key] || console.error("You are setting the style `{ " + key + ": ... }` as a prop. You " + "should nest it in a style object. " + "E.g. `{ style: { " + key + ": ... } }`");
+    }
 }
 
 var NativeMethodsMixinUtils = {
@@ -21949,8 +22226,9 @@ function setNativePropsStack(componentOrHandle, nativeProps) {
     if (null != maybeInstance) {
         var viewConfig = void 0;
         if (void 0 !== maybeInstance.viewConfig) viewConfig = maybeInstance.viewConfig;else if (void 0 !== maybeInstance._instance && void 0 !== maybeInstance._instance.viewConfig) viewConfig = maybeInstance._instance.viewConfig;else {
-            for (; void 0 !== maybeInstance._renderedComponent;) maybeInstance = maybeInstance._renderedComponent;
-            viewConfig = maybeInstance.viewConfig;
+            for (; void 0 !== maybeInstance._renderedComponent;) {
+                maybeInstance = maybeInstance._renderedComponent;
+            }viewConfig = maybeInstance.viewConfig;
         }
         var tag = "function" == typeof maybeInstance.getHostNode ? maybeInstance.getHostNode() : maybeInstance._rootNodeID,
             updatePayload = ReactNativeAttributePayload_1.create(nativeProps, viewConfig.validAttributes);
@@ -22006,8 +22284,9 @@ function setNativePropsStack$1(componentOrHandle, nativeProps) {
     if (null != maybeInstance) {
         var viewConfig = void 0;
         if (void 0 !== maybeInstance.viewConfig) viewConfig = maybeInstance.viewConfig;else if (void 0 !== maybeInstance._instance && void 0 !== maybeInstance._instance.viewConfig) viewConfig = maybeInstance._instance.viewConfig;else {
-            for (; void 0 !== maybeInstance._renderedComponent;) maybeInstance = maybeInstance._renderedComponent;
-            viewConfig = maybeInstance.viewConfig;
+            for (; void 0 !== maybeInstance._renderedComponent;) {
+                maybeInstance = maybeInstance._renderedComponent;
+            }viewConfig = maybeInstance.viewConfig;
         }
         var tag = "function" == typeof maybeInstance.getHostNode ? maybeInstance.getHostNode() : maybeInstance._rootNodeID;
         warnForStyleProps$1(nativeProps, viewConfig.validAttributes);
@@ -22119,11 +22398,15 @@ function traverseStackChildrenImpl(children, nameSoFar, callback, traverseContex
         nextName,
         subtreeCount = 0,
         nextNamePrefix = "" === nameSoFar ? SEPARATOR : nameSoFar + SUBSEPARATOR;
-    if (Array.isArray(children)) for (var i = 0; i < children.length; i++) child = children[i], nextName = nextNamePrefix + getComponentKey(child, i), subtreeCount += traverseStackChildrenImpl(child, nextName, callback, traverseContext);else {
+    if (Array.isArray(children)) for (var i = 0; i < children.length; i++) {
+        child = children[i], nextName = nextNamePrefix + getComponentKey(child, i), subtreeCount += traverseStackChildrenImpl(child, nextName, callback, traverseContext);
+    } else {
         var iteratorFn = getIteratorFn_1(children);
         if (iteratorFn) {
             iteratorFn === children.entries && (warning(didWarnAboutMaps, "Using Maps as children is unsupported and will likely yield " + "unexpected results. Convert it to a sequence/iterable of keyed " + "ReactElements instead.%s", getCurrentStackAddendum()), didWarnAboutMaps = !0);
-            for (var step, iterator = iteratorFn.call(children), ii = 0; !(step = iterator.next()).done;) child = step.value, nextName = nextNamePrefix + getComponentKey(child, ii++), subtreeCount += traverseStackChildrenImpl(child, nextName, callback, traverseContext);
+            for (var step, iterator = iteratorFn.call(children), ii = 0; !(step = iterator.next()).done;) {
+                child = step.value, nextName = nextNamePrefix + getComponentKey(child, ii++), subtreeCount += traverseStackChildrenImpl(child, nextName, callback, traverseContext);
+            }
         } else if ("object" === type) {
             var addendum = "";
             addendum = " If you meant to render a collection of children, use an array " + "instead." + getCurrentStackAddendum();
@@ -22159,24 +22442,29 @@ var ReactChildReconciler = {
     updateChildren: function (prevChildren, nextChildren, mountImages, removedNodes, transaction, hostParent, hostContainerInfo, context, selfDebugID) {
         if (nextChildren || prevChildren) {
             var name, prevChild;
-            for (name in nextChildren) if (nextChildren.hasOwnProperty(name)) {
-                prevChild = prevChildren && prevChildren[name];
-                var prevElement = prevChild && prevChild._currentElement,
-                    nextElement = nextChildren[name];
-                if (null != prevChild && shouldUpdateReactComponent_1(prevElement, nextElement)) ReactReconciler_1.receiveComponent(prevChild, nextElement, transaction, context), nextChildren[name] = prevChild;else {
-                    var nextChildInstance = instantiateReactComponent_1(nextElement, !0);
-                    nextChildren[name] = nextChildInstance;
-                    var nextChildMountImage = ReactReconciler_1.mountComponent(nextChildInstance, transaction, hostParent, hostContainerInfo, context, selfDebugID);
-                    mountImages.push(nextChildMountImage), prevChild && (removedNodes[name] = ReactReconciler_1.getHostNode(prevChild), ReactReconciler_1.unmountComponent(prevChild, !1, !1));
+            for (name in nextChildren) {
+                if (nextChildren.hasOwnProperty(name)) {
+                    prevChild = prevChildren && prevChildren[name];
+                    var prevElement = prevChild && prevChild._currentElement,
+                        nextElement = nextChildren[name];
+                    if (null != prevChild && shouldUpdateReactComponent_1(prevElement, nextElement)) ReactReconciler_1.receiveComponent(prevChild, nextElement, transaction, context), nextChildren[name] = prevChild;else {
+                        var nextChildInstance = instantiateReactComponent_1(nextElement, !0);
+                        nextChildren[name] = nextChildInstance;
+                        var nextChildMountImage = ReactReconciler_1.mountComponent(nextChildInstance, transaction, hostParent, hostContainerInfo, context, selfDebugID);
+                        mountImages.push(nextChildMountImage), prevChild && (removedNodes[name] = ReactReconciler_1.getHostNode(prevChild), ReactReconciler_1.unmountComponent(prevChild, !1, !1));
+                    }
                 }
+            }for (name in prevChildren) {
+                !prevChildren.hasOwnProperty(name) || nextChildren && nextChildren.hasOwnProperty(name) || (prevChild = prevChildren[name], removedNodes[name] = ReactReconciler_1.getHostNode(prevChild), ReactReconciler_1.unmountComponent(prevChild, !1, !1));
             }
-            for (name in prevChildren) !prevChildren.hasOwnProperty(name) || nextChildren && nextChildren.hasOwnProperty(name) || (prevChild = prevChildren[name], removedNodes[name] = ReactReconciler_1.getHostNode(prevChild), ReactReconciler_1.unmountComponent(prevChild, !1, !1));
         }
     },
     unmountChildren: function (renderedChildren, safely, skipLifecycle) {
-        for (var name in renderedChildren) if (renderedChildren.hasOwnProperty(name)) {
-            var renderedChild = renderedChildren[name];
-            ReactReconciler_1.unmountComponent(renderedChild, safely, skipLifecycle);
+        for (var name in renderedChildren) {
+            if (renderedChildren.hasOwnProperty(name)) {
+                var renderedChild = renderedChildren[name];
+                ReactReconciler_1.unmountComponent(renderedChild, safely, skipLifecycle);
+            }
         }
     }
 },
@@ -22311,26 +22599,29 @@ var ReactMultiChild = {
         this._renderedChildren = children;
         var mountImages = [],
             index = 0;
-        for (var name in children) if (children.hasOwnProperty(name)) {
-            var child = children[name],
-                selfDebugID = 0;
-            selfDebugID = getDebugID(this);
-            var mountImage = ReactReconciler_1.mountComponent(child, transaction, this, this._hostContainerInfo, context, selfDebugID);
-            child._mountIndex = index++, mountImages.push(mountImage);
-        }
-        return setChildrenForInstrumentation.call(this, children), mountImages;
+        for (var name in children) {
+            if (children.hasOwnProperty(name)) {
+                var child = children[name],
+                    selfDebugID = 0;
+                selfDebugID = getDebugID(this);
+                var mountImage = ReactReconciler_1.mountComponent(child, transaction, this, this._hostContainerInfo, context, selfDebugID);
+                child._mountIndex = index++, mountImages.push(mountImage);
+            }
+        }return setChildrenForInstrumentation.call(this, children), mountImages;
     },
     updateTextContent: function (nextContent) {
         var prevChildren = this._renderedChildren;
         ReactChildReconciler_1.unmountChildren(prevChildren, !1, !1);
-        for (var name in prevChildren) prevChildren.hasOwnProperty(name) && invariant(!1, "updateTextContent called on non-empty component.");
-        processQueue(this, [makeTextContent(nextContent)]);
+        for (var name in prevChildren) {
+            prevChildren.hasOwnProperty(name) && invariant(!1, "updateTextContent called on non-empty component.");
+        }processQueue(this, [makeTextContent(nextContent)]);
     },
     updateMarkup: function (nextMarkup) {
         var prevChildren = this._renderedChildren;
         ReactChildReconciler_1.unmountChildren(prevChildren, !1, !1);
-        for (var name in prevChildren) prevChildren.hasOwnProperty(name) && invariant(!1, "updateTextContent called on non-empty component.");
-        processQueue(this, [makeSetMarkup(nextMarkup)]);
+        for (var name in prevChildren) {
+            prevChildren.hasOwnProperty(name) && invariant(!1, "updateTextContent called on non-empty component.");
+        }processQueue(this, [makeSetMarkup(nextMarkup)]);
     },
     updateChildren: function (nextNestedChildrenElements, transaction, context) {
         this._updateChildren(nextNestedChildrenElements, transaction, context);
@@ -22347,13 +22638,15 @@ var ReactMultiChild = {
                 lastIndex = 0,
                 nextMountIndex = 0,
                 lastPlacedNode = null;
-            for (name in nextChildren) if (nextChildren.hasOwnProperty(name)) {
-                var prevChild = prevChildren && prevChildren[name],
-                    nextChild = nextChildren[name];
-                prevChild === nextChild ? (updates = enqueue(updates, this.moveChild(prevChild, lastPlacedNode, nextIndex, lastIndex)), lastIndex = Math.max(prevChild._mountIndex, lastIndex), prevChild._mountIndex = nextIndex) : (prevChild && (lastIndex = Math.max(prevChild._mountIndex, lastIndex)), updates = enqueue(updates, this._mountChildAtIndex(nextChild, mountImages[nextMountIndex], lastPlacedNode, nextIndex, transaction, context)), nextMountIndex++), nextIndex++, lastPlacedNode = ReactReconciler_1.getHostNode(nextChild);
-            }
-            for (name in removedNodes) removedNodes.hasOwnProperty(name) && (updates = enqueue(updates, this._unmountChild(prevChildren[name], removedNodes[name])));
-            updates && processQueue(this, updates), this._renderedChildren = nextChildren, setChildrenForInstrumentation.call(this, nextChildren);
+            for (name in nextChildren) {
+                if (nextChildren.hasOwnProperty(name)) {
+                    var prevChild = prevChildren && prevChildren[name],
+                        nextChild = nextChildren[name];
+                    prevChild === nextChild ? (updates = enqueue(updates, this.moveChild(prevChild, lastPlacedNode, nextIndex, lastIndex)), lastIndex = Math.max(prevChild._mountIndex, lastIndex), prevChild._mountIndex = nextIndex) : (prevChild && (lastIndex = Math.max(prevChild._mountIndex, lastIndex)), updates = enqueue(updates, this._mountChildAtIndex(nextChild, mountImages[nextMountIndex], lastPlacedNode, nextIndex, transaction, context)), nextMountIndex++), nextIndex++, lastPlacedNode = ReactReconciler_1.getHostNode(nextChild);
+                }
+            }for (name in removedNodes) {
+                removedNodes.hasOwnProperty(name) && (updates = enqueue(updates, this._unmountChild(prevChildren[name], removedNodes[name])));
+            }updates && processQueue(this, updates), this._renderedChildren = nextChildren, setChildrenForInstrumentation.call(this, nextChildren);
         }
     },
     unmountChildren: function (safely, skipLifecycle) {
@@ -22403,8 +22696,9 @@ ReactNativeBaseComponent.Mixin = {
     receiveComponent: function (nextElement, transaction, context) {
         var prevElement = this._currentElement;
         this._currentElement = nextElement;
-        for (var key in this.viewConfig.validAttributes) nextElement.props.hasOwnProperty(key) && deepFreezeAndThrowOnMutationInDev(nextElement.props[key]);
-        var updatePayload = ReactNativeAttributePayload_1.diff(prevElement.props, nextElement.props, this.viewConfig.validAttributes);
+        for (var key in this.viewConfig.validAttributes) {
+            nextElement.props.hasOwnProperty(key) && deepFreezeAndThrowOnMutationInDev(nextElement.props[key]);
+        }var updatePayload = ReactNativeAttributePayload_1.diff(prevElement.props, nextElement.props, this.viewConfig.validAttributes);
         updatePayload && UIManager.updateView(this._rootNodeID, this.viewConfig.uiViewClassName, updatePayload), this.updateChildren(nextElement.props.children, transaction, context);
     },
     getName: function () {
@@ -22416,8 +22710,9 @@ ReactNativeBaseComponent.Mixin = {
     mountComponent: function (transaction, hostParent, hostContainerInfo, context) {
         var tag = ReactNativeTagHandles_1.allocateTag();
         this._rootNodeID = tag, this._hostParent = hostParent, this._hostContainerInfo = hostContainerInfo;
-        for (var key in this.viewConfig.validAttributes) this._currentElement.props.hasOwnProperty(key) && deepFreezeAndThrowOnMutationInDev(this._currentElement.props[key]);
-        var updatePayload = ReactNativeAttributePayload_1.create(this._currentElement.props, this.viewConfig.validAttributes),
+        for (var key in this.viewConfig.validAttributes) {
+            this._currentElement.props.hasOwnProperty(key) && deepFreezeAndThrowOnMutationInDev(this._currentElement.props[key]);
+        }var updatePayload = ReactNativeAttributePayload_1.create(this._currentElement.props, this.viewConfig.validAttributes),
             nativeTopRootTag = hostContainerInfo._tag;
         return UIManager.createView(tag, this.viewConfig.uiViewClassName, nativeTopRootTag, updatePayload), ReactNativeComponentTree_1.precacheNode(this, tag), this.initializeChildren(this._currentElement.props.children, tag, transaction, context), tag;
     }
@@ -22441,8 +22736,9 @@ function takeSnapshot(view, options) {
 var takeSnapshot_1 = takeSnapshot,
     lowPriorityWarning = function () {},
     printWarning = function (format) {
-    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) args[_key - 1] = arguments[_key];
-    var argIndex = 0,
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+    }var argIndex = 0,
         message = "Warning: " + format.replace(/%s/g, function () {
         return args[argIndex++];
     });
@@ -22455,8 +22751,9 @@ var takeSnapshot_1 = takeSnapshot,
 lowPriorityWarning = function (condition, format) {
     if (void 0 === format) throw new Error("`warning(condition, format, ...args)` requires a warning " + "message argument");
     if (!condition) {
-        for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) args[_key2 - 2] = arguments[_key2];
-        printWarning.apply(void 0, [format].concat(args));
+        for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+            args[_key2 - 2] = arguments[_key2];
+        }printWarning.apply(void 0, [format].concat(args));
     }
 };
 
@@ -22464,7 +22761,9 @@ var lowPriorityWarning_1 = lowPriorityWarning,
     _extends$2 = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
         var source = arguments[i];
-        for (var key in source) Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        for (var key in source) {
+            Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        }
     }
     return target;
 };
@@ -22553,9 +22852,11 @@ function getInclusive() {
                 updateAggregatedStats(treeSnapshot, instanceID, function (stats) {
                     stats.renderCount++;
                 });
-                for (var nextParentID = instanceID; nextParentID;) isCompositeByID[nextParentID] && updateAggregatedStats(treeSnapshot, nextParentID, function (stats) {
-                    stats.inclusiveRenderDuration += duration;
-                }), nextParentID = treeSnapshot[nextParentID].parentID;
+                for (var nextParentID = instanceID; nextParentID;) {
+                    isCompositeByID[nextParentID] && updateAggregatedStats(treeSnapshot, nextParentID, function (stats) {
+                        stats.inclusiveRenderDuration += duration;
+                    }), nextParentID = treeSnapshot[nextParentID].parentID;
+                }
             }
         });
     }), Object.keys(aggregatedStats).map(function (key) {
@@ -22591,7 +22892,9 @@ function getWasted() {
             operations = flush.operations,
             isDefinitelyNotWastedByID = {};
         operations.forEach(function (operation) {
-            for (var instanceID = operation.instanceID, nextParentID = instanceID; nextParentID;) isDefinitelyNotWastedByID[nextParentID] = !0, nextParentID = treeSnapshot[nextParentID].parentID;
+            for (var instanceID = operation.instanceID, nextParentID = instanceID; nextParentID;) {
+                isDefinitelyNotWastedByID[nextParentID] = !0, nextParentID = treeSnapshot[nextParentID].parentID;
+            }
         });
         var renderedCompositeIDs = {};
         measurements.forEach(function (measurement) {
@@ -22606,9 +22909,11 @@ function getWasted() {
                     updateAggregatedStats(treeSnapshot, instanceID, function (stats) {
                         stats.renderCount++;
                     });
-                    for (var nextParentID = instanceID; nextParentID;) renderedCompositeIDs[nextParentID] && !isDefinitelyNotWastedByID[nextParentID] && updateAggregatedStats(treeSnapshot, nextParentID, function (stats) {
-                        stats.inclusiveRenderDuration += duration;
-                    }), nextParentID = treeSnapshot[nextParentID].parentID;
+                    for (var nextParentID = instanceID; nextParentID;) {
+                        renderedCompositeIDs[nextParentID] && !isDefinitelyNotWastedByID[nextParentID] && updateAggregatedStats(treeSnapshot, nextParentID, function (stats) {
+                            stats.inclusiveRenderDuration += duration;
+                        }), nextParentID = treeSnapshot[nextParentID].parentID;
+                    }
                 }
             }
         });
@@ -22785,8 +23090,9 @@ Object.assign(ReactNative.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED, {
             return ReactNativeComponentTree_1.getClosestInstanceFromNode(node);
         },
         getNodeFromInstance: function (inst) {
-            for (; inst._renderedComponent;) inst = inst._renderedComponent;
-            return inst ? ReactNativeComponentTree_1.getNodeFromInstance(inst) : null;
+            for (; inst._renderedComponent;) {
+                inst = inst._renderedComponent;
+            }return inst ? ReactNativeComponentTree_1.getNodeFromInstance(inst) : null;
         }
     },
     Mount: ReactNativeMount_1,
@@ -22801,28 +23107,28 @@ module.exports = ReactNativeStack;
 __d(/* View */function(global, require, module, exports) {
 'use strict';
 
-const NativeMethodsMixin = require(31                  ); // 31 = NativeMethodsMixin
-const NativeModules = require(36             ); // 36 = NativeModules
-const Platform = require(46        ); // 46 = Platform
-const PropTypes = require(19          ); // 19 = prop-types
-const React = require(125    ); // 125 = React
-const ReactNativeFeatureFlags = require(33                       ); // 33 = ReactNativeFeatureFlags
-const ReactNativeStyleAttributes = require(126                         ); // 126 = ReactNativeStyleAttributes
-const ReactNativeViewAttributes = require(139                        ); // 139 = ReactNativeViewAttributes
-const ViewPropTypes = require(140            ); // 140 = ViewPropTypes
+var NativeMethodsMixin = require(31                  ); // 31 = NativeMethodsMixin
+var NativeModules = require(36             ); // 36 = NativeModules
+var Platform = require(46        ); // 46 = Platform
+var PropTypes = require(19          ); // 19 = prop-types
+var React = require(125    ); // 125 = React
+var ReactNativeFeatureFlags = require(33                       ); // 33 = ReactNativeFeatureFlags
+var ReactNativeStyleAttributes = require(126                         ); // 126 = ReactNativeStyleAttributes
+var ReactNativeViewAttributes = require(139                        ); // 139 = ReactNativeViewAttributes
+var ViewPropTypes = require(140            ); // 140 = ViewPropTypes
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
-const requireNativeComponent = require(149                     ); // 149 = requireNativeComponent
-const warning = require(15                ); // 15 = fbjs/lib/warning
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var requireNativeComponent = require(149                     ); // 149 = requireNativeComponent
+var warning = require(15                ); // 15 = fbjs/lib/warning
 
-const {
-  AccessibilityComponentTypes,
-  AccessibilityTraits
+var {
+  AccessibilityComponentTypes: AccessibilityComponentTypes,
+  AccessibilityTraits: AccessibilityTraits
 } = require(147                ); // 147 = ViewAccessibility
 
-const forceTouchAvailable = NativeModules.PlatformConstants && NativeModules.PlatformConstants.forceTouchAvailable || false;
+var forceTouchAvailable = NativeModules.PlatformConstants && NativeModules.PlatformConstants.forceTouchAvailable || false;
 
-const View = React.createClass({
+var View = React.createClass({
   mixins: [NativeMethodsMixin],
 
   propTypes: ViewPropTypes,
@@ -22848,10 +23154,10 @@ const View = React.createClass({
 });
 
 function mixinStatics(target) {
-  let warnedAboutAccessibilityTraits = false;
-  let warnedAboutAccessibilityComponentType = false;
-  let warnedAboutForceTouchAvailable = false;
-  let warnedAboutPropTypes = false;
+  var warnedAboutAccessibilityTraits = false;
+  var warnedAboutAccessibilityComponentType = false;
+  var warnedAboutForceTouchAvailable = false;
+  var warnedAboutPropTypes = false;
 
   Object.defineProperty(target, 'AccessibilityTraits', {
     get: function () {
@@ -22886,7 +23192,7 @@ function mixinStatics(target) {
   });
 }
 
-const RCTView = requireNativeComponent('RCTView', View, {
+var RCTView = requireNativeComponent('RCTView', View, {
   nativeOnly: {
     nativeBackgroundAndroid: true,
     nativeForegroundAndroid: true
@@ -22894,17 +23200,17 @@ const RCTView = requireNativeComponent('RCTView', View, {
 });
 
 if (__DEV__) {
-  const UIManager = require(73         ); // 73 = UIManager
-  const viewConfig = UIManager.viewConfigs && UIManager.viewConfigs.RCTView || {};
-  for (const prop in viewConfig.nativeProps) {
-    const viewAny = View;
+  var UIManager = require(73         ); // 73 = UIManager
+  var viewConfig = UIManager.viewConfigs && UIManager.viewConfigs.RCTView || {};
+  for (var prop in viewConfig.nativeProps) {
+    var viewAny = View;
     if (!viewAny.propTypes[prop] && !ReactNativeStyleAttributes[prop]) {
       throw new Error('View is missing propType for native prop `' + prop + '`');
     }
   }
 }
 
-let ViewToExport = RCTView;
+var ViewToExport = RCTView;
 if (__DEV__ || ReactNativeFeatureFlags.useFiber) {
   mixinStatics(View);
   ViewToExport = View;
@@ -23126,10 +23432,10 @@ module.exports = LayoutPropTypes;
 __d(/* ShadowPropTypesIOS */function(global, require, module, exports) {
 'use strict';
 
-const ColorPropType = require(29             ); // 29 = ColorPropType
-const ReactPropTypes = require(19          ); // 19 = prop-types
+var ColorPropType = require(29             ); // 29 = ColorPropType
+var ReactPropTypes = require(19          ); // 19 = prop-types
 
-const ShadowPropTypesIOS = {
+var ShadowPropTypesIOS = {
   shadowColor: ColorPropType,
 
   shadowOffset: ReactPropTypes.shape({
@@ -23181,15 +23487,15 @@ module.exports = TransformPropTypes;
 __d(/* deprecatedPropType */function(global, require, module, exports) {
 'use strict';
 
-const UIManager = require(73         ); // 73 = UIManager
+var UIManager = require(73         ); // 73 = UIManager
 
 function deprecatedPropType(propType, explanation) {
   return function validate(props, propName, componentName, ...rest) {
     if (!UIManager[componentName] && props[propName] !== undefined) {
-      console.warn(`\`${propName}\` supplied to \`${componentName}\` has been deprecated. ${explanation}`);
+      console.warn('`' + propName + '` supplied to `' + componentName + '` has been deprecated. ' + explanation);
     }
 
-    return propType(props, propName, componentName, ...rest);
+    return propType.apply(undefined, [props, propName, componentName].concat(rest));
   };
 }
 
@@ -23198,11 +23504,11 @@ module.exports = deprecatedPropType;
 __d(/* TextStylePropTypes */function(global, require, module, exports) {
 'use strict';
 
-const ReactPropTypes = require(125    ).PropTypes; // 125 = React
-const ColorPropType = require(29             ); // 29 = ColorPropType
-const ViewStylePropTypes = require(135                 ); // 135 = ViewStylePropTypes
+var ReactPropTypes = require(125    ).PropTypes; // 125 = React
+var ColorPropType = require(29             ); // 29 = ColorPropType
+var ViewStylePropTypes = require(135                 ); // 135 = ViewStylePropTypes
 
-const TextStylePropTypes = babelHelpers.extends({}, ViewStylePropTypes, {
+var TextStylePropTypes = babelHelpers.extends({}, ViewStylePropTypes, {
 
   color: ColorPropType,
   fontFamily: ReactPropTypes.string,
@@ -23290,7 +23596,7 @@ function processTransform(transform) {
 
   var result = MatrixMath.createIdentityMatrix();
 
-  transform.forEach(transformation => {
+  transform.forEach(function (transformation) {
     var key = Object.keys(transformation)[0];
     var value = transformation[key];
 
@@ -23356,7 +23662,7 @@ function _convertToRadians(value) {
 }
 
 function _validateTransforms(transform) {
-  transform.forEach(transformation => {
+  transform.forEach(function (transformation) {
     var keys = Object.keys(transformation);
     invariant(keys.length === 1, 'You must specify exactly one property per transform object. Passed properties: %s', stringifySafe(transformation));
     var key = keys[0];
@@ -23491,17 +23797,16 @@ var MatrixMath = {
     matrixCommand[11] = -1 / p;
   },
 
-  reuseScaleXCommand(matrixCommand, factor) {
+  reuseScaleXCommand: function (matrixCommand, factor) {
     matrixCommand[0] = factor;
   },
-
-  reuseScaleYCommand(matrixCommand, factor) {
+  reuseScaleYCommand: function (matrixCommand, factor) {
     matrixCommand[5] = factor;
   },
-
-  reuseScaleZCommand(matrixCommand, factor) {
+  reuseScaleZCommand: function (matrixCommand, factor) {
     matrixCommand[10] = factor;
   },
+
 
   reuseRotateXCommand: function (matrixCommand, radians) {
     matrixCommand[5] = Math.cos(radians);
@@ -23584,12 +23889,11 @@ var MatrixMath = {
     out[15] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
   },
 
-  determinant(matrix) {
+  determinant: function (matrix) {
     var [m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33] = matrix;
     return m03 * m12 * m21 * m30 - m02 * m13 * m21 * m30 - m03 * m11 * m22 * m30 + m01 * m13 * m22 * m30 + m02 * m11 * m23 * m30 - m01 * m12 * m23 * m30 - m03 * m12 * m20 * m31 + m02 * m13 * m20 * m31 + m03 * m10 * m22 * m31 - m00 * m13 * m22 * m31 - m02 * m10 * m23 * m31 + m00 * m12 * m23 * m31 + m03 * m11 * m20 * m32 - m01 * m13 * m20 * m32 - m03 * m10 * m21 * m32 + m00 * m13 * m21 * m32 + m01 * m10 * m23 * m32 - m00 * m11 * m23 * m32 - m02 * m11 * m20 * m33 + m01 * m12 * m20 * m33 + m02 * m10 * m21 * m33 - m00 * m12 * m21 * m33 - m01 * m10 * m22 * m33 + m00 * m11 * m22 * m33;
   },
-
-  inverse(matrix) {
+  inverse: function (matrix) {
     var det = MatrixMath.determinant(matrix);
     if (!det) {
       return matrix;
@@ -23597,38 +23901,30 @@ var MatrixMath = {
     var [m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33] = matrix;
     return [(m12 * m23 * m31 - m13 * m22 * m31 + m13 * m21 * m32 - m11 * m23 * m32 - m12 * m21 * m33 + m11 * m22 * m33) / det, (m03 * m22 * m31 - m02 * m23 * m31 - m03 * m21 * m32 + m01 * m23 * m32 + m02 * m21 * m33 - m01 * m22 * m33) / det, (m02 * m13 * m31 - m03 * m12 * m31 + m03 * m11 * m32 - m01 * m13 * m32 - m02 * m11 * m33 + m01 * m12 * m33) / det, (m03 * m12 * m21 - m02 * m13 * m21 - m03 * m11 * m22 + m01 * m13 * m22 + m02 * m11 * m23 - m01 * m12 * m23) / det, (m13 * m22 * m30 - m12 * m23 * m30 - m13 * m20 * m32 + m10 * m23 * m32 + m12 * m20 * m33 - m10 * m22 * m33) / det, (m02 * m23 * m30 - m03 * m22 * m30 + m03 * m20 * m32 - m00 * m23 * m32 - m02 * m20 * m33 + m00 * m22 * m33) / det, (m03 * m12 * m30 - m02 * m13 * m30 - m03 * m10 * m32 + m00 * m13 * m32 + m02 * m10 * m33 - m00 * m12 * m33) / det, (m02 * m13 * m20 - m03 * m12 * m20 + m03 * m10 * m22 - m00 * m13 * m22 - m02 * m10 * m23 + m00 * m12 * m23) / det, (m11 * m23 * m30 - m13 * m21 * m30 + m13 * m20 * m31 - m10 * m23 * m31 - m11 * m20 * m33 + m10 * m21 * m33) / det, (m03 * m21 * m30 - m01 * m23 * m30 - m03 * m20 * m31 + m00 * m23 * m31 + m01 * m20 * m33 - m00 * m21 * m33) / det, (m01 * m13 * m30 - m03 * m11 * m30 + m03 * m10 * m31 - m00 * m13 * m31 - m01 * m10 * m33 + m00 * m11 * m33) / det, (m03 * m11 * m20 - m01 * m13 * m20 - m03 * m10 * m21 + m00 * m13 * m21 + m01 * m10 * m23 - m00 * m11 * m23) / det, (m12 * m21 * m30 - m11 * m22 * m30 - m12 * m20 * m31 + m10 * m22 * m31 + m11 * m20 * m32 - m10 * m21 * m32) / det, (m01 * m22 * m30 - m02 * m21 * m30 + m02 * m20 * m31 - m00 * m22 * m31 - m01 * m20 * m32 + m00 * m21 * m32) / det, (m02 * m11 * m30 - m01 * m12 * m30 - m02 * m10 * m31 + m00 * m12 * m31 + m01 * m10 * m32 - m00 * m11 * m32) / det, (m01 * m12 * m20 - m02 * m11 * m20 + m02 * m10 * m21 - m00 * m12 * m21 - m01 * m10 * m22 + m00 * m11 * m22) / det];
   },
-
-  transpose(m) {
+  transpose: function (m) {
     return [m[0], m[4], m[8], m[12], m[1], m[5], m[9], m[13], m[2], m[6], m[10], m[14], m[3], m[7], m[11], m[15]];
   },
-
-  multiplyVectorByMatrix(v, m) {
+  multiplyVectorByMatrix: function (v, m) {
     var [vx, vy, vz, vw] = v;
     return [vx * m[0] + vy * m[4] + vz * m[8] + vw * m[12], vx * m[1] + vy * m[5] + vz * m[9] + vw * m[13], vx * m[2] + vy * m[6] + vz * m[10] + vw * m[14], vx * m[3] + vy * m[7] + vz * m[11] + vw * m[15]];
   },
-
-  v3Length(a) {
+  v3Length: function (a) {
     return Math.sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
   },
-
-  v3Normalize(vector, v3Length) {
+  v3Normalize: function (vector, v3Length) {
     var im = 1 / (v3Length || MatrixMath.v3Length(vector));
     return [vector[0] * im, vector[1] * im, vector[2] * im];
   },
-
-  v3Dot(a, b) {
+  v3Dot: function (a, b) {
     return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
   },
-
-  v3Combine(a, b, aScale, bScale) {
+  v3Combine: function (a, b, aScale, bScale) {
     return [aScale * a[0] + bScale * b[0], aScale * a[1] + bScale * b[1], aScale * a[2] + bScale * b[2]];
   },
-
-  v3Cross(a, b) {
+  v3Cross: function (a, b) {
     return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
   },
-
-  quaternionToDegreesXYZ(q, matrix, row) {
+  quaternionToDegreesXYZ: function (q, matrix, row) {
     var [qx, qy, qz, qw] = q;
     var qw2 = qw * qw;
     var qx2 = qx * qx;
@@ -23647,13 +23943,11 @@ var MatrixMath = {
 
     return [MatrixMath.roundTo3Places(Math.atan2(2 * qx * qw - 2 * qy * qz, 1 - 2 * qx2 - 2 * qz2) * conv), MatrixMath.roundTo3Places(Math.atan2(2 * qy * qw - 2 * qx * qz, 1 - 2 * qy2 - 2 * qz2) * conv), MatrixMath.roundTo3Places(Math.asin(2 * qx * qy + 2 * qz * qw) * conv)];
   },
-
-  roundTo3Places(n) {
+  roundTo3Places: function (n) {
     var arr = n.toString().split('e');
     return Math.round(arr[0] + 'e' + (arr[1] ? +arr[1] - 3 : 3)) * 0.001;
   },
-
-  decomposeMatrix(transformMatrix) {
+  decomposeMatrix: function (transformMatrix) {
 
     invariant(transformMatrix.length === 16, 'Matrix decomposition needs a list of 3d matrix values, received %s', transformMatrix);
 
@@ -23758,12 +24052,12 @@ var MatrixMath = {
     }
 
     return {
-      rotationDegrees,
-      perspective,
-      quaternion,
-      scale,
-      skew,
-      translation,
+      rotationDegrees: rotationDegrees,
+      perspective: perspective,
+      quaternion: quaternion,
+      scale: scale,
+      skew: skew,
+      translation: translation,
 
       rotate: rotationDegrees[2],
       rotateX: rotationDegrees[0],
@@ -23774,7 +24068,6 @@ var MatrixMath = {
       translateY: translation[1]
     };
   }
-
 };
 
 module.exports = MatrixMath;
@@ -23828,15 +24121,15 @@ module.exports = ReactNativeViewAttributes;
 __d(/* ViewPropTypes */function(global, require, module, exports) {
 'use strict';
 
-const EdgeInsetsPropType = require(141                 ); // 141 = EdgeInsetsPropType
-const Platform = require(46        ); // 46 = Platform
-const StyleSheetPropType = require(146                 ); // 146 = StyleSheetPropType
-const ViewStylePropTypes = require(135                 ); // 135 = ViewStylePropTypes
+var EdgeInsetsPropType = require(141                 ); // 141 = EdgeInsetsPropType
+var Platform = require(46        ); // 46 = Platform
+var StyleSheetPropType = require(146                 ); // 146 = StyleSheetPropType
+var ViewStylePropTypes = require(135                 ); // 135 = ViewStylePropTypes
 
-const { PropTypes } = require(125    ); // 125 = React
-const {
-  AccessibilityComponentTypes,
-  AccessibilityTraits
+var { PropTypes: PropTypes } = require(125    ); // 125 = React
+var {
+  AccessibilityComponentTypes: AccessibilityComponentTypes,
+  AccessibilityTraits: AccessibilityTraits
 } = require(147                ); // 147 = ViewAccessibility
 
 var TVViewPropTypes = {};
@@ -23844,7 +24137,7 @@ if (Platform.isTVOS) {
   TVViewPropTypes = require(148              ); // 148 = TVViewPropTypes
 }
 
-const stylePropType = StyleSheetPropType(ViewStylePropTypes);
+var stylePropType = StyleSheetPropType(ViewStylePropTypes);
 
 module.exports = babelHelpers.extends({}, TVViewPropTypes, {
   accessible: PropTypes.bool,
@@ -23912,7 +24205,7 @@ __d(/* EdgeInsetsPropType */function(global, require, module, exports) {
 
 var createStrictShapeTypeChecker = require(142                           ); // 142 = createStrictShapeTypeChecker
 
-var { PropTypes } = require(125    ); // 125 = React
+var { PropTypes: PropTypes } = require(125    ); // 125 = React
 
 var EdgeInsetsPropType = createStrictShapeTypeChecker({
   top: PropTypes.number,
@@ -23933,7 +24226,7 @@ function createStrictShapeTypeChecker(shapeTypes) {
   function checkType(isRequired, props, propName, componentName, location, ...rest) {
     if (!props[propName]) {
       if (isRequired) {
-        invariant(false, `Required object \`${propName}\` was not specified in ` + `\`${componentName}\`.`);
+        invariant(false, 'Required object `' + propName + '` was not specified in ' + ('`' + componentName + '`.'));
       }
       return;
     }
@@ -23941,23 +24234,23 @@ function createStrictShapeTypeChecker(shapeTypes) {
     var propType = typeof propValue;
     var locationName = location || '(unknown)';
     if (propType !== 'object') {
-      invariant(false, `Invalid ${locationName} \`${propName}\` of type \`${propType}\` ` + `supplied to \`${componentName}\`, expected \`object\`.`);
+      invariant(false, 'Invalid ' + locationName + ' `' + propName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
     }
 
     var allKeys = merge(props[propName], shapeTypes);
     for (var key in allKeys) {
       var checker = shapeTypes[key];
       if (!checker) {
-        invariant(false, `Invalid props.${propName} key \`${key}\` supplied to \`${componentName}\`.` + `\nBad object: ` + JSON.stringify(props[propName], null, '  ') + `\nValid keys: ` + JSON.stringify(Object.keys(shapeTypes), null, '  '));
+        invariant(false, 'Invalid props.' + propName + ' key `' + key + '` supplied to `' + componentName + '`.' + '\nBad object: ' + JSON.stringify(props[propName], null, '  ') + '\nValid keys: ' + JSON.stringify(Object.keys(shapeTypes), null, '  '));
       }
-      var error = checker(propValue, key, componentName, location, ...rest);
+      var error = checker.apply(undefined, [propValue, key, componentName, location].concat(rest));
       if (error) {
-        invariant(false, error.message + `\nBad object: ` + JSON.stringify(props[propName], null, '  '));
+        invariant(false, error.message + '\nBad object: ' + JSON.stringify(props[propName], null, '  '));
       }
     }
   }
   function chainedCheckType(props, propName, componentName, location, ...rest) {
-    return checkType(false, props, propName, componentName, location, ...rest);
+    return checkType.apply(undefined, [false, props, propName, componentName, location].concat(rest));
   }
   chainedCheckType.isRequired = checkType.bind(null, true);
   return chainedCheckType;
@@ -24075,7 +24368,7 @@ function StyleSheetPropType(shape) {
       newProps = {};
       newProps[propName] = flattenStyle(props[propName]);
     }
-    return shapePropType(newProps, propName, componentName, location, ...rest);
+    return shapePropType.apply(undefined, [newProps, propName, componentName, location].concat(rest));
   };
 }
 
@@ -24116,22 +24409,22 @@ module.exports = TVViewPropTypes;
 __d(/* requireNativeComponent */function(global, require, module, exports) {
 'use strict';
 
-const ReactNativeStyleAttributes = require(126                         ); // 126 = ReactNativeStyleAttributes
-const UIManager = require(73         ); // 73 = UIManager
-const UnimplementedView = require(150                ); // 150 = UnimplementedView
+var ReactNativeStyleAttributes = require(126                         ); // 126 = ReactNativeStyleAttributes
+var UIManager = require(73         ); // 73 = UIManager
+var UnimplementedView = require(150                ); // 150 = UnimplementedView
 
-const createReactNativeComponentClass = require(156                              ); // 156 = createReactNativeComponentClass
-const insetsDiffer = require(157           ); // 157 = insetsDiffer
-const matricesDiffer = require(158             ); // 158 = matricesDiffer
-const pointsDiffer = require(159           ); // 159 = pointsDiffer
-const processColor = require(85            ); // 85 = processColor
-const resolveAssetSource = require(160                 ); // 160 = resolveAssetSource
-const sizesDiffer = require(138          ); // 138 = sizesDiffer
-const verifyPropTypes = require(164              ); // 164 = verifyPropTypes
-const warning = require(15                ); // 15 = fbjs/lib/warning
+var createReactNativeComponentClass = require(156                              ); // 156 = createReactNativeComponentClass
+var insetsDiffer = require(157           ); // 157 = insetsDiffer
+var matricesDiffer = require(158             ); // 158 = matricesDiffer
+var pointsDiffer = require(159           ); // 159 = pointsDiffer
+var processColor = require(85            ); // 85 = processColor
+var resolveAssetSource = require(160                 ); // 160 = resolveAssetSource
+var sizesDiffer = require(138          ); // 138 = sizesDiffer
+var verifyPropTypes = require(164              ); // 164 = verifyPropTypes
+var warning = require(15                ); // 15 = fbjs/lib/warning
 
 function requireNativeComponent(viewName, componentInterface, extraConfig) {
-  const viewConfig = UIManager[viewName];
+  var viewConfig = UIManager[viewName];
   if (!viewConfig || !viewConfig.NativeProps) {
     warning(false, 'Native component for "%s" does not exist', viewName);
     return UnimplementedView;
@@ -24146,18 +24439,18 @@ function requireNativeComponent(viewName, componentInterface, extraConfig) {
     viewConfig.propTypes = null;
   }
 
-  const nativeProps = babelHelpers.extends({}, UIManager.RCTView.NativeProps, viewConfig.NativeProps);
-  for (const key in nativeProps) {
-    let useAttribute = false;
-    const attribute = {};
+  var nativeProps = babelHelpers.extends({}, UIManager.RCTView.NativeProps, viewConfig.NativeProps);
+  for (var key in nativeProps) {
+    var useAttribute = false;
+    var attribute = {};
 
-    const differ = TypeToDifferMap[nativeProps[key]];
+    var differ = TypeToDifferMap[nativeProps[key]];
     if (differ) {
       attribute.diff = differ;
       useAttribute = true;
     }
 
-    const processor = TypeToProcessorMap[nativeProps[key]];
+    var processor = TypeToProcessorMap[nativeProps[key]];
     if (processor) {
       attribute.process = processor;
       useAttribute = true;
@@ -24175,7 +24468,7 @@ function requireNativeComponent(viewName, componentInterface, extraConfig) {
   return createReactNativeComponentClass(viewConfig);
 }
 
-const TypeToDifferMap = {
+var TypeToDifferMap = {
   CATransform3D: matricesDiffer,
   CGPoint: pointsDiffer,
   CGSize: sizesDiffer,
@@ -24186,7 +24479,7 @@ function processColorArray(colors) {
   return colors && colors.map(processColor);
 }
 
-const TypeToProcessorMap = {
+var TypeToProcessorMap = {
   CGColor: processColor,
   CGColorArray: processColorArray,
   UIColor: processColor,
@@ -24204,14 +24497,14 @@ module.exports = requireNativeComponent;
 __d(/* UnimplementedView */function(global, require, module, exports) {
 'use strict';
 
-const React = require(125    ); // 125 = React
-const StyleSheet = require(151         ); // 151 = StyleSheet
+var React = require(125    ); // 125 = React
+var StyleSheet = require(151         ); // 151 = StyleSheet
 
-let UnimplementedView = class UnimplementedView extends React.Component {
+var UnimplementedView = class UnimplementedView extends React.Component {
   setNativeProps() {}
 
   render() {
-    const View = require(124   ); // 124 = View
+    var View = require(124   ); // 124 = View
     return React.createElement(
       View,
       { style: [styles.unimplementedView, this.props.style] },
@@ -24221,7 +24514,7 @@ let UnimplementedView = class UnimplementedView extends React.Component {
 };
 
 
-const styles = StyleSheet.create({
+var styles = StyleSheet.create({
   unimplementedView: __DEV__ ? {
     alignSelf: 'flex-start',
     borderColor: 'red',
@@ -24246,44 +24539,43 @@ if (hairlineWidth === 0) {
   hairlineWidth = 1 / PixelRatio.get();
 }
 
-const absoluteFillObject = {
+var absoluteFillObject = {
   position: 'absolute',
   left: 0,
   right: 0,
   top: 0,
   bottom: 0
 };
-const absoluteFill = ReactNativePropRegistry.register(absoluteFillObject);
+var absoluteFill = ReactNativePropRegistry.register(absoluteFillObject);
 module.exports = {
-  hairlineWidth,
+  hairlineWidth: hairlineWidth,
 
-  absoluteFill,
+  absoluteFill: absoluteFill,
 
-  absoluteFillObject,
+  absoluteFillObject: absoluteFillObject,
 
-  flatten,
+  flatten: flatten,
 
-  setStyleAttributePreprocessor(property, process) {
-    let value;
+  setStyleAttributePreprocessor: function (property, process) {
+    var value = void 0;
 
     if (typeof ReactNativeStyleAttributes[property] === 'string') {
       value = {};
     } else if (typeof ReactNativeStyleAttributes[property] === 'object') {
       value = ReactNativeStyleAttributes[property];
     } else {
-      console.error(`${property} is not a valid style attribute`);
+      console.error(property + ' is not a valid style attribute');
       return;
     }
 
     if (__DEV__ && typeof value.process === 'function') {
-      console.warn(`Overwriting ${property} style attribute preprocessor`);
+      console.warn('Overwriting ' + property + ' style attribute preprocessor');
     }
 
-    ReactNativeStyleAttributes[property] = babelHelpers.extends({}, value, { process });
+    ReactNativeStyleAttributes[property] = babelHelpers.extends({}, value, { process: process });
   },
-
-  create(obj) {
-    const result = {};
+  create: function (obj) {
+    var result = {};
     for (var key in obj) {
       StyleSheetValidation.validateStyle(key, obj);
       result[key] = ReactNativePropRegistry.register(obj[key]);
@@ -24297,7 +24589,7 @@ __d(/* PixelRatio */function(global, require, module, exports) {
 
 var Dimensions = require(153         ); // 153 = Dimensions
 
-let PixelRatio = class PixelRatio {
+var PixelRatio = class PixelRatio {
   static get() {
     return Dimensions.get('window').scale;
   }
@@ -24334,7 +24626,7 @@ var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 var eventEmitter = new EventEmitter();
 var dimensionsInitialized = false;
 var dimensions = {};
-let Dimensions = class Dimensions {
+var Dimensions = class Dimensions {
   static set(dims) {
     if (dims && dims.windowPhysicalPixels) {
       dims = JSON.parse(JSON.stringify(dims));
@@ -24401,9 +24693,9 @@ module.exports = Dimensions;
 __d(/* DeviceInfo */function(global, require, module, exports) {
 'use strict';
 
-const DeviceInfo = require(36             ).DeviceInfo; // 36 = NativeModules
+var DeviceInfo = require(36             ).DeviceInfo; // 36 = NativeModules
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
 invariant(DeviceInfo, 'DeviceInfo native module is not installed correctly');
 
@@ -24418,9 +24710,9 @@ var ViewStylePropTypes = require(135                 ); // 135 = ViewStylePropTy
 
 var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-const ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
+var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
-let StyleSheetValidation = class StyleSheetValidation {
+var StyleSheetValidation = class StyleSheetValidation {
   static validateStyleProp(prop, style, caller) {
     if (!__DEV__) {
       return;
@@ -24469,8 +24761,8 @@ __d(/* createReactNativeComponentClass */function(global, require, module, expor
 
 'use strict';
 
-const {
-  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
+var {
+  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED: __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
 } = require(32           ); // 32 = ReactNative
 
 module.exports = __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.createReactNativeComponentClass;
@@ -24521,11 +24813,13 @@ module.exports = pointsDiffer;
 __d(/* resolveAssetSource */function(global, require, module, exports) {
 'use strict';
 
-const AssetRegistry = require(161            ); // 161 = AssetRegistry
-const AssetSourceResolver = require(162                  ); // 162 = AssetSourceResolver
-const NativeModules = require(36             ); // 36 = NativeModules
+var AssetRegistry = require(161            ); // 161 = AssetRegistry
+var AssetSourceResolver = require(162                  ); // 162 = AssetSourceResolver
+var NativeModules = require(36             ); // 36 = NativeModules
 
-let _customSourceTransformer, _serverURL, _bundleSourcePath;
+var _customSourceTransformer = void 0,
+    _serverURL = void 0,
+    _bundleSourcePath = void 0;
 
 function getDevServerURL() {
   if (_serverURL === undefined) {
@@ -24542,7 +24836,7 @@ function getDevServerURL() {
 
 function getBundleSourcePath() {
   if (_bundleSourcePath === undefined) {
-    const scriptURL = NativeModules.SourceCode.scriptURL;
+    var scriptURL = NativeModules.SourceCode.scriptURL;
     if (!scriptURL) {
       _bundleSourcePath = null;
       return _bundleSourcePath;
@@ -24575,7 +24869,7 @@ function resolveAssetSource(source) {
     return null;
   }
 
-  const resolver = new AssetSourceResolver(getDevServerURL(), getBundleSourcePath(), asset);
+  var resolver = new AssetSourceResolver(getDevServerURL(), getBundleSourcePath(), asset);
   if (_customSourceTransformer) {
     return _customSourceTransformer(resolver);
   }
@@ -24599,16 +24893,16 @@ function getAssetByID(assetId) {
   return assets[assetId - 1];
 }
 
-module.exports = { registerAsset, getAssetByID };
+module.exports = { registerAsset: registerAsset, getAssetByID: getAssetByID };
 }, 161, null, "AssetRegistry");
 __d(/* AssetSourceResolver */function(global, require, module, exports) {
 'use strict';
 
-const PixelRatio = require(152         ); // 152 = PixelRatio
-const Platform = require(46        ); // 46 = Platform
+var PixelRatio = require(152         ); // 152 = PixelRatio
+var Platform = require(46        ); // 46 = Platform
 
-const assetPathUtils = require(163                                    ); // 163 = ../../local-cli/bundle/assetPathUtils
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var assetPathUtils = require(163                                    ); // 163 = ../../local-cli/bundle/assetPathUtils
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
 function getScaledAssetPath(asset) {
   var scale = AssetSourceResolver.pickScale(asset.scales, PixelRatio.get());
@@ -24624,7 +24918,7 @@ function getAssetPathInDrawableFolder(asset) {
   return drawbleFolder + '/' + fileName + '.' + asset.type;
 }
 
-let AssetSourceResolver = class AssetSourceResolver {
+var AssetSourceResolver = class AssetSourceResolver {
 
   constructor(serverUrl, bundlePath, asset) {
     this.serverUrl = serverUrl;
@@ -24662,7 +24956,7 @@ let AssetSourceResolver = class AssetSourceResolver {
   }
 
   scaledAssetPathInBundle() {
-    const path = this.bundlePath || '';
+    var path = this.bundlePath || '';
     return this.fromSource(path + getScaledAssetPath(this.asset));
   }
 
@@ -24672,7 +24966,7 @@ let AssetSourceResolver = class AssetSourceResolver {
   }
 
   drawableFolderInBundle() {
-    const path = this.bundlePath || '';
+    var path = this.bundlePath || '';
     return this.fromSource('file://' + path + getAssetPathInDrawableFolder(this.asset));
   }
 
@@ -24728,7 +25022,7 @@ function getAndroidDrawableFolderName(asset, scale) {
   if (!suffix) {
     throw new Error('Don\'t know which android drawable suffix to use for asset: ' + JSON.stringify(asset));
   }
-  const androidFolder = 'drawable-' + suffix;
+  var androidFolder = 'drawable-' + suffix;
   return androidFolder;
 }
 
@@ -24893,7 +25187,9 @@ function executeDispatch(event, simulated, listener, inst) {
 function executeDispatchesInOrder(event, simulated) {
     var dispatchListeners = event._dispatchListeners,
         dispatchInstances = event._dispatchInstances;
-    if (Array.isArray(dispatchListeners)) for (var i = 0; i < dispatchListeners.length && !event.isPropagationStopped(); i++) executeDispatch(event, simulated, dispatchListeners[i], dispatchInstances[i]);else dispatchListeners && executeDispatch(event, simulated, dispatchListeners, dispatchInstances);
+    if (Array.isArray(dispatchListeners)) for (var i = 0; i < dispatchListeners.length && !event.isPropagationStopped(); i++) {
+        executeDispatch(event, simulated, dispatchListeners[i], dispatchInstances[i]);
+    } else dispatchListeners && executeDispatch(event, simulated, dispatchListeners, dispatchInstances);
     event._dispatchListeners = null, event._dispatchInstances = null;
 }
 
@@ -24901,7 +25197,9 @@ function executeDispatchesInOrderStopAtTrueImpl(event) {
     var dispatchListeners = event._dispatchListeners,
         dispatchInstances = event._dispatchInstances;
     if (Array.isArray(dispatchListeners)) {
-        for (var i = 0; i < dispatchListeners.length && !event.isPropagationStopped(); i++) if (dispatchListeners[i](event, dispatchInstances[i])) return dispatchInstances[i];
+        for (var i = 0; i < dispatchListeners.length && !event.isPropagationStopped(); i++) {
+            if (dispatchListeners[i](event, dispatchInstances[i])) return dispatchInstances[i];
+        }
     } else if (dispatchListeners && dispatchListeners(event, dispatchInstances)) return dispatchInstances;
     return null;
 }
@@ -24973,7 +25271,9 @@ var ReactControlledComponent = {
         if (restoreTarget) {
             var target = restoreTarget,
                 queuedTargets = restoreQueue;
-            if (restoreTarget = null, restoreQueue = null, restoreStateOfTarget(target), queuedTargets) for (var i = 0; i < queuedTargets.length; i++) restoreStateOfTarget(queuedTargets[i]);
+            if (restoreTarget = null, restoreQueue = null, restoreStateOfTarget(target), queuedTargets) for (var i = 0; i < queuedTargets.length; i++) {
+                restoreStateOfTarget(queuedTargets[i]);
+            }
         }
     }
 },
@@ -25048,7 +25348,9 @@ function recomputePluginOrdering() {
         if (invariant(pluginIndex > -1, "EventPluginRegistry: Cannot inject event plugins that do not exist in " + "the plugin ordering, `%s`.", pluginName), !EventPluginRegistry.plugins[pluginIndex]) {
             invariant(pluginModule.extractEvents, "EventPluginRegistry: Event plugins must implement an `extractEvents` " + "method, but `%s` does not.", pluginName), EventPluginRegistry.plugins[pluginIndex] = pluginModule;
             var publishedEvents = pluginModule.eventTypes;
-            for (var eventName in publishedEvents) invariant(publishEventForPlugin(publishedEvents[eventName], pluginModule, eventName), "EventPluginRegistry: Failed to publish event `%s` for plugin `%s`.", eventName, pluginName);
+            for (var eventName in publishedEvents) {
+                invariant(publishEventForPlugin(publishedEvents[eventName], pluginModule, eventName), "EventPluginRegistry: Failed to publish event `%s` for plugin `%s`.", eventName, pluginName);
+            }
         }
     }
 }
@@ -25057,11 +25359,12 @@ function publishEventForPlugin(dispatchConfig, pluginModule, eventName) {
     invariant(!EventPluginRegistry.eventNameDispatchConfigs.hasOwnProperty(eventName), "EventPluginHub: More than one plugin attempted to publish the same " + "event name, `%s`.", eventName), EventPluginRegistry.eventNameDispatchConfigs[eventName] = dispatchConfig;
     var phasedRegistrationNames = dispatchConfig.phasedRegistrationNames;
     if (phasedRegistrationNames) {
-        for (var phaseName in phasedRegistrationNames) if (phasedRegistrationNames.hasOwnProperty(phaseName)) {
-            var phasedRegistrationName = phasedRegistrationNames[phaseName];
-            publishRegistrationName(phasedRegistrationName, pluginModule, eventName);
-        }
-        return !0;
+        for (var phaseName in phasedRegistrationNames) {
+            if (phasedRegistrationNames.hasOwnProperty(phaseName)) {
+                var phasedRegistrationName = phasedRegistrationNames[phaseName];
+                publishRegistrationName(phasedRegistrationName, pluginModule, eventName);
+            }
+        }return !0;
     }
     return !!dispatchConfig.registrationName && (publishRegistrationName(dispatchConfig.registrationName, pluginModule, eventName), !0);
 }
@@ -25081,11 +25384,12 @@ var EventPluginRegistry = {
     },
     injectEventPluginsByName: function (injectedNamesToPlugins) {
         var isOrderingDirty = !1;
-        for (var pluginName in injectedNamesToPlugins) if (injectedNamesToPlugins.hasOwnProperty(pluginName)) {
-            var pluginModule = injectedNamesToPlugins[pluginName];
-            namesToPlugins.hasOwnProperty(pluginName) && namesToPlugins[pluginName] === pluginModule || (invariant(!namesToPlugins[pluginName], "EventPluginRegistry: Cannot inject two different event plugins " + "using the same name, `%s`.", pluginName), namesToPlugins[pluginName] = pluginModule, isOrderingDirty = !0);
-        }
-        isOrderingDirty && recomputePluginOrdering();
+        for (var pluginName in injectedNamesToPlugins) {
+            if (injectedNamesToPlugins.hasOwnProperty(pluginName)) {
+                var pluginModule = injectedNamesToPlugins[pluginName];
+                namesToPlugins.hasOwnProperty(pluginName) && namesToPlugins[pluginName] === pluginModule || (invariant(!namesToPlugins[pluginName], "EventPluginRegistry: Cannot inject two different event plugins " + "using the same name, `%s`.", pluginName), namesToPlugins[pluginName] = pluginModule, isOrderingDirty = !0);
+            }
+        }isOrderingDirty && recomputePluginOrdering();
     }
 },
     EventPluginRegistry_1 = EventPluginRegistry;
@@ -25203,11 +25507,15 @@ function getParent(inst) {
 }
 
 function getLowestCommonAncestor(instA, instB) {
-    for (var depthA = 0, tempA = instA; tempA; tempA = getParent(tempA)) depthA++;
-    for (var depthB = 0, tempB = instB; tempB; tempB = getParent(tempB)) depthB++;
-    for (; depthA - depthB > 0;) instA = getParent(instA), depthA--;
-    for (; depthB - depthA > 0;) instB = getParent(instB), depthB--;
-    for (var depth = depthA; depth--;) {
+    for (var depthA = 0, tempA = instA; tempA; tempA = getParent(tempA)) {
+        depthA++;
+    }for (var depthB = 0, tempB = instB; tempB; tempB = getParent(tempB)) {
+        depthB++;
+    }for (; depthA - depthB > 0;) {
+        instA = getParent(instA), depthA--;
+    }for (; depthB - depthA > 0;) {
+        instB = getParent(instB), depthB--;
+    }for (var depth = depthA; depth--;) {
         if (instA === instB || instA === instB.alternate) return instA;
         instA = getParent(instA), instB = getParent(instB);
     }
@@ -25227,18 +25535,27 @@ function getParentInstance(inst) {
 }
 
 function traverseTwoPhase(inst, fn, arg) {
-    for (var path = []; inst;) path.push(inst), inst = getParent(inst);
-    var i;
-    for (i = path.length; i-- > 0;) fn(path[i], "captured", arg);
-    for (i = 0; i < path.length; i++) fn(path[i], "bubbled", arg);
+    for (var path = []; inst;) {
+        path.push(inst), inst = getParent(inst);
+    }var i;
+    for (i = path.length; i-- > 0;) {
+        fn(path[i], "captured", arg);
+    }for (i = 0; i < path.length; i++) {
+        fn(path[i], "bubbled", arg);
+    }
 }
 
 function traverseEnterLeave(from, to, fn, argFrom, argTo) {
-    for (var common = from && to ? getLowestCommonAncestor(from, to) : null, pathFrom = []; from && from !== common;) pathFrom.push(from), from = getParent(from);
-    for (var pathTo = []; to && to !== common;) pathTo.push(to), to = getParent(to);
-    var i;
-    for (i = 0; i < pathFrom.length; i++) fn(pathFrom[i], "bubbled", argFrom);
-    for (i = pathTo.length; i-- > 0;) fn(pathTo[i], "captured", argTo);
+    for (var common = from && to ? getLowestCommonAncestor(from, to) : null, pathFrom = []; from && from !== common;) {
+        pathFrom.push(from), from = getParent(from);
+    }for (var pathTo = []; to && to !== common;) {
+        pathTo.push(to), to = getParent(to);
+    }var i;
+    for (i = 0; i < pathFrom.length; i++) {
+        fn(pathFrom[i], "bubbled", argFrom);
+    }for (i = pathTo.length; i-- > 0;) {
+        fn(pathTo[i], "captured", argTo);
+    }
 }
 
 var ReactTreeTraversal = {
@@ -25375,11 +25692,12 @@ var EventPropagators = {
 function SyntheticEvent(dispatchConfig, targetInst, nativeEvent, nativeEventTarget) {
     this.dispatchConfig = dispatchConfig, this._targetInst = targetInst, this.nativeEvent = nativeEvent;
     var Interface = this.constructor.Interface;
-    for (var propName in Interface) if (Interface.hasOwnProperty(propName)) {
-        var normalize = Interface[propName];
-        normalize ? this[propName] = normalize(nativeEvent) : "target" === propName ? this.target = nativeEventTarget : this[propName] = nativeEvent[propName];
-    }
-    var defaultPrevented = null != nativeEvent.defaultPrevented ? nativeEvent.defaultPrevented : !1 === nativeEvent.returnValue;
+    for (var propName in Interface) {
+        if (Interface.hasOwnProperty(propName)) {
+            var normalize = Interface[propName];
+            normalize ? this[propName] = normalize(nativeEvent) : "target" === propName ? this.target = nativeEventTarget : this[propName] = nativeEvent[propName];
+        }
+    }var defaultPrevented = null != nativeEvent.defaultPrevented ? nativeEvent.defaultPrevented : !1 === nativeEvent.returnValue;
     return this.isDefaultPrevented = defaultPrevented ? emptyFunction.thatReturnsTrue : emptyFunction.thatReturnsFalse, this.isPropagationStopped = emptyFunction.thatReturnsFalse, this;
 }
 
@@ -25399,8 +25717,11 @@ Object.assign(SyntheticEvent.prototype, {
     isPersistent: emptyFunction.thatReturnsFalse,
     destructor: function () {
         var Interface = this.constructor.Interface;
-        for (var propName in Interface) this[propName] = null;
-        for (var i = 0; i < shouldBeReleasedProperties.length; i++) this[shouldBeReleasedProperties[i]] = null;
+        for (var propName in Interface) {
+            this[propName] = null;
+        }for (var i = 0; i < shouldBeReleasedProperties.length; i++) {
+            this[shouldBeReleasedProperties[i]] = null;
+        }
     }
 }), SyntheticEvent.Interface = EventInterface, SyntheticEvent.augmentClass = function (Class, Interface) {
     var Super = this,
@@ -25414,7 +25735,9 @@ var SyntheticEvent_1 = SyntheticEvent,
     _extends = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
         var source = arguments[i];
-        for (var key in source) Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        for (var key in source) {
+            Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        }
     }
     return target;
 },
@@ -25422,11 +25745,11 @@ var SyntheticEvent_1 = SyntheticEvent,
     customDirectEventTypes = UIManager.customDirectEventTypes,
     allTypesByEventName = {};
 
-for (var bubblingTypeName in customBubblingEventTypes) allTypesByEventName[bubblingTypeName] = customBubblingEventTypes[bubblingTypeName];
-
-for (var directTypeName in customDirectEventTypes) warning(!customBubblingEventTypes[directTypeName], "Event cannot be both direct and bubbling: %s", directTypeName), allTypesByEventName[directTypeName] = customDirectEventTypes[directTypeName];
-
-var ReactNativeBridgeEventPlugin = {
+for (var bubblingTypeName in customBubblingEventTypes) {
+    allTypesByEventName[bubblingTypeName] = customBubblingEventTypes[bubblingTypeName];
+}for (var directTypeName in customDirectEventTypes) {
+    warning(!customBubblingEventTypes[directTypeName], "Event cannot be both direct and bubbling: %s", directTypeName), allTypesByEventName[directTypeName] = customDirectEventTypes[directTypeName];
+}var ReactNativeBridgeEventPlugin = {
     eventTypes: _extends({}, customBubblingEventTypes, customDirectEventTypes),
     extractEvents: function (topLevelType, targetInst, nativeEvent, nativeEventTarget) {
         var bubbleDispatchConfig = customBubblingEventTypes[topLevelType],
@@ -25444,8 +25767,9 @@ var ReactNativeBridgeEventPlugin = {
     instanceProps = {};
 
 function getRenderedHostOrTextFromComponent(component) {
-    for (var rendered; rendered = component._renderedComponent;) component = rendered;
-    return component;
+    for (var rendered; rendered = component._renderedComponent;) {
+        component = rendered;
+    }return component;
 }
 
 function precacheNode(inst, tag) {
@@ -25511,8 +25835,9 @@ var ReactEventEmitterMixin = {
     tagsStartAt: INITIAL_TAG_COUNT,
     tagCount: INITIAL_TAG_COUNT,
     allocateTag: function () {
-        for (; this.reactTagIsNativeTopRootID(ReactNativeTagHandles.tagCount);) ReactNativeTagHandles.tagCount++;
-        var tag = ReactNativeTagHandles.tagCount;
+        for (; this.reactTagIsNativeTopRootID(ReactNativeTagHandles.tagCount);) {
+            ReactNativeTagHandles.tagCount++;
+        }var tag = ReactNativeTagHandles.tagCount;
         return ReactNativeTagHandles.tagCount++, tag;
     },
     assertRootTag: function (tag) {
@@ -25526,14 +25851,17 @@ var ReactEventEmitterMixin = {
     _extends$1 = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
         var source = arguments[i];
-        for (var key in source) Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        for (var key in source) {
+            Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        }
     }
     return target;
 },
     EMPTY_NATIVE_EVENT = {},
     touchSubsequence = function (touches, indices) {
-    for (var ret = [], i = 0; i < indices.length; i++) ret.push(touches[indices[i]]);
-    return ret;
+    for (var ret = [], i = 0; i < indices.length; i++) {
+        ret.push(touches[indices[i]]);
+    }return ret;
 },
     removeTouchesAtIndices = function (touches, indices) {
     for (var rippedOut = [], temp = touches, i = 0; i < indices.length; i++) {
@@ -25943,8 +26271,9 @@ function findInsertionPosition(queue, update) {
     var priorityLevel = update.priorityLevel,
         insertAfter = null,
         insertBefore = null;
-    if (null !== queue.last && comparePriority(queue.last.priorityLevel, priorityLevel) <= 0) insertAfter = queue.last;else for (insertBefore = queue.first; null !== insertBefore && comparePriority(insertBefore.priorityLevel, priorityLevel) <= 0;) insertAfter = insertBefore, insertBefore = insertBefore.next;
-    return insertAfter;
+    if (null !== queue.last && comparePriority(queue.last.priorityLevel, priorityLevel) <= 0) insertAfter = queue.last;else for (insertBefore = queue.first; null !== insertBefore && comparePriority(insertBefore.priorityLevel, priorityLevel) <= 0;) {
+        insertAfter = insertBefore, insertBefore = insertBefore.next;
+    }return insertAfter;
 }
 
 function insertUpdate(fiber, update) {
@@ -26116,9 +26445,13 @@ var getComponentName_1 = getComponentName$1,
 
 function isFiberMountedImpl(fiber) {
     var node = fiber;
-    if (fiber.alternate) for (; node.return;) node = node.return;else {
+    if (fiber.alternate) for (; node.return;) {
+        node = node.return;
+    } else {
         if ((node.effectTag & Placement) !== NoEffect) return MOUNTING;
-        for (; node.return;) if (node = node.return, (node.effectTag & Placement) !== NoEffect) return MOUNTING;
+        for (; node.return;) {
+            if (node = node.return, (node.effectTag & Placement) !== NoEffect) return MOUNTING;
+        }
     }
     return node.tag === HostRoot$1 ? MOUNTED : UNMOUNTED;
 }
@@ -26225,7 +26558,9 @@ var findCurrentFiberUsingSlowPath_1 = findCurrentFiberUsingSlowPath,
     index++, valueStack[index] = cursor.current, cursor.current = value;
 },
     reset = function () {
-    for (; index > -1;) valueStack[index] = null, index--;
+    for (; index > -1;) {
+        valueStack[index] = null, index--;
+    }
 },
     ReactFiberStack = {
     createCursor: createCursor$1,
@@ -26237,7 +26572,9 @@ var findCurrentFiberUsingSlowPath_1 = findCurrentFiberUsingSlowPath,
     _extends$2 = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
         var source = arguments[i];
-        for (var key in source) Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        for (var key in source) {
+            Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        }
     }
     return target;
 },
@@ -26270,8 +26607,9 @@ var cacheContext_1 = cacheContext,
     var instance = workInProgress.stateNode;
     if (instance && instance.__reactInternalMemoizedUnmaskedChildContext === unmaskedContext) return instance.__reactInternalMemoizedMaskedChildContext;
     var context = {};
-    for (var key in contextTypes) context[key] = unmaskedContext[key];
-    return instance && cacheContext(workInProgress, unmaskedContext, context), context;
+    for (var key in contextTypes) {
+        context[key] = unmaskedContext[key];
+    }return instance && cacheContext(workInProgress, unmaskedContext, context), context;
 },
     hasContextChanged = function () {
     return didPerformWorkStackCursor.current;
@@ -26304,8 +26642,9 @@ function processChildContext$1(fiber, parentContext, isReconciling) {
     if ("function" != typeof instance.getChildContext) return parentContext;
     var childContext = void 0;
     childContext = instance.getChildContext();
-    for (var contextKey in childContext) invariant(contextKey in childContextTypes, '%s.getChildContext(): key "%s" is not defined in childContextTypes.', getComponentName_1(fiber) || "Unknown", contextKey);
-    return _extends$2({}, parentContext, childContext);
+    for (var contextKey in childContext) {
+        invariant(contextKey in childContextTypes, '%s.getChildContext(): key "%s" is not defined in childContextTypes.', getComponentName_1(fiber) || "Unknown", contextKey);
+    }return _extends$2({}, parentContext, childContext);
 }
 
 var processChildContext_1 = processChildContext$1,
@@ -26624,12 +26963,14 @@ function ChildReconciler(shouldClone, shouldTrackSideEffects) {
     }
     function deleteRemainingChildren(returnFiber, currentFirstChild) {
         if (!shouldTrackSideEffects) return null;
-        for (var childToDelete = currentFirstChild; null !== childToDelete;) deleteChild(returnFiber, childToDelete), childToDelete = childToDelete.sibling;
-        return null;
+        for (var childToDelete = currentFirstChild; null !== childToDelete;) {
+            deleteChild(returnFiber, childToDelete), childToDelete = childToDelete.sibling;
+        }return null;
     }
     function mapRemainingChildren(returnFiber, currentFirstChild) {
-        for (var existingChildren = new Map(), existingChild = currentFirstChild; null !== existingChild;) null !== existingChild.key ? existingChildren.set(existingChild.key, existingChild) : existingChildren.set(existingChild.index, existingChild), existingChild = existingChild.sibling;
-        return existingChildren;
+        for (var existingChildren = new Map(), existingChild = currentFirstChild; null !== existingChild;) {
+            null !== existingChild.key ? existingChildren.set(existingChild.key, existingChild) : existingChildren.set(existingChild.index, existingChild), existingChild = existingChild.sibling;
+        }return existingChildren;
     }
     function useFiber(fiber, priority) {
         if (shouldClone) {
@@ -26956,9 +27297,12 @@ var reconcileChildFibers$1 = ChildReconciler(!0, !0),
     if (workInProgress.child) if (null !== current && workInProgress.child === current.child) {
         var currentChild = workInProgress.child,
             newChild = cloneFiber$2(currentChild, currentChild.pendingWorkPriority);
-        for (workInProgress.child = newChild, newChild.return = workInProgress; null !== currentChild.sibling;) currentChild = currentChild.sibling, newChild = newChild.sibling = cloneFiber$2(currentChild, currentChild.pendingWorkPriority), newChild.return = workInProgress;
-        newChild.sibling = null;
-    } else for (var child = workInProgress.child; null !== child;) child.return = workInProgress, child = child.sibling;
+        for (workInProgress.child = newChild, newChild.return = workInProgress; null !== currentChild.sibling;) {
+            currentChild = currentChild.sibling, newChild = newChild.sibling = cloneFiber$2(currentChild, currentChild.pendingWorkPriority), newChild.return = workInProgress;
+        }newChild.sibling = null;
+    } else for (var child = workInProgress.child; null !== child;) {
+        child.return = workInProgress, child = child.sibling;
+    }
 },
     ReactChildFiber = {
     reconcileChildFibers: reconcileChildFibers$1,
@@ -27202,15 +27546,17 @@ var reconcileChildFibers$1 = ChildReconciler(!0, !0),
             memoizedProps = workInProgress.memoizedProps;
         if (hasContextChanged$1()) null === nextProps && (nextProps = memoizedProps, invariant(null !== nextProps, "We should always have pending or current props. This error is " + "likely caused by a bug in React. Please file an issue."));else if (null === nextProps || memoizedProps === nextProps) {
             if (!useSyncScheduling && shouldDeprioritizeSubtree(type, memoizedProps) && workInProgress.pendingWorkPriority !== OffscreenPriority$1) {
-                for (var child = workInProgress.progressedChild; null !== child;) child.pendingWorkPriority = OffscreenPriority$1, child = child.sibling;
-                return null;
+                for (var child = workInProgress.progressedChild; null !== child;) {
+                    child.pendingWorkPriority = OffscreenPriority$1, child = child.sibling;
+                }return null;
             }
             return bailoutOnAlreadyFinishedWork(current, workInProgress);
         }
         var nextChildren = nextProps.children;
         if (shouldSetTextContent(type, nextProps) ? nextChildren = null : prevProps && shouldSetTextContent(type, prevProps) && (workInProgress.effectTag |= ContentReset$1), markRef(current, workInProgress), !useSyncScheduling && shouldDeprioritizeSubtree(workInProgress.type, nextProps) && workInProgress.pendingWorkPriority !== OffscreenPriority$1) {
-            if (workInProgress.progressedPriority === OffscreenPriority$1 && (workInProgress.child = workInProgress.progressedChild), reconcileChildrenAtPriority(current, workInProgress, nextChildren, OffscreenPriority$1), memoizeProps(workInProgress, nextProps), workInProgress.child = null !== current ? current.child : null, null === current) for (var _child = workInProgress.progressedChild; null !== _child;) _child.effectTag = Placement$2, _child = _child.sibling;
-            return null;
+            if (workInProgress.progressedPriority === OffscreenPriority$1 && (workInProgress.child = workInProgress.progressedChild), reconcileChildrenAtPriority(current, workInProgress, nextChildren, OffscreenPriority$1), memoizeProps(workInProgress, nextProps), workInProgress.child = null !== current ? current.child : null, null === current) for (var _child = workInProgress.progressedChild; null !== _child;) {
+                _child.effectTag = Placement$2, _child = _child.sibling;
+            }return null;
         }
         return reconcileChildren(current, workInProgress, nextChildren), memoizeProps(workInProgress, nextProps), workInProgress.child;
     }
@@ -27607,14 +27953,16 @@ var injectInternals_1 = injectInternals$1,
         }
     }
     function commitNestedUnmounts(root) {
-        for (var node = root; !0;) if (commitUnmount(node), null === node.child || node.tag === HostPortal$5) {
-            if (node === root) return;
-            for (; null === node.sibling;) {
-                if (null === node.return || node.return === root) return;
-                node = node.return;
-            }
-            node.sibling.return = node.return, node = node.sibling;
-        } else node.child.return = node, node = node.child;
+        for (var node = root; !0;) {
+            if (commitUnmount(node), null === node.child || node.tag === HostPortal$5) {
+                if (node === root) return;
+                for (; null === node.sibling;) {
+                    if (null === node.return || node.return === root) return;
+                    node = node.return;
+                }
+                node.sibling.return = node.return, node = node.sibling;
+            } else node.child.return = node, node = node.child;
+        }
     }
     function unmountHostComponents(parent, current) {
         for (var node = current; !0;) {
@@ -27874,15 +28222,17 @@ var injectInternals_1 = injectInternals$1,
         return hydrateTextInstance(textInstance, fiber.memoizedProps, fiber);
     }
     function popToNextHostParent(fiber) {
-        for (var parent = fiber.return; null !== parent && parent.tag !== HostComponent$9 && parent.tag !== HostRoot$7;) parent = parent.return;
-        hydrationParentFiber = parent;
+        for (var parent = fiber.return; null !== parent && parent.tag !== HostComponent$9 && parent.tag !== HostRoot$7;) {
+            parent = parent.return;
+        }hydrationParentFiber = parent;
     }
     function popHydrationState(fiber) {
         if (fiber !== hydrationParentFiber) return !1;
         if (!isHydrating) return popToNextHostParent(fiber), isHydrating = !0, !1;
         var type = fiber.type;
-        if (fiber.tag !== HostComponent$9 || "head" !== type && "body" !== type && !shouldSetTextContent(type, fiber.memoizedProps)) for (var nextInstance = nextHydratableInstance; nextInstance;) deleteHydratableInstance(fiber, nextInstance), nextInstance = getNextHydratableSibling(nextInstance);
-        return popToNextHostParent(fiber), nextHydratableInstance = hydrationParentFiber ? getNextHydratableSibling(fiber.stateNode) : null, !0;
+        if (fiber.tag !== HostComponent$9 || "head" !== type && "body" !== type && !shouldSetTextContent(type, fiber.memoizedProps)) for (var nextInstance = nextHydratableInstance; nextInstance;) {
+            deleteHydratableInstance(fiber, nextInstance), nextInstance = getNextHydratableSibling(nextInstance);
+        }return popToNextHostParent(fiber), nextHydratableInstance = hydrationParentFiber ? getNextHydratableSibling(fiber.stateNode) : null, !0;
     }
     function resetHydrationState() {
         hydrationParentFiber = null, nextHydratableInstance = null, isHydrating = !1;
@@ -27988,8 +28338,9 @@ var injectInternals_1 = injectInternals$1,
             if (nextScheduledRoot.nextScheduledRoot = null, nextScheduledRoot === lastScheduledRoot) return nextScheduledRoot = null, lastScheduledRoot = null, nextPriorityLevel = NoWork$2, null;
             nextScheduledRoot = next;
         }
-        for (var root = nextScheduledRoot, highestPriorityRoot = null, highestPriorityLevel = NoWork$2; null !== root;) root.current.pendingWorkPriority !== NoWork$2 && (highestPriorityLevel === NoWork$2 || highestPriorityLevel > root.current.pendingWorkPriority) && (highestPriorityLevel = root.current.pendingWorkPriority, highestPriorityRoot = root), root = root.nextScheduledRoot;
-        return null !== highestPriorityRoot ? (nextPriorityLevel = highestPriorityLevel, priorityContext = nextPriorityLevel, resetContextStack(), cloneFiber$1(highestPriorityRoot.current, highestPriorityLevel)) : (nextPriorityLevel = NoWork$2, null);
+        for (var root = nextScheduledRoot, highestPriorityRoot = null, highestPriorityLevel = NoWork$2; null !== root;) {
+            root.current.pendingWorkPriority !== NoWork$2 && (highestPriorityLevel === NoWork$2 || highestPriorityLevel > root.current.pendingWorkPriority) && (highestPriorityLevel = root.current.pendingWorkPriority, highestPriorityRoot = root), root = root.nextScheduledRoot;
+        }return null !== highestPriorityRoot ? (nextPriorityLevel = highestPriorityLevel, priorityContext = nextPriorityLevel, resetContextStack(), cloneFiber$1(highestPriorityRoot.current, highestPriorityLevel)) : (nextPriorityLevel = NoWork$2, null);
     }
     function commitAllHostEffects() {
         for (; null !== nextEffect;) {
@@ -28064,8 +28415,9 @@ var injectInternals_1 = injectInternals$1,
             queue = workInProgress.updateQueue,
             tag = workInProgress.tag;
         null === queue || tag !== ClassComponent$3 && tag !== HostRoot$3 || (newPriority = getPendingPriority$1(queue));
-        for (var child = workInProgress.progressedChild; null !== child;) child.pendingWorkPriority !== NoWork$2 && (newPriority === NoWork$2 || newPriority > child.pendingWorkPriority) && (newPriority = child.pendingWorkPriority), child = child.sibling;
-        workInProgress.pendingWorkPriority = newPriority;
+        for (var child = workInProgress.progressedChild; null !== child;) {
+            child.pendingWorkPriority !== NoWork$2 && (newPriority === NoWork$2 || newPriority > child.pendingWorkPriority) && (newPriority = child.pendingWorkPriority), child = child.sibling;
+        }workInProgress.pendingWorkPriority = newPriority;
     }
     function completeUnitOfWork(workInProgress) {
         for (; !0;) {
@@ -28101,10 +28453,16 @@ var injectInternals_1 = injectInternals$1,
         isAnimationCallbackScheduled = !1, performWork(AnimationPriority, null);
     }
     function clearErrors() {
-        for (null === nextUnitOfWork && (nextUnitOfWork = findNextUnitOfWork()); null !== capturedErrors && capturedErrors.size && null !== nextUnitOfWork && nextPriorityLevel !== NoWork$2 && nextPriorityLevel <= TaskPriority$1;) null === (nextUnitOfWork = hasCapturedError(nextUnitOfWork) ? performFailedUnitOfWork(nextUnitOfWork) : performUnitOfWork(nextUnitOfWork)) && (nextUnitOfWork = findNextUnitOfWork());
+        for (null === nextUnitOfWork && (nextUnitOfWork = findNextUnitOfWork()); null !== capturedErrors && capturedErrors.size && null !== nextUnitOfWork && nextPriorityLevel !== NoWork$2 && nextPriorityLevel <= TaskPriority$1;) {
+            null === (nextUnitOfWork = hasCapturedError(nextUnitOfWork) ? performFailedUnitOfWork(nextUnitOfWork) : performUnitOfWork(nextUnitOfWork)) && (nextUnitOfWork = findNextUnitOfWork());
+        }
     }
     function workLoop(priorityLevel, deadline) {
-        if (clearErrors(), null === nextUnitOfWork && (nextUnitOfWork = findNextUnitOfWork()), null !== deadline && priorityLevel > TaskPriority$1) for (; null !== nextUnitOfWork && !deadlineHasExpired;) deadline.timeRemaining() > timeHeuristicForUnitOfWork ? null === (nextUnitOfWork = performUnitOfWork(nextUnitOfWork)) && null !== pendingCommit && (deadline.timeRemaining() > timeHeuristicForUnitOfWork ? (commitAllWork(pendingCommit), nextUnitOfWork = findNextUnitOfWork(), clearErrors()) : deadlineHasExpired = !0) : deadlineHasExpired = !0;else for (; null !== nextUnitOfWork && nextPriorityLevel !== NoWork$2 && nextPriorityLevel <= priorityLevel;) null === (nextUnitOfWork = performUnitOfWork(nextUnitOfWork)) && (nextUnitOfWork = findNextUnitOfWork(), clearErrors());
+        if (clearErrors(), null === nextUnitOfWork && (nextUnitOfWork = findNextUnitOfWork()), null !== deadline && priorityLevel > TaskPriority$1) for (; null !== nextUnitOfWork && !deadlineHasExpired;) {
+            deadline.timeRemaining() > timeHeuristicForUnitOfWork ? null === (nextUnitOfWork = performUnitOfWork(nextUnitOfWork)) && null !== pendingCommit && (deadline.timeRemaining() > timeHeuristicForUnitOfWork ? (commitAllWork(pendingCommit), nextUnitOfWork = findNextUnitOfWork(), clearErrors()) : deadlineHasExpired = !0) : deadlineHasExpired = !0;
+        } else for (; null !== nextUnitOfWork && nextPriorityLevel !== NoWork$2 && nextPriorityLevel <= priorityLevel;) {
+            null === (nextUnitOfWork = performUnitOfWork(nextUnitOfWork)) && (nextUnitOfWork = findNextUnitOfWork(), clearErrors());
+        }
     }
     function performWork(priorityLevel, deadline) {
         invariant(!isPerformingWork, "performWork was called recursively. This error is likely caused " + "by a bug in React. Please file an issue."), isPerformingWork = !0;
@@ -28430,18 +28788,22 @@ function resolveObject(idOrObject) {
 }
 
 function restoreDeletedValuesInNestedArray(updatePayload, node, validAttributes) {
-    if (Array.isArray(node)) for (var i = node.length; i-- && removedKeyCount > 0;) restoreDeletedValuesInNestedArray(updatePayload, node[i], validAttributes);else if (node && removedKeyCount > 0) {
+    if (Array.isArray(node)) for (var i = node.length; i-- && removedKeyCount > 0;) {
+        restoreDeletedValuesInNestedArray(updatePayload, node[i], validAttributes);
+    } else if (node && removedKeyCount > 0) {
         var obj = resolveObject(node);
-        for (var propKey in removedKeys) if (removedKeys[propKey]) {
-            var nextProp = obj[propKey];
-            if (void 0 !== nextProp) {
-                var attributeConfig = validAttributes[propKey];
-                if (attributeConfig) {
-                    if ("function" == typeof nextProp && (nextProp = !0), void 0 === nextProp && (nextProp = null), "object" != typeof attributeConfig) updatePayload[propKey] = nextProp;else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
-                        var nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp;
-                        updatePayload[propKey] = nextValue;
+        for (var propKey in removedKeys) {
+            if (removedKeys[propKey]) {
+                var nextProp = obj[propKey];
+                if (void 0 !== nextProp) {
+                    var attributeConfig = validAttributes[propKey];
+                    if (attributeConfig) {
+                        if ("function" == typeof nextProp && (nextProp = !0), void 0 === nextProp && (nextProp = null), "object" != typeof attributeConfig) updatePayload[propKey] = nextProp;else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
+                            var nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp;
+                            updatePayload[propKey] = nextValue;
+                        }
+                        removedKeys[propKey] = !1, removedKeyCount--;
                     }
-                    removedKeys[propKey] = !1, removedKeyCount--;
                 }
             }
         }
@@ -28451,10 +28813,13 @@ function restoreDeletedValuesInNestedArray(updatePayload, node, validAttributes)
 function diffNestedArrayProperty(updatePayload, prevArray, nextArray, validAttributes) {
     var i,
         minLength = prevArray.length < nextArray.length ? prevArray.length : nextArray.length;
-    for (i = 0; i < minLength; i++) updatePayload = diffNestedProperty(updatePayload, prevArray[i], nextArray[i], validAttributes);
-    for (; i < prevArray.length; i++) updatePayload = clearNestedProperty(updatePayload, prevArray[i], validAttributes);
-    for (; i < nextArray.length; i++) updatePayload = addNestedProperty(updatePayload, nextArray[i], validAttributes);
-    return updatePayload;
+    for (i = 0; i < minLength; i++) {
+        updatePayload = diffNestedProperty(updatePayload, prevArray[i], nextArray[i], validAttributes);
+    }for (; i < prevArray.length; i++) {
+        updatePayload = clearNestedProperty(updatePayload, prevArray[i], validAttributes);
+    }for (; i < nextArray.length; i++) {
+        updatePayload = addNestedProperty(updatePayload, nextArray[i], validAttributes);
+    }return updatePayload;
 }
 
 function diffNestedProperty(updatePayload, prevProp, nextProp, validAttributes) {
@@ -28464,30 +28829,34 @@ function diffNestedProperty(updatePayload, prevProp, nextProp, validAttributes) 
 function addNestedProperty(updatePayload, nextProp, validAttributes) {
     if (!nextProp) return updatePayload;
     if (!Array.isArray(nextProp)) return addProperties(updatePayload, resolveObject(nextProp), validAttributes);
-    for (var i = 0; i < nextProp.length; i++) updatePayload = addNestedProperty(updatePayload, nextProp[i], validAttributes);
-    return updatePayload;
+    for (var i = 0; i < nextProp.length; i++) {
+        updatePayload = addNestedProperty(updatePayload, nextProp[i], validAttributes);
+    }return updatePayload;
 }
 
 function clearNestedProperty(updatePayload, prevProp, validAttributes) {
     if (!prevProp) return updatePayload;
     if (!Array.isArray(prevProp)) return clearProperties(updatePayload, resolveObject(prevProp), validAttributes);
-    for (var i = 0; i < prevProp.length; i++) updatePayload = clearNestedProperty(updatePayload, prevProp[i], validAttributes);
-    return updatePayload;
+    for (var i = 0; i < prevProp.length; i++) {
+        updatePayload = clearNestedProperty(updatePayload, prevProp[i], validAttributes);
+    }return updatePayload;
 }
 
 function diffProperties(updatePayload, prevProps, nextProps, validAttributes) {
     var attributeConfig, nextProp, prevProp;
-    for (var propKey in nextProps) if (attributeConfig = validAttributes[propKey]) if (prevProp = prevProps[propKey], nextProp = nextProps[propKey], "function" == typeof nextProp && (nextProp = !0, "function" == typeof prevProp && (prevProp = !0)), void 0 === nextProp && (nextProp = null, void 0 === prevProp && (prevProp = null)), removedKeys && (removedKeys[propKey] = !1), updatePayload && void 0 !== updatePayload[propKey]) {
-        if ("object" != typeof attributeConfig) updatePayload[propKey] = nextProp;else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
-            var nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp;
-            updatePayload[propKey] = nextValue;
-        }
-    } else if (prevProp !== nextProp) if ("object" != typeof attributeConfig) defaultDiffer(prevProp, nextProp) && ((updatePayload || (updatePayload = {}))[propKey] = nextProp);else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
-        var shouldUpdate = void 0 === prevProp || ("function" == typeof attributeConfig.diff ? attributeConfig.diff(prevProp, nextProp) : defaultDiffer(prevProp, nextProp));
-        shouldUpdate && (nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp, (updatePayload || (updatePayload = {}))[propKey] = nextValue);
-    } else removedKeys = null, removedKeyCount = 0, updatePayload = diffNestedProperty(updatePayload, prevProp, nextProp, attributeConfig), removedKeyCount > 0 && updatePayload && (restoreDeletedValuesInNestedArray(updatePayload, nextProp, attributeConfig), removedKeys = null);
-    for (propKey in prevProps) void 0 === nextProps[propKey] && (attributeConfig = validAttributes[propKey]) && (updatePayload && void 0 !== updatePayload[propKey] || void 0 !== (prevProp = prevProps[propKey]) && ("object" != typeof attributeConfig || "function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process ? ((updatePayload || (updatePayload = {}))[propKey] = null, removedKeys || (removedKeys = {}), removedKeys[propKey] || (removedKeys[propKey] = !0, removedKeyCount++)) : updatePayload = clearNestedProperty(updatePayload, prevProp, attributeConfig)));
-    return updatePayload;
+    for (var propKey in nextProps) {
+        if (attributeConfig = validAttributes[propKey]) if (prevProp = prevProps[propKey], nextProp = nextProps[propKey], "function" == typeof nextProp && (nextProp = !0, "function" == typeof prevProp && (prevProp = !0)), void 0 === nextProp && (nextProp = null, void 0 === prevProp && (prevProp = null)), removedKeys && (removedKeys[propKey] = !1), updatePayload && void 0 !== updatePayload[propKey]) {
+            if ("object" != typeof attributeConfig) updatePayload[propKey] = nextProp;else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
+                var nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp;
+                updatePayload[propKey] = nextValue;
+            }
+        } else if (prevProp !== nextProp) if ("object" != typeof attributeConfig) defaultDiffer(prevProp, nextProp) && ((updatePayload || (updatePayload = {}))[propKey] = nextProp);else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
+            var shouldUpdate = void 0 === prevProp || ("function" == typeof attributeConfig.diff ? attributeConfig.diff(prevProp, nextProp) : defaultDiffer(prevProp, nextProp));
+            shouldUpdate && (nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp, (updatePayload || (updatePayload = {}))[propKey] = nextValue);
+        } else removedKeys = null, removedKeyCount = 0, updatePayload = diffNestedProperty(updatePayload, prevProp, nextProp, attributeConfig), removedKeyCount > 0 && updatePayload && (restoreDeletedValuesInNestedArray(updatePayload, nextProp, attributeConfig), removedKeys = null);
+    }for (propKey in prevProps) {
+        void 0 === nextProps[propKey] && (attributeConfig = validAttributes[propKey]) && (updatePayload && void 0 !== updatePayload[propKey] || void 0 !== (prevProp = prevProps[propKey]) && ("object" != typeof attributeConfig || "function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process ? ((updatePayload || (updatePayload = {}))[propKey] = null, removedKeys || (removedKeys = {}), removedKeys[propKey] || (removedKeys[propKey] = !0, removedKeyCount++)) : updatePayload = clearNestedProperty(updatePayload, prevProp, attributeConfig)));
+    }return updatePayload;
 }
 
 function addProperties(updatePayload, props, validAttributes) {
@@ -28529,7 +28898,9 @@ function throwOnStylesProp(component, props) {
 }
 
 function warnForStyleProps$1(props, validAttributes) {
-    for (var key in validAttributes.style) validAttributes[key] || void 0 === props[key] || console.error("You are setting the style `{ " + key + ": ... }` as a prop. You " + "should nest it in a style object. " + "E.g. `{ style: { " + key + ": ... } }`");
+    for (var key in validAttributes.style) {
+        validAttributes[key] || void 0 === props[key] || console.error("You are setting the style `{ " + key + ": ... }` as a prop. You " + "should nest it in a style object. " + "E.g. `{ style: { " + key + ": ... } }`");
+    }
 }
 
 var NativeMethodsMixinUtils = {
@@ -28776,8 +29147,9 @@ function setNativePropsStack(componentOrHandle, nativeProps) {
     if (null != maybeInstance) {
         var viewConfig = void 0;
         if (void 0 !== maybeInstance.viewConfig) viewConfig = maybeInstance.viewConfig;else if (void 0 !== maybeInstance._instance && void 0 !== maybeInstance._instance.viewConfig) viewConfig = maybeInstance._instance.viewConfig;else {
-            for (; void 0 !== maybeInstance._renderedComponent;) maybeInstance = maybeInstance._renderedComponent;
-            viewConfig = maybeInstance.viewConfig;
+            for (; void 0 !== maybeInstance._renderedComponent;) {
+                maybeInstance = maybeInstance._renderedComponent;
+            }viewConfig = maybeInstance.viewConfig;
         }
         var tag = "function" == typeof maybeInstance.getHostNode ? maybeInstance.getHostNode() : maybeInstance._rootNodeID,
             updatePayload = ReactNativeAttributePayload_1.create(nativeProps, viewConfig.validAttributes);
@@ -28830,8 +29202,9 @@ function setNativePropsStack$1(componentOrHandle, nativeProps) {
     if (null != maybeInstance) {
         var viewConfig = void 0;
         if (void 0 !== maybeInstance.viewConfig) viewConfig = maybeInstance.viewConfig;else if (void 0 !== maybeInstance._instance && void 0 !== maybeInstance._instance.viewConfig) viewConfig = maybeInstance._instance.viewConfig;else {
-            for (; void 0 !== maybeInstance._renderedComponent;) maybeInstance = maybeInstance._renderedComponent;
-            viewConfig = maybeInstance.viewConfig;
+            for (; void 0 !== maybeInstance._renderedComponent;) {
+                maybeInstance = maybeInstance._renderedComponent;
+            }viewConfig = maybeInstance.viewConfig;
         }
         var tag = "function" == typeof maybeInstance.getHostNode ? maybeInstance.getHostNode() : maybeInstance._rootNodeID,
             updatePayload = ReactNativeAttributePayload_1.create(nativeProps, viewConfig.validAttributes);
@@ -28974,8 +29347,9 @@ var instanceCache = {},
     instanceProps = {};
 
 function getRenderedHostOrTextFromComponent(component) {
-    for (var rendered; rendered = component._renderedComponent;) component = rendered;
-    return component;
+    for (var rendered; rendered = component._renderedComponent;) {
+        component = rendered;
+    }return component;
 }
 
 function precacheNode(inst, tag) {
@@ -29035,7 +29409,9 @@ function recomputePluginOrdering() {
         if (invariant(pluginIndex > -1, "EventPluginRegistry: Cannot inject event plugins that do not exist in " + "the plugin ordering, `%s`.", pluginName), !EventPluginRegistry.plugins[pluginIndex]) {
             invariant(pluginModule.extractEvents, "EventPluginRegistry: Event plugins must implement an `extractEvents` " + "method, but `%s` does not.", pluginName), EventPluginRegistry.plugins[pluginIndex] = pluginModule;
             var publishedEvents = pluginModule.eventTypes;
-            for (var eventName in publishedEvents) invariant(publishEventForPlugin(publishedEvents[eventName], pluginModule, eventName), "EventPluginRegistry: Failed to publish event `%s` for plugin `%s`.", eventName, pluginName);
+            for (var eventName in publishedEvents) {
+                invariant(publishEventForPlugin(publishedEvents[eventName], pluginModule, eventName), "EventPluginRegistry: Failed to publish event `%s` for plugin `%s`.", eventName, pluginName);
+            }
         }
     }
 }
@@ -29044,11 +29420,12 @@ function publishEventForPlugin(dispatchConfig, pluginModule, eventName) {
     invariant(!EventPluginRegistry.eventNameDispatchConfigs.hasOwnProperty(eventName), "EventPluginHub: More than one plugin attempted to publish the same " + "event name, `%s`.", eventName), EventPluginRegistry.eventNameDispatchConfigs[eventName] = dispatchConfig;
     var phasedRegistrationNames = dispatchConfig.phasedRegistrationNames;
     if (phasedRegistrationNames) {
-        for (var phaseName in phasedRegistrationNames) if (phasedRegistrationNames.hasOwnProperty(phaseName)) {
-            var phasedRegistrationName = phasedRegistrationNames[phaseName];
-            publishRegistrationName(phasedRegistrationName, pluginModule, eventName);
-        }
-        return !0;
+        for (var phaseName in phasedRegistrationNames) {
+            if (phasedRegistrationNames.hasOwnProperty(phaseName)) {
+                var phasedRegistrationName = phasedRegistrationNames[phaseName];
+                publishRegistrationName(phasedRegistrationName, pluginModule, eventName);
+            }
+        }return !0;
     }
     return !!dispatchConfig.registrationName && (publishRegistrationName(dispatchConfig.registrationName, pluginModule, eventName), !0);
 }
@@ -29068,11 +29445,12 @@ var EventPluginRegistry = {
     },
     injectEventPluginsByName: function (injectedNamesToPlugins) {
         var isOrderingDirty = !1;
-        for (var pluginName in injectedNamesToPlugins) if (injectedNamesToPlugins.hasOwnProperty(pluginName)) {
-            var pluginModule = injectedNamesToPlugins[pluginName];
-            namesToPlugins.hasOwnProperty(pluginName) && namesToPlugins[pluginName] === pluginModule || (invariant(!namesToPlugins[pluginName], "EventPluginRegistry: Cannot inject two different event plugins " + "using the same name, `%s`.", pluginName), namesToPlugins[pluginName] = pluginModule, isOrderingDirty = !0);
-        }
-        isOrderingDirty && recomputePluginOrdering();
+        for (var pluginName in injectedNamesToPlugins) {
+            if (injectedNamesToPlugins.hasOwnProperty(pluginName)) {
+                var pluginModule = injectedNamesToPlugins[pluginName];
+                namesToPlugins.hasOwnProperty(pluginName) && namesToPlugins[pluginName] === pluginModule || (invariant(!namesToPlugins[pluginName], "EventPluginRegistry: Cannot inject two different event plugins " + "using the same name, `%s`.", pluginName), namesToPlugins[pluginName] = pluginModule, isOrderingDirty = !0);
+            }
+        }isOrderingDirty && recomputePluginOrdering();
     }
 },
     EventPluginRegistry_1 = EventPluginRegistry,
@@ -29137,7 +29515,9 @@ function executeDispatch(event, simulated, listener, inst) {
 function executeDispatchesInOrder(event, simulated) {
     var dispatchListeners = event._dispatchListeners,
         dispatchInstances = event._dispatchInstances;
-    if (Array.isArray(dispatchListeners)) for (var i = 0; i < dispatchListeners.length && !event.isPropagationStopped(); i++) executeDispatch(event, simulated, dispatchListeners[i], dispatchInstances[i]);else dispatchListeners && executeDispatch(event, simulated, dispatchListeners, dispatchInstances);
+    if (Array.isArray(dispatchListeners)) for (var i = 0; i < dispatchListeners.length && !event.isPropagationStopped(); i++) {
+        executeDispatch(event, simulated, dispatchListeners[i], dispatchInstances[i]);
+    } else dispatchListeners && executeDispatch(event, simulated, dispatchListeners, dispatchInstances);
     event._dispatchListeners = null, event._dispatchInstances = null;
 }
 
@@ -29145,7 +29525,9 @@ function executeDispatchesInOrderStopAtTrueImpl(event) {
     var dispatchListeners = event._dispatchListeners,
         dispatchInstances = event._dispatchInstances;
     if (Array.isArray(dispatchListeners)) {
-        for (var i = 0; i < dispatchListeners.length && !event.isPropagationStopped(); i++) if (dispatchListeners[i](event, dispatchInstances[i])) return dispatchInstances[i];
+        for (var i = 0; i < dispatchListeners.length && !event.isPropagationStopped(); i++) {
+            if (dispatchListeners[i](event, dispatchInstances[i])) return dispatchInstances[i];
+        }
     } else if (dispatchListeners && dispatchListeners(event, dispatchInstances)) return dispatchInstances;
     return null;
 }
@@ -29301,11 +29683,15 @@ function getParent(inst) {
 }
 
 function getLowestCommonAncestor(instA, instB) {
-    for (var depthA = 0, tempA = instA; tempA; tempA = getParent(tempA)) depthA++;
-    for (var depthB = 0, tempB = instB; tempB; tempB = getParent(tempB)) depthB++;
-    for (; depthA - depthB > 0;) instA = getParent(instA), depthA--;
-    for (; depthB - depthA > 0;) instB = getParent(instB), depthB--;
-    for (var depth = depthA; depth--;) {
+    for (var depthA = 0, tempA = instA; tempA; tempA = getParent(tempA)) {
+        depthA++;
+    }for (var depthB = 0, tempB = instB; tempB; tempB = getParent(tempB)) {
+        depthB++;
+    }for (; depthA - depthB > 0;) {
+        instA = getParent(instA), depthA--;
+    }for (; depthB - depthA > 0;) {
+        instB = getParent(instB), depthB--;
+    }for (var depth = depthA; depth--;) {
         if (instA === instB || instA === instB.alternate) return instA;
         instA = getParent(instA), instB = getParent(instB);
     }
@@ -29325,18 +29711,27 @@ function getParentInstance(inst) {
 }
 
 function traverseTwoPhase(inst, fn, arg) {
-    for (var path = []; inst;) path.push(inst), inst = getParent(inst);
-    var i;
-    for (i = path.length; i-- > 0;) fn(path[i], "captured", arg);
-    for (i = 0; i < path.length; i++) fn(path[i], "bubbled", arg);
+    for (var path = []; inst;) {
+        path.push(inst), inst = getParent(inst);
+    }var i;
+    for (i = path.length; i-- > 0;) {
+        fn(path[i], "captured", arg);
+    }for (i = 0; i < path.length; i++) {
+        fn(path[i], "bubbled", arg);
+    }
 }
 
 function traverseEnterLeave(from, to, fn, argFrom, argTo) {
-    for (var common = from && to ? getLowestCommonAncestor(from, to) : null, pathFrom = []; from && from !== common;) pathFrom.push(from), from = getParent(from);
-    for (var pathTo = []; to && to !== common;) pathTo.push(to), to = getParent(to);
-    var i;
-    for (i = 0; i < pathFrom.length; i++) fn(pathFrom[i], "bubbled", argFrom);
-    for (i = pathTo.length; i-- > 0;) fn(pathTo[i], "captured", argTo);
+    for (var common = from && to ? getLowestCommonAncestor(from, to) : null, pathFrom = []; from && from !== common;) {
+        pathFrom.push(from), from = getParent(from);
+    }for (var pathTo = []; to && to !== common;) {
+        pathTo.push(to), to = getParent(to);
+    }var i;
+    for (i = 0; i < pathFrom.length; i++) {
+        fn(pathFrom[i], "bubbled", argFrom);
+    }for (i = pathTo.length; i-- > 0;) {
+        fn(pathTo[i], "captured", argTo);
+    }
 }
 
 var ReactTreeTraversal = {
@@ -29473,11 +29868,12 @@ var EventPropagators = {
 function SyntheticEvent(dispatchConfig, targetInst, nativeEvent, nativeEventTarget) {
     this.dispatchConfig = dispatchConfig, this._targetInst = targetInst, this.nativeEvent = nativeEvent;
     var Interface = this.constructor.Interface;
-    for (var propName in Interface) if (Interface.hasOwnProperty(propName)) {
-        var normalize = Interface[propName];
-        normalize ? this[propName] = normalize(nativeEvent) : "target" === propName ? this.target = nativeEventTarget : this[propName] = nativeEvent[propName];
-    }
-    var defaultPrevented = null != nativeEvent.defaultPrevented ? nativeEvent.defaultPrevented : !1 === nativeEvent.returnValue;
+    for (var propName in Interface) {
+        if (Interface.hasOwnProperty(propName)) {
+            var normalize = Interface[propName];
+            normalize ? this[propName] = normalize(nativeEvent) : "target" === propName ? this.target = nativeEventTarget : this[propName] = nativeEvent[propName];
+        }
+    }var defaultPrevented = null != nativeEvent.defaultPrevented ? nativeEvent.defaultPrevented : !1 === nativeEvent.returnValue;
     return this.isDefaultPrevented = defaultPrevented ? emptyFunction.thatReturnsTrue : emptyFunction.thatReturnsFalse, this.isPropagationStopped = emptyFunction.thatReturnsFalse, this;
 }
 
@@ -29497,8 +29893,11 @@ Object.assign(SyntheticEvent.prototype, {
     isPersistent: emptyFunction.thatReturnsFalse,
     destructor: function () {
         var Interface = this.constructor.Interface;
-        for (var propName in Interface) this[propName] = null;
-        for (var i = 0; i < shouldBeReleasedProperties.length; i++) this[shouldBeReleasedProperties[i]] = null;
+        for (var propName in Interface) {
+            this[propName] = null;
+        }for (var i = 0; i < shouldBeReleasedProperties.length; i++) {
+            this[shouldBeReleasedProperties[i]] = null;
+        }
     }
 }), SyntheticEvent.Interface = EventInterface, SyntheticEvent.augmentClass = function (Class, Interface) {
     var Super = this,
@@ -29512,7 +29911,9 @@ var SyntheticEvent_1 = SyntheticEvent,
     _extends = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
         var source = arguments[i];
-        for (var key in source) Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        for (var key in source) {
+            Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        }
     }
     return target;
 },
@@ -29520,11 +29921,11 @@ var SyntheticEvent_1 = SyntheticEvent,
     customDirectEventTypes = UIManager.customDirectEventTypes,
     allTypesByEventName = {};
 
-for (var bubblingTypeName in customBubblingEventTypes) allTypesByEventName[bubblingTypeName] = customBubblingEventTypes[bubblingTypeName];
-
-for (var directTypeName in customDirectEventTypes) warning(!customBubblingEventTypes[directTypeName], "Event cannot be both direct and bubbling: %s", directTypeName), allTypesByEventName[directTypeName] = customDirectEventTypes[directTypeName];
-
-var ReactNativeBridgeEventPlugin = {
+for (var bubblingTypeName in customBubblingEventTypes) {
+    allTypesByEventName[bubblingTypeName] = customBubblingEventTypes[bubblingTypeName];
+}for (var directTypeName in customDirectEventTypes) {
+    warning(!customBubblingEventTypes[directTypeName], "Event cannot be both direct and bubbling: %s", directTypeName), allTypesByEventName[directTypeName] = customDirectEventTypes[directTypeName];
+}var ReactNativeBridgeEventPlugin = {
     eventTypes: _extends({}, customBubblingEventTypes, customDirectEventTypes),
     extractEvents: function (topLevelType, targetInst, nativeEvent, nativeEventTarget) {
         var bubbleDispatchConfig = customBubblingEventTypes[topLevelType],
@@ -29554,8 +29955,9 @@ var ReactEventEmitterMixin = {
     tagsStartAt: INITIAL_TAG_COUNT,
     tagCount: INITIAL_TAG_COUNT,
     allocateTag: function () {
-        for (; this.reactTagIsNativeTopRootID(ReactNativeTagHandles.tagCount);) ReactNativeTagHandles.tagCount++;
-        var tag = ReactNativeTagHandles.tagCount;
+        for (; this.reactTagIsNativeTopRootID(ReactNativeTagHandles.tagCount);) {
+            ReactNativeTagHandles.tagCount++;
+        }var tag = ReactNativeTagHandles.tagCount;
         return ReactNativeTagHandles.tagCount++, tag;
     },
     assertRootTag: function (tag) {
@@ -29596,7 +29998,9 @@ var ReactControlledComponent = {
         if (restoreTarget) {
             var target = restoreTarget,
                 queuedTargets = restoreQueue;
-            if (restoreTarget = null, restoreQueue = null, restoreStateOfTarget(target), queuedTargets) for (var i = 0; i < queuedTargets.length; i++) restoreStateOfTarget(queuedTargets[i]);
+            if (restoreTarget = null, restoreQueue = null, restoreStateOfTarget(target), queuedTargets) for (var i = 0; i < queuedTargets.length; i++) {
+                restoreStateOfTarget(queuedTargets[i]);
+            }
         }
     }
 },
@@ -29644,14 +30048,17 @@ var ReactGenericBatchingInjection = {
     _extends$1 = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
         var source = arguments[i];
-        for (var key in source) Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        for (var key in source) {
+            Object.prototype.hasOwnProperty.call(source, key) && (target[key] = source[key]);
+        }
     }
     return target;
 },
     EMPTY_NATIVE_EVENT = {},
     touchSubsequence = function (touches, indices) {
-    for (var ret = [], i = 0; i < indices.length; i++) ret.push(touches[indices[i]]);
-    return ret;
+    for (var ret = [], i = 0; i < indices.length; i++) {
+        ret.push(touches[indices[i]]);
+    }return ret;
 },
     removeTouchesAtIndices = function (touches, indices) {
     for (var rippedOut = [], temp = touches, i = 0; i < indices.length; i++) {
@@ -30326,7 +30733,9 @@ var nextMountID = 1,
         var callbacks = this._pendingCallbacks;
         if (callbacks) {
             this._pendingCallbacks = null;
-            for (var i = 0; i < callbacks.length; i++) transaction.getReactMountReady().enqueue(callbacks[i], inst);
+            for (var i = 0; i < callbacks.length; i++) {
+                transaction.getReactMountReady().enqueue(callbacks[i], inst);
+            }
         }
         return markup;
     },
@@ -30374,8 +30783,9 @@ var nextMountID = 1,
             contextTypes = Component.contextTypes;
         if (!contextTypes) return emptyObject;
         var maskedContext = {};
-        for (var contextName in contextTypes) maskedContext[contextName] = context[contextName];
-        return maskedContext;
+        for (var contextName in contextTypes) {
+            maskedContext[contextName] = context[contextName];
+        }return maskedContext;
     },
     _processContext: function (context) {
         return this._maskContext(context);
@@ -30386,8 +30796,9 @@ var nextMountID = 1,
             inst = this._instance;
         if ("function" == typeof inst.getChildContext) {
             childContext = inst.getChildContext(), invariant("object" == typeof Component.childContextTypes, "%s.getChildContext(): childContextTypes must be defined in order to " + "use getChildContext().", this.getName() || "ReactCompositeComponent");
-            for (var name in childContext) invariant(name in Component.childContextTypes, '%s.getChildContext(): key "%s" is not defined in childContextTypes.', this.getName() || "ReactCompositeComponent", name);
-            return Object.assign({}, currentContext, childContext);
+            for (var name in childContext) {
+                invariant(name in Component.childContextTypes, '%s.getChildContext(): key "%s" is not defined in childContextTypes.', this.getName() || "ReactCompositeComponent", name);
+            }return Object.assign({}, currentContext, childContext);
         }
         return currentContext;
     },
@@ -30400,8 +30811,9 @@ var nextMountID = 1,
     performUpdateIfNecessary: function (transaction) {
         if (null != this._pendingElement) ReactReconciler_1.receiveComponent(this, this._pendingElement, transaction, this._context);else if (null !== this._pendingStateQueue || this._pendingForceUpdate) this.updateComponent(transaction, this._currentElement, this._currentElement, this._context, this._context);else {
             var callbacks = this._pendingCallbacks;
-            if (this._pendingCallbacks = null, callbacks) for (var j = 0; j < callbacks.length; j++) transaction.getReactMountReady().enqueue(callbacks[j], this.getPublicInstance());
-            this._updateBatchNumber = null;
+            if (this._pendingCallbacks = null, callbacks) for (var j = 0; j < callbacks.length; j++) {
+                transaction.getReactMountReady().enqueue(callbacks[j], this.getPublicInstance());
+            }this._updateBatchNumber = null;
         }
     },
     updateComponent: function (transaction, prevParentElement, nextParentElement, prevUnmaskedContext, nextUnmaskedContext) {
@@ -30426,7 +30838,9 @@ var nextMountID = 1,
             var prevState = inst.state;
             shouldUpdate = willReceive || nextState !== prevState, inst.shouldComponentUpdate ? shouldUpdate = inst.shouldComponentUpdate(nextProps, nextState, nextContext) : this._compositeType === ReactCompositeComponentTypes$1.PureClass && (shouldUpdate = !shallowEqual(prevProps, nextProps) || !shallowEqual(inst.state, nextState));
         }
-        if (this._updateBatchNumber = null, shouldUpdate ? (this._pendingForceUpdate = !1, this._performComponentUpdate(nextParentElement, nextProps, nextState, nextContext, transaction, nextUnmaskedContext)) : (this._currentElement = nextParentElement, this._context = nextUnmaskedContext, inst.props = nextProps, inst.state = nextState, inst.context = nextContext), callbacks) for (var j = 0; j < callbacks.length; j++) transaction.getReactMountReady().enqueue(callbacks[j], this.getPublicInstance());
+        if (this._updateBatchNumber = null, shouldUpdate ? (this._pendingForceUpdate = !1, this._performComponentUpdate(nextParentElement, nextProps, nextState, nextContext, transaction, nextUnmaskedContext)) : (this._currentElement = nextParentElement, this._context = nextUnmaskedContext, inst.props = nextProps, inst.state = nextState, inst.context = nextContext), callbacks) for (var j = 0; j < callbacks.length; j++) {
+            transaction.getReactMountReady().enqueue(callbacks[j], this.getPublicInstance());
+        }
     },
     _processPendingState: function (props, context) {
         var inst = this._instance,
@@ -30752,8 +31166,9 @@ var CallbackQueue = function () {
             arg = this._arg;
         if (callbacks && contexts) {
             invariant(callbacks.length === contexts.length, "Mismatched list of contexts in callback queue"), this._callbacks = null, this._contexts = null;
-            for (var i = 0; i < callbacks.length; i++) validateCallback_1(callbacks[i]), callbacks[i].call(contexts[i], arg);
-            callbacks.length = 0, contexts.length = 0;
+            for (var i = 0; i < callbacks.length; i++) {
+                validateCallback_1(callbacks[i]), callbacks[i].call(contexts[i], arg);
+            }callbacks.length = 0, contexts.length = 0;
         }
     }, CallbackQueue.prototype.checkpoint = function () {
         return this._callbacks ? this._callbacks.length : 0;
@@ -30930,18 +31345,22 @@ function resolveObject(idOrObject) {
 }
 
 function restoreDeletedValuesInNestedArray(updatePayload, node, validAttributes) {
-    if (Array.isArray(node)) for (var i = node.length; i-- && removedKeyCount > 0;) restoreDeletedValuesInNestedArray(updatePayload, node[i], validAttributes);else if (node && removedKeyCount > 0) {
+    if (Array.isArray(node)) for (var i = node.length; i-- && removedKeyCount > 0;) {
+        restoreDeletedValuesInNestedArray(updatePayload, node[i], validAttributes);
+    } else if (node && removedKeyCount > 0) {
         var obj = resolveObject(node);
-        for (var propKey in removedKeys) if (removedKeys[propKey]) {
-            var nextProp = obj[propKey];
-            if (void 0 !== nextProp) {
-                var attributeConfig = validAttributes[propKey];
-                if (attributeConfig) {
-                    if ("function" == typeof nextProp && (nextProp = !0), void 0 === nextProp && (nextProp = null), "object" != typeof attributeConfig) updatePayload[propKey] = nextProp;else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
-                        var nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp;
-                        updatePayload[propKey] = nextValue;
+        for (var propKey in removedKeys) {
+            if (removedKeys[propKey]) {
+                var nextProp = obj[propKey];
+                if (void 0 !== nextProp) {
+                    var attributeConfig = validAttributes[propKey];
+                    if (attributeConfig) {
+                        if ("function" == typeof nextProp && (nextProp = !0), void 0 === nextProp && (nextProp = null), "object" != typeof attributeConfig) updatePayload[propKey] = nextProp;else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
+                            var nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp;
+                            updatePayload[propKey] = nextValue;
+                        }
+                        removedKeys[propKey] = !1, removedKeyCount--;
                     }
-                    removedKeys[propKey] = !1, removedKeyCount--;
                 }
             }
         }
@@ -30951,10 +31370,13 @@ function restoreDeletedValuesInNestedArray(updatePayload, node, validAttributes)
 function diffNestedArrayProperty(updatePayload, prevArray, nextArray, validAttributes) {
     var i,
         minLength = prevArray.length < nextArray.length ? prevArray.length : nextArray.length;
-    for (i = 0; i < minLength; i++) updatePayload = diffNestedProperty(updatePayload, prevArray[i], nextArray[i], validAttributes);
-    for (; i < prevArray.length; i++) updatePayload = clearNestedProperty(updatePayload, prevArray[i], validAttributes);
-    for (; i < nextArray.length; i++) updatePayload = addNestedProperty(updatePayload, nextArray[i], validAttributes);
-    return updatePayload;
+    for (i = 0; i < minLength; i++) {
+        updatePayload = diffNestedProperty(updatePayload, prevArray[i], nextArray[i], validAttributes);
+    }for (; i < prevArray.length; i++) {
+        updatePayload = clearNestedProperty(updatePayload, prevArray[i], validAttributes);
+    }for (; i < nextArray.length; i++) {
+        updatePayload = addNestedProperty(updatePayload, nextArray[i], validAttributes);
+    }return updatePayload;
 }
 
 function diffNestedProperty(updatePayload, prevProp, nextProp, validAttributes) {
@@ -30964,30 +31386,34 @@ function diffNestedProperty(updatePayload, prevProp, nextProp, validAttributes) 
 function addNestedProperty(updatePayload, nextProp, validAttributes) {
     if (!nextProp) return updatePayload;
     if (!Array.isArray(nextProp)) return addProperties(updatePayload, resolveObject(nextProp), validAttributes);
-    for (var i = 0; i < nextProp.length; i++) updatePayload = addNestedProperty(updatePayload, nextProp[i], validAttributes);
-    return updatePayload;
+    for (var i = 0; i < nextProp.length; i++) {
+        updatePayload = addNestedProperty(updatePayload, nextProp[i], validAttributes);
+    }return updatePayload;
 }
 
 function clearNestedProperty(updatePayload, prevProp, validAttributes) {
     if (!prevProp) return updatePayload;
     if (!Array.isArray(prevProp)) return clearProperties(updatePayload, resolveObject(prevProp), validAttributes);
-    for (var i = 0; i < prevProp.length; i++) updatePayload = clearNestedProperty(updatePayload, prevProp[i], validAttributes);
-    return updatePayload;
+    for (var i = 0; i < prevProp.length; i++) {
+        updatePayload = clearNestedProperty(updatePayload, prevProp[i], validAttributes);
+    }return updatePayload;
 }
 
 function diffProperties(updatePayload, prevProps, nextProps, validAttributes) {
     var attributeConfig, nextProp, prevProp;
-    for (var propKey in nextProps) if (attributeConfig = validAttributes[propKey]) if (prevProp = prevProps[propKey], nextProp = nextProps[propKey], "function" == typeof nextProp && (nextProp = !0, "function" == typeof prevProp && (prevProp = !0)), void 0 === nextProp && (nextProp = null, void 0 === prevProp && (prevProp = null)), removedKeys && (removedKeys[propKey] = !1), updatePayload && void 0 !== updatePayload[propKey]) {
-        if ("object" != typeof attributeConfig) updatePayload[propKey] = nextProp;else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
-            var nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp;
-            updatePayload[propKey] = nextValue;
-        }
-    } else if (prevProp !== nextProp) if ("object" != typeof attributeConfig) defaultDiffer(prevProp, nextProp) && ((updatePayload || (updatePayload = {}))[propKey] = nextProp);else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
-        var shouldUpdate = void 0 === prevProp || ("function" == typeof attributeConfig.diff ? attributeConfig.diff(prevProp, nextProp) : defaultDiffer(prevProp, nextProp));
-        shouldUpdate && (nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp, (updatePayload || (updatePayload = {}))[propKey] = nextValue);
-    } else removedKeys = null, removedKeyCount = 0, updatePayload = diffNestedProperty(updatePayload, prevProp, nextProp, attributeConfig), removedKeyCount > 0 && updatePayload && (restoreDeletedValuesInNestedArray(updatePayload, nextProp, attributeConfig), removedKeys = null);
-    for (propKey in prevProps) void 0 === nextProps[propKey] && (attributeConfig = validAttributes[propKey]) && (updatePayload && void 0 !== updatePayload[propKey] || void 0 !== (prevProp = prevProps[propKey]) && ("object" != typeof attributeConfig || "function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process ? ((updatePayload || (updatePayload = {}))[propKey] = null, removedKeys || (removedKeys = {}), removedKeys[propKey] || (removedKeys[propKey] = !0, removedKeyCount++)) : updatePayload = clearNestedProperty(updatePayload, prevProp, attributeConfig)));
-    return updatePayload;
+    for (var propKey in nextProps) {
+        if (attributeConfig = validAttributes[propKey]) if (prevProp = prevProps[propKey], nextProp = nextProps[propKey], "function" == typeof nextProp && (nextProp = !0, "function" == typeof prevProp && (prevProp = !0)), void 0 === nextProp && (nextProp = null, void 0 === prevProp && (prevProp = null)), removedKeys && (removedKeys[propKey] = !1), updatePayload && void 0 !== updatePayload[propKey]) {
+            if ("object" != typeof attributeConfig) updatePayload[propKey] = nextProp;else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
+                var nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp;
+                updatePayload[propKey] = nextValue;
+            }
+        } else if (prevProp !== nextProp) if ("object" != typeof attributeConfig) defaultDiffer(prevProp, nextProp) && ((updatePayload || (updatePayload = {}))[propKey] = nextProp);else if ("function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process) {
+            var shouldUpdate = void 0 === prevProp || ("function" == typeof attributeConfig.diff ? attributeConfig.diff(prevProp, nextProp) : defaultDiffer(prevProp, nextProp));
+            shouldUpdate && (nextValue = "function" == typeof attributeConfig.process ? attributeConfig.process(nextProp) : nextProp, (updatePayload || (updatePayload = {}))[propKey] = nextValue);
+        } else removedKeys = null, removedKeyCount = 0, updatePayload = diffNestedProperty(updatePayload, prevProp, nextProp, attributeConfig), removedKeyCount > 0 && updatePayload && (restoreDeletedValuesInNestedArray(updatePayload, nextProp, attributeConfig), removedKeys = null);
+    }for (propKey in prevProps) {
+        void 0 === nextProps[propKey] && (attributeConfig = validAttributes[propKey]) && (updatePayload && void 0 !== updatePayload[propKey] || void 0 !== (prevProp = prevProps[propKey]) && ("object" != typeof attributeConfig || "function" == typeof attributeConfig.diff || "function" == typeof attributeConfig.process ? ((updatePayload || (updatePayload = {}))[propKey] = null, removedKeys || (removedKeys = {}), removedKeys[propKey] || (removedKeys[propKey] = !0, removedKeyCount++)) : updatePayload = clearNestedProperty(updatePayload, prevProp, attributeConfig)));
+    }return updatePayload;
 }
 
 function addProperties(updatePayload, props, validAttributes) {
@@ -31029,7 +31455,9 @@ function throwOnStylesProp(component, props) {
 }
 
 function warnForStyleProps(props, validAttributes) {
-    for (var key in validAttributes.style) validAttributes[key] || void 0 === props[key] || console.error("You are setting the style `{ " + key + ": ... }` as a prop. You " + "should nest it in a style object. " + "E.g. `{ style: { " + key + ": ... } }`");
+    for (var key in validAttributes.style) {
+        validAttributes[key] || void 0 === props[key] || console.error("You are setting the style `{ " + key + ": ... }` as a prop. You " + "should nest it in a style object. " + "E.g. `{ style: { " + key + ": ... } }`");
+    }
 }
 
 var NativeMethodsMixinUtils = {
@@ -31098,8 +31526,9 @@ function setNativePropsStack(componentOrHandle, nativeProps) {
     if (null != maybeInstance) {
         var viewConfig = void 0;
         if (void 0 !== maybeInstance.viewConfig) viewConfig = maybeInstance.viewConfig;else if (void 0 !== maybeInstance._instance && void 0 !== maybeInstance._instance.viewConfig) viewConfig = maybeInstance._instance.viewConfig;else {
-            for (; void 0 !== maybeInstance._renderedComponent;) maybeInstance = maybeInstance._renderedComponent;
-            viewConfig = maybeInstance.viewConfig;
+            for (; void 0 !== maybeInstance._renderedComponent;) {
+                maybeInstance = maybeInstance._renderedComponent;
+            }viewConfig = maybeInstance.viewConfig;
         }
         var tag = "function" == typeof maybeInstance.getHostNode ? maybeInstance.getHostNode() : maybeInstance._rootNodeID,
             updatePayload = ReactNativeAttributePayload_1.create(nativeProps, viewConfig.validAttributes);
@@ -31152,8 +31581,9 @@ function setNativePropsStack$1(componentOrHandle, nativeProps) {
     if (null != maybeInstance) {
         var viewConfig = void 0;
         if (void 0 !== maybeInstance.viewConfig) viewConfig = maybeInstance.viewConfig;else if (void 0 !== maybeInstance._instance && void 0 !== maybeInstance._instance.viewConfig) viewConfig = maybeInstance._instance.viewConfig;else {
-            for (; void 0 !== maybeInstance._renderedComponent;) maybeInstance = maybeInstance._renderedComponent;
-            viewConfig = maybeInstance.viewConfig;
+            for (; void 0 !== maybeInstance._renderedComponent;) {
+                maybeInstance = maybeInstance._renderedComponent;
+            }viewConfig = maybeInstance.viewConfig;
         }
         var tag = "function" == typeof maybeInstance.getHostNode ? maybeInstance.getHostNode() : maybeInstance._rootNodeID,
             updatePayload = ReactNativeAttributePayload_1.create(nativeProps, viewConfig.validAttributes);
@@ -31254,9 +31684,13 @@ function traverseStackChildrenImpl(children, nameSoFar, callback, traverseContex
         nextName,
         subtreeCount = 0,
         nextNamePrefix = "" === nameSoFar ? SEPARATOR : nameSoFar + SUBSEPARATOR;
-    if (Array.isArray(children)) for (var i = 0; i < children.length; i++) child = children[i], nextName = nextNamePrefix + getComponentKey(child, i), subtreeCount += traverseStackChildrenImpl(child, nextName, callback, traverseContext);else {
+    if (Array.isArray(children)) for (var i = 0; i < children.length; i++) {
+        child = children[i], nextName = nextNamePrefix + getComponentKey(child, i), subtreeCount += traverseStackChildrenImpl(child, nextName, callback, traverseContext);
+    } else {
         var iteratorFn = getIteratorFn_1(children);
-        if (iteratorFn) for (var step, iterator = iteratorFn.call(children), ii = 0; !(step = iterator.next()).done;) child = step.value, nextName = nextNamePrefix + getComponentKey(child, ii++), subtreeCount += traverseStackChildrenImpl(child, nextName, callback, traverseContext);else if ("object" === type) {
+        if (iteratorFn) for (var step, iterator = iteratorFn.call(children), ii = 0; !(step = iterator.next()).done;) {
+            child = step.value, nextName = nextNamePrefix + getComponentKey(child, ii++), subtreeCount += traverseStackChildrenImpl(child, nextName, callback, traverseContext);
+        } else if ("object" === type) {
             var addendum = "",
                 childrenString = "" + children;
             invariant(!1, "Objects are not valid as a React child (found: %s).%s", "[object Object]" === childrenString ? "object with keys {" + Object.keys(children).join(", ") + "}" : childrenString, addendum);
@@ -31288,24 +31722,29 @@ var ReactChildReconciler = {
     updateChildren: function (prevChildren, nextChildren, mountImages, removedNodes, transaction, hostParent, hostContainerInfo, context, selfDebugID) {
         if (nextChildren || prevChildren) {
             var name, prevChild;
-            for (name in nextChildren) if (nextChildren.hasOwnProperty(name)) {
-                prevChild = prevChildren && prevChildren[name];
-                var prevElement = prevChild && prevChild._currentElement,
-                    nextElement = nextChildren[name];
-                if (null != prevChild && shouldUpdateReactComponent_1(prevElement, nextElement)) ReactReconciler_1.receiveComponent(prevChild, nextElement, transaction, context), nextChildren[name] = prevChild;else {
-                    var nextChildInstance = instantiateReactComponent_1(nextElement, !0);
-                    nextChildren[name] = nextChildInstance;
-                    var nextChildMountImage = ReactReconciler_1.mountComponent(nextChildInstance, transaction, hostParent, hostContainerInfo, context, selfDebugID);
-                    mountImages.push(nextChildMountImage), prevChild && (removedNodes[name] = ReactReconciler_1.getHostNode(prevChild), ReactReconciler_1.unmountComponent(prevChild, !1, !1));
+            for (name in nextChildren) {
+                if (nextChildren.hasOwnProperty(name)) {
+                    prevChild = prevChildren && prevChildren[name];
+                    var prevElement = prevChild && prevChild._currentElement,
+                        nextElement = nextChildren[name];
+                    if (null != prevChild && shouldUpdateReactComponent_1(prevElement, nextElement)) ReactReconciler_1.receiveComponent(prevChild, nextElement, transaction, context), nextChildren[name] = prevChild;else {
+                        var nextChildInstance = instantiateReactComponent_1(nextElement, !0);
+                        nextChildren[name] = nextChildInstance;
+                        var nextChildMountImage = ReactReconciler_1.mountComponent(nextChildInstance, transaction, hostParent, hostContainerInfo, context, selfDebugID);
+                        mountImages.push(nextChildMountImage), prevChild && (removedNodes[name] = ReactReconciler_1.getHostNode(prevChild), ReactReconciler_1.unmountComponent(prevChild, !1, !1));
+                    }
                 }
+            }for (name in prevChildren) {
+                !prevChildren.hasOwnProperty(name) || nextChildren && nextChildren.hasOwnProperty(name) || (prevChild = prevChildren[name], removedNodes[name] = ReactReconciler_1.getHostNode(prevChild), ReactReconciler_1.unmountComponent(prevChild, !1, !1));
             }
-            for (name in prevChildren) !prevChildren.hasOwnProperty(name) || nextChildren && nextChildren.hasOwnProperty(name) || (prevChild = prevChildren[name], removedNodes[name] = ReactReconciler_1.getHostNode(prevChild), ReactReconciler_1.unmountComponent(prevChild, !1, !1));
         }
     },
     unmountChildren: function (renderedChildren, safely, skipLifecycle) {
-        for (var name in renderedChildren) if (renderedChildren.hasOwnProperty(name)) {
-            var renderedChild = renderedChildren[name];
-            ReactReconciler_1.unmountComponent(renderedChild, safely, skipLifecycle);
+        for (var name in renderedChildren) {
+            if (renderedChildren.hasOwnProperty(name)) {
+                var renderedChild = renderedChildren[name];
+                ReactReconciler_1.unmountComponent(renderedChild, safely, skipLifecycle);
+            }
         }
     }
 },
@@ -31406,25 +31845,28 @@ var ReactMultiChild = {
         this._renderedChildren = children;
         var mountImages = [],
             index = 0;
-        for (var name in children) if (children.hasOwnProperty(name)) {
-            var child = children[name],
-                selfDebugID = 0,
-                mountImage = ReactReconciler_1.mountComponent(child, transaction, this, this._hostContainerInfo, context, selfDebugID);
-            child._mountIndex = index++, mountImages.push(mountImage);
-        }
-        return mountImages;
+        for (var name in children) {
+            if (children.hasOwnProperty(name)) {
+                var child = children[name],
+                    selfDebugID = 0,
+                    mountImage = ReactReconciler_1.mountComponent(child, transaction, this, this._hostContainerInfo, context, selfDebugID);
+                child._mountIndex = index++, mountImages.push(mountImage);
+            }
+        }return mountImages;
     },
     updateTextContent: function (nextContent) {
         var prevChildren = this._renderedChildren;
         ReactChildReconciler_1.unmountChildren(prevChildren, !1, !1);
-        for (var name in prevChildren) prevChildren.hasOwnProperty(name) && invariant(!1, "updateTextContent called on non-empty component.");
-        processQueue(this, [makeTextContent(nextContent)]);
+        for (var name in prevChildren) {
+            prevChildren.hasOwnProperty(name) && invariant(!1, "updateTextContent called on non-empty component.");
+        }processQueue(this, [makeTextContent(nextContent)]);
     },
     updateMarkup: function (nextMarkup) {
         var prevChildren = this._renderedChildren;
         ReactChildReconciler_1.unmountChildren(prevChildren, !1, !1);
-        for (var name in prevChildren) prevChildren.hasOwnProperty(name) && invariant(!1, "updateTextContent called on non-empty component.");
-        processQueue(this, [makeSetMarkup(nextMarkup)]);
+        for (var name in prevChildren) {
+            prevChildren.hasOwnProperty(name) && invariant(!1, "updateTextContent called on non-empty component.");
+        }processQueue(this, [makeSetMarkup(nextMarkup)]);
     },
     updateChildren: function (nextNestedChildrenElements, transaction, context) {
         this._updateChildren(nextNestedChildrenElements, transaction, context);
@@ -31441,13 +31883,15 @@ var ReactMultiChild = {
                 lastIndex = 0,
                 nextMountIndex = 0,
                 lastPlacedNode = null;
-            for (name in nextChildren) if (nextChildren.hasOwnProperty(name)) {
-                var prevChild = prevChildren && prevChildren[name],
-                    nextChild = nextChildren[name];
-                prevChild === nextChild ? (updates = enqueue(updates, this.moveChild(prevChild, lastPlacedNode, nextIndex, lastIndex)), lastIndex = Math.max(prevChild._mountIndex, lastIndex), prevChild._mountIndex = nextIndex) : (prevChild && (lastIndex = Math.max(prevChild._mountIndex, lastIndex)), updates = enqueue(updates, this._mountChildAtIndex(nextChild, mountImages[nextMountIndex], lastPlacedNode, nextIndex, transaction, context)), nextMountIndex++), nextIndex++, lastPlacedNode = ReactReconciler_1.getHostNode(nextChild);
-            }
-            for (name in removedNodes) removedNodes.hasOwnProperty(name) && (updates = enqueue(updates, this._unmountChild(prevChildren[name], removedNodes[name])));
-            updates && processQueue(this, updates), this._renderedChildren = nextChildren;
+            for (name in nextChildren) {
+                if (nextChildren.hasOwnProperty(name)) {
+                    var prevChild = prevChildren && prevChildren[name],
+                        nextChild = nextChildren[name];
+                    prevChild === nextChild ? (updates = enqueue(updates, this.moveChild(prevChild, lastPlacedNode, nextIndex, lastIndex)), lastIndex = Math.max(prevChild._mountIndex, lastIndex), prevChild._mountIndex = nextIndex) : (prevChild && (lastIndex = Math.max(prevChild._mountIndex, lastIndex)), updates = enqueue(updates, this._mountChildAtIndex(nextChild, mountImages[nextMountIndex], lastPlacedNode, nextIndex, transaction, context)), nextMountIndex++), nextIndex++, lastPlacedNode = ReactReconciler_1.getHostNode(nextChild);
+                }
+            }for (name in removedNodes) {
+                removedNodes.hasOwnProperty(name) && (updates = enqueue(updates, this._unmountChild(prevChildren[name], removedNodes[name])));
+            }updates && processQueue(this, updates), this._renderedChildren = nextChildren;
         }
     },
     unmountChildren: function (safely, skipLifecycle) {
@@ -31562,8 +32006,9 @@ var render = function (element, mountInto, callback) {
             return ReactNativeComponentTree_1.getClosestInstanceFromNode(node);
         },
         getNodeFromInstance: function (inst) {
-            for (; inst._renderedComponent;) inst = inst._renderedComponent;
-            return inst ? ReactNativeComponentTree_1.getNodeFromInstance(inst) : null;
+            for (; inst._renderedComponent;) {
+                inst = inst._renderedComponent;
+            }return inst ? ReactNativeComponentTree_1.getNodeFromInstance(inst) : null;
         }
     },
     Mount: ReactNativeMount_1,
@@ -31689,7 +32134,7 @@ function childrenAsString(children) {
   return '';
 }
 
-let Surface = (_temp = _class = class Surface extends React.Component {
+var Surface = (_temp = _class = class Surface extends React.Component {
 
   getChildContext() {
     return { isInSurface: true };
@@ -31742,7 +32187,7 @@ function extractOpacity(props) {
   return +props.opacity;
 }
 
-let Group = (_temp2 = _class2 = class Group extends React.Component {
+var Group = (_temp2 = _class2 = class Group extends React.Component {
 
   render() {
     var props = this.props;
@@ -31758,7 +32203,7 @@ let Group = (_temp2 = _class2 = class Group extends React.Component {
 }, _class2.contextTypes = {
   isInSurface: PropTypes.bool.isRequired
 }, _temp2);
-let ClippingRectangle = class ClippingRectangle extends React.Component {
+var ClippingRectangle = class ClippingRectangle extends React.Component {
   render() {
     var props = this.props;
     var x = extractNumber(props.x, 0);
@@ -31904,7 +32349,7 @@ function extractStrokeJoin(strokeJoin) {
       return 1;}
 }
 
-let Shape = class Shape extends React.Component {
+var Shape = class Shape extends React.Component {
   render() {
     var props = this.props;
     var path = props.d || childrenAsString(props.children);
@@ -31990,7 +32435,7 @@ function extractAlignment(alignment) {
   }
 }
 
-let Text = class Text extends React.Component {
+var Text = class Text extends React.Component {
   render() {
     var props = this.props;
     var textPath = props.path ? new Path(props.path).toJSON() : null;
@@ -32091,8 +32536,9 @@ var colors = {
 
 var map = function (array, fn) {
 	var results = [];
-	for (var i = 0, l = array.length; i < l; i++) results[i] = fn(array[i], i);
-	return results;
+	for (var i = 0, l = array.length; i < l; i++) {
+		results[i] = fn(array[i], i);
+	}return results;
 };
 
 var Color = function (color, type) {
@@ -32400,7 +32846,9 @@ module.exports = function (mixins) {
 	for (var i = 0, l = arguments.length; i < l; i++) {
 		var mixin = arguments[i];
 		if (typeof mixin == 'function') mixin = mixin.prototype;
-		for (var key in mixin) proto[key] = mixin[key];
+		for (var key in mixin) {
+			proto[key] = mixin[key];
+		}
 	}
 	if (!proto.initialize) proto.initialize = function () {};
 	proto.constructor = function (a, b, c, d, e, f, g, h) {
@@ -32846,60 +33294,61 @@ module.exports = Class({
 });
 }, 172, null, "art/core/transform.js");
 __d(/* Button */function(global, require, module, exports) {
-'use strict';
+"use strict";
 
 var _class, _temp;
 
-const ColorPropType = require(29             ); // 29 = ColorPropType
-const Platform = require(46        ); // 46 = Platform
-const React = require(125    ); // 125 = React
-const PropTypes = require(19          ); // 19 = prop-types
-const StyleSheet = require(151         ); // 151 = StyleSheet
-const Text = require(174   ); // 174 = Text
-const TouchableNativeFeedback = require(182                      ); // 182 = TouchableNativeFeedback
-const TouchableOpacity = require(183               ); // 183 = TouchableOpacity
-const View = require(124   ); // 124 = View
+var ColorPropType = require(29             ); // 29 = ColorPropType
+var Platform = require(46        ); // 46 = Platform
+var React = require(125    ); // 125 = React
+var PropTypes = require(19          ); // 19 = prop-types
+var StyleSheet = require(151         ); // 151 = StyleSheet
+var Text = require(174   ); // 174 = Text
+var TouchableNativeFeedback = require(182                      ); // 182 = TouchableNativeFeedback
+var TouchableOpacity = require(183               ); // 183 = TouchableOpacity
+var View = require(124   ); // 124 = View
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-let Button = (_temp = _class = class Button extends React.Component {
+var Button = (_temp = _class = class Button extends React.Component {
 
   render() {
-    const {
-      accessibilityLabel,
-      color,
-      onPress,
-      title,
-      disabled,
-      testID
+    var {
+      accessibilityLabel: accessibilityLabel,
+      color: color,
+      onPress: onPress,
+      title: title,
+      disabled: disabled,
+      testID: testID
     } = this.props;
-    const buttonStyles = [styles.button];
-    const textStyles = [styles.text];
-    const Touchable = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
-    if (color && Platform.OS === 'ios') {
-      textStyles.push({ color: color });
-    } else if (color) {
-      buttonStyles.push({ backgroundColor: color });
+    var buttonStyles = [styles.button];
+    var textStyles = [styles.text];
+    if (color) {
+      if (Platform.OS === "ios" || Platform.OS === "web") {
+        textStyles.push({ color: color });
+      } else {
+        buttonStyles.push({ backgroundColor: color });
+      }
     }
+    var accessibilityTraits = ["button"];
     if (disabled) {
       buttonStyles.push(styles.buttonDisabled);
       textStyles.push(styles.textDisabled);
+      accessibilityTraits.push("disabled");
     }
-    invariant(typeof title === 'string', 'The title prop of a Button must be a string');
-    const formattedTitle = Platform.OS === 'android' ? title.toUpperCase() : title;
-    const accessibilityTraits = ['button'];
-    if (disabled) {
-      accessibilityTraits.push('disabled');
-    }
+    invariant(typeof title === "string", "The title prop of a Button must be a string");
+    var formattedTitle = Platform.OS === "android" ? title.toUpperCase() : title;
+    var Touchable = Platform.OS === "android" ? TouchableNativeFeedback : TouchableOpacity;
     return React.createElement(
       Touchable,
       {
-        accessibilityComponentType: 'button',
+        accessibilityComponentType: "button",
         accessibilityLabel: accessibilityLabel,
         accessibilityTraits: accessibilityTraits,
         testID: testID,
         disabled: disabled,
-        onPress: onPress },
+        onPress: onPress
+      },
       React.createElement(
         View,
         { style: buttonStyles },
@@ -32925,47 +33374,59 @@ let Button = (_temp = _class = class Button extends React.Component {
   testID: PropTypes.string
 }, _temp);
 
-let defaultBlue = '#2196F3';
-if (Platform.OS === 'ios') {
-  defaultBlue = '#007AFF';
-}
 
-const styles = StyleSheet.create({
+var styles = StyleSheet.create({
   button: Platform.select({
     ios: {},
+    web: {
+      padding: "10px 14px",
+      backgroundColor: "#337ab7",
+      borderRadius: 4
+    },
     android: {
       elevation: 4,
-      backgroundColor: defaultBlue,
+
+      backgroundColor: "#2196F3",
       borderRadius: 2
     }
   }),
   text: Platform.select({
     ios: {
-      color: defaultBlue,
-      textAlign: 'center',
+      color: "#007AFF",
+      textAlign: "center",
       padding: 8,
-      fontSize: 18
+      fontSize: 18,
+      fontWeight: 400
+    },
+    web: {
+      color: "white",
+      textAlign: "center",
+      fontSize: 14
     },
     android: {
-      textAlign: 'center',
-      color: 'white',
+      color: "white",
+      textAlign: "center",
       padding: 8,
-      fontWeight: '500'
+      fontWeight: "500"
     }
   }),
   buttonDisabled: Platform.select({
     ios: {},
+    web: {},
     android: {
       elevation: 0,
-      backgroundColor: '#dfdfdf'
+      backgroundColor: "#dfdfdf"
     }
   }),
   textDisabled: Platform.select({
     ios: {
-      color: '#cdcdcd'
+      color: "#cdcdcd"
+    },
+    web: {
+      color: "#cdcdcd"
     },
     android: {
-      color: '#a1a1a1'
+      color: "#a1a1a1"
     }
   })
 });
@@ -32975,24 +33436,24 @@ module.exports = Button;
 __d(/* Text */function(global, require, module, exports) {
 'use strict';
 
-const ColorPropType = require(29             ); // 29 = ColorPropType
-const EdgeInsetsPropType = require(141                 ); // 141 = EdgeInsetsPropType
-const NativeMethodsMixin = require(31                  ); // 31 = NativeMethodsMixin
-const Platform = require(46        ); // 46 = Platform
-const React = require(125    ); // 125 = React
-const PropTypes = require(19          ); // 19 = prop-types
-const ReactNativeViewAttributes = require(139                        ); // 139 = ReactNativeViewAttributes
-const StyleSheetPropType = require(146                 ); // 146 = StyleSheetPropType
-const TextStylePropTypes = require(134                 ); // 134 = TextStylePropTypes
-const Touchable = require(175        ); // 175 = Touchable
+var ColorPropType = require(29             ); // 29 = ColorPropType
+var EdgeInsetsPropType = require(141                 ); // 141 = EdgeInsetsPropType
+var NativeMethodsMixin = require(31                  ); // 31 = NativeMethodsMixin
+var Platform = require(46        ); // 46 = Platform
+var React = require(125    ); // 125 = React
+var PropTypes = require(19          ); // 19 = prop-types
+var ReactNativeViewAttributes = require(139                        ); // 139 = ReactNativeViewAttributes
+var StyleSheetPropType = require(146                 ); // 146 = StyleSheetPropType
+var TextStylePropTypes = require(134                 ); // 134 = TextStylePropTypes
+var Touchable = require(175        ); // 175 = Touchable
 
-const createReactNativeComponentClass = require(156                              ); // 156 = createReactNativeComponentClass
-const mergeFast = require(181        ); // 181 = mergeFast
-const processColor = require(85            ); // 85 = processColor
+var createReactNativeComponentClass = require(156                              ); // 156 = createReactNativeComponentClass
+var mergeFast = require(181        ); // 181 = mergeFast
+var processColor = require(85            ); // 85 = processColor
 
-const stylePropType = StyleSheetPropType(TextStylePropTypes);
+var stylePropType = StyleSheetPropType(TextStylePropTypes);
 
-const viewConfig = {
+var viewConfig = {
   validAttributes: mergeFast(ReactNativeViewAttributes.UIView, {
     isHighlighted: true,
     numberOfLines: true,
@@ -33008,7 +33469,7 @@ const viewConfig = {
   uiViewClassName: 'RCTText'
 };
 
-const Text = React.createClass({
+var Text = React.createClass({
   propTypes: {
     ellipsizeMode: PropTypes.oneOf(['head', 'middle', 'tail', 'clip']),
 
@@ -33045,7 +33506,7 @@ const Text = React.createClass({
 
     disabled: PropTypes.bool
   },
-  getDefaultProps() {
+  getDefaultProps: function () {
     return {
       accessible: true,
       allowFontScaling: true,
@@ -33053,6 +33514,7 @@ const Text = React.createClass({
       disabled: false
     };
   },
+
   getInitialState: function () {
     return mergeFast(Touchable.Mixin.touchableGetInitialState(), {
       isHighlighted: false
@@ -33060,9 +33522,10 @@ const Text = React.createClass({
   },
   mixins: [NativeMethodsMixin],
   viewConfig: viewConfig,
-  getChildContext() {
+  getChildContext: function () {
     return { isInAParentText: true };
   },
+
   childContextTypes: {
     isInAParentText: PropTypes.bool
   },
@@ -33071,7 +33534,7 @@ const Text = React.createClass({
   },
 
   _handlers: null,
-  _hasPressHandler() {
+  _hasPressHandler: function () {
     return !!this.props.onPress || !!this.props.onLongPress;
   },
 
@@ -33080,47 +33543,49 @@ const Text = React.createClass({
   touchableHandlePress: null,
   touchableHandleLongPress: null,
   touchableGetPressRectOffset: null,
-  render() {
-    let newProps = this.props;
+  render: function () {
+    var _this = this;
+
+    var newProps = this.props;
     if (this.props.onStartShouldSetResponder || this._hasPressHandler()) {
       if (!this._handlers) {
         this._handlers = {
-          onStartShouldSetResponder: () => {
-            const shouldSetFromProps = this.props.onStartShouldSetResponder && this.props.onStartShouldSetResponder();
-            const setResponder = shouldSetFromProps || this._hasPressHandler();
-            if (setResponder && !this.touchableHandleActivePressIn) {
-              for (const key in Touchable.Mixin) {
+          onStartShouldSetResponder: function () {
+            var shouldSetFromProps = _this.props.onStartShouldSetResponder && _this.props.onStartShouldSetResponder();
+            var setResponder = shouldSetFromProps || _this._hasPressHandler();
+            if (setResponder && !_this.touchableHandleActivePressIn) {
+              for (var key in Touchable.Mixin) {
                 if (typeof Touchable.Mixin[key] === 'function') {
-                  this[key] = Touchable.Mixin[key].bind(this);
+                  _this[key] = Touchable.Mixin[key].bind(_this);
                 }
               }
-              this.touchableHandleActivePressIn = () => {
-                if (this.props.suppressHighlighting || !this._hasPressHandler()) {
+              _this.touchableHandleActivePressIn = function () {
+                if (_this.props.suppressHighlighting || !_this._hasPressHandler()) {
                   return;
                 }
-                this.setState({
+                _this.setState({
                   isHighlighted: true
                 });
               };
 
-              this.touchableHandleActivePressOut = () => {
-                if (this.props.suppressHighlighting || !this._hasPressHandler()) {
+              _this.touchableHandleActivePressOut = function () {
+                if (_this.props.suppressHighlighting || !_this._hasPressHandler()) {
                   return;
                 }
-                this.setState({
+                _this.setState({
                   isHighlighted: false
                 });
               };
 
-              this.touchableHandlePress = e => {
-                this.props.onPress && this.props.onPress(e);
+              _this.touchableHandlePress = function (e) {
+                _this.props.onPress && _this.props.onPress(e);
               };
 
-              this.touchableHandleLongPress = e => {
-                this.props.onLongPress && this.props.onLongPress(e);
+              _this.touchableHandleLongPress = function (e) {
+                _this.props.onLongPress && _this.props.onLongPress(e);
               };
 
-              this.touchableGetPressRectOffset = function () {
+              _this.touchableGetPressRectOffset = function () {
                 return this.props.pressRetentionOffset || PRESS_RECT_OFFSET;
               };
             }
@@ -33194,18 +33659,18 @@ __d(/* Touchable */function(global, require, module, exports) {
 
 'use strict';
 
-const BoundingDimensions = require(176                 ); // 176 = BoundingDimensions
-const Platform = require(46        ); // 46 = Platform
-const Position = require(178       ); // 178 = Position
-const React = require(125    ); // 125 = React
-const ReactNative = require(32           ); // 32 = ReactNative
-const TVEventHandler = require(179             ); // 179 = TVEventHandler
-const TouchEventUtils = require(180                       ); // 180 = fbjs/lib/TouchEventUtils
-const UIManager = require(73         ); // 73 = UIManager
-const View = require(124   ); // 124 = View
+var BoundingDimensions = require(176                 ); // 176 = BoundingDimensions
+var Platform = require(46        ); // 46 = Platform
+var Position = require(178       ); // 178 = Position
+var React = require(125    ); // 125 = React
+var ReactNative = require(32           ); // 32 = ReactNative
+var TVEventHandler = require(179             ); // 179 = TVEventHandler
+var TouchEventUtils = require(180                       ); // 180 = fbjs/lib/TouchEventUtils
+var UIManager = require(73         ); // 73 = UIManager
+var View = require(124   ); // 124 = View
 
-const keyMirror = require(129                 ); // 129 = fbjs/lib/keyMirror
-const normalizeColor = require(30              ); // 30 = normalizeColor
+var keyMirror = require(129                 ); // 129 = fbjs/lib/keyMirror
+var normalizeColor = require(30              ); // 30 = normalizeColor
 
 var States = keyMirror({
   NOT_RESPONDER: null,
@@ -33467,7 +33932,7 @@ var TouchableMixin = {
   },
 
   _remeasureMetricsOnActivation: function () {
-    const tag = this.state.touchable.responderID;
+    var tag = this.state.touchable.responderID;
     if (tag == null) {
       return;
     }
@@ -33534,7 +33999,7 @@ var TouchableMixin = {
     var pageY = touch && touch.pageY;
     var locationX = touch && touch.locationX;
     var locationY = touch && touch.locationY;
-    this.pressInLocation = { pageX, pageY, locationX, locationY };
+    this.pressInLocation = { pageX: pageX, pageY: pageY, locationX: locationX, locationY: locationY };
   },
 
   _getDistanceBetweenPoints: function (aX, aY, bX, bY) {
@@ -33591,10 +34056,12 @@ var TouchableMixin = {
   },
 
   _endHighlight: function (e) {
+    var _this = this;
+
     if (this.touchableHandleActivePressOut) {
       if (this.touchableGetPressOutDelayMS && this.touchableGetPressOutDelayMS()) {
-        this.pressOutDelayTimeout = setTimeout(() => {
-          this.touchableHandleActivePressOut(e);
+        this.pressOutDelayTimeout = setTimeout(function () {
+          _this.touchableHandleActivePressOut(e);
         }, this.touchableGetPressOutDelayMS());
       } else {
         this.touchableHandleActivePressOut(e);
@@ -33607,19 +34074,19 @@ var TouchableMixin = {
 var Touchable = {
   Mixin: TouchableMixin,
   TOUCH_TARGET_DEBUG: false,
-  renderDebugView: ({ color, hitSlop }) => {
+  renderDebugView: function ({ color: color, hitSlop: hitSlop }) {
     if (!Touchable.TOUCH_TARGET_DEBUG) {
       return null;
     }
     if (!__DEV__) {
       throw Error('Touchable.TOUCH_TARGET_DEBUG should not be enabled in prod!');
     }
-    const debugHitSlopStyle = {};
+    var debugHitSlopStyle = {};
     hitSlop = hitSlop || { top: 0, bottom: 0, left: 0, right: 0 };
-    for (const key in hitSlop) {
+    for (var key in hitSlop) {
       debugHitSlopStyle[key] = -hitSlop[key];
     }
-    const hexColor = '#' + ('00000000' + normalizeColor(color).toString(16)).substr(-8);
+    var hexColor = '#' + ('00000000' + normalizeColor(color).toString(16)).substr(-8);
     return React.createElement(View, {
       pointerEvents: 'none',
       style: babelHelpers.extends({
@@ -33965,9 +34432,9 @@ var Image = require(195    ); // 195 = Image
 var Text = require(174   ); // 174 = Text
 var View = require(124   ); // 124 = View
 
-let AnimatedScrollView;
+var AnimatedScrollView = void 0;
 
-const Animated = {
+var Animated = {
   View: AnimatedImplementation.createAnimatedComponent(View),
   Text: AnimatedImplementation.createAnimatedComponent(Text),
   Image: AnimatedImplementation.createAnimatedComponent(Image),
@@ -34015,7 +34482,7 @@ function shouldUseNativeDriver(config) {
   return config.useNativeDriver || false;
 }
 
-let Animated = class Animated {
+var Animated = class Animated {
   __attach() {}
   __detach() {
     if (this.__isNative && this.__nativeTag != null) {
@@ -34055,7 +34522,7 @@ let Animated = class Animated {
     return this.__getValue();
   }
 };
-let Animation = class Animation {
+var Animation = class Animation {
   start(fromValue, onUpdate, onEnd, previousAnimation, animatedValue) {}
   stop() {
     if (this.__nativeId) {
@@ -34077,7 +34544,7 @@ let Animation = class Animation {
     NativeAnimatedAPI.startAnimatingNode(this.__nativeId, animatedValue.__getNativeTag(), this.__getNativeAnimationConfig(), this.__debouncedOnEnd.bind(this));
   }
 };
-let AnimatedWithChildren = class AnimatedWithChildren extends Animated {
+var AnimatedWithChildren = class AnimatedWithChildren extends Animated {
 
   constructor() {
     super();
@@ -34136,19 +34603,21 @@ function _flush(rootNode) {
   }
   findAnimatedStyles(rootNode);
 
-  animatedStyles.forEach(animatedStyle => animatedStyle.update());
+  animatedStyles.forEach(function (animatedStyle) {
+    return animatedStyle.update();
+  });
 }
 
-let _easeInOut;
+var _easeInOut = void 0;
 function easeInOut() {
   if (!_easeInOut) {
-    const Easing = require(193     ); // 193 = Easing
+    var Easing = require(193     ); // 193 = Easing
     _easeInOut = Easing.inOut(Easing.ease);
   }
   return _easeInOut;
 }
 
-let TimingAnimation = class TimingAnimation extends Animation {
+var TimingAnimation = class TimingAnimation extends Animation {
 
   constructor(config) {
     super();
@@ -34170,28 +34639,30 @@ let TimingAnimation = class TimingAnimation extends Animation {
     frames.push(this._easing(1));
     return {
       type: 'frames',
-      frames,
+      frames: frames,
       toValue: this._toValue,
       iterations: this.__iterations
     };
   }
 
   start(fromValue, onUpdate, onEnd, previousAnimation, animatedValue) {
+    var _this = this;
+
     this.__active = true;
     this._fromValue = fromValue;
     this._onUpdate = onUpdate;
     this.__onEnd = onEnd;
 
-    var start = () => {
-      if (this._duration === 0 && !this._useNativeDriver) {
-        this._onUpdate(this._toValue);
-        this.__debouncedOnEnd({ finished: true });
+    var start = function () {
+      if (_this._duration === 0 && !_this._useNativeDriver) {
+        _this._onUpdate(_this._toValue);
+        _this.__debouncedOnEnd({ finished: true });
       } else {
-        this._startTime = Date.now();
-        if (this._useNativeDriver) {
-          this.__startNativeAnimation(animatedValue);
+        _this._startTime = Date.now();
+        if (_this._useNativeDriver) {
+          _this.__startNativeAnimation(animatedValue);
         } else {
-          this._animationFrame = requestAnimationFrame(this.onUpdate.bind(this));
+          _this._animationFrame = requestAnimationFrame(_this.onUpdate.bind(_this));
         }
       }
     };
@@ -34228,7 +34699,7 @@ let TimingAnimation = class TimingAnimation extends Animation {
     this.__debouncedOnEnd({ finished: false });
   }
 };
-let DecayAnimation = class DecayAnimation extends Animation {
+var DecayAnimation = class DecayAnimation extends Animation {
 
   constructor(config) {
     super();
@@ -34296,7 +34767,7 @@ function withDefault(value, defaultValue) {
   return value;
 }
 
-let SpringAnimation = class SpringAnimation extends Animation {
+var SpringAnimation = class SpringAnimation extends Animation {
 
   constructor(config) {
     super();
@@ -34460,7 +34931,7 @@ let SpringAnimation = class SpringAnimation extends Animation {
 
 var _uniqueId = 1;
 
-let AnimatedValue = class AnimatedValue extends AnimatedWithChildren {
+var AnimatedValue = class AnimatedValue extends AnimatedWithChildren {
 
   constructor(value) {
     super();
@@ -34545,16 +35016,18 @@ let AnimatedValue = class AnimatedValue extends AnimatedWithChildren {
   }
 
   _startListeningToNativeValueUpdates() {
+    var _this2 = this;
+
     if (this.__nativeAnimatedValueListener) {
       return;
     }
 
     NativeAnimatedAPI.startListeningToAnimatedNodeValue(this.__getNativeTag());
-    this.__nativeAnimatedValueListener = NativeAnimatedHelper.nativeEventEmitter.addListener('onAnimatedValueUpdate', data => {
-      if (data.tag !== this.__getNativeTag()) {
+    this.__nativeAnimatedValueListener = NativeAnimatedHelper.nativeEventEmitter.addListener('onAnimatedValueUpdate', function (data) {
+      if (data.tag !== _this2.__getNativeTag()) {
         return;
       }
-      this._updateValue(data.value, false);
+      _this2._updateValue(data.value, false);
     });
   }
 
@@ -34585,6 +35058,8 @@ let AnimatedValue = class AnimatedValue extends AnimatedWithChildren {
   }
 
   animate(animation, callback) {
+    var _this3 = this;
+
     var handle = null;
     if (animation.__isInteraction) {
       handle = InteractionManager.createInteractionHandle();
@@ -34592,10 +35067,10 @@ let AnimatedValue = class AnimatedValue extends AnimatedWithChildren {
     var previousAnimation = this._animation;
     this._animation && this._animation.stop();
     this._animation = animation;
-    animation.start(this._value, value => {
-      this._updateValue(value, true);
-    }, result => {
-      this._animation = null;
+    animation.start(this._value, function (value) {
+      _this3._updateValue(value, true);
+    }, function (result) {
+      _this3._animation = null;
       if (handle !== null) {
         InteractionManager.clearInteractionHandle(handle);
       }
@@ -34631,7 +35106,7 @@ let AnimatedValue = class AnimatedValue extends AnimatedWithChildren {
     };
   }
 };
-let AnimatedValueXY = class AnimatedValueXY extends AnimatedWithChildren {
+var AnimatedValueXY = class AnimatedValueXY extends AnimatedWithChildren {
 
   constructor(valueIn) {
     super();
@@ -34687,9 +35162,11 @@ let AnimatedValueXY = class AnimatedValueXY extends AnimatedWithChildren {
   }
 
   addListener(callback) {
+    var _this4 = this;
+
     var id = String(_uniqueId++);
-    var jointCallback = ({ value: number }) => {
-      callback(this.__getValue());
+    var jointCallback = function ({ value: number }) {
+      callback(_this4.__getValue());
     };
     this._listeners[id] = {
       x: this.x.addListener(jointCallback),
@@ -34721,7 +35198,7 @@ let AnimatedValueXY = class AnimatedValueXY extends AnimatedWithChildren {
     return [{ translateX: this.x }, { translateY: this.y }];
   }
 };
-let AnimatedInterpolation = class AnimatedInterpolation extends AnimatedWithChildren {
+var AnimatedInterpolation = class AnimatedInterpolation extends AnimatedWithChildren {
 
   constructor(parent, config) {
     super();
@@ -34755,8 +35232,8 @@ let AnimatedInterpolation = class AnimatedInterpolation extends AnimatedWithChil
         return value;
       }
       if (/deg$/.test(value)) {
-        const degrees = parseFloat(value) || 0;
-        const radians = degrees * Math.PI / 180.0;
+        var degrees = parseFloat(value) || 0;
+        var radians = degrees * Math.PI / 180.0;
         return radians;
       } else {
         return parseFloat(value) || 0;
@@ -34779,7 +35256,7 @@ let AnimatedInterpolation = class AnimatedInterpolation extends AnimatedWithChil
     };
   }
 };
-let AnimatedAddition = class AnimatedAddition extends AnimatedWithChildren {
+var AnimatedAddition = class AnimatedAddition extends AnimatedWithChildren {
 
   constructor(a, b) {
     super();
@@ -34819,7 +35296,7 @@ let AnimatedAddition = class AnimatedAddition extends AnimatedWithChildren {
     };
   }
 };
-let AnimatedDivision = class AnimatedDivision extends AnimatedWithChildren {
+var AnimatedDivision = class AnimatedDivision extends AnimatedWithChildren {
 
   constructor(a, b) {
     super();
@@ -34834,8 +35311,8 @@ let AnimatedDivision = class AnimatedDivision extends AnimatedWithChildren {
   }
 
   __getValue() {
-    const a = this._a.__getValue();
-    const b = this._b.__getValue();
+    var a = this._a.__getValue();
+    var b = this._b.__getValue();
     if (b === 0) {
       console.error('Detected division by zero in AnimatedDivision');
     }
@@ -34864,7 +35341,7 @@ let AnimatedDivision = class AnimatedDivision extends AnimatedWithChildren {
     };
   }
 };
-let AnimatedMultiplication = class AnimatedMultiplication extends AnimatedWithChildren {
+var AnimatedMultiplication = class AnimatedMultiplication extends AnimatedWithChildren {
 
   constructor(a, b) {
     super();
@@ -34904,7 +35381,7 @@ let AnimatedMultiplication = class AnimatedMultiplication extends AnimatedWithCh
     };
   }
 };
-let AnimatedModulo = class AnimatedModulo extends AnimatedWithChildren {
+var AnimatedModulo = class AnimatedModulo extends AnimatedWithChildren {
 
   constructor(a, modulus) {
     super();
@@ -34942,7 +35419,7 @@ let AnimatedModulo = class AnimatedModulo extends AnimatedWithChildren {
     };
   }
 };
-let AnimatedDiffClamp = class AnimatedDiffClamp extends AnimatedWithChildren {
+var AnimatedDiffClamp = class AnimatedDiffClamp extends AnimatedWithChildren {
 
   constructor(a, min, max) {
     super();
@@ -34963,8 +35440,8 @@ let AnimatedDiffClamp = class AnimatedDiffClamp extends AnimatedWithChildren {
   }
 
   __getValue() {
-    const value = this._a.__getValue();
-    const diff = value - this._lastValue;
+    var value = this._a.__getValue();
+    var diff = value - this._lastValue;
     this._lastValue = value;
     this._value = Math.min(Math.max(this._value + diff, this._min), this._max);
     return this._value;
@@ -34988,7 +35465,7 @@ let AnimatedDiffClamp = class AnimatedDiffClamp extends AnimatedWithChildren {
     };
   }
 };
-let AnimatedTransform = class AnimatedTransform extends AnimatedWithChildren {
+var AnimatedTransform = class AnimatedTransform extends AnimatedWithChildren {
 
   constructor(transforms) {
     super();
@@ -34997,7 +35474,7 @@ let AnimatedTransform = class AnimatedTransform extends AnimatedWithChildren {
 
   __makeNative() {
     super.__makeNative();
-    this._transforms.forEach(transform => {
+    this._transforms.forEach(function (transform) {
       for (var key in transform) {
         var value = transform[key];
         if (value instanceof Animated) {
@@ -35008,7 +35485,7 @@ let AnimatedTransform = class AnimatedTransform extends AnimatedWithChildren {
   }
 
   __getValue() {
-    return this._transforms.map(transform => {
+    return this._transforms.map(function (transform) {
       var result = {};
       for (var key in transform) {
         var value = transform[key];
@@ -35023,7 +35500,7 @@ let AnimatedTransform = class AnimatedTransform extends AnimatedWithChildren {
   }
 
   __getAnimatedValue() {
-    return this._transforms.map(transform => {
+    return this._transforms.map(function (transform) {
       var result = {};
       for (var key in transform) {
         var value = transform[key];
@@ -35038,22 +35515,26 @@ let AnimatedTransform = class AnimatedTransform extends AnimatedWithChildren {
   }
 
   __attach() {
-    this._transforms.forEach(transform => {
+    var _this5 = this;
+
+    this._transforms.forEach(function (transform) {
       for (var key in transform) {
         var value = transform[key];
         if (value instanceof Animated) {
-          value.__addChild(this);
+          value.__addChild(_this5);
         }
       }
     });
   }
 
   __detach() {
-    this._transforms.forEach(transform => {
+    var _this6 = this;
+
+    this._transforms.forEach(function (transform) {
       for (var key in transform) {
         var value = transform[key];
         if (value instanceof Animated) {
-          value.__removeChild(this);
+          value.__removeChild(_this6);
         }
       }
     });
@@ -35063,7 +35544,7 @@ let AnimatedTransform = class AnimatedTransform extends AnimatedWithChildren {
   __getNativeConfig() {
     var transConfigs = [];
 
-    this._transforms.forEach(transform => {
+    this._transforms.forEach(function (transform) {
       for (var key in transform) {
         var value = transform[key];
         if (value instanceof Animated) {
@@ -35076,7 +35557,7 @@ let AnimatedTransform = class AnimatedTransform extends AnimatedWithChildren {
           transConfigs.push({
             type: 'static',
             property: key,
-            value
+            value: value
           });
         }
       }
@@ -35089,7 +35570,7 @@ let AnimatedTransform = class AnimatedTransform extends AnimatedWithChildren {
     };
   }
 };
-let AnimatedStyle = class AnimatedStyle extends AnimatedWithChildren {
+var AnimatedStyle = class AnimatedStyle extends AnimatedWithChildren {
 
   constructor(style) {
     super();
@@ -35103,17 +35584,17 @@ let AnimatedStyle = class AnimatedStyle extends AnimatedWithChildren {
   }
 
   __walkStyleAndGetValues(style) {
-    const updatedStyle = {};
-    for (const key in style) {
-      const value = style[key];
-      if (value instanceof Animated) {
-        if (!value.__isNative) {
-          updatedStyle[key] = value.__getValue();
+    var updatedStyle = {};
+    for (var _key in style) {
+      var _value = style[_key];
+      if (_value instanceof Animated) {
+        if (!_value.__isNative) {
+          updatedStyle[_key] = _value.__getValue();
         }
-      } else if (value && !Array.isArray(value) && typeof value === 'object') {
-        updatedStyle[key] = this.__walkStyleAndGetValues(value);
+      } else if (_value && !Array.isArray(_value) && typeof _value === 'object') {
+        updatedStyle[_key] = this.__walkStyleAndGetValues(_value);
       } else {
-        updatedStyle[key] = value;
+        updatedStyle[_key] = _value;
       }
     }
     return updatedStyle;
@@ -35124,13 +35605,13 @@ let AnimatedStyle = class AnimatedStyle extends AnimatedWithChildren {
   }
 
   __walkStyleAndGetAnimatedValues(style) {
-    const updatedStyle = {};
-    for (const key in style) {
-      const value = style[key];
-      if (value instanceof Animated) {
-        updatedStyle[key] = value.__getAnimatedValue();
-      } else if (value && !Array.isArray(value) && typeof value === 'object') {
-        updatedStyle[key] = this.__walkStyleAndGetAnimatedValues(value);
+    var updatedStyle = {};
+    for (var _key2 in style) {
+      var _value2 = style[_key2];
+      if (_value2 instanceof Animated) {
+        updatedStyle[_key2] = _value2.__getAnimatedValue();
+      } else if (_value2 && !Array.isArray(_value2) && typeof _value2 === 'object') {
+        updatedStyle[_key2] = this.__walkStyleAndGetAnimatedValues(_value2);
       }
     }
     return updatedStyle;
@@ -35171,7 +35652,7 @@ let AnimatedStyle = class AnimatedStyle extends AnimatedWithChildren {
 
   __getNativeConfig() {
     var styleConfig = {};
-    for (const styleKey in this._style) {
+    for (var styleKey in this._style) {
       if (this._style[styleKey] instanceof Animated) {
         styleConfig[styleKey] = this._style[styleKey].__getNativeTag();
       }
@@ -35183,7 +35664,7 @@ let AnimatedStyle = class AnimatedStyle extends AnimatedWithChildren {
     };
   }
 };
-let AnimatedProps = class AnimatedProps extends Animated {
+var AnimatedProps = class AnimatedProps extends Animated {
 
   constructor(props, callback) {
     super();
@@ -35292,7 +35773,7 @@ let AnimatedProps = class AnimatedProps extends Animated {
 
   __getNativeConfig() {
     var propsConfig = {};
-    for (const propKey in this._props) {
+    for (var propKey in this._props) {
       var value = this._props[propKey];
       if (value instanceof Animated) {
         propsConfig[propKey] = value.__getNativeTag();
@@ -35307,7 +35788,7 @@ let AnimatedProps = class AnimatedProps extends Animated {
 
 
 function createAnimatedComponent(Component) {
-  let AnimatedComponent = class AnimatedComponent extends React.Component {
+  var AnimatedComponent = class AnimatedComponent extends React.Component {
 
     constructor(props) {
       super(props);
@@ -35334,34 +35815,46 @@ function createAnimatedComponent(Component) {
     }
 
     _attachNativeEvents() {
-      const scrollableNode = this._component.getScrollableNode ? this._component.getScrollableNode() : this._component;
+      var _this7 = this;
 
-      for (const key in this.props) {
-        const prop = this.props[key];
+      var scrollableNode = this._component.getScrollableNode ? this._component.getScrollableNode() : this._component;
+
+      var _loop = function (_key3) {
+        var prop = _this7.props[_key3];
         if (prop instanceof AnimatedEvent && prop.__isNative) {
-          prop.__attach(scrollableNode, key);
-          this._eventDetachers.push(() => prop.__detach(scrollableNode, key));
+          prop.__attach(scrollableNode, _key3);
+          _this7._eventDetachers.push(function () {
+            return prop.__detach(scrollableNode, _key3);
+          });
         }
+      };
+
+      for (var _key3 in this.props) {
+        _loop(_key3);
       }
     }
 
     _detachNativeEvents() {
-      this._eventDetachers.forEach(remove => remove());
+      this._eventDetachers.forEach(function (remove) {
+        return remove();
+      });
       this._eventDetachers = [];
     }
 
     _attachProps(nextProps) {
+      var _this8 = this;
+
       var oldPropsAnimated = this._propsAnimated;
 
-      var callback = () => {
-        if (this._component.setNativeProps) {
-          if (!this._propsAnimated.__isNative) {
-            this._component.setNativeProps(this._propsAnimated.__getAnimatedValue());
+      var callback = function () {
+        if (_this8._component.setNativeProps) {
+          if (!_this8._propsAnimated.__isNative) {
+            _this8._component.setNativeProps(_this8._propsAnimated.__getAnimatedValue());
           } else {
             throw new Error('Attempting to run JS driven animation on animated ' + 'node that has been moved to "native" earlier by starting an ' + 'animation with `useNativeDriver: true`');
           }
         } else {
-          this.forceUpdate();
+          _this8.forceUpdate();
         }
       };
 
@@ -35385,7 +35878,7 @@ function createAnimatedComponent(Component) {
     }
 
     render() {
-      const props = this._propsAnimated.__getValue();
+      var props = this._propsAnimated.__getValue();
       return React.createElement(Component, babelHelpers.extends({}, props, {
         ref: this._setComponentRef,
 
@@ -35422,7 +35915,7 @@ function createAnimatedComponent(Component) {
   return AnimatedComponent;
 }
 
-let AnimatedTracking = class AnimatedTracking extends Animated {
+var AnimatedTracking = class AnimatedTracking extends Animated {
 
   constructor(value, parent, animationClass, animationConfig, callback) {
     super();
@@ -35475,11 +35968,11 @@ var diffClamp = function (a, min, max) {
   return new AnimatedDiffClamp(a, min, max);
 };
 
-const _combineCallbacks = function (callback, config) {
+var _combineCallbacks = function (callback, config) {
   if (callback && config.onComplete) {
-    return (...args) => {
-      config.onComplete && config.onComplete(...args);
-      callback && callback(...args);
+    return function (...args) {
+      config.onComplete && config.onComplete.apply(config, args);
+      callback && callback.apply(undefined, args);
     };
   } else {
     return callback || config.onComplete;
@@ -35491,7 +35984,7 @@ var maybeVectorAnim = function (value, config, anim) {
     var configX = babelHelpers.extends({}, config);
     var configY = babelHelpers.extends({}, config);
     for (var key in config) {
-      var { x, y } = config[key];
+      var { x: x, y: y } = config[key];
       if (x !== undefined && y !== undefined) {
         configX[key] = x;
         configY[key] = y;
@@ -35531,7 +36024,7 @@ var spring = function (value, config) {
     },
 
     _startNativeLoop: function (iterations) {
-      var singleConfig = babelHelpers.extends({}, config, { iterations });
+      var singleConfig = babelHelpers.extends({}, config, { iterations: iterations });
       start(value, singleConfig);
     },
 
@@ -35568,7 +36061,7 @@ var timing = function (value, config) {
     },
 
     _startNativeLoop: function (iterations) {
-      var singleConfig = babelHelpers.extends({}, config, { iterations });
+      var singleConfig = babelHelpers.extends({}, config, { iterations: iterations });
       start(value, singleConfig);
     },
 
@@ -35601,7 +36094,7 @@ var decay = function (value, config) {
     },
 
     _startNativeLoop: function (iterations) {
-      var singleConfig = babelHelpers.extends({}, config, { iterations });
+      var singleConfig = babelHelpers.extends({}, config, { iterations: iterations });
       start(value, singleConfig);
     },
 
@@ -35645,7 +36138,7 @@ var sequence = function (animations) {
     },
 
     reset: function () {
-      animations.forEach((animation, idx) => {
+      animations.forEach(function (animation, idx) {
         if (idx <= current) {
           animation.reset();
         }
@@ -35676,7 +36169,7 @@ var parallel = function (animations, config) {
         return;
       }
 
-      animations.forEach((animation, idx) => {
+      animations.forEach(function (animation, idx) {
         var cb = function (endResult) {
           hasEnded[idx] = true;
           doneCount++;
@@ -35700,14 +36193,14 @@ var parallel = function (animations, config) {
     },
 
     stop: function () {
-      animations.forEach((animation, idx) => {
+      animations.forEach(function (animation, idx) {
         !hasEnded[idx] && animation.stop();
         hasEnded[idx] = true;
       });
     },
 
     reset: function () {
-      animations.forEach((animation, idx) => {
+      animations.forEach(function (animation, idx) {
         animation.reset();
         hasEnded[idx] = false;
         doneCount = 0;
@@ -35731,7 +36224,7 @@ var delay = function (time) {
 };
 
 var stagger = function (time, animations) {
-  return parallel(animations.map((animation, i) => {
+  return parallel(animations.map(function (animation, i) {
     return sequence([delay(time * i), animation]);
   }));
 };
@@ -35783,9 +36276,9 @@ var loop = function (animation, { iterations = -1 } = {}) {
 };
 
 function attachNativeEvent(viewRef, eventName, argMapping) {
-  const eventMappings = [];
+  var eventMappings = [];
 
-  const traverse = (value, path) => {
+  var traverse = function (value, path) {
     if (value instanceof AnimatedValue) {
       value.__makeNative();
 
@@ -35794,8 +36287,8 @@ function attachNativeEvent(viewRef, eventName, argMapping) {
         animatedValueTag: value.__getNativeTag()
       });
     } else if (typeof value === 'object') {
-      for (const key in value) {
-        traverse(value[key], path.concat(key));
+      for (var _key4 in value) {
+        traverse(value[_key4], path.concat(_key4));
       }
     }
   };
@@ -35804,15 +36297,15 @@ function attachNativeEvent(viewRef, eventName, argMapping) {
 
   traverse(argMapping[0].nativeEvent, []);
 
-  const viewTag = ReactNative.findNodeHandle(viewRef);
+  var viewTag = ReactNative.findNodeHandle(viewRef);
 
-  eventMappings.forEach(mapping => {
+  eventMappings.forEach(function (mapping) {
     NativeAnimatedAPI.addAnimatedEventToView(viewTag, eventName, mapping);
   });
 
   return {
-    detach() {
-      eventMappings.forEach(mapping => {
+    detach: function () {
+      eventMappings.forEach(function (mapping) {
         NativeAnimatedAPI.removeAnimatedEventFromView(viewTag, eventName, mapping.animatedValueTag);
       });
     }
@@ -35826,9 +36319,9 @@ function forkEvent(event, listener) {
     event.__addListener(listener);
     return event;
   } else {
-    return (...args) => {
-      typeof event === 'function' && event(...args);
-      listener(...args);
+    return function (...args) {
+      typeof event === 'function' && event.apply(undefined, args);
+      listener.apply(undefined, args);
     };
   }
 }
@@ -35839,7 +36332,7 @@ function unforkEvent(event, listener) {
   }
 }
 
-let AnimatedEvent = class AnimatedEvent {
+var AnimatedEvent = class AnimatedEvent {
 
   constructor(argMapping, config = {}) {
     this._listeners = [];
@@ -35862,7 +36355,9 @@ let AnimatedEvent = class AnimatedEvent {
   }
 
   __removeListener(callback) {
-    this._listeners = this._listeners.filter(listener => listener !== callback);
+    this._listeners = this._listeners.filter(function (listener) {
+      return listener !== callback;
+    });
   }
 
   __attach(viewRef, eventName) {
@@ -35878,43 +36373,47 @@ let AnimatedEvent = class AnimatedEvent {
   }
 
   __getHandler() {
+    var _this9 = this;
+
     if (this.__isNative) {
       return this._callListeners;
     }
 
-    return (...args) => {
-      const traverse = (recMapping, recEvt, key) => {
+    return function (...args) {
+      var traverse = function (recMapping, recEvt, key) {
         if (typeof recEvt === 'number' && recMapping instanceof AnimatedValue) {
           recMapping.setValue(recEvt);
         } else if (typeof recMapping === 'object') {
-          for (const mappingKey in recMapping) {
+          for (var mappingKey in recMapping) {
             traverse(recMapping[mappingKey], recEvt[mappingKey], mappingKey);
           }
         }
       };
 
-      if (!this.__isNative) {
-        this._argMapping.forEach((mapping, idx) => {
+      if (!_this9.__isNative) {
+        _this9._argMapping.forEach(function (mapping, idx) {
           traverse(mapping, args[idx], 'arg' + idx);
         });
       }
-      this._callListeners(...args);
+      _this9._callListeners.apply(_this9, args);
     };
   }
 
   _callListeners(...args) {
-    this._listeners.forEach(listener => listener(...args));
+    this._listeners.forEach(function (listener) {
+      return listener.apply(undefined, args);
+    });
   }
 
   _validateMapping() {
-    const traverse = (recMapping, recEvt, key) => {
+    var traverse = function (recMapping, recEvt, key) {
       if (typeof recEvt === 'number') {
         invariant(recMapping instanceof AnimatedValue, 'Bad mapping of type ' + typeof recMapping + ' for key ' + key + ', event value must map to AnimatedValue');
         return;
       }
       invariant(typeof recMapping === 'object', 'Bad mapping of type ' + typeof recMapping + ' for key ' + key);
       invariant(typeof recEvt === 'object', 'Bad event of type ' + typeof recEvt + ' for key ' + key);
-      for (const mappingKey in recMapping) {
+      for (var mappingKey in recMapping) {
         traverse(recMapping[mappingKey], recEvt[mappingKey], mappingKey);
       }
     };
@@ -35923,7 +36422,7 @@ let AnimatedEvent = class AnimatedEvent {
 
 
 var event = function (argMapping, config) {
-  const animatedEvent = new AnimatedEvent(argMapping, config);
+  var animatedEvent = new AnimatedEvent(argMapping, config);
   if (animatedEvent.__isNative) {
     return animatedEvent;
   } else {
@@ -35938,40 +36437,40 @@ module.exports = {
 
   Interpolation: AnimatedInterpolation,
 
-  decay,
+  decay: decay,
 
-  timing,
+  timing: timing,
 
-  spring,
+  spring: spring,
 
-  add,
+  add: add,
 
-  divide,
+  divide: divide,
 
-  multiply,
+  multiply: multiply,
 
-  modulo,
+  modulo: modulo,
 
-  diffClamp,
+  diffClamp: diffClamp,
 
-  delay,
+  delay: delay,
 
-  sequence,
+  sequence: sequence,
 
-  parallel,
+  parallel: parallel,
 
-  stagger,
+  stagger: stagger,
 
-  loop,
+  loop: loop,
 
-  event,
+  event: event,
 
-  createAnimatedComponent,
+  createAnimatedComponent: createAnimatedComponent,
 
-  attachNativeEvent,
+  attachNativeEvent: attachNativeEvent,
 
-  forkEvent,
-  unforkEvent,
+  forkEvent: forkEvent,
+  unforkEvent: unforkEvent,
 
   __PropsOnlyForTests: AnimatedProps
 };
@@ -35979,19 +36478,19 @@ module.exports = {
 __d(/* InteractionManager */function(global, require, module, exports) {
 'use strict';
 
-const BatchedBridge = require(37             ); // 37 = BatchedBridge
-const EventEmitter = require(64            ); // 64 = EventEmitter
-const Set = require(107  ); // 107 = Set
-const TaskQueue = require(187        ); // 187 = TaskQueue
+var BatchedBridge = require(37             ); // 37 = BatchedBridge
+var EventEmitter = require(64            ); // 64 = EventEmitter
+var Set = require(107  ); // 107 = Set
+var TaskQueue = require(187        ); // 187 = TaskQueue
 
-const infoLog = require(119      ); // 119 = infoLog
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
-const keyMirror = require(129                 ); // 129 = fbjs/lib/keyMirror
+var infoLog = require(119      ); // 119 = infoLog
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var keyMirror = require(129                 ); // 129 = fbjs/lib/keyMirror
 
-const _emitter = new EventEmitter();
+var _emitter = new EventEmitter();
 
-const DEBUG_DELAY = 0;
-const DEBUG = false;
+var DEBUG_DELAY = 0;
+var DEBUG = false;
 
 var InteractionManager = {
   Events: keyMirror({
@@ -35999,9 +36498,9 @@ var InteractionManager = {
     interactionComplete: true
   }),
 
-  runAfterInteractions(task) {
-    const tasks = [];
-    const promise = new Promise(resolve => {
+  runAfterInteractions: function (task) {
+    var tasks = [];
+    var promise = new Promise(function (resolve) {
       _scheduleUpdate();
       if (task) {
         tasks.push(task);
@@ -36011,9 +36510,9 @@ var InteractionManager = {
     });
     return {
       then: promise.then.bind(promise),
-      done: (...args) => {
+      done: function (...args) {
         if (promise.done) {
-          return promise.done(...args);
+          return promise.done.apply(promise, args);
         } else {
           console.warn('Tried to call done when not supported by current Promise implementation.');
         }
@@ -36023,16 +36522,14 @@ var InteractionManager = {
       }
     };
   },
-
-  createInteractionHandle() {
+  createInteractionHandle: function () {
     DEBUG && infoLog('create interaction handle');
     _scheduleUpdate();
     var handle = ++_inc;
     _addInteractionSet.add(handle);
     return handle;
   },
-
-  clearInteractionHandle(handle) {
+  clearInteractionHandle: function (handle) {
     DEBUG && infoLog('clear interaction handle');
     invariant(!!handle, 'Must provide a handle to clear.');
     _scheduleUpdate();
@@ -36040,20 +36537,21 @@ var InteractionManager = {
     _deleteInteractionSet.add(handle);
   },
 
+
   addListener: _emitter.addListener.bind(_emitter),
 
-  setDeadline(deadline) {
+  setDeadline: function (deadline) {
     _deadline = deadline;
   }
 };
 
-const _interactionSet = new Set();
-const _addInteractionSet = new Set();
-const _deleteInteractionSet = new Set();
-const _taskQueue = new TaskQueue({ onMoreTasks: _scheduleUpdate });
-let _nextUpdateHandle = 0;
-let _inc = 0;
-let _deadline = -1;
+var _interactionSet = new Set();
+var _addInteractionSet = new Set();
+var _deleteInteractionSet = new Set();
+var _taskQueue = new TaskQueue({ onMoreTasks: _scheduleUpdate });
+var _nextUpdateHandle = 0;
+var _inc = 0;
+var _deadline = -1;
 
 function _scheduleUpdate() {
   if (!_nextUpdateHandle) {
@@ -36069,8 +36567,12 @@ function _processUpdate() {
   _nextUpdateHandle = 0;
 
   var interactionCount = _interactionSet.size;
-  _addInteractionSet.forEach(handle => _interactionSet.add(handle));
-  _deleteInteractionSet.forEach(handle => _interactionSet.delete(handle));
+  _addInteractionSet.forEach(function (handle) {
+    return _interactionSet.add(handle);
+  });
+  _deleteInteractionSet.forEach(function (handle) {
+    return _interactionSet.delete(handle);
+  });
   var nextInteractionCount = _interactionSet.size;
 
   if (interactionCount !== 0 && nextInteractionCount === 0) {
@@ -36097,13 +36599,13 @@ module.exports = InteractionManager;
 __d(/* TaskQueue */function(global, require, module, exports) {
 'use strict';
 
-const infoLog = require(119      ); // 119 = infoLog
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var infoLog = require(119      ); // 119 = infoLog
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-const DEBUG = false;
+var DEBUG = false;
 
-let TaskQueue = class TaskQueue {
-  constructor({ onMoreTasks }) {
+var TaskQueue = class TaskQueue {
+  constructor({ onMoreTasks: onMoreTasks }) {
     this._onMoreTasks = onMoreTasks;
     this._queueStack = [{ tasks: [], popable: false }];
   }
@@ -36113,13 +36615,23 @@ let TaskQueue = class TaskQueue {
   }
 
   enqueueTasks(tasks) {
-    tasks.forEach(task => this.enqueue(task));
+    var _this = this;
+
+    tasks.forEach(function (task) {
+      return _this.enqueue(task);
+    });
   }
 
   cancelTasks(tasksToCancel) {
-    this._queueStack = this._queueStack.map(queue => babelHelpers.extends({}, queue, {
-      tasks: queue.tasks.filter(task => tasksToCancel.indexOf(task) === -1)
-    })).filter((queue, idx) => queue.tasks.length > 0 || idx === 0);
+    this._queueStack = this._queueStack.map(function (queue) {
+      return babelHelpers.extends({}, queue, {
+        tasks: queue.tasks.filter(function (task) {
+          return tasksToCancel.indexOf(task) === -1;
+        })
+      });
+    }).filter(function (queue, idx) {
+      return queue.tasks.length > 0 || idx === 0;
+    });
   }
 
   hasTasksToProcess() {
@@ -36127,9 +36639,9 @@ let TaskQueue = class TaskQueue {
   }
 
   processNext() {
-    const queue = this._getCurrentQueue();
+    var queue = this._getCurrentQueue();
     if (queue.length) {
-      const task = queue.shift();
+      var task = queue.shift();
       try {
         if (task.gen) {
           DEBUG && infoLog('genPromise for task ' + task.name);
@@ -36150,11 +36662,11 @@ let TaskQueue = class TaskQueue {
   }
 
   _getCurrentQueue() {
-    const stackIdx = this._queueStack.length - 1;
-    const queue = this._queueStack[stackIdx];
+    var stackIdx = this._queueStack.length - 1;
+    var queue = this._queueStack[stackIdx];
     if (queue.popable && queue.tasks.length === 0 && this._queueStack.length > 1) {
       this._queueStack.pop();
-      DEBUG && infoLog('popped queue: ', { stackIdx, queueStackSize: this._queueStack.length });
+      DEBUG && infoLog('popped queue: ', { stackIdx: stackIdx, queueStackSize: this._queueStack.length });
       return this._getCurrentQueue();
     } else {
       return queue.tasks;
@@ -36162,16 +36674,18 @@ let TaskQueue = class TaskQueue {
   }
 
   _genPromise(task) {
+    var _this2 = this;
+
     this._queueStack.push({ tasks: [], popable: false });
-    const stackIdx = this._queueStack.length - 1;
-    DEBUG && infoLog('push new queue: ', { stackIdx });
+    var stackIdx = this._queueStack.length - 1;
+    DEBUG && infoLog('push new queue: ', { stackIdx: stackIdx });
     DEBUG && infoLog('exec gen task ' + task.name);
-    task.gen().then(() => {
-      DEBUG && infoLog('onThen for gen task ' + task.name, { stackIdx, queueStackSize: this._queueStack.length });
-      this._queueStack[stackIdx].popable = true;
-      this.hasTasksToProcess() && this._onMoreTasks();
-    }).catch(ex => {
-      ex.message = `TaskQueue: Error resolving Promise in task ${task.name}: ${ex.message}`;
+    task.gen().then(function () {
+      DEBUG && infoLog('onThen for gen task ' + task.name, { stackIdx: stackIdx, queueStackSize: _this2._queueStack.length });
+      _this2._queueStack[stackIdx].popable = true;
+      _this2.hasTasksToProcess() && _this2._onMoreTasks();
+    }).catch(function (ex) {
+      ex.message = 'TaskQueue: Error resolving Promise in task ' + task.name + ': ' + ex.message;
       throw ex;
     }).done();
   }
@@ -36186,9 +36700,11 @@ __d(/* Interpolation */function(global, require, module, exports) {
 var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 var normalizeColor = require(30              ); // 30 = normalizeColor
 
-var linear = t => t;
+var linear = function (t) {
+  return t;
+};
 
-let Interpolation = class Interpolation {
+var Interpolation = class Interpolation {
   static create(config) {
 
     if (config.outputRange && typeof config.outputRange[0] === 'string') {
@@ -36220,7 +36736,7 @@ let Interpolation = class Interpolation {
       extrapolateRight = config.extrapolate;
     }
 
-    return input => {
+    return function (input) {
       invariant(typeof input === 'number', 'Cannot interpolation an input which is not a number');
 
       var range = findRange(input, inputRange);
@@ -36294,7 +36810,7 @@ function colorToRgba(input) {
   var b = (int32Color & 0x0000ff00) >>> 8;
   var a = (int32Color & 0x000000ff) / 255;
 
-  return `rgba(${r}, ${g}, ${b}, ${a})`;
+  return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')';
 }
 
 var stringShapeRegex = /[0-9\.-]+/g;
@@ -36305,27 +36821,29 @@ function createInterpolationFromStringOutputRange(config) {
   outputRange = outputRange.map(colorToRgba);
   checkPattern(outputRange);
 
-  var outputRanges = outputRange[0].match(stringShapeRegex).map(() => []);
-  outputRange.forEach(value => {
-    value.match(stringShapeRegex).forEach((number, i) => {
+  var outputRanges = outputRange[0].match(stringShapeRegex).map(function () {
+    return [];
+  });
+  outputRange.forEach(function (value) {
+    value.match(stringShapeRegex).forEach(function (number, i) {
       outputRanges[i].push(+number);
     });
   });
 
-  var interpolations = outputRange[0].match(stringShapeRegex).map((value, i) => {
+  var interpolations = outputRange[0].match(stringShapeRegex).map(function (value, i) {
     return Interpolation.create(babelHelpers.extends({}, config, {
       outputRange: outputRanges[i]
     }));
   });
 
-  const shouldRound = isRgbOrRgba(outputRange[0]);
+  var shouldRound = isRgbOrRgba(outputRange[0]);
 
-  return input => {
+  return function (input) {
     var i = 0;
 
-    return outputRange[0].replace(stringShapeRegex, () => {
-      const val = +interpolations[i++](input);
-      const rounded = shouldRound && i < 4 ? Math.round(val) : Math.round(val * 1000) / 1000;
+    return outputRange[0].replace(stringShapeRegex, function () {
+      var val = +interpolations[i++](input);
+      var rounded = shouldRound && i < 4 ? Math.round(val) : Math.round(val * 1000) / 1000;
       return String(rounded);
     });
   };
@@ -36368,17 +36886,17 @@ module.exports = Interpolation;
 __d(/* NativeAnimatedHelper */function(global, require, module, exports) {
 'use strict';
 
-const NativeAnimatedModule = require(36             ).NativeAnimatedModule; // 36 = NativeModules
-const NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
+var NativeAnimatedModule = require(36             ).NativeAnimatedModule; // 36 = NativeModules
+var NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-let __nativeAnimatedNodeTagCount = 1;
-let __nativeAnimationIdCount = 1;
+var __nativeAnimatedNodeTagCount = 1;
+var __nativeAnimationIdCount = 1;
 
-let nativeEventEmitter;
+var nativeEventEmitter = void 0;
 
-const API = {
+var API = {
   createAnimatedNode: function (tag, config) {
     assertNativeAnimatedModule();
     NativeAnimatedModule.createAnimatedNode(tag, config);
@@ -36439,13 +36957,13 @@ const API = {
     assertNativeAnimatedModule();
     NativeAnimatedModule.addAnimatedEventToView(viewTag, eventName, eventMapping);
   },
-  removeAnimatedEventFromView(viewTag, eventName, animatedNodeTag) {
+  removeAnimatedEventFromView: function (viewTag, eventName, animatedNodeTag) {
     assertNativeAnimatedModule();
     NativeAnimatedModule.removeAnimatedEventFromView(viewTag, eventName, animatedNodeTag);
   }
 };
 
-const STYLES_WHITELIST = {
+var STYLES_WHITELIST = {
   opacity: true,
   transform: true,
 
@@ -36455,7 +36973,7 @@ const STYLES_WHITELIST = {
   translateY: true
 };
 
-const TRANSFORM_WHITELIST = {
+var TRANSFORM_WHITELIST = {
   translateX: true,
   translateY: true,
   scale: true,
@@ -36468,9 +36986,9 @@ const TRANSFORM_WHITELIST = {
 };
 
 function validateTransform(configs) {
-  configs.forEach(config => {
+  configs.forEach(function (config) {
     if (!TRANSFORM_WHITELIST.hasOwnProperty(config.property)) {
-      throw new Error(`Property '${config.property}' is not supported by native animated module`);
+      throw new Error('Property \'' + config.property + '\' is not supported by native animated module');
     }
   });
 }
@@ -36478,7 +36996,7 @@ function validateTransform(configs) {
 function validateStyles(styles) {
   for (var key in styles) {
     if (!STYLES_WHITELIST.hasOwnProperty(key)) {
-      throw new Error(`Style property '${key}' is not supported by native animated module`);
+      throw new Error('Style property \'' + key + '\' is not supported by native animated module');
     }
   }
 }
@@ -36493,7 +37011,7 @@ function validateInterpolation(config) {
   };
   for (var key in config) {
     if (!SUPPORTED_INTERPOLATION_PARAMS.hasOwnProperty(key)) {
-      throw new Error(`Interpolation property '${key}' is not supported by native animated module`);
+      throw new Error('Interpolation property \'' + key + '\' is not supported by native animated module');
     }
   }
 }
@@ -36515,14 +37033,14 @@ function isNativeAnimatedAvailable() {
 }
 
 module.exports = {
-  API,
-  validateStyles,
-  validateTransform,
-  validateInterpolation,
-  generateNewNodeTag,
-  generateNewAnimationId,
-  assertNativeAnimatedModule,
-  isNativeAnimatedAvailable,
+  API: API,
+  validateStyles: validateStyles,
+  validateTransform: validateTransform,
+  validateInterpolation: validateInterpolation,
+  generateNewNodeTag: generateNewNodeTag,
+  generateNewAnimationId: generateNewAnimationId,
+  assertNativeAnimatedModule: assertNativeAnimatedModule,
+  isNativeAnimatedAvailable: isNativeAnimatedAvailable,
   get nativeEventEmitter() {
     if (!nativeEventEmitter) {
       nativeEventEmitter = new NativeEventEmitter(NativeAnimatedModule);
@@ -36602,8 +37120,8 @@ function fromBouncinessAndSpeed(bounciness, speed) {
 }
 
 module.exports = {
-  fromOrigamiTensionAndFriction,
-  fromBouncinessAndSpeed
+  fromOrigamiTensionAndFriction: fromOrigamiTensionAndFriction,
+  fromBouncinessAndSpeed: fromBouncinessAndSpeed
 };
 }, 190, null, "SpringConfig");
 __d(/* fbjs/lib/requestAnimationFrame.js */function(global, require, module, exports) {'use strict';
@@ -36635,9 +37153,9 @@ module.exports = nativeRequestAnimationFrame;
 __d(/* Easing */function(global, require, module, exports) {
 'use strict';
 
-let ease;
+var ease = void 0;
 
-let Easing = class Easing {
+var Easing = class Easing {
   static step0(n) {
     return n > 0 ? 1 : 0;
   }
@@ -36666,7 +37184,9 @@ let Easing = class Easing {
   }
 
   static poly(n) {
-    return t => Math.pow(t, n);
+    return function (t) {
+      return Math.pow(t, n);
+    };
   }
 
   static sin(t) {
@@ -36682,15 +37202,19 @@ let Easing = class Easing {
   }
 
   static elastic(bounciness = 1) {
-    const p = bounciness * Math.PI;
-    return t => 1 - Math.pow(Math.cos(t * Math.PI / 2), 3) * Math.cos(t * p);
+    var p = bounciness * Math.PI;
+    return function (t) {
+      return 1 - Math.pow(Math.cos(t * Math.PI / 2), 3) * Math.cos(t * p);
+    };
   }
 
   static back(s) {
     if (s === undefined) {
       s = 1.70158;
     }
-    return t => t * t * ((s + 1) * t - s);
+    return function (t) {
+      return t * t * ((s + 1) * t - s);
+    };
   }
 
   static bounce(t) {
@@ -36713,7 +37237,7 @@ let Easing = class Easing {
   }
 
   static bezier(x1, y1, x2, y2) {
-    const _bezier = require(194     ); // 194 = bezier
+    var _bezier = require(194     ); // 194 = bezier
     return _bezier(x1, y1, x2, y2);
   }
 
@@ -36722,11 +37246,13 @@ let Easing = class Easing {
   }
 
   static out(easing) {
-    return t => 1 - easing(1 - t);
+    return function (t) {
+      return 1 - easing(1 - t);
+    };
   }
 
   static inOut(easing) {
-    return t => {
+    return function (t) {
       if (t < 0.5) {
         return easing(t * 2) / 2;
       }
@@ -36855,29 +37381,29 @@ module.exports = require(150                ); // 150 = UnimplementedView
 __d(/* ScrollView */function(global, require, module, exports) {
 'use strict';
 
-const Animated = require(184       ); // 184 = Animated
-const ColorPropType = require(29             ); // 29 = ColorPropType
-const EdgeInsetsPropType = require(141                 ); // 141 = EdgeInsetsPropType
-const Platform = require(46        ); // 46 = Platform
-const PointPropType = require(197            ); // 197 = PointPropType
-const PropTypes = require(19          ); // 19 = prop-types
-const React = require(125    ); // 125 = React
-const ReactNative = require(32           ); // 32 = ReactNative
-const ScrollResponder = require(198              ); // 198 = ScrollResponder
-const ScrollViewStickyHeader = require(203                     ); // 203 = ScrollViewStickyHeader
-const StyleSheet = require(151         ); // 151 = StyleSheet
-const StyleSheetPropType = require(146                 ); // 146 = StyleSheetPropType
-const View = require(124   ); // 124 = View
-const ViewPropTypes = require(140            ); // 140 = ViewPropTypes
-const ViewStylePropTypes = require(135                 ); // 135 = ViewStylePropTypes
+var Animated = require(184       ); // 184 = Animated
+var ColorPropType = require(29             ); // 29 = ColorPropType
+var EdgeInsetsPropType = require(141                 ); // 141 = EdgeInsetsPropType
+var Platform = require(46        ); // 46 = Platform
+var PointPropType = require(197            ); // 197 = PointPropType
+var PropTypes = require(19          ); // 19 = prop-types
+var React = require(125    ); // 125 = React
+var ReactNative = require(32           ); // 32 = ReactNative
+var ScrollResponder = require(198              ); // 198 = ScrollResponder
+var ScrollViewStickyHeader = require(203                     ); // 203 = ScrollViewStickyHeader
+var StyleSheet = require(151         ); // 151 = StyleSheet
+var StyleSheetPropType = require(146                 ); // 146 = StyleSheetPropType
+var View = require(124   ); // 124 = View
+var ViewPropTypes = require(140            ); // 140 = ViewPropTypes
+var ViewStylePropTypes = require(135                 ); // 135 = ViewStylePropTypes
 
-const dismissKeyboard = require(71               ); // 71 = dismissKeyboard
-const flattenStyle = require(110           ); // 110 = flattenStyle
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
-const processDecelerationRate = require(204                      ); // 204 = processDecelerationRate
-const requireNativeComponent = require(149                     ); // 149 = requireNativeComponent
+var dismissKeyboard = require(71               ); // 71 = dismissKeyboard
+var flattenStyle = require(110           ); // 110 = flattenStyle
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var processDecelerationRate = require(204                      ); // 204 = processDecelerationRate
+var requireNativeComponent = require(149                     ); // 149 = requireNativeComponent
 
-const ScrollView = React.createClass({
+var ScrollView = React.createClass({
   propTypes: babelHelpers.extends({}, ViewPropTypes, {
     automaticallyAdjustContentInsets: PropTypes.bool,
 
@@ -37007,13 +37533,13 @@ const ScrollView = React.createClass({
     if (typeof y === 'number') {
       console.warn('`scrollTo(y, x, animated)` is deprecated. Use `scrollTo({x: 5, y: 5, ' + 'animated: true})` instead.');
     } else {
-      ({ x, y, animated } = y || {});
+      ({ x: x, y: y, animated: animated } = y || {});
     }
     this.getScrollResponder().scrollResponderScrollTo({ x: x || 0, y: y || 0, animated: animated !== false });
   },
 
   scrollToEnd: function (options) {
-    const animated = (options && options.animated) !== false;
+    var animated = (options && options.animated) !== false;
     this.getScrollResponder().scrollResponderScrollToEnd({
       animated: animated
     });
@@ -37021,7 +37547,7 @@ const ScrollView = React.createClass({
 
   scrollWithoutAnimationTo: function (y = 0, x = 0) {
     console.warn('`scrollWithoutAnimationTo` is deprecated. Use `scrollTo` instead');
-    this.scrollTo({ x, y, animated: false });
+    this.scrollTo({ x: x, y: y, animated: false });
   },
 
   flashScrollIndicators: function () {
@@ -37029,7 +37555,7 @@ const ScrollView = React.createClass({
   },
 
   _getKeyForIndex: function (index, childArray) {
-    const child = childArray[index];
+    var child = childArray[index];
     return child && child.key;
   },
 
@@ -37054,18 +37580,18 @@ const ScrollView = React.createClass({
     if (!this.props.stickyHeaderIndices) {
       return;
     }
-    const childArray = React.Children.toArray(this.props.children);
+    var childArray = React.Children.toArray(this.props.children);
     if (key !== this._getKeyForIndex(index, childArray)) {
       return;
     }
 
-    const layoutY = event.nativeEvent.layout.y;
+    var layoutY = event.nativeEvent.layout.y;
     this._headerLayoutYs.set(key, layoutY);
 
-    const indexOfIndex = this.props.stickyHeaderIndices.indexOf(index);
-    const previousHeaderIndex = this.props.stickyHeaderIndices[indexOfIndex - 1];
+    var indexOfIndex = this.props.stickyHeaderIndices.indexOf(index);
+    var previousHeaderIndex = this.props.stickyHeaderIndices[indexOfIndex - 1];
     if (previousHeaderIndex != null) {
-      const previousHeader = this._stickyHeaderRefs.get(this._getKeyForIndex(previousHeaderIndex, childArray));
+      var previousHeader = this._stickyHeaderRefs.get(this._getKeyForIndex(previousHeaderIndex, childArray));
       previousHeader && previousHeader.setNextHeaderY(layoutY);
     }
   },
@@ -37085,7 +37611,7 @@ const ScrollView = React.createClass({
   },
 
   _handleContentOnLayout: function (e) {
-    const { width, height } = e.nativeEvent.layout;
+    var { width: width, height: height } = e.nativeEvent.layout;
     this.props.onContentSizeChange && this.props.onContentSizeChange(width, height);
   },
 
@@ -37100,8 +37626,10 @@ const ScrollView = React.createClass({
   },
 
   render: function () {
-    let ScrollViewClass;
-    let ScrollContentContainerViewClass;
+    var _this = this;
+
+    var ScrollViewClass = void 0;
+    var ScrollContentContainerViewClass = void 0;
     if (Platform.OS === 'ios') {
       ScrollViewClass = RCTScrollView;
       ScrollContentContainerViewClass = RCTScrollContentView;
@@ -37118,44 +37646,51 @@ const ScrollView = React.createClass({
 
     invariant(ScrollContentContainerViewClass !== undefined, 'ScrollContentContainerViewClass must not be undefined');
 
-    const contentContainerStyle = [this.props.horizontal && styles.contentContainerHorizontal, this.props.contentContainerStyle];
-    let style, childLayoutProps;
+    var contentContainerStyle = [this.props.horizontal && styles.contentContainerHorizontal, this.props.contentContainerStyle];
+    var style = void 0,
+        childLayoutProps = void 0;
     if (__DEV__ && this.props.style) {
       style = flattenStyle(this.props.style);
-      childLayoutProps = ['alignItems', 'justifyContent'].filter(prop => style && style[prop] !== undefined);
+      childLayoutProps = ['alignItems', 'justifyContent'].filter(function (prop) {
+        return style && style[prop] !== undefined;
+      });
       invariant(childLayoutProps.length === 0, 'ScrollView child layout (' + JSON.stringify(childLayoutProps) + ') must be applied through the contentContainerStyle prop.');
     }
 
-    let contentSizeChangeProps = {};
+    var contentSizeChangeProps = {};
     if (this.props.onContentSizeChange) {
       contentSizeChangeProps = {
         onLayout: this._handleContentOnLayout
       };
     }
 
-    const { stickyHeaderIndices } = this.props;
-    const hasStickyHeaders = stickyHeaderIndices && stickyHeaderIndices.length > 0;
-    const childArray = hasStickyHeaders && React.Children.toArray(this.props.children);
-    const children = hasStickyHeaders ? childArray.map((child, index) => {
-      const indexOfIndex = child ? stickyHeaderIndices.indexOf(index) : -1;
+    var { stickyHeaderIndices: stickyHeaderIndices } = this.props;
+    var hasStickyHeaders = stickyHeaderIndices && stickyHeaderIndices.length > 0;
+    var childArray = hasStickyHeaders && React.Children.toArray(this.props.children);
+    var children = hasStickyHeaders ? childArray.map(function (child, index) {
+      var indexOfIndex = child ? stickyHeaderIndices.indexOf(index) : -1;
       if (indexOfIndex > -1) {
-        const key = child.key;
-        const nextIndex = stickyHeaderIndices[indexOfIndex + 1];
+        var key = child.key;
+        var nextIndex = stickyHeaderIndices[indexOfIndex + 1];
         return React.createElement(
           ScrollViewStickyHeader,
           {
             key: key,
-            ref: ref => this._setStickyHeaderRef(key, ref),
-            nextHeaderLayoutY: this._headerLayoutYs.get(this._getKeyForIndex(nextIndex, childArray)),
-            onLayout: event => this._onStickyHeaderLayout(index, event, key),
-            scrollAnimatedValue: this._scrollAnimatedValue },
+            ref: function (ref) {
+              return _this._setStickyHeaderRef(key, ref);
+            },
+            nextHeaderLayoutY: _this._headerLayoutYs.get(_this._getKeyForIndex(nextIndex, childArray)),
+            onLayout: function (event) {
+              return _this._onStickyHeaderLayout(index, event, key);
+            },
+            scrollAnimatedValue: _this._scrollAnimatedValue },
           child
         );
       } else {
         return child;
       }
     }) : this.props.children;
-    const contentContainer = React.createElement(
+    var contentContainer = React.createElement(
       ScrollContentContainerViewClass,
       babelHelpers.extends({}, contentSizeChangeProps, {
         ref: this._setInnerViewRef,
@@ -37165,16 +37700,16 @@ const ScrollView = React.createClass({
       children
     );
 
-    const alwaysBounceHorizontal = this.props.alwaysBounceHorizontal !== undefined ? this.props.alwaysBounceHorizontal : this.props.horizontal;
+    var alwaysBounceHorizontal = this.props.alwaysBounceHorizontal !== undefined ? this.props.alwaysBounceHorizontal : this.props.horizontal;
 
-    const alwaysBounceVertical = this.props.alwaysBounceVertical !== undefined ? this.props.alwaysBounceVertical : !this.props.horizontal;
+    var alwaysBounceVertical = this.props.alwaysBounceVertical !== undefined ? this.props.alwaysBounceVertical : !this.props.horizontal;
 
-    const DEPRECATED_sendUpdatedChildFrames = !!this.props.DEPRECATED_sendUpdatedChildFrames;
+    var DEPRECATED_sendUpdatedChildFrames = !!this.props.DEPRECATED_sendUpdatedChildFrames;
 
-    const baseStyle = this.props.horizontal ? styles.baseHorizontal : styles.baseVertical;
-    const props = babelHelpers.extends({}, this.props, {
-      alwaysBounceHorizontal,
-      alwaysBounceVertical,
+    var baseStyle = this.props.horizontal ? styles.baseHorizontal : styles.baseVertical;
+    var props = babelHelpers.extends({}, this.props, {
+      alwaysBounceHorizontal: alwaysBounceHorizontal,
+      alwaysBounceVertical: alwaysBounceVertical,
       style: [baseStyle, this.props.style],
 
       onContentSizeChange: null,
@@ -37196,15 +37731,15 @@ const ScrollView = React.createClass({
       onTouchStart: this.scrollResponderHandleTouchStart,
       scrollEventThrottle: hasStickyHeaders ? 1 : this.props.scrollEventThrottle,
       sendMomentumEvents: this.props.onMomentumScrollBegin || this.props.onMomentumScrollEnd ? true : false,
-      DEPRECATED_sendUpdatedChildFrames
+      DEPRECATED_sendUpdatedChildFrames: DEPRECATED_sendUpdatedChildFrames
     });
 
-    const { decelerationRate } = this.props;
+    var { decelerationRate: decelerationRate } = this.props;
     if (decelerationRate) {
       props.decelerationRate = processDecelerationRate(decelerationRate);
     }
 
-    const refreshControl = this.props.refreshControl;
+    var refreshControl = this.props.refreshControl;
 
     if (refreshControl) {
       if (Platform.OS === 'ios') {
@@ -37231,7 +37766,7 @@ const ScrollView = React.createClass({
   }
 });
 
-const styles = StyleSheet.create({
+var styles = StyleSheet.create({
   baseVertical: {
     flexGrow: 1,
     flexShrink: 1,
@@ -37249,7 +37784,11 @@ const styles = StyleSheet.create({
   }
 });
 
-let nativeOnlyProps, AndroidScrollView, AndroidHorizontalScrollView, RCTScrollView, RCTScrollContentView;
+var nativeOnlyProps = void 0,
+    AndroidScrollView = void 0,
+    AndroidHorizontalScrollView = void 0,
+    RCTScrollView = void 0,
+    RCTScrollContentView = void 0;
 if (Platform.OS === 'android') {
   nativeOnlyProps = {
     nativeOnly: {
@@ -37303,8 +37842,8 @@ var nullthrows = require(201                  ); // 201 = fbjs/lib/nullthrows
 var performanceNow = require(42                       ); // 42 = fbjs/lib/performanceNow
 var warning = require(15                ); // 15 = fbjs/lib/warning
 
-var { ScrollViewManager } = require(36             ); // 36 = NativeModules
-var { getInstanceFromNode } = require(202                       ); // 202 = ReactNativeComponentTree
+var { ScrollViewManager: ScrollViewManager } = require(36             ); // 36 = NativeModules
+var { getInstanceFromNode: getInstanceFromNode } = require(202                       ); // 202 = ReactNativeComponentTree
 
 var IS_ANIMATING_TOUCH_START_THRESHOLD_MS = 16;
 
@@ -37341,7 +37880,7 @@ var ScrollResponderMixin = {
 
   scrollResponderHandleStartShouldSetResponderCapture: function (e) {
     var currentlyFocusedTextInput = TextInputState.currentlyFocusedField();
-    var { keyboardShouldPersistTaps } = this.props;
+    var { keyboardShouldPersistTaps: keyboardShouldPersistTaps } = this.props;
     var keyboardNeverPersistTaps = !keyboardShouldPersistTaps || keyboardShouldPersistTaps === 'never';
     if (keyboardNeverPersistTaps && currentlyFocusedTextInput != null && !isTagInstanceOfTextInput(e.target)) {
       return true;
@@ -37388,7 +37927,7 @@ var ScrollResponderMixin = {
   },
 
   scrollResponderHandleScrollEndDrag: function (e) {
-    const { velocity } = e.nativeEvent;
+    var { velocity: velocity } = e.nativeEvent;
 
     if (!this.scrollResponderIsAnimating() && (!velocity || velocity.x === 0 && velocity.y === 0)) {
       FrameRateLogger.endScroll();
@@ -37431,13 +37970,13 @@ var ScrollResponderMixin = {
     if (typeof x === 'number') {
       console.warn('`scrollResponderScrollTo(x, y, animated)` is deprecated. Use `scrollResponderScrollTo({x: 5, y: 5, animated: true})` instead.');
     } else {
-      ({ x, y, animated } = x || {});
+      ({ x: x, y: y, animated: animated } = x || {});
     }
     UIManager.dispatchViewManagerCommand(nullthrows(this.scrollResponderGetScrollableNode()), UIManager.RCTScrollView.Commands.scrollTo, [x || 0, y || 0, animated !== false]);
   },
 
   scrollResponderScrollToEnd: function (options) {
-    const animated = (options && options.animated) !== false;
+    var animated = (options && options.animated) !== false;
     UIManager.dispatchViewManagerCommand(this.scrollResponderGetScrollableNode(), UIManager.RCTScrollView.Commands.scrollToEnd, [animated]);
   },
 
@@ -37449,7 +37988,7 @@ var ScrollResponderMixin = {
   scrollResponderZoomTo: function (rect, animated) {
     invariant(ScrollViewManager && ScrollViewManager.zoomToRect, 'zoomToRect is not implemented');
     if ('animated' in rect) {
-      var { animated } = rect,
+      var { animated: animated } = rect,
           rect = babelHelpers.objectWithoutProperties(rect, ['animated']);
     } else if (typeof animated !== 'undefined') {
       console.warn('`scrollResponderZoomTo` `animated` argument is deprecated. Use `options.animated` instead');
@@ -37489,8 +38028,8 @@ var ScrollResponderMixin = {
   },
 
   componentWillMount: function () {
-    var { keyboardShouldPersistTaps } = this.props;
-    warning(typeof keyboardShouldPersistTaps !== 'boolean', `'keyboardShouldPersistTaps={${keyboardShouldPersistTaps}}' is deprecated. ` + `Use 'keyboardShouldPersistTaps="${keyboardShouldPersistTaps ? "always" : "never"}"' instead`);
+    var { keyboardShouldPersistTaps: keyboardShouldPersistTaps } = this.props;
+    warning(typeof keyboardShouldPersistTaps !== 'boolean', '\'keyboardShouldPersistTaps={' + keyboardShouldPersistTaps + '}\' is deprecated. ' + ('Use \'keyboardShouldPersistTaps="' + (keyboardShouldPersistTaps ? "always" : "never") + '"\' instead'));
 
     this.keyboardWillOpenTo = null;
     this.additionalScrollOffset = 0;
@@ -37533,11 +38072,11 @@ module.exports = ScrollResponder;
 __d(/* FrameRateLogger */function(global, require, module, exports) {
 'use strict';
 
-const NativeModules = require(36             ); // 36 = NativeModules
+var NativeModules = require(36             ); // 36 = NativeModules
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-const FrameRateLogger = {
+var FrameRateLogger = {
   setGlobalOptions: function (options) {
     if (options.debug !== undefined) {
       invariant(NativeModules.FrameRateLogger, 'Trying to debug FrameRateLogger without the native module!');
@@ -37549,11 +38088,10 @@ const FrameRateLogger = {
     NativeModules.FrameRateLogger && NativeModules.FrameRateLogger.setContext(context);
   },
 
-  beginScroll() {
+  beginScroll: function () {
     NativeModules.FrameRateLogger && NativeModules.FrameRateLogger.beginScroll();
   },
-
-  endScroll() {
+  endScroll: function () {
     NativeModules.FrameRateLogger && NativeModules.FrameRateLogger.endScroll();
   }
 };
@@ -37572,7 +38110,9 @@ Subscribable.Mixin = {
   },
 
   componentWillUnmount: function () {
-    this._subscribableSubscriptions.forEach(subscription => subscription.remove());
+    this._subscribableSubscriptions.forEach(function (subscription) {
+      return subscription.remove();
+    });
     this._subscribableSubscriptions = null;
   },
 
@@ -37598,8 +38138,8 @@ __d(/* ReactNativeComponentTree */function(global, require, module, exports) {
 
 'use strict';
 
-const {
-  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
+var {
+  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED: __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
 } = require(32           ); // 32 = ReactNative
 
 module.exports = __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactNativeComponentTree;
@@ -37607,24 +38147,26 @@ module.exports = __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactNativeC
 __d(/* ScrollViewStickyHeader */function(global, require, module, exports) {
 'use strict';
 
-const Animated = require(184       ); // 184 = Animated
-const React = require(125    ); // 125 = React
-const StyleSheet = require(151         ); // 151 = StyleSheet
+var Animated = require(184       ); // 184 = Animated
+var React = require(125    ); // 125 = React
+var StyleSheet = require(151         ); // 151 = StyleSheet
 
-let ScrollViewStickyHeader = class ScrollViewStickyHeader extends React.Component {
+var ScrollViewStickyHeader = class ScrollViewStickyHeader extends React.Component {
 
   constructor(props, context) {
-    super(props, context);
+    var _this;
 
-    this._onLayout = event => {
-      this.setState({
+    _this = super(props, context);
+
+    this._onLayout = function (event) {
+      _this.setState({
         measured: true,
         layoutY: event.nativeEvent.layout.y,
         layoutHeight: event.nativeEvent.layout.height
       });
 
-      this.props.onLayout(event);
-      const child = React.Children.only(this.props.children);
+      _this.props.onLayout(event);
+      var child = React.Children.only(_this.props.children);
       if (child.props.onLayout) {
         child.props.onLayout(event);
       }
@@ -37643,15 +38185,15 @@ let ScrollViewStickyHeader = class ScrollViewStickyHeader extends React.Componen
   }
 
   render() {
-    const { measured, layoutHeight, layoutY, nextHeaderLayoutY } = this.state;
-    const inputRange = [-1, 0];
-    const outputRange = [0, 0];
+    var { measured: measured, layoutHeight: layoutHeight, layoutY: layoutY, nextHeaderLayoutY: nextHeaderLayoutY } = this.state;
+    var inputRange = [-1, 0];
+    var outputRange = [0, 0];
 
     if (measured) {
       inputRange.push(layoutY);
       outputRange.push(0);
 
-      const collisionPoint = (nextHeaderLayoutY || 0) - layoutHeight;
+      var collisionPoint = (nextHeaderLayoutY || 0) - layoutHeight;
       if (collisionPoint >= layoutY) {
         inputRange.push(collisionPoint, collisionPoint + 1);
         outputRange.push(collisionPoint - layoutY, collisionPoint - layoutY);
@@ -37661,18 +38203,18 @@ let ScrollViewStickyHeader = class ScrollViewStickyHeader extends React.Componen
       }
     }
 
-    const translateY = this.props.scrollAnimatedValue.interpolate({
-      inputRange,
-      outputRange
+    var translateY = this.props.scrollAnimatedValue.interpolate({
+      inputRange: inputRange,
+      outputRange: outputRange
     });
-    const child = React.Children.only(this.props.children);
+    var child = React.Children.only(this.props.children);
 
     return React.createElement(
       Animated.View,
       {
         collapsable: false,
         onLayout: this._onLayout,
-        style: [child.props.style, styles.header, { transform: [{ translateY }] }] },
+        style: [child.props.style, styles.header, { transform: [{ translateY: translateY }] }] },
       React.cloneElement(child, {
         style: styles.fill,
         onLayout: undefined })
@@ -37681,7 +38223,7 @@ let ScrollViewStickyHeader = class ScrollViewStickyHeader extends React.Componen
 };
 
 
-const styles = StyleSheet.create({
+var styles = StyleSheet.create({
   header: {
     zIndex: 10
   },
@@ -37793,23 +38335,23 @@ module.exports = TimerMixin;
 __d(/* TouchableWithoutFeedback */function(global, require, module, exports) {
 'use strict';
 
-const EdgeInsetsPropType = require(141                 ); // 141 = EdgeInsetsPropType
-const React = require(125    ); // 125 = React
-const PropTypes = require(19          ); // 19 = prop-types
-const TimerMixin = require(205                ); // 205 = react-timer-mixin
-const Touchable = require(175        ); // 175 = Touchable
+var EdgeInsetsPropType = require(141                 ); // 141 = EdgeInsetsPropType
+var React = require(125    ); // 125 = React
+var PropTypes = require(19          ); // 19 = prop-types
+var TimerMixin = require(205                ); // 205 = react-timer-mixin
+var Touchable = require(175        ); // 175 = Touchable
 
-const ensurePositiveDelayProps = require(207                       ); // 207 = ensurePositiveDelayProps
-const warning = require(15                ); // 15 = fbjs/lib/warning
+var ensurePositiveDelayProps = require(207                       ); // 207 = ensurePositiveDelayProps
+var warning = require(15                ); // 15 = fbjs/lib/warning
 
-const {
-  AccessibilityComponentTypes,
-  AccessibilityTraits
+var {
+  AccessibilityComponentTypes: AccessibilityComponentTypes,
+  AccessibilityTraits: AccessibilityTraits
 } = require(147                ); // 147 = ViewAccessibility
 
-const PRESS_RETENTION_OFFSET = { top: 20, left: 20, right: 20, bottom: 30 };
+var PRESS_RETENTION_OFFSET = { top: 20, left: 20, right: 20, bottom: 30 };
 
-const TouchableWithoutFeedback = React.createClass({
+var TouchableWithoutFeedback = React.createClass({
   mixins: [TimerMixin, Touchable.Mixin],
 
   propTypes: {
@@ -37887,14 +38429,14 @@ const TouchableWithoutFeedback = React.createClass({
   },
 
   render: function () {
-    const child = React.Children.only(this.props.children);
-    let children = child.props.children;
+    var child = React.Children.only(this.props.children);
+    var children = child.props.children;
     warning(!child.type || child.type.displayName !== 'Text', 'TouchableWithoutFeedback does not work well with Text children. Wrap children in a View instead. See ' + (child._owner && child._owner.getName && child._owner.getName() || '<unknown>'));
     if (Touchable.TOUCH_TARGET_DEBUG && child.type && child.type.displayName === 'View') {
       children = React.Children.toArray(children);
       children.push(Touchable.renderDebugView({ color: 'red', hitSlop: this.props.hitSlop }));
     }
-    const style = Touchable.TOUCH_TARGET_DEBUG && child.type && child.type.displayName === 'Text' ? [child.props.style, { color: 'red' }] : child.props.style;
+    var style = Touchable.TOUCH_TARGET_DEBUG && child.type && child.type.displayName === 'Text' ? [child.props.style, { color: 'red' }] : child.props.style;
     return React.cloneElement(child, {
       accessible: this.props.accessible !== false,
 
@@ -37913,8 +38455,8 @@ const TouchableWithoutFeedback = React.createClass({
       onResponderMove: this.touchableHandleResponderMove,
       onResponderRelease: this.touchableHandleResponderRelease,
       onResponderTerminate: this.touchableHandleResponderTerminate,
-      style,
-      children
+      style: style,
+      children: children
     });
   }
 });
@@ -37946,70 +38488,76 @@ __d(/* FlatList */function(global, require, module, exports) {
 
 var _class, _temp2;
 
-const MetroListView = require(211            ); // 211 = MetroListView
-const React = require(125    ); // 125 = React
-const View = require(124   ); // 124 = View
-const VirtualizedList = require(218              ); // 218 = VirtualizedList
+var MetroListView = require(211            ); // 211 = MetroListView
+var React = require(125    ); // 125 = React
+var View = require(124   ); // 124 = View
+var VirtualizedList = require(218              ); // 218 = VirtualizedList
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-const defaultProps = babelHelpers.extends({}, VirtualizedList.defaultProps, {
+var defaultProps = babelHelpers.extends({}, VirtualizedList.defaultProps, {
   numColumns: 1
 });
-let FlatList = (_temp2 = _class = class FlatList extends React.PureComponent {
+var FlatList = (_temp2 = _class = class FlatList extends React.PureComponent {
   constructor(...args) {
-    var _temp;
+    var _temp, _this;
 
-    return _temp = super(...args), this._hasWarnedLegacy = false, this._captureRef = ref => {
-      this._listRef = ref;
-    }, this._getItem = (data, index) => {
-      const { numColumns } = this.props;
+    return _temp = _this = super(...args), this._hasWarnedLegacy = false, this._captureRef = function (ref) {
+      _this._listRef = ref;
+    }, this._getItem = function (data, index) {
+      var { numColumns: numColumns } = _this.props;
       if (numColumns > 1) {
-        const ret = [];
-        for (let kk = 0; kk < numColumns; kk++) {
-          const item = data[index * numColumns + kk];
-          item && ret.push(item);
+        var ret = [];
+        for (var kk = 0; kk < numColumns; kk++) {
+          var _item = data[index * numColumns + kk];
+          _item && ret.push(_item);
         }
         return ret;
       } else {
         return data[index];
       }
-    }, this._getItemCount = data => {
-      return data ? Math.ceil(data.length / this.props.numColumns) : 0;
-    }, this._keyExtractor = (items, index) => {
-      const { keyExtractor, numColumns } = this.props;
+    }, this._getItemCount = function (data) {
+      return data ? Math.ceil(data.length / _this.props.numColumns) : 0;
+    }, this._keyExtractor = function (items, index) {
+      var { keyExtractor: keyExtractor, numColumns: numColumns } = _this.props;
       if (numColumns > 1) {
         invariant(Array.isArray(items), 'FlatList: Encountered internal consistency error, expected each item to consist of an ' + 'array with 1-%s columns; instead, received a single item.', numColumns);
-        return items.map((it, kk) => keyExtractor(it, index * numColumns + kk)).join(':');
+        return items.map(function (it, kk) {
+          return keyExtractor(it, index * numColumns + kk);
+        }).join(':');
       } else {
         return keyExtractor(items, index);
       }
-    }, this._onViewableItemsChanged = info => {
-      const { numColumns, onViewableItemsChanged } = this.props;
+    }, this._onViewableItemsChanged = function (info) {
+      var { numColumns: numColumns, onViewableItemsChanged: onViewableItemsChanged } = _this.props;
       if (!onViewableItemsChanged) {
         return;
       }
       if (numColumns > 1) {
-        const changed = [];
-        const viewableItems = [];
-        info.viewableItems.forEach(v => this._pushMultiColumnViewable(viewableItems, v));
-        info.changed.forEach(v => this._pushMultiColumnViewable(changed, v));
-        onViewableItemsChanged({ viewableItems, changed });
+        var _changed = [];
+        var _viewableItems = [];
+        info.viewableItems.forEach(function (v) {
+          return _this._pushMultiColumnViewable(_viewableItems, v);
+        });
+        info.changed.forEach(function (v) {
+          return _this._pushMultiColumnViewable(_changed, v);
+        });
+        onViewableItemsChanged({ viewableItems: _viewableItems, changed: _changed });
       } else {
         onViewableItemsChanged(info);
       }
-    }, this._renderItem = info => {
-      const { renderItem, numColumns, columnWrapperStyle } = this.props;
+    }, this._renderItem = function (info) {
+      var { renderItem: renderItem, numColumns: numColumns, columnWrapperStyle: columnWrapperStyle } = _this.props;
       if (numColumns > 1) {
-        const { item, index } = info;
-        invariant(Array.isArray(item), 'Expected array of items with numColumns > 1');
+        var { item: _item2, index: _index } = info;
+        invariant(Array.isArray(_item2), 'Expected array of items with numColumns > 1');
         return React.createElement(
           View,
           { style: [{ flexDirection: 'row' }, columnWrapperStyle] },
-          item.map((it, kk) => {
-            const element = renderItem({
+          _item2.map(function (it, kk) {
+            var element = renderItem({
               item: it,
-              index: index * numColumns + kk,
+              index: _index * numColumns + kk,
               separators: info.separators
             });
             return element && React.cloneElement(element, { key: kk });
@@ -38067,13 +38615,13 @@ let FlatList = (_temp2 = _class = class FlatList extends React.PureComponent {
   }
 
   _checkProps(props) {
-    const {
-      getItem,
-      getItemCount,
-      horizontal,
-      legacyImplementation,
-      numColumns,
-      columnWrapperStyle
+    var {
+      getItem: getItem,
+      getItemCount: getItemCount,
+      horizontal: horizontal,
+      legacyImplementation: legacyImplementation,
+      numColumns: numColumns,
+      columnWrapperStyle: columnWrapperStyle
     } = props;
     invariant(!getItem && !getItemCount, 'FlatList does not support custom data formats.');
     if (numColumns > 1) {
@@ -38092,11 +38640,11 @@ let FlatList = (_temp2 = _class = class FlatList extends React.PureComponent {
   }
 
   _pushMultiColumnViewable(arr, v) {
-    const { numColumns, keyExtractor } = this.props;
-    v.item.forEach((item, ii) => {
+    var { numColumns: numColumns, keyExtractor: keyExtractor } = this.props;
+    v.item.forEach(function (item, ii) {
       invariant(v.index != null, 'Missing index!');
-      const index = v.index * numColumns + ii;
-      arr.push(babelHelpers.extends({}, v, { item, key: keyExtractor(item, index), index }));
+      var index = v.index * numColumns + ii;
+      arr.push(babelHelpers.extends({}, v, { item: item, key: keyExtractor(item, index), index: index }));
     });
   }
 
@@ -38124,33 +38672,43 @@ __d(/* MetroListView */function(global, require, module, exports) {
 
 var _class, _temp2;
 
-const ListView = require(212       ); // 212 = ListView
-const React = require(125    ); // 125 = React
-const RefreshControl = require(217             ); // 217 = RefreshControl
-const ScrollView = require(196         ); // 196 = ScrollView
+var ListView = require(212       ); // 212 = ListView
+var React = require(125    ); // 125 = React
+var RefreshControl = require(217             ); // 217 = RefreshControl
+var ScrollView = require(196         ); // 196 = ScrollView
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-let MetroListView = (_temp2 = _class = class MetroListView extends React.Component {
+var MetroListView = (_temp2 = _class = class MetroListView extends React.Component {
   constructor(...args) {
-    var _temp;
+    var _temp, _this;
 
-    return _temp = super(...args), this.state = this._computeState(this.props, {
+    return _temp = _this = super(...args), this.state = this._computeState(this.props, {
       ds: new ListView.DataSource({
-        rowHasChanged: (itemA, itemB) => true,
-        sectionHeaderHasChanged: () => true,
-        getSectionHeaderData: (dataBlob, sectionID) => this.state.sectionHeaderData[sectionID]
+        rowHasChanged: function (itemA, itemB) {
+          return true;
+        },
+        sectionHeaderHasChanged: function () {
+          return true;
+        },
+        getSectionHeaderData: function (dataBlob, sectionID) {
+          return _this.state.sectionHeaderData[sectionID];
+        }
       }),
       sectionHeaderData: {}
-    }), this._captureRef = ref => {
-      this._listRef = ref;
-    }, this._renderFooter = () => React.createElement(this.props.FooterComponent, { key: '$footer' }), this._renderRow = (item, sectionID, rowID, highlightRow) => {
-      return this.props.renderItem({ item, index: rowID });
-    }, this._renderSectionHeader = (section, sectionID) => {
-      const { renderSectionHeader } = this.props;
+    }), this._captureRef = function (ref) {
+      _this._listRef = ref;
+    }, this._renderFooter = function () {
+      return React.createElement(_this.props.FooterComponent, { key: '$footer' });
+    }, this._renderRow = function (item, sectionID, rowID, highlightRow) {
+      return _this.props.renderItem({ item: item, index: rowID });
+    }, this._renderSectionHeader = function (section, sectionID) {
+      var { renderSectionHeader: renderSectionHeader } = _this.props;
       invariant(renderSectionHeader, 'Must provide renderSectionHeader with sections prop');
-      return renderSectionHeader({ section });
-    }, this._renderSeparator = (sID, rID) => React.createElement(this.props.SeparatorComponent, { key: sID + rID }), _temp;
+      return renderSectionHeader({ section: section });
+    }, this._renderSeparator = function (sID, rID) {
+      return React.createElement(_this.props.SeparatorComponent, { key: sID + rID });
+    }, _temp;
   }
 
   scrollToEnd(params) {
@@ -38166,15 +38724,19 @@ let MetroListView = (_temp2 = _class = class MetroListView extends React.Compone
     throw new Error('scrollToLocation not supported in legacy ListView.');
   }
   scrollToOffset(params) {
-    const { animated, offset } = params;
-    this._listRef.scrollTo(this.props.horizontal ? { x: offset, animated } : { y: offset, animated });
+    var { animated: animated, offset: offset } = params;
+    this._listRef.scrollTo(this.props.horizontal ? { x: offset, animated: animated } : { y: offset, animated: animated });
   }
   getListRef() {
     return this._listRef;
   }
 
   componentWillReceiveProps(newProps) {
-    this.setState(state => this._computeState(newProps, state));
+    var _this2 = this;
+
+    this.setState(function (state) {
+      return _this2._computeState(newProps, state);
+    });
   }
   render() {
     return React.createElement(ListView, babelHelpers.extends({}, this.props, {
@@ -38188,30 +38750,32 @@ let MetroListView = (_temp2 = _class = class MetroListView extends React.Compone
   }
 
   _computeState(props, state) {
-    const sectionHeaderData = {};
+    var sectionHeaderData = {};
     if (props.sections) {
       invariant(!props.items, 'Cannot have both sections and items props.');
-      const sections = {};
-      props.sections.forEach((sectionIn, ii) => {
-        const sectionID = 's' + ii;
-        sections[sectionID] = sectionIn.data;
+      var _sections = {};
+      props.sections.forEach(function (sectionIn, ii) {
+        var sectionID = 's' + ii;
+        _sections[sectionID] = sectionIn.data;
         sectionHeaderData[sectionID] = sectionIn;
       });
       return {
-        ds: state.ds.cloneWithRowsAndSections(sections),
-        sectionHeaderData
+        ds: state.ds.cloneWithRowsAndSections(_sections),
+        sectionHeaderData: sectionHeaderData
       };
     } else {
       invariant(!props.sections, 'Cannot have both sections and items props.');
       return {
         ds: state.ds.cloneWithRows(props.items),
-        sectionHeaderData
+        sectionHeaderData: sectionHeaderData
       };
     }
   }
 }, _class.defaultProps = {
-  keyExtractor: (item, index) => item.key || String(index),
-  renderScrollComponent: props => {
+  keyExtractor: function (item, index) {
+    return item.key || String(index);
+  },
+  renderScrollComponent: function (props) {
     if (props.onRefresh) {
       return React.createElement(ScrollView, babelHelpers.extends({}, props, {
         refreshControl: React.createElement(RefreshControl, {
@@ -38327,7 +38891,9 @@ var ListView = React.createClass({
 
   scrollTo: function (...args) {
     if (this._scrollComponent && this._scrollComponent.scrollTo) {
-      this._scrollComponent.scrollTo(...args);
+      var _scrollComponent;
+
+      (_scrollComponent = this._scrollComponent).scrollTo.apply(_scrollComponent, args);
     }
   },
 
@@ -38357,7 +38923,9 @@ var ListView = React.createClass({
     return {
       initialListSize: DEFAULT_INITIAL_ROWS,
       pageSize: DEFAULT_PAGE_SIZE,
-      renderScrollComponent: props => React.createElement(ScrollView, props),
+      renderScrollComponent: function (props) {
+        return React.createElement(ScrollView, props);
+      },
       scrollRenderAheadDistance: DEFAULT_SCROLL_RENDER_AHEAD,
       onEndReachedThreshold: DEFAULT_END_REACHED_THRESHOLD,
       stickySectionHeadersEnabled: Platform.OS === 'ios',
@@ -38389,30 +38957,38 @@ var ListView = React.createClass({
   },
 
   componentDidMount: function () {
-    this.requestAnimationFrame(() => {
-      this._measureAndUpdateScrollProps();
+    var _this = this;
+
+    this.requestAnimationFrame(function () {
+      _this._measureAndUpdateScrollProps();
     });
   },
 
   componentWillReceiveProps: function (nextProps) {
+    var _this2 = this;
+
     if (this.props.dataSource !== nextProps.dataSource || this.props.initialListSize !== nextProps.initialListSize) {
-      this.setState((state, props) => {
-        this._prevRenderedRowsCount = 0;
+      this.setState(function (state, props) {
+        _this2._prevRenderedRowsCount = 0;
         return {
           curRenderedRowsCount: Math.min(Math.max(state.curRenderedRowsCount, props.initialListSize), props.enableEmptySections ? props.dataSource.getRowAndSectionCount() : props.dataSource.getRowCount())
         };
-      }, () => this._renderMoreRowsIfNeeded());
+      }, function () {
+        return _this2._renderMoreRowsIfNeeded();
+      });
     }
   },
 
   componentDidUpdate: function () {
-    this.requestAnimationFrame(() => {
-      this._measureAndUpdateScrollProps();
+    var _this3 = this;
+
+    this.requestAnimationFrame(function () {
+      _this3._measureAndUpdateScrollProps();
     });
   },
 
   _onRowHighlighted: function (sectionID, rowID) {
-    this.setState({ highlightedRow: { sectionID, rowID } });
+    this.setState({ highlightedRow: { sectionID: sectionID, rowID: rowID } });
   },
 
   render: function () {
@@ -38423,7 +38999,7 @@ var ListView = React.createClass({
     var rowCount = 0;
     var stickySectionHeaderIndices = [];
 
-    const { renderSectionHeader } = this.props;
+    var { renderSectionHeader: renderSectionHeader } = this.props;
 
     var header = this.props.renderHeader && this.props.renderHeader();
     var footer = this.props.renderFooter && this.props.renderFooter();
@@ -38444,7 +39020,7 @@ var ListView = React.createClass({
       }
 
       if (renderSectionHeader) {
-        const element = renderSectionHeader(dataSource.getSectionHeaderData(sectionIdx), sectionID);
+        var element = renderSectionHeader(dataSource.getSectionHeaderData(sectionIdx), sectionID);
         if (element) {
           bodyComponents.push(React.cloneElement(element, { key: 's_' + sectionID }));
           if (this.props.stickySectionHeadersEnabled) {
@@ -38489,7 +39065,7 @@ var ListView = React.createClass({
 
     var _props = this.props,
         {
-      renderScrollComponent
+      renderScrollComponent: renderScrollComponent
     } = _props,
         props = babelHelpers.objectWithoutProperties(_props, ['renderScrollComponent']);
     if (!props.scrollEventThrottle) {
@@ -38540,7 +39116,7 @@ var ListView = React.createClass({
   },
 
   _onLayout: function (event) {
-    var { width, height } = event.nativeEvent.layout;
+    var { width: width, height: height } = event.nativeEvent.layout;
     var visibleLength = !this.props.horizontal ? height : width;
     if (visibleLength !== this.scrollProperties.visibleLength) {
       this.scrollProperties.visibleLength = visibleLength;
@@ -38572,15 +39148,17 @@ var ListView = React.createClass({
   },
 
   _pageInNewRows: function () {
-    this.setState((state, props) => {
+    var _this4 = this;
+
+    this.setState(function (state, props) {
       var rowsToRender = Math.min(state.curRenderedRowsCount + props.pageSize, props.enableEmptySections ? props.dataSource.getRowAndSectionCount() : props.dataSource.getRowCount());
-      this._prevRenderedRowsCount = state.curRenderedRowsCount;
+      _this4._prevRenderedRowsCount = state.curRenderedRowsCount;
       return {
         curRenderedRowsCount: rowsToRender
       };
-    }, () => {
-      this._measureAndUpdateScrollProps();
-      this._prevRenderedRowsCount = this.state.curRenderedRowsCount;
+    }, function () {
+      _this4._measureAndUpdateScrollProps();
+      _this4._prevRenderedRowsCount = _this4.state.curRenderedRowsCount;
     });
   },
 
@@ -38589,12 +39167,14 @@ var ListView = React.createClass({
   },
 
   _updateVisibleRows: function (updatedFrames) {
+    var _this5 = this;
+
     if (!this.props.onChangeVisibleRows) {
       return;
     }
     if (updatedFrames) {
-      updatedFrames.forEach(newFrame => {
-        this._childFrames[newFrame.index] = merge(newFrame);
+      updatedFrames.forEach(function (newFrame) {
+        _this5._childFrames[newFrame.index] = merge(newFrame);
       });
     }
     var isVertical = !this.props.horizontal;
@@ -38698,7 +39278,7 @@ function defaultGetSectionHeaderData(dataBlob, sectionID) {
   return dataBlob[sectionID];
 }
 
-let ListViewDataSource = class ListViewDataSource {
+var ListViewDataSource = class ListViewDataSource {
   constructor(params) {
     invariant(params && typeof params.rowHasChanged === 'function', 'Must provide a rowHasChanged function.');
     this._rowHasChanged = params.rowHasChanged;
@@ -38716,9 +39296,11 @@ let ListViewDataSource = class ListViewDataSource {
   }
 
   cloneWithRows(dataBlob, rowIdentities) {
-    var rowIds = rowIdentities ? [[...rowIdentities]] : null;
+    var rowIds = rowIdentities ? [[].concat(babelHelpers.toConsumableArray(rowIdentities))] : null;
     if (!this._sectionHeaderHasChanged) {
-      this._sectionHeaderHasChanged = () => false;
+      this._sectionHeaderHasChanged = function () {
+        return false;
+      };
     }
     return this.cloneWithRowsAndSections({ s1: dataBlob }, ['s1'], rowIds);
   }
@@ -38743,7 +39325,7 @@ let ListViewDataSource = class ListViewDataSource {
       newSource.rowIdentities = rowIdentities;
     } else {
       newSource.rowIdentities = [];
-      newSource.sectionIdentities.forEach(sectionID => {
+      newSource.sectionIdentities.forEach(function (sectionID) {
         newSource.rowIdentities.push(Object.keys(dataBlob[sectionID]));
       });
     }
@@ -38908,7 +39490,7 @@ var React = require(125    ); // 125 = React
 
 var PropTypes = require(19          ); // 19 = prop-types
 
-let StaticRenderer = (_temp = _class = class StaticRenderer extends React.Component {
+var StaticRenderer = (_temp = _class = class StaticRenderer extends React.Component {
 
   shouldComponentUpdate(nextProps) {
     return nextProps.shouldUpdate;
@@ -38927,28 +39509,28 @@ module.exports = StaticRenderer;
 }, 215, null, "StaticRenderer");
 __d(/* react-clone-referenced-element/cloneReferencedElement.js */function(global, require, module, exports) {'use strict';
 
-let React = require(12     ); // 12 = react
+var React = require(12     ); // 12 = react
 
 function cloneReferencedElement(element, config, ...children) {
-  let cloneRef = config.ref;
-  let originalRef = element.ref;
+  var cloneRef = config.ref;
+  var originalRef = element.ref;
   if (originalRef == null || cloneRef == null) {
-    return React.cloneElement(element, config, ...children);
+    return React.cloneElement.apply(React, [element, config].concat(children));
   }
 
   if (typeof originalRef !== 'function') {
     if (__DEV__) {
       console.warn('Cloning an element with a ref that will be overwritten because it ' + 'is not a function. Use a composable callback-style ref instead. ' + 'Ignoring ref: ' + originalRef);
     }
-    return React.cloneElement(element, config, ...children);
+    return React.cloneElement.apply(React, [element, config].concat(children));
   }
 
-  return React.cloneElement(element, babelHelpers.extends({}, config, {
-    ref(component) {
+  return React.cloneElement.apply(React, [element, babelHelpers.extends({}, config, {
+    ref: function (component) {
       cloneRef(component);
       originalRef(component);
     }
-  }), ...children);
+  })].concat(children));
 }
 
 module.exports = cloneReferencedElement;
@@ -38956,14 +39538,14 @@ module.exports = cloneReferencedElement;
 __d(/* RefreshControl */function(global, require, module, exports) {
 'use strict';
 
-const ColorPropType = require(29             ); // 29 = ColorPropType
-const NativeMethodsMixin = require(31                  ); // 31 = NativeMethodsMixin
-const Platform = require(46        ); // 46 = Platform
-const React = require(125    ); // 125 = React
-const PropTypes = require(19          ); // 19 = prop-types
-const ViewPropTypes = require(140            ); // 140 = ViewPropTypes
+var ColorPropType = require(29             ); // 29 = ColorPropType
+var NativeMethodsMixin = require(31                  ); // 31 = NativeMethodsMixin
+var Platform = require(46        ); // 46 = Platform
+var React = require(125    ); // 125 = React
+var PropTypes = require(19          ); // 19 = prop-types
+var ViewPropTypes = require(140            ); // 140 = ViewPropTypes
 
-const requireNativeComponent = require(149                     ); // 149 = requireNativeComponent
+var requireNativeComponent = require(149                     ); // 149 = requireNativeComponent
 
 if (Platform.OS === 'android') {
   var RefreshLayoutConsts = require(73         ).AndroidSwipeRefreshLayout.Constants; // 73 = UIManager
@@ -38971,7 +39553,7 @@ if (Platform.OS === 'android') {
   var RefreshLayoutConsts = { SIZE: {} };
 }
 
-const RefreshControl = React.createClass({
+var RefreshControl = React.createClass({
   statics: {
     SIZE: RefreshLayoutConsts.SIZE
   },
@@ -39003,11 +39585,10 @@ const RefreshControl = React.createClass({
   _nativeRef: null,
   _lastNativeRefreshing: false,
 
-  componentDidMount() {
+  componentDidMount: function () {
     this._lastNativeRefreshing = this.props.refreshing;
   },
-
-  componentDidUpdate(prevProps) {
+  componentDidUpdate: function (prevProps) {
     if (this.props.refreshing !== prevProps.refreshing) {
       this._lastNativeRefreshing = this.props.refreshing;
     } else if (this.props.refreshing !== this._lastNativeRefreshing) {
@@ -39015,17 +39596,17 @@ const RefreshControl = React.createClass({
       this._lastNativeRefreshing = this.props.refreshing;
     }
   },
+  render: function () {
+    var _this = this;
 
-  render() {
     return React.createElement(NativeRefreshControl, babelHelpers.extends({}, this.props, {
-      ref: ref => {
-        this._nativeRef = ref;
+      ref: function (ref) {
+        _this._nativeRef = ref;
       },
       onRefresh: this._onRefresh
     }));
   },
-
-  _onRefresh() {
+  _onRefresh: function () {
     this._lastNativeRefreshing = true;
 
     this.props.onRefresh && this.props.onRefresh();
@@ -39047,58 +39628,58 @@ __d(/* VirtualizedList */function(global, require, module, exports) {
 
 var _class, _temp, _initialiseProps;
 
-const Batchinator = require(219          ); // 219 = Batchinator
-const FillRateHelper = require(220             ); // 220 = FillRateHelper
-const React = require(125    ); // 125 = React
-const ReactNative = require(32           ); // 32 = ReactNative
-const RefreshControl = require(217             ); // 217 = RefreshControl
-const ScrollView = require(196         ); // 196 = ScrollView
-const View = require(124   ); // 124 = View
-const ViewabilityHelper = require(221                ); // 221 = ViewabilityHelper
+var Batchinator = require(219          ); // 219 = Batchinator
+var FillRateHelper = require(220             ); // 220 = FillRateHelper
+var React = require(125    ); // 125 = React
+var ReactNative = require(32           ); // 32 = ReactNative
+var RefreshControl = require(217             ); // 217 = RefreshControl
+var ScrollView = require(196         ); // 196 = ScrollView
+var View = require(124   ); // 124 = View
+var ViewabilityHelper = require(221                ); // 221 = ViewabilityHelper
 
-const flattenStyle = require(110           ); // 110 = flattenStyle
-const infoLog = require(119      ); // 119 = infoLog
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
-const warning = require(15                ); // 15 = fbjs/lib/warning
+var flattenStyle = require(110           ); // 110 = flattenStyle
+var infoLog = require(119      ); // 119 = infoLog
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var warning = require(15                ); // 15 = fbjs/lib/warning
 
-const { computeWindowedRenderLimits } = require(222              ); // 222 = VirtualizeUtils
+var { computeWindowedRenderLimits: computeWindowedRenderLimits } = require(222              ); // 222 = VirtualizeUtils
 
-let _usedIndexForKey = false;
+var _usedIndexForKey = false;
 
-let VirtualizedList = (_temp = _class = class VirtualizedList extends React.PureComponent {
+var VirtualizedList = (_temp = _class = class VirtualizedList extends React.PureComponent {
   scrollToEnd(params) {
-    const animated = params ? params.animated : true;
-    const veryLast = this.props.getItemCount(this.props.data) - 1;
-    const frame = this._getFrameMetricsApprox(veryLast);
-    const offset = frame.offset + frame.length + this._footerLength - this._scrollMetrics.visibleLength;
-    this._scrollRef.scrollTo(this.props.horizontal ? { x: offset, animated } : { y: offset, animated });
+    var animated = params ? params.animated : true;
+    var veryLast = this.props.getItemCount(this.props.data) - 1;
+    var frame = this._getFrameMetricsApprox(veryLast);
+    var offset = frame.offset + frame.length + this._footerLength - this._scrollMetrics.visibleLength;
+    this._scrollRef.scrollTo(this.props.horizontal ? { x: offset, animated: animated } : { y: offset, animated: animated });
   }
 
   scrollToIndex(params) {
-    const { data, horizontal, getItemCount, getItemLayout } = this.props;
-    const { animated, index, viewOffset, viewPosition } = params;
-    invariant(index >= 0 && index < getItemCount(data), `scrollToIndex out of range: ${index} vs ${getItemCount(data) - 1}`);
+    var { data: data, horizontal: horizontal, getItemCount: getItemCount, getItemLayout: getItemLayout } = this.props;
+    var { animated: animated, index: index, viewOffset: viewOffset, viewPosition: viewPosition } = params;
+    invariant(index >= 0 && index < getItemCount(data), 'scrollToIndex out of range: ' + index + ' vs ' + (getItemCount(data) - 1));
     invariant(getItemLayout || index < this._highestMeasuredFrameIndex, 'scrollToIndex should be used in conjunction with getItemLayout, ' + 'otherwise there is no way to know the location of an arbitrary index.');
-    const frame = this._getFrameMetricsApprox(index);
-    const offset = Math.max(0, frame.offset - (viewPosition || 0) * (this._scrollMetrics.visibleLength - frame.length)) - (viewOffset || 0);
-    this._scrollRef.scrollTo(horizontal ? { x: offset, animated } : { y: offset, animated });
+    var frame = this._getFrameMetricsApprox(index);
+    var offset = Math.max(0, frame.offset - (viewPosition || 0) * (this._scrollMetrics.visibleLength - frame.length)) - (viewOffset || 0);
+    this._scrollRef.scrollTo(horizontal ? { x: offset, animated: animated } : { y: offset, animated: animated });
   }
 
   scrollToItem(params) {
-    const { item } = params;
-    const { data, getItem, getItemCount } = this.props;
-    const itemCount = getItemCount(data);
-    for (let index = 0; index < itemCount; index++) {
-      if (getItem(data, index) === item) {
-        this.scrollToIndex(babelHelpers.extends({}, params, { index }));
+    var { item: item } = params;
+    var { data: data, getItem: getItem, getItemCount: getItemCount } = this.props;
+    var itemCount = getItemCount(data);
+    for (var _index = 0; _index < itemCount; _index++) {
+      if (getItem(data, _index) === item) {
+        this.scrollToIndex(babelHelpers.extends({}, params, { index: _index }));
         break;
       }
     }
   }
 
   scrollToOffset(params) {
-    const { animated, offset } = params;
-    this._scrollRef.scrollTo(this.props.horizontal ? { x: offset, animated } : { y: offset, animated });
+    var { animated: animated, offset: offset } = params;
+    this._scrollRef.scrollTo(this.props.horizontal ? { x: offset, animated: animated } : { y: offset, animated: animated });
   }
 
   recordInteraction() {
@@ -39141,8 +39722,12 @@ let VirtualizedList = (_temp = _class = class VirtualizedList extends React.Pure
   }
 
   componentDidMount() {
+    var _this = this;
+
     if (this.props.initialScrollIndex) {
-      this._initialScrollIndexTimeout = setTimeout(() => this.scrollToIndex({ animated: false, index: this.props.initialScrollIndex }), 0);
+      this._initialScrollIndexTimeout = setTimeout(function () {
+        return _this.scrollToIndex({ animated: false, index: _this.props.initialScrollIndex });
+      }, 0);
     }
   }
 
@@ -39155,7 +39740,7 @@ let VirtualizedList = (_temp = _class = class VirtualizedList extends React.Pure
   }
 
   componentWillReceiveProps(newProps) {
-    const { data, extraData, getItemCount, maxToRenderPerBatch } = newProps;
+    var { data: data, extraData: extraData, getItemCount: getItemCount, maxToRenderPerBatch: maxToRenderPerBatch } = newProps;
 
     this.setState({
       first: Math.max(0, Math.min(this.state.first, getItemCount(data) - 1 - maxToRenderPerBatch)),
@@ -39167,78 +39752,87 @@ let VirtualizedList = (_temp = _class = class VirtualizedList extends React.Pure
   }
 
   _pushCells(cells, stickyHeaderIndices, stickyIndicesFromProps, first, last) {
-    const { ItemSeparatorComponent, data, getItem, getItemCount, keyExtractor } = this.props;
-    const stickyOffset = this.props.ListHeaderComponent ? 1 : 0;
-    const end = getItemCount(data) - 1;
-    let prevCellKey;
+    var _this2 = this;
+
+    var { ItemSeparatorComponent: ItemSeparatorComponent, data: data, getItem: getItem, getItemCount: getItemCount, keyExtractor: keyExtractor } = this.props;
+    var stickyOffset = this.props.ListHeaderComponent ? 1 : 0;
+    var end = getItemCount(data) - 1;
+    var prevCellKey = void 0;
     last = Math.min(end, last);
-    for (let ii = first; ii <= last; ii++) {
-      const item = getItem(data, ii);
+
+    var _loop = function (ii) {
+      var item = getItem(data, ii);
       invariant(item, 'No item for index ' + ii);
-      const key = keyExtractor(item, ii);
+      var key = keyExtractor(item, ii);
       if (stickyIndicesFromProps.has(ii + stickyOffset)) {
         stickyHeaderIndices.push(cells.length);
       }
       cells.push(React.createElement(CellRenderer, {
         ItemSeparatorComponent: ii < end ? ItemSeparatorComponent : undefined,
         cellKey: key,
-        fillRateHelper: this._fillRateHelper,
+        fillRateHelper: _this2._fillRateHelper,
         index: ii,
         item: item,
         key: key,
         prevCellKey: prevCellKey,
-        onUpdateSeparators: this._onUpdateSeparators,
-        onLayout: e => this._onCellLayout(e, key, ii),
-        onUnmount: this._onCellUnmount,
-        parentProps: this.props,
-        ref: ref => {
-          this._cellRefs[key] = ref;
+        onUpdateSeparators: _this2._onUpdateSeparators,
+        onLayout: function (e) {
+          return _this2._onCellLayout(e, key, ii);
+        },
+        onUnmount: _this2._onCellUnmount,
+        parentProps: _this2.props,
+        ref: function (ref) {
+          _this2._cellRefs[key] = ref;
         }
       }));
       prevCellKey = key;
+    };
+
+    for (var ii = first; ii <= last; ii++) {
+      _loop(ii);
     }
   }
 
   render() {
     if (__DEV__) {
-      const flatStyles = flattenStyle(this.props.contentContainerStyle);
+      var flatStyles = flattenStyle(this.props.contentContainerStyle);
       warning(flatStyles == null || flatStyles.flexWrap !== 'wrap', '`flexWrap: `wrap`` is not supported with the `VirtualizedList` components.' + 'Consider using `numColumns` with `FlatList` instead.');
     }
 
-    const { ListEmptyComponent, ListFooterComponent, ListHeaderComponent } = this.props;
-    const { data, disableVirtualization, horizontal } = this.props;
-    const cells = [];
-    const stickyIndicesFromProps = new Set(this.props.stickyHeaderIndices);
-    const stickyHeaderIndices = [];
+    var { ListEmptyComponent: ListEmptyComponent, ListFooterComponent: ListFooterComponent, ListHeaderComponent: ListHeaderComponent } = this.props;
+    var { data: data, disableVirtualization: disableVirtualization, horizontal: horizontal } = this.props;
+    var cells = [];
+    var stickyIndicesFromProps = new Set(this.props.stickyHeaderIndices);
+    var stickyHeaderIndices = [];
     if (ListHeaderComponent) {
-      const element = React.isValidElement(ListHeaderComponent) ? ListHeaderComponent : React.createElement(ListHeaderComponent, null);
+      var element = React.isValidElement(ListHeaderComponent) ? ListHeaderComponent : React.createElement(ListHeaderComponent, null);
       cells.push(React.createElement(
         View,
         { key: '$header', onLayout: this._onLayoutHeader },
         element
       ));
     }
-    const itemCount = this.props.getItemCount(data);
+    var itemCount = this.props.getItemCount(data);
     if (itemCount > 0) {
       _usedIndexForKey = false;
-      const spacerKey = !horizontal ? 'height' : 'width';
-      const lastInitialIndex = this.props.initialScrollIndex ? -1 : this.props.initialNumToRender - 1;
-      const { first, last } = this.state;
+      var spacerKey = !horizontal ? 'height' : 'width';
+      var lastInitialIndex = this.props.initialScrollIndex ? -1 : this.props.initialNumToRender - 1;
+      var { first: _first, last: _last } = this.state;
       this._pushCells(cells, stickyHeaderIndices, stickyIndicesFromProps, 0, lastInitialIndex);
-      const firstAfterInitial = Math.max(lastInitialIndex + 1, first);
-      if (!disableVirtualization && first > lastInitialIndex + 1) {
-        let insertedStickySpacer = false;
+      var firstAfterInitial = Math.max(lastInitialIndex + 1, _first);
+      if (!disableVirtualization && _first > lastInitialIndex + 1) {
+        var insertedStickySpacer = false;
         if (stickyIndicesFromProps.size > 0) {
-          const stickyOffset = ListHeaderComponent ? 1 : 0;
+          var stickyOffset = ListHeaderComponent ? 1 : 0;
 
-          for (let ii = firstAfterInitial - 1; ii > lastInitialIndex; ii--) {
+          for (var ii = firstAfterInitial - 1; ii > lastInitialIndex; ii--) {
             if (stickyIndicesFromProps.has(ii + stickyOffset)) {
-              const initBlock = this._getFrameMetricsApprox(lastInitialIndex);
-              const stickyBlock = this._getFrameMetricsApprox(ii);
-              const leadSpace = stickyBlock.offset - (initBlock.offset + initBlock.length);
+              var initBlock = this._getFrameMetricsApprox(lastInitialIndex);
+              var stickyBlock = this._getFrameMetricsApprox(ii);
+              var leadSpace = stickyBlock.offset - (initBlock.offset + initBlock.length);
               cells.push(React.createElement(View, { key: '$sticky_lead', style: { [spacerKey]: leadSpace } }));
               this._pushCells(cells, stickyHeaderIndices, stickyIndicesFromProps, ii, ii);
-              const trailSpace = this._getFrameMetricsApprox(first).offset - (stickyBlock.offset + stickyBlock.length);
+              var trailSpace = this._getFrameMetricsApprox(_first).offset - (stickyBlock.offset + stickyBlock.length);
               cells.push(React.createElement(View, { key: '$sticky_trail', style: { [spacerKey]: trailSpace } }));
               insertedStickySpacer = true;
               break;
@@ -39246,41 +39840,41 @@ let VirtualizedList = (_temp = _class = class VirtualizedList extends React.Pure
           }
         }
         if (!insertedStickySpacer) {
-          const initBlock = this._getFrameMetricsApprox(lastInitialIndex);
-          const firstSpace = this._getFrameMetricsApprox(first).offset - (initBlock.offset + initBlock.length);
+          var _initBlock = this._getFrameMetricsApprox(lastInitialIndex);
+          var firstSpace = this._getFrameMetricsApprox(_first).offset - (_initBlock.offset + _initBlock.length);
           cells.push(React.createElement(View, { key: '$lead_spacer', style: { [spacerKey]: firstSpace } }));
         }
       }
-      this._pushCells(cells, stickyHeaderIndices, stickyIndicesFromProps, firstAfterInitial, last);
+      this._pushCells(cells, stickyHeaderIndices, stickyIndicesFromProps, firstAfterInitial, _last);
       if (!this._hasWarned.keys && _usedIndexForKey) {
         console.warn('VirtualizedList: missing keys for items, make sure to specify a key property on each ' + 'item or provide a custom keyExtractor.');
         this._hasWarned.keys = true;
       }
-      if (!disableVirtualization && last < itemCount - 1) {
-        const lastFrame = this._getFrameMetricsApprox(last);
+      if (!disableVirtualization && _last < itemCount - 1) {
+        var lastFrame = this._getFrameMetricsApprox(_last);
 
-        const end = this.props.getItemLayout ? itemCount - 1 : Math.min(itemCount - 1, this._highestMeasuredFrameIndex);
-        const endFrame = this._getFrameMetricsApprox(end);
-        const tailSpacerLength = endFrame.offset + endFrame.length - (lastFrame.offset + lastFrame.length);
+        var end = this.props.getItemLayout ? itemCount - 1 : Math.min(itemCount - 1, this._highestMeasuredFrameIndex);
+        var endFrame = this._getFrameMetricsApprox(end);
+        var tailSpacerLength = endFrame.offset + endFrame.length - (lastFrame.offset + lastFrame.length);
         cells.push(React.createElement(View, { key: '$tail_spacer', style: { [spacerKey]: tailSpacerLength } }));
       }
     } else if (ListEmptyComponent) {
-      const element = React.isValidElement(ListEmptyComponent) ? ListEmptyComponent : React.createElement(ListEmptyComponent, null);
+      var _element = React.isValidElement(ListEmptyComponent) ? ListEmptyComponent : React.createElement(ListEmptyComponent, null);
       cells.push(React.createElement(
         View,
         { key: '$empty', onLayout: this._onLayoutEmpty },
-        element
+        _element
       ));
     }
     if (ListFooterComponent) {
-      const element = React.isValidElement(ListFooterComponent) ? ListFooterComponent : React.createElement(ListFooterComponent, null);
+      var _element2 = React.isValidElement(ListFooterComponent) ? ListFooterComponent : React.createElement(ListFooterComponent, null);
       cells.push(React.createElement(
         View,
         { key: '$footer', onLayout: this._onLayoutFooter },
-        element
+        _element2
       ));
     }
-    const ret = React.cloneElement(this.props.renderScrollComponent(this.props), {
+    var ret = React.cloneElement(this.props.renderScrollComponent(this.props), {
       onContentSizeChange: this._onContentSizeChange,
       onLayout: this._onLayout,
       onScroll: this._onScroll,
@@ -39289,7 +39883,7 @@ let VirtualizedList = (_temp = _class = class VirtualizedList extends React.Pure
       onMomentumScrollEnd: this._onMomentumScrollEnd,
       ref: this._captureScrollRef,
       scrollEventThrottle: this.props.scrollEventThrottle,
-      stickyHeaderIndices
+      stickyHeaderIndices: stickyHeaderIndices
     }, cells);
     if (this.props.debug) {
       return React.createElement(
@@ -39312,14 +39906,14 @@ let VirtualizedList = (_temp = _class = class VirtualizedList extends React.Pure
   }
 
   _onCellLayout(e, cellKey, index) {
-    const layout = e.nativeEvent.layout;
-    const next = {
+    var layout = e.nativeEvent.layout;
+    var next = {
       offset: this._selectOffset(layout),
       length: this._selectLength(layout),
-      index,
+      index: index,
       inLayout: true
     };
-    const curr = this._frames[cellKey];
+    var curr = this._frames[cellKey];
     if (!curr || next.offset !== curr.offset || next.length !== curr.length || index !== curr.index) {
       this._totalCellLength += next.length - (curr ? curr.length : 0);
       this._totalCellsMeasured += curr ? 0 : 1;
@@ -39334,30 +39928,32 @@ let VirtualizedList = (_temp = _class = class VirtualizedList extends React.Pure
   }
 
   _renderDebugOverlay() {
-    const normalize = this._scrollMetrics.visibleLength / this._scrollMetrics.contentLength;
-    const framesInLayout = [];
-    const itemCount = this.props.getItemCount(this.props.data);
-    for (let ii = 0; ii < itemCount; ii++) {
-      const frame = this._getFrameMetricsApprox(ii);
+    var normalize = this._scrollMetrics.visibleLength / this._scrollMetrics.contentLength;
+    var framesInLayout = [];
+    var itemCount = this.props.getItemCount(this.props.data);
+    for (var ii = 0; ii < itemCount; ii++) {
+      var frame = this._getFrameMetricsApprox(ii);
       if (frame.inLayout) {
         framesInLayout.push(frame);
       }
     }
-    const windowTop = this._getFrameMetricsApprox(this.state.first).offset;
-    const frameLast = this._getFrameMetricsApprox(this.state.last);
-    const windowLen = frameLast.offset + frameLast.length - windowTop;
-    const visTop = this._scrollMetrics.offset;
-    const visLen = this._scrollMetrics.visibleLength;
-    const baseStyle = { position: 'absolute', top: 0, right: 0 };
+    var windowTop = this._getFrameMetricsApprox(this.state.first).offset;
+    var frameLast = this._getFrameMetricsApprox(this.state.last);
+    var windowLen = frameLast.offset + frameLast.length - windowTop;
+    var visTop = this._scrollMetrics.offset;
+    var visLen = this._scrollMetrics.visibleLength;
+    var baseStyle = { position: 'absolute', top: 0, right: 0 };
     return React.createElement(
       View,
       { style: babelHelpers.extends({}, baseStyle, { bottom: 0, width: 20, borderColor: 'blue', borderWidth: 1 }) },
-      framesInLayout.map((f, ii) => React.createElement(View, { key: 'f' + ii, style: babelHelpers.extends({}, baseStyle, {
-          left: 0,
-          top: f.offset * normalize,
-          height: f.length * normalize,
-          backgroundColor: 'orange'
-        }) })),
+      framesInLayout.map(function (f, ii) {
+        return React.createElement(View, { key: 'f' + ii, style: babelHelpers.extends({}, baseStyle, {
+            left: 0,
+            top: f.offset * normalize,
+            height: f.length * normalize,
+            backgroundColor: 'orange'
+          }) });
+      }),
       React.createElement(View, { style: babelHelpers.extends({}, baseStyle, {
           left: 0,
           top: windowTop * normalize,
@@ -39384,25 +39980,25 @@ let VirtualizedList = (_temp = _class = class VirtualizedList extends React.Pure
   }
 
   _maybeCallOnEndReached() {
-    const { data, getItemCount, onEndReached, onEndReachedThreshold } = this.props;
-    const { contentLength, visibleLength, offset } = this._scrollMetrics;
-    const distanceFromEnd = contentLength - visibleLength - offset;
+    var { data: data, getItemCount: getItemCount, onEndReached: onEndReached, onEndReachedThreshold: onEndReachedThreshold } = this.props;
+    var { contentLength: contentLength, visibleLength: visibleLength, offset: offset } = this._scrollMetrics;
+    var distanceFromEnd = contentLength - visibleLength - offset;
     if (onEndReached && this.state.last === getItemCount(data) - 1 && distanceFromEnd < onEndReachedThreshold * visibleLength && (this._hasDataChangedSinceEndReached || this._scrollMetrics.contentLength !== this._sentEndForContentLength)) {
       this._hasDataChangedSinceEndReached = false;
       this._sentEndForContentLength = this._scrollMetrics.contentLength;
-      onEndReached({ distanceFromEnd });
+      onEndReached({ distanceFromEnd: distanceFromEnd });
     }
   }
 
   _scheduleCellsToRenderUpdate() {
-    const { first, last } = this.state;
-    const { offset, visibleLength, velocity } = this._scrollMetrics;
-    const itemCount = this.props.getItemCount(this.props.data);
-    let hiPri = false;
+    var { first: first, last: last } = this.state;
+    var { offset: offset, visibleLength: visibleLength, velocity: velocity } = this._scrollMetrics;
+    var itemCount = this.props.getItemCount(this.props.data);
+    var hiPri = false;
     if (first > 0 || last < itemCount - 1) {
-      const distTop = offset - this._getFrameMetricsApprox(first).offset;
-      const distBottom = this._getFrameMetricsApprox(last).offset - (offset + visibleLength);
-      const scrollingThreshold = this.props.onEndReachedThreshold * visibleLength / 2;
+      var distTop = offset - this._getFrameMetricsApprox(first).offset;
+      var distBottom = this._getFrameMetricsApprox(last).offset - (offset + visibleLength);
+      var scrollingThreshold = this.props.onEndReachedThreshold * visibleLength / 2;
       hiPri = Math.min(distTop, distBottom) < 0 || velocity < -2 && distTop < scrollingThreshold || velocity > 2 && distBottom < scrollingThreshold;
     }
     if (hiPri) {
@@ -39415,7 +40011,7 @@ let VirtualizedList = (_temp = _class = class VirtualizedList extends React.Pure
   }
 
   _updateViewableItems(data) {
-    const { getItemCount, onViewableItemsChanged } = this.props;
+    var { getItemCount: getItemCount, onViewableItemsChanged: onViewableItemsChanged } = this.props;
     if (!onViewableItemsChanged) {
       return;
     }
@@ -39425,7 +40021,7 @@ let VirtualizedList = (_temp = _class = class VirtualizedList extends React.Pure
   disableVirtualization: false,
   horizontal: false,
   initialNumToRender: 10,
-  keyExtractor: (item, index) => {
+  keyExtractor: function (item, index) {
     if (item.key != null) {
       return item.key;
     }
@@ -39434,7 +40030,7 @@ let VirtualizedList = (_temp = _class = class VirtualizedList extends React.Pure
   },
   maxToRenderPerBatch: 10,
   onEndReachedThreshold: 2,
-  renderScrollComponent: props => {
+  renderScrollComponent: function (props) {
     if (props.onRefresh) {
       invariant(typeof props.refreshing === 'boolean', '`refreshing` prop must be set as a boolean in order to use `onRefresh`, but got `' + JSON.stringify(props.refreshing) + '`');
 
@@ -39452,9 +40048,11 @@ let VirtualizedList = (_temp = _class = class VirtualizedList extends React.Pure
   scrollEventThrottle: 50,
   updateCellsBatchingPeriod: 50,
   windowSize: 21 }, _initialiseProps = function () {
-  this._onUpdateSeparators = (keys, newProps) => {
-    keys.forEach(key => {
-      const ref = key != null && this._cellRefs[key];
+  var _this3 = this;
+
+  this._onUpdateSeparators = function (keys, newProps) {
+    keys.forEach(function (key) {
+      var ref = key != null && _this3._cellRefs[key];
       ref && ref.updateSeparatorProps(newProps);
     });
   };
@@ -39476,107 +40074,107 @@ let VirtualizedList = (_temp = _class = class VirtualizedList extends React.Pure
   this._totalCellLength = 0;
   this._totalCellsMeasured = 0;
 
-  this._captureScrollRef = ref => {
-    this._scrollRef = ref;
+  this._captureScrollRef = function (ref) {
+    _this3._scrollRef = ref;
   };
 
-  this._onCellUnmount = cellKey => {
-    const curr = this._frames[cellKey];
+  this._onCellUnmount = function (cellKey) {
+    var curr = _this3._frames[cellKey];
     if (curr) {
-      this._frames[cellKey] = babelHelpers.extends({}, curr, { inLayout: false });
+      _this3._frames[cellKey] = babelHelpers.extends({}, curr, { inLayout: false });
     }
   };
 
-  this._onLayout = e => {
-    this._scrollMetrics.visibleLength = this._selectLength(e.nativeEvent.layout);
-    this.props.onLayout && this.props.onLayout(e);
-    this._scheduleCellsToRenderUpdate();
-    this._maybeCallOnEndReached();
+  this._onLayout = function (e) {
+    _this3._scrollMetrics.visibleLength = _this3._selectLength(e.nativeEvent.layout);
+    _this3.props.onLayout && _this3.props.onLayout(e);
+    _this3._scheduleCellsToRenderUpdate();
+    _this3._maybeCallOnEndReached();
   };
 
-  this._onLayoutEmpty = e => {
-    this.props.onLayout && this.props.onLayout(e);
+  this._onLayoutEmpty = function (e) {
+    _this3.props.onLayout && _this3.props.onLayout(e);
   };
 
-  this._onLayoutFooter = e => {
-    this._footerLength = this._selectLength(e.nativeEvent.layout);
+  this._onLayoutFooter = function (e) {
+    _this3._footerLength = _this3._selectLength(e.nativeEvent.layout);
   };
 
-  this._onLayoutHeader = e => {
-    this._headerLength = this._selectLength(e.nativeEvent.layout);
+  this._onLayoutHeader = function (e) {
+    _this3._headerLength = _this3._selectLength(e.nativeEvent.layout);
   };
 
-  this._onContentSizeChange = (width, height) => {
-    if (this.props.onContentSizeChange) {
-      this.props.onContentSizeChange(width, height);
+  this._onContentSizeChange = function (width, height) {
+    if (_this3.props.onContentSizeChange) {
+      _this3.props.onContentSizeChange(width, height);
     }
-    this._scrollMetrics.contentLength = this._selectLength({ height, width });
-    this._scheduleCellsToRenderUpdate();
-    this._maybeCallOnEndReached();
+    _this3._scrollMetrics.contentLength = _this3._selectLength({ height: height, width: width });
+    _this3._scheduleCellsToRenderUpdate();
+    _this3._maybeCallOnEndReached();
   };
 
-  this._onScroll = e => {
-    if (this.props.onScroll) {
-      this.props.onScroll(e);
+  this._onScroll = function (e) {
+    if (_this3.props.onScroll) {
+      _this3.props.onScroll(e);
     }
-    const timestamp = e.timeStamp;
-    const visibleLength = this._selectLength(e.nativeEvent.layoutMeasurement);
-    const contentLength = this._selectLength(e.nativeEvent.contentSize);
-    const offset = this._selectOffset(e.nativeEvent.contentOffset);
-    const dt = this._scrollMetrics.timestamp ? Math.max(1, timestamp - this._scrollMetrics.timestamp) : 1;
-    if (dt > 500 && this._scrollMetrics.dt > 500 && contentLength > 5 * visibleLength && !this._hasWarned.perf) {
-      infoLog('VirtualizedList: You have a large list that is slow to update - make sure your ' + 'renderItem function renders components that follow React performance best practices ' + 'like PureComponent, shouldComponentUpdate, etc.', { dt, prevDt: this._scrollMetrics.dt, contentLength });
-      this._hasWarned.perf = true;
+    var timestamp = e.timeStamp;
+    var visibleLength = _this3._selectLength(e.nativeEvent.layoutMeasurement);
+    var contentLength = _this3._selectLength(e.nativeEvent.contentSize);
+    var offset = _this3._selectOffset(e.nativeEvent.contentOffset);
+    var dt = _this3._scrollMetrics.timestamp ? Math.max(1, timestamp - _this3._scrollMetrics.timestamp) : 1;
+    if (dt > 500 && _this3._scrollMetrics.dt > 500 && contentLength > 5 * visibleLength && !_this3._hasWarned.perf) {
+      infoLog('VirtualizedList: You have a large list that is slow to update - make sure your ' + 'renderItem function renders components that follow React performance best practices ' + 'like PureComponent, shouldComponentUpdate, etc.', { dt: dt, prevDt: _this3._scrollMetrics.dt, contentLength: contentLength });
+      _this3._hasWarned.perf = true;
     }
-    const dOffset = offset - this._scrollMetrics.offset;
-    const velocity = dOffset / dt;
-    this._scrollMetrics = { contentLength, dt, dOffset, offset, timestamp, velocity, visibleLength };
-    this._updateViewableItems(this.props.data);
-    if (!this.props) {
+    var dOffset = offset - _this3._scrollMetrics.offset;
+    var velocity = dOffset / dt;
+    _this3._scrollMetrics = { contentLength: contentLength, dt: dt, dOffset: dOffset, offset: offset, timestamp: timestamp, velocity: velocity, visibleLength: visibleLength };
+    _this3._updateViewableItems(_this3.props.data);
+    if (!_this3.props) {
       return;
     }
-    this._maybeCallOnEndReached();
+    _this3._maybeCallOnEndReached();
     if (velocity !== 0) {
-      this._fillRateHelper.activate();
+      _this3._fillRateHelper.activate();
     }
-    this._computeBlankness();
-    this._scheduleCellsToRenderUpdate();
+    _this3._computeBlankness();
+    _this3._scheduleCellsToRenderUpdate();
   };
 
-  this._onScrollBeginDrag = e => {
-    this._viewabilityHelper.recordInteraction();
-    this.props.onScrollBeginDrag && this.props.onScrollBeginDrag(e);
+  this._onScrollBeginDrag = function (e) {
+    _this3._viewabilityHelper.recordInteraction();
+    _this3.props.onScrollBeginDrag && _this3.props.onScrollBeginDrag(e);
   };
 
-  this._onScrollEndDrag = e => {
-    const { velocity } = e.nativeEvent;
+  this._onScrollEndDrag = function (e) {
+    var { velocity: velocity } = e.nativeEvent;
     if (velocity) {
-      this._scrollMetrics.velocity = this._selectOffset(velocity);
+      _this3._scrollMetrics.velocity = _this3._selectOffset(velocity);
     }
-    this._computeBlankness();
-    this.props.onScrollEndDrag && this.props.onScrollEndDrag(e);
+    _this3._computeBlankness();
+    _this3.props.onScrollEndDrag && _this3.props.onScrollEndDrag(e);
   };
 
-  this._onMomentumScrollEnd = e => {
-    this._scrollMetrics.velocity = 0;
-    this._computeBlankness();
-    this.props.onMomentumScrollEnd && this.props.onMomentumScrollEnd(e);
+  this._onMomentumScrollEnd = function (e) {
+    _this3._scrollMetrics.velocity = 0;
+    _this3._computeBlankness();
+    _this3.props.onMomentumScrollEnd && _this3.props.onMomentumScrollEnd(e);
   };
 
-  this._updateCellsToRender = () => {
-    const { data, disableVirtualization, getItemCount, onEndReachedThreshold } = this.props;
-    this._updateViewableItems(data);
+  this._updateCellsToRender = function () {
+    var { data: data, disableVirtualization: disableVirtualization, getItemCount: getItemCount, onEndReachedThreshold: onEndReachedThreshold } = _this3.props;
+    _this3._updateViewableItems(data);
     if (!data) {
       return;
     }
-    this.setState(state => {
-      let newState;
+    _this3.setState(function (state) {
+      var newState = void 0;
       if (!disableVirtualization) {
-        newState = computeWindowedRenderLimits(this.props, state, this._getFrameMetricsApprox, this._scrollMetrics);
+        newState = computeWindowedRenderLimits(_this3.props, state, _this3._getFrameMetricsApprox, _this3._scrollMetrics);
       } else {
-        const { contentLength, offset, visibleLength } = this._scrollMetrics;
-        const distanceFromEnd = contentLength - visibleLength - offset;
-        const renderAhead = distanceFromEnd < onEndReachedThreshold * visibleLength ? this.props.maxToRenderPerBatch : 0;
+        var { contentLength: contentLength, offset: _offset, visibleLength: visibleLength } = _this3._scrollMetrics;
+        var _distanceFromEnd = contentLength - visibleLength - _offset;
+        var renderAhead = _distanceFromEnd < onEndReachedThreshold * visibleLength ? _this3.props.maxToRenderPerBatch : 0;
         newState = {
           first: 0,
           last: Math.min(state.last + renderAhead, getItemCount(data) - 1)
@@ -39586,32 +40184,32 @@ let VirtualizedList = (_temp = _class = class VirtualizedList extends React.Pure
     });
   };
 
-  this._createViewToken = (index, isViewable) => {
-    const { data, getItem, keyExtractor } = this.props;
-    const item = getItem(data, index);
+  this._createViewToken = function (index, isViewable) {
+    var { data: data, getItem: getItem, keyExtractor: keyExtractor } = _this3.props;
+    var item = getItem(data, index);
     invariant(item, 'Missing item for index ' + index);
-    return { index, item, key: keyExtractor(item, index), isViewable };
+    return { index: index, item: item, key: keyExtractor(item, index), isViewable: isViewable };
   };
 
-  this._getFrameMetricsApprox = index => {
-    const frame = this._getFrameMetrics(index);
+  this._getFrameMetricsApprox = function (index) {
+    var frame = _this3._getFrameMetrics(index);
     if (frame && frame.index === index) {
       return frame;
     } else {
-      const { getItemLayout } = this.props;
-      invariant(!getItemLayout, 'Should not have to estimate frames when a measurement metrics function is provided');
+      var { getItemLayout: _getItemLayout } = _this3.props;
+      invariant(!_getItemLayout, 'Should not have to estimate frames when a measurement metrics function is provided');
       return {
-        length: this._averageCellLength,
-        offset: this._averageCellLength * index
+        length: _this3._averageCellLength,
+        offset: _this3._averageCellLength * index
       };
     }
   };
 
-  this._getFrameMetrics = index => {
-    const { data, getItem, getItemCount, getItemLayout, keyExtractor } = this.props;
+  this._getFrameMetrics = function (index) {
+    var { data: data, getItem: getItem, getItemCount: getItemCount, getItemLayout: getItemLayout, keyExtractor: keyExtractor } = _this3.props;
     invariant(getItemCount(data) > index, 'Tried to get frame for out of range index ' + index);
-    const item = getItem(data, index);
-    let frame = item && this._frames[keyExtractor(item, index)];
+    var item = getItem(data, index);
+    var frame = item && _this3._frames[keyExtractor(item, index)];
     if (!frame || frame.index !== index) {
       if (getItemLayout) {
         frame = getItemLayout(data, index);
@@ -39620,33 +40218,35 @@ let VirtualizedList = (_temp = _class = class VirtualizedList extends React.Pure
     return frame;
   };
 }, _temp);
-let CellRenderer = class CellRenderer extends React.Component {
+var CellRenderer = class CellRenderer extends React.Component {
   constructor(...args) {
-    var _temp2;
+    var _temp2, _this4;
 
-    return _temp2 = super(...args), this.state = {
+    return _temp2 = _this4 = super(...args), this.state = {
       separatorProps: {
         highlighted: false,
         leadingItem: this.props.item
       }
     }, this._separators = {
-      highlight: () => {
-        const { cellKey, prevCellKey } = this.props;
-        this.props.onUpdateSeparators([cellKey, prevCellKey], { highlighted: true });
+      highlight: function () {
+        var { cellKey: cellKey, prevCellKey: prevCellKey } = _this4.props;
+        _this4.props.onUpdateSeparators([cellKey, prevCellKey], { highlighted: true });
       },
-      unhighlight: () => {
-        const { cellKey, prevCellKey } = this.props;
-        this.props.onUpdateSeparators([cellKey, prevCellKey], { highlighted: false });
+      unhighlight: function () {
+        var { cellKey: cellKey, prevCellKey: prevCellKey } = _this4.props;
+        _this4.props.onUpdateSeparators([cellKey, prevCellKey], { highlighted: false });
       },
-      updateProps: (select, newProps) => {
-        const { cellKey, prevCellKey } = this.props;
-        this.props.onUpdateSeparators([select === 'leading' ? prevCellKey : cellKey], newProps);
+      updateProps: function (select, newProps) {
+        var { cellKey: cellKey, prevCellKey: prevCellKey } = _this4.props;
+        _this4.props.onUpdateSeparators([select === 'leading' ? prevCellKey : cellKey], newProps);
       }
     }, _temp2;
   }
 
   updateSeparatorProps(newProps) {
-    this.setState(state => ({ separatorProps: babelHelpers.extends({}, state.separatorProps, newProps) }));
+    this.setState(function (state) {
+      return { separatorProps: babelHelpers.extends({}, state.separatorProps, newProps) };
+    });
   }
 
   componentWillUnmount() {
@@ -39654,15 +40254,15 @@ let CellRenderer = class CellRenderer extends React.Component {
   }
 
   render() {
-    const { ItemSeparatorComponent, fillRateHelper, item, index, parentProps } = this.props;
-    const { renderItem, getItemLayout } = parentProps;
+    var { ItemSeparatorComponent: ItemSeparatorComponent, fillRateHelper: fillRateHelper, item: item, index: index, parentProps: parentProps } = this.props;
+    var { renderItem: renderItem, getItemLayout: getItemLayout } = parentProps;
     invariant(renderItem, 'no renderItem!');
-    const element = renderItem({
-      item,
-      index,
+    var element = renderItem({
+      item: item,
+      index: index,
       separators: this._separators
     });
-    const onLayout = getItemLayout && !parentProps.debug && !fillRateHelper.enabled() ? undefined : this.props.onLayout;
+    var onLayout = getItemLayout && !parentProps.debug && !fillRateHelper.enabled() ? undefined : this.props.onLayout;
 
     return React.createElement(
       View,
@@ -39679,9 +40279,9 @@ module.exports = VirtualizedList;
 __d(/* Batchinator */function(global, require, module, exports) {
 'use strict';
 
-const InteractionManager = require(186                 ); // 186 = InteractionManager
+var InteractionManager = require(186                 ); // 186 = InteractionManager
 
-let Batchinator = class Batchinator {
+var Batchinator = class Batchinator {
   constructor(callback, delayMS) {
     this._delay = delayMS;
     this._callback = callback;
@@ -39697,16 +40297,20 @@ let Batchinator = class Batchinator {
     }
   }
   schedule() {
+    var _this = this;
+
     if (this._taskHandle) {
       return;
     }
-    const timeoutHandle = setTimeout(() => {
-      this._taskHandle = InteractionManager.runAfterInteractions(() => {
-        this._taskHandle = null;
-        this._callback();
+    var timeoutHandle = setTimeout(function () {
+      _this._taskHandle = InteractionManager.runAfterInteractions(function () {
+        _this._taskHandle = null;
+        _this._callback();
       });
     }, this._delay);
-    this._taskHandle = { cancel: () => clearTimeout(timeoutHandle) };
+    this._taskHandle = { cancel: function () {
+        return clearTimeout(timeoutHandle);
+      } };
   }
 };
 
@@ -39717,10 +40321,10 @@ __d(/* FillRateHelper */function(global, require, module, exports) {
 
 'use strict';
 
-const performanceNow = require(42                       ); // 42 = fbjs/lib/performanceNow
-const warning = require(15                ); // 15 = fbjs/lib/warning
+var performanceNow = require(42                       ); // 42 = fbjs/lib/performanceNow
+var warning = require(15                ); // 15 = fbjs/lib/warning
 
-let Info = class Info {
+var Info = class Info {
   constructor() {
     this.any_blank_count = 0;
     this.any_blank_ms = 0;
@@ -39737,20 +40341,22 @@ let Info = class Info {
 };
 
 
-const DEBUG = false;
+var DEBUG = false;
 
-let _listeners = [];
-let _minSampleCount = 10;
-let _sampleRate = DEBUG ? 1 : null;
+var _listeners = [];
+var _minSampleCount = 10;
+var _sampleRate = DEBUG ? 1 : null;
 
-let FillRateHelper = class FillRateHelper {
+var FillRateHelper = class FillRateHelper {
 
   static addListener(callback) {
     warning(_sampleRate !== null, 'Call `FillRateHelper.setSampleRate` before `addListener`.');
     _listeners.push(callback);
     return {
-      remove: () => {
-        _listeners = _listeners.filter(listener => callback !== listener);
+      remove: function () {
+        _listeners = _listeners.filter(function (listener) {
+          return callback !== listener;
+        });
       }
     };
   }
@@ -39786,7 +40392,7 @@ let FillRateHelper = class FillRateHelper {
     if (!this._enabled) {
       return;
     }
-    const start = this._samplesStartTime;
+    var start = this._samplesStartTime;
     if (start == null) {
       DEBUG && console.debug('FillRateHelper: bail on deactivate with no start time');
       return;
@@ -39795,12 +40401,12 @@ let FillRateHelper = class FillRateHelper {
       this._resetData();
       return;
     }
-    const total_time_spent = performanceNow() - start;
-    const info = babelHelpers.extends({}, this._info, {
-      total_time_spent
+    var total_time_spent = performanceNow() - start;
+    var info = babelHelpers.extends({}, this._info, {
+      total_time_spent: total_time_spent
     });
     if (DEBUG) {
-      const derived = {
+      var derived = {
         avg_blankness: this._info.pixels_blank / this._info.pixels_sampled,
         avg_speed: this._info.pixels_scrolled / (total_time_spent / 1000),
         avg_speed_when_any_blank: this._info.any_blank_speed_sum / this._info.any_blank_count,
@@ -39809,12 +40415,14 @@ let FillRateHelper = class FillRateHelper {
         mostly_blank_per_min: this._info.mostly_blank_count / (total_time_spent / 1000 / 60),
         mostly_blank_time_frac: this._info.mostly_blank_ms / total_time_spent
       };
-      for (const key in derived) {
+      for (var key in derived) {
         derived[key] = Math.round(1000 * derived[key]) / 1000;
       }
-      console.debug('FillRateHelper deactivateAndFlush: ', { derived, info });
+      console.debug('FillRateHelper deactivateAndFlush: ', { derived: derived, info: info });
     }
-    _listeners.forEach(listener => listener(info));
+    _listeners.forEach(function (listener) {
+      return listener(info);
+    });
     this._resetData();
   }
 
@@ -39822,13 +40430,13 @@ let FillRateHelper = class FillRateHelper {
     if (!this._enabled || props.getItemCount(props.data) === 0 || this._samplesStartTime == null) {
       return 0;
     }
-    const { dOffset, offset, velocity, visibleLength } = scrollMetrics;
+    var { dOffset: dOffset, offset: offset, velocity: velocity, visibleLength: visibleLength } = scrollMetrics;
 
     this._info.sample_count++;
     this._info.pixels_sampled += Math.round(visibleLength);
     this._info.pixels_scrolled += Math.round(Math.abs(dOffset));
-    const scrollSpeed = Math.round(Math.abs(velocity) * 1000);
-    const now = performanceNow();
+    var scrollSpeed = Math.round(Math.abs(velocity) * 1000);
+    var now = performanceNow();
     if (this._anyBlankStartTime != null) {
       this._info.any_blank_ms += now - this._anyBlankStartTime;
     }
@@ -39838,9 +40446,9 @@ let FillRateHelper = class FillRateHelper {
     }
     this._mostlyBlankStartTime = null;
 
-    let blankTop = 0;
-    let first = state.first;
-    let firstFrame = this._getFrameMetrics(first);
+    var blankTop = 0;
+    var first = state.first;
+    var firstFrame = this._getFrameMetrics(first);
     while (first <= state.last && (!firstFrame || !firstFrame.inLayout)) {
       firstFrame = this._getFrameMetrics(first);
       first++;
@@ -39849,20 +40457,20 @@ let FillRateHelper = class FillRateHelper {
     if (firstFrame && first > 0) {
       blankTop = Math.min(visibleLength, Math.max(0, firstFrame.offset - offset));
     }
-    let blankBottom = 0;
-    let last = state.last;
-    let lastFrame = this._getFrameMetrics(last);
+    var blankBottom = 0;
+    var last = state.last;
+    var lastFrame = this._getFrameMetrics(last);
     while (last >= state.first && (!lastFrame || !lastFrame.inLayout)) {
       lastFrame = this._getFrameMetrics(last);
       last--;
     }
 
     if (lastFrame && last < props.getItemCount(props.data) - 1) {
-      const bottomEdge = lastFrame.offset + lastFrame.length;
+      var bottomEdge = lastFrame.offset + lastFrame.length;
       blankBottom = Math.min(visibleLength, Math.max(0, offset + visibleLength - bottomEdge));
     }
-    const pixels_blank = Math.round(blankTop + blankBottom);
-    const blankness = pixels_blank / visibleLength;
+    var pixels_blank = Math.round(blankTop + blankBottom);
+    var blankness = pixels_blank / visibleLength;
     if (blankness > 0) {
       this._anyBlankStartTime = now;
       this._info.any_blank_speed_sum += scrollSpeed;
@@ -39896,9 +40504,9 @@ module.exports = FillRateHelper;
 __d(/* ViewabilityHelper */function(global, require, module, exports) {
 'use strict';
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-let ViewabilityHelper = class ViewabilityHelper {
+var ViewabilityHelper = class ViewabilityHelper {
 
   constructor(config = { viewAreaCoveragePercentThreshold: 0 }) {
     this._hasInteracted = false;
@@ -39915,24 +40523,24 @@ let ViewabilityHelper = class ViewabilityHelper {
   }
 
   computeViewableItems(itemCount, scrollOffset, viewportHeight, getFrameMetrics, renderRange) {
-    const { itemVisiblePercentThreshold, viewAreaCoveragePercentThreshold } = this._config;
-    const viewAreaMode = viewAreaCoveragePercentThreshold != null;
-    const viewablePercentThreshold = viewAreaMode ? viewAreaCoveragePercentThreshold : itemVisiblePercentThreshold;
+    var { itemVisiblePercentThreshold: itemVisiblePercentThreshold, viewAreaCoveragePercentThreshold: viewAreaCoveragePercentThreshold } = this._config;
+    var viewAreaMode = viewAreaCoveragePercentThreshold != null;
+    var viewablePercentThreshold = viewAreaMode ? viewAreaCoveragePercentThreshold : itemVisiblePercentThreshold;
     invariant(viewablePercentThreshold != null && itemVisiblePercentThreshold != null !== (viewAreaCoveragePercentThreshold != null), 'Must set exactly one of itemVisiblePercentThreshold or viewAreaCoveragePercentThreshold');
-    const viewableIndices = [];
+    var viewableIndices = [];
     if (itemCount === 0) {
       return viewableIndices;
     }
-    let firstVisible = -1;
-    const { first, last } = renderRange || { first: 0, last: itemCount - 1 };
-    invariant(last < itemCount, 'Invalid render range ' + JSON.stringify({ renderRange, itemCount }));
-    for (let idx = first; idx <= last; idx++) {
-      const metrics = getFrameMetrics(idx);
+    var firstVisible = -1;
+    var { first: first, last: last } = renderRange || { first: 0, last: itemCount - 1 };
+    invariant(last < itemCount, 'Invalid render range ' + JSON.stringify({ renderRange: renderRange, itemCount: itemCount }));
+    for (var idx = first; idx <= last; idx++) {
+      var metrics = getFrameMetrics(idx);
       if (!metrics) {
         continue;
       }
-      const top = metrics.offset - scrollOffset;
-      const bottom = top + metrics.length;
+      var top = metrics.offset - scrollOffset;
+      var bottom = top + metrics.length;
       if (top < viewportHeight && bottom > 0) {
         firstVisible = idx;
         if (_isViewable(viewAreaMode, viewablePercentThreshold, top, bottom, viewportHeight, metrics.length)) {
@@ -39946,27 +40554,31 @@ let ViewabilityHelper = class ViewabilityHelper {
   }
 
   onUpdate(itemCount, scrollOffset, viewportHeight, getFrameMetrics, createViewToken, onViewableItemsChanged, renderRange) {
-    const updateTime = Date.now();
+    var _this = this;
+
+    var updateTime = Date.now();
     if (this._lastUpdateTime === 0 && itemCount > 0 && getFrameMetrics(0)) {
       this._lastUpdateTime = updateTime;
     }
-    const updateElapsed = this._lastUpdateTime ? updateTime - this._lastUpdateTime : 0;
+    var updateElapsed = this._lastUpdateTime ? updateTime - this._lastUpdateTime : 0;
     if (this._config.waitForInteraction && !this._hasInteracted) {
       return;
     }
-    let viewableIndices = [];
+    var viewableIndices = [];
     if (itemCount) {
       viewableIndices = this.computeViewableItems(itemCount, scrollOffset, viewportHeight, getFrameMetrics, renderRange);
     }
-    if (this._viewableIndices.length === viewableIndices.length && this._viewableIndices.every((v, ii) => v === viewableIndices[ii])) {
+    if (this._viewableIndices.length === viewableIndices.length && this._viewableIndices.every(function (v, ii) {
+      return v === viewableIndices[ii];
+    })) {
       return;
     }
     this._viewableIndices = viewableIndices;
     this._lastUpdateTime = updateTime;
     if (this._config.minimumViewTime && updateElapsed < this._config.minimumViewTime) {
-      const handle = setTimeout(() => {
-        this._timers.delete(handle);
-        this._onUpdateSync(viewableIndices, onViewableItemsChanged, createViewToken);
+      var handle = setTimeout(function () {
+        _this._timers.delete(handle);
+        _this._onUpdateSync(viewableIndices, onViewableItemsChanged, createViewToken);
       }, this._config.minimumViewTime);
       this._timers.add(handle);
     } else {
@@ -39979,27 +40591,31 @@ let ViewabilityHelper = class ViewabilityHelper {
   }
 
   _onUpdateSync(viewableIndicesToCheck, onViewableItemsChanged, createViewToken) {
-    viewableIndicesToCheck = viewableIndicesToCheck.filter(ii => this._viewableIndices.includes(ii));
-    const prevItems = this._viewableItems;
-    const nextItems = new Map(viewableIndicesToCheck.map(ii => {
-      const viewable = createViewToken(ii, true);
+    var _this2 = this;
+
+    viewableIndicesToCheck = viewableIndicesToCheck.filter(function (ii) {
+      return _this2._viewableIndices.includes(ii);
+    });
+    var prevItems = this._viewableItems;
+    var nextItems = new Map(viewableIndicesToCheck.map(function (ii) {
+      var viewable = createViewToken(ii, true);
       return [viewable.key, viewable];
     }));
 
-    const changed = [];
-    for (const [key, viewable] of nextItems) {
-      if (!prevItems.has(key)) {
+    var changed = [];
+    for (var [_key, viewable] of nextItems) {
+      if (!prevItems.has(_key)) {
         changed.push(viewable);
       }
     }
-    for (const [key, viewable] of prevItems) {
-      if (!nextItems.has(key)) {
-        changed.push(babelHelpers.extends({}, viewable, { isViewable: false }));
+    for (var [_key2, _viewable] of prevItems) {
+      if (!nextItems.has(_key2)) {
+        changed.push(babelHelpers.extends({}, _viewable, { isViewable: false }));
       }
     }
     if (changed.length > 0) {
       this._viewableItems = nextItems;
-      onViewableItemsChanged({ viewableItems: Array.from(nextItems.values()), changed });
+      onViewableItemsChanged({ viewableItems: Array.from(nextItems.values()), changed: changed });
     }
   }
 };
@@ -40009,14 +40625,14 @@ function _isViewable(viewAreaMode, viewablePercentThreshold, top, bottom, viewpo
   if (_isEntirelyVisible(top, bottom, viewportHeight)) {
     return true;
   } else {
-    const pixels = _getPixelsVisible(top, bottom, viewportHeight);
-    const percent = 100 * (viewAreaMode ? pixels / viewportHeight : pixels / itemLength);
+    var pixels = _getPixelsVisible(top, bottom, viewportHeight);
+    var percent = 100 * (viewAreaMode ? pixels / viewportHeight : pixels / itemLength);
     return percent >= viewablePercentThreshold;
   }
 }
 
 function _getPixelsVisible(top, bottom, viewportHeight) {
-  const visibleHeight = Math.min(bottom, viewportHeight) - Math.max(top, 0);
+  var visibleHeight = Math.min(bottom, viewportHeight) - Math.max(top, 0);
   return Math.max(0, visibleHeight);
 }
 
@@ -40029,14 +40645,14 @@ module.exports = ViewabilityHelper;
 __d(/* VirtualizeUtils */function(global, require, module, exports) {
 'use strict';
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
 function elementsThatOverlapOffsets(offsets, itemCount, getFrameMetrics) {
-  const out = [];
-  for (let ii = 0; ii < itemCount; ii++) {
-    const frame = getFrameMetrics(ii);
-    const trailingOffset = frame.offset + frame.length;
-    for (let kk = 0; kk < offsets.length; kk++) {
+  var out = [];
+  for (var ii = 0; ii < itemCount; ii++) {
+    var frame = getFrameMetrics(ii);
+    var trailingOffset = frame.offset + frame.length;
+    for (var kk = 0; kk < offsets.length; kk++) {
       if (out[kk] == null && trailingOffset >= offsets[kk]) {
         out[kk] = ii;
         if (kk === offsets.length - 1) {
@@ -40054,42 +40670,42 @@ function newRangeCount(prev, next) {
 }
 
 function computeWindowedRenderLimits(props, prev, getFrameMetricsApprox, scrollMetrics) {
-  const { data, getItemCount, maxToRenderPerBatch, windowSize } = props;
-  const itemCount = getItemCount(data);
+  var { data: data, getItemCount: getItemCount, maxToRenderPerBatch: maxToRenderPerBatch, windowSize: windowSize } = props;
+  var itemCount = getItemCount(data);
   if (itemCount === 0) {
     return prev;
   }
-  const { offset, velocity, visibleLength } = scrollMetrics;
+  var { offset: offset, velocity: velocity, visibleLength: visibleLength } = scrollMetrics;
 
-  const visibleBegin = Math.max(0, offset);
-  const visibleEnd = visibleBegin + visibleLength;
-  const overscanLength = (windowSize - 1) * visibleLength;
+  var visibleBegin = Math.max(0, offset);
+  var visibleEnd = visibleBegin + visibleLength;
+  var overscanLength = (windowSize - 1) * visibleLength;
 
-  const leadFactor = 0.5;
+  var leadFactor = 0.5;
 
-  const fillPreference = velocity > 1 ? 'after' : velocity < -1 ? 'before' : 'none';
+  var fillPreference = velocity > 1 ? 'after' : velocity < -1 ? 'before' : 'none';
 
-  const overscanBegin = Math.max(0, visibleBegin - (1 - leadFactor) * overscanLength);
-  const overscanEnd = Math.max(0, visibleEnd + leadFactor * overscanLength);
+  var overscanBegin = Math.max(0, visibleBegin - (1 - leadFactor) * overscanLength);
+  var overscanEnd = Math.max(0, visibleEnd + leadFactor * overscanLength);
 
-  let [overscanFirst, first, last, overscanLast] = elementsThatOverlapOffsets([overscanBegin, visibleBegin, visibleEnd, overscanEnd], props.getItemCount(props.data), getFrameMetricsApprox);
+  var [overscanFirst, first, last, overscanLast] = elementsThatOverlapOffsets([overscanBegin, visibleBegin, visibleEnd, overscanEnd], props.getItemCount(props.data), getFrameMetricsApprox);
   overscanFirst = overscanFirst == null ? 0 : overscanFirst;
   first = first == null ? Math.max(0, overscanFirst) : first;
   overscanLast = overscanLast == null ? itemCount - 1 : overscanLast;
   last = last == null ? Math.min(overscanLast, first + maxToRenderPerBatch - 1) : last;
-  const visible = { first, last };
+  var visible = { first: first, last: last };
 
-  let newCellCount = newRangeCount(prev, visible);
+  var newCellCount = newRangeCount(prev, visible);
 
   while (true) {
     if (first <= overscanFirst && last >= overscanLast) {
       break;
     }
-    const maxNewCells = newCellCount >= maxToRenderPerBatch;
-    const firstWillAddMore = first <= prev.first || first > prev.last;
-    const firstShouldIncrement = first > overscanFirst && (!maxNewCells || !firstWillAddMore);
-    const lastWillAddMore = last >= prev.last || last < prev.first;
-    const lastShouldIncrement = last < overscanLast && (!maxNewCells || !lastWillAddMore);
+    var maxNewCells = newCellCount >= maxToRenderPerBatch;
+    var firstWillAddMore = first <= prev.first || first > prev.last;
+    var firstShouldIncrement = first > overscanFirst && (!maxNewCells || !firstWillAddMore);
+    var lastWillAddMore = last >= prev.last || last < prev.first;
+    var lastShouldIncrement = last < overscanLast && (!maxNewCells || !lastWillAddMore);
     if (maxNewCells && !firstShouldIncrement && !lastShouldIncrement) {
       break;
     }
@@ -40107,15 +40723,15 @@ function computeWindowedRenderLimits(props, prev, getFrameMetricsApprox, scrollM
     }
   }
   if (!(last >= first && first >= 0 && last < itemCount && first >= overscanFirst && last <= overscanLast && first <= visible.first && last >= visible.last)) {
-    throw new Error('Bad window calculation ' + JSON.stringify({ first, last, itemCount, overscanFirst, overscanLast, visible }));
+    throw new Error('Bad window calculation ' + JSON.stringify({ first: first, last: last, itemCount: itemCount, overscanFirst: overscanFirst, overscanLast: overscanLast, visible: visible }));
   }
-  return { first, last };
+  return { first: first, last: last };
 }
 
-const VirtualizeUtils = {
-  computeWindowedRenderLimits,
-  elementsThatOverlapOffsets,
-  newRangeCount
+var VirtualizeUtils = {
+  computeWindowedRenderLimits: computeWindowedRenderLimits,
+  elementsThatOverlapOffsets: elementsThatOverlapOffsets,
+  newRangeCount: newRangeCount
 };
 
 module.exports = VirtualizeUtils;
@@ -40123,15 +40739,15 @@ module.exports = VirtualizeUtils;
 __d(/* ImageBackground */function(global, require, module, exports) {
 'use strict';
 
-const Image = require(195    ); // 195 = Image
-const React = require(125    ); // 125 = React
-const View = require(124   ); // 124 = View
+var Image = require(195    ); // 195 = Image
+var React = require(125    ); // 125 = React
+var View = require(124   ); // 124 = View
 
-let ImageBackground = class ImageBackground extends React.Component {
+var ImageBackground = class ImageBackground extends React.Component {
   render() {
-    const _props = this.props,
-          { children, style, imageStyle, imageRef } = _props,
-          props = babelHelpers.objectWithoutProperties(_props, ['children', 'style', 'imageStyle', 'imageRef']);
+    var _props = this.props,
+        { children: children, style: style, imageStyle: imageStyle, imageRef: imageRef } = _props,
+        props = babelHelpers.objectWithoutProperties(_props, ['children', 'style', 'imageStyle', 'imageRef']);
 
     return React.createElement(
       View,
@@ -40157,9 +40773,9 @@ module.exports = ImageBackground;
 __d(/* ImageEditor */function(global, require, module, exports) {
 'use strict';
 
-const RCTImageEditingManager = require(36             ).ImageEditingManager; // 36 = NativeModules
+var RCTImageEditingManager = require(36             ).ImageEditingManager; // 36 = NativeModules
 
-let ImageEditor = class ImageEditor {
+var ImageEditor = class ImageEditor {
   static cropImage(uri, cropData, success, failure) {
     RCTImageEditingManager.cropImage(uri, cropData, success, failure);
   }
@@ -40171,9 +40787,9 @@ module.exports = ImageEditor;
 __d(/* ImageStore */function(global, require, module, exports) {
 'use strict';
 
-const RCTImageStoreManager = require(36             ).ImageStoreManager; // 36 = NativeModules
+var RCTImageStoreManager = require(36             ).ImageStoreManager; // 36 = NativeModules
 
-let ImageStore = class ImageStore {
+var ImageStore = class ImageStore {
   static hasImageForTag(uri, callback) {
     if (RCTImageStoreManager.hasImageForTag) {
       RCTImageStoreManager.hasImageForTag(uri, callback);
@@ -40205,18 +40821,18 @@ module.exports = ImageStore;
 __d(/* KeyboardAvoidingView */function(global, require, module, exports) {
 'use strict';
 
-const Keyboard = require(70        ); // 70 = Keyboard
-const LayoutAnimation = require(227              ); // 227 = LayoutAnimation
-const Platform = require(46        ); // 46 = Platform
-const PropTypes = require(19          ); // 19 = prop-types
-const React = require(125    ); // 125 = React
-const TimerMixin = require(205                ); // 205 = react-timer-mixin
-const View = require(124   ); // 124 = View
-const ViewPropTypes = require(140            ); // 140 = ViewPropTypes
+var Keyboard = require(70        ); // 70 = Keyboard
+var LayoutAnimation = require(227              ); // 227 = LayoutAnimation
+var Platform = require(46        ); // 46 = Platform
+var PropTypes = require(19          ); // 19 = prop-types
+var React = require(125    ); // 125 = React
+var TimerMixin = require(205                ); // 205 = react-timer-mixin
+var View = require(124   ); // 124 = View
+var ViewPropTypes = require(140            ); // 140 = ViewPropTypes
 
-const viewRef = 'VIEW';
+var viewRef = 'VIEW';
 
-const KeyboardAvoidingView = React.createClass({
+var KeyboardAvoidingView = React.createClass({
   mixins: [TimerMixin],
 
   propTypes: babelHelpers.extends({}, ViewPropTypes, {
@@ -40227,40 +40843,39 @@ const KeyboardAvoidingView = React.createClass({
     keyboardVerticalOffset: PropTypes.number.isRequired
   }),
 
-  getDefaultProps() {
+  getDefaultProps: function () {
     return {
       keyboardVerticalOffset: 0
     };
   },
-
-  getInitialState() {
+  getInitialState: function () {
     return {
       bottom: 0
     };
   },
 
+
   subscriptions: [],
   frame: null,
 
-  relativeKeyboardHeight(keyboardFrame) {
-    const frame = this.frame;
+  relativeKeyboardHeight: function (keyboardFrame) {
+    var frame = this.frame;
     if (!frame || !keyboardFrame) {
       return 0;
     }
 
-    const keyboardY = keyboardFrame.screenY - this.props.keyboardVerticalOffset;
+    var keyboardY = keyboardFrame.screenY - this.props.keyboardVerticalOffset;
 
     return Math.max(frame.y + frame.height - keyboardY, 0);
   },
-
-  onKeyboardChange(event) {
+  onKeyboardChange: function (event) {
     if (!event) {
       this.setState({ bottom: 0 });
       return;
     }
 
-    const { duration, easing, endCoordinates } = event;
-    const height = this.relativeKeyboardHeight(endCoordinates);
+    var { duration: duration, easing: easing, endCoordinates: endCoordinates } = event;
+    var height = this.relativeKeyboardHeight(endCoordinates);
 
     if (duration && easing) {
       LayoutAnimation.configureNext({
@@ -40273,37 +40888,34 @@ const KeyboardAvoidingView = React.createClass({
     }
     this.setState({ bottom: height });
   },
-
-  onLayout(event) {
+  onLayout: function (event) {
     this.frame = event.nativeEvent.layout;
   },
-
-  componentWillUpdate(nextProps, nextState, nextContext) {
+  componentWillUpdate: function (nextProps, nextState, nextContext) {
     if (nextState.bottom === this.state.bottom && this.props.behavior === 'height' && nextProps.behavior === 'height') {
       nextState.bottom = 0;
     }
   },
-
-  componentWillMount() {
+  componentWillMount: function () {
     if (Platform.OS === 'ios') {
       this.subscriptions = [Keyboard.addListener('keyboardWillChangeFrame', this.onKeyboardChange)];
     } else {
       this.subscriptions = [Keyboard.addListener('keyboardDidHide', this.onKeyboardChange), Keyboard.addListener('keyboardDidShow', this.onKeyboardChange)];
     }
   },
-
-  componentWillUnmount() {
-    this.subscriptions.forEach(sub => sub.remove());
+  componentWillUnmount: function () {
+    this.subscriptions.forEach(function (sub) {
+      return sub.remove();
+    });
   },
-
-  render() {
-    const _props = this.props,
-          { behavior, children, style } = _props,
-          props = babelHelpers.objectWithoutProperties(_props, ['behavior', 'children', 'style']);
+  render: function () {
+    var _props = this.props,
+        { behavior: behavior, children: children, style: style } = _props,
+        props = babelHelpers.objectWithoutProperties(_props, ['behavior', 'children', 'style']);
 
     switch (behavior) {
       case 'height':
-        let heightStyle;
+        var heightStyle = void 0;
         if (this.frame) {
           heightStyle = { height: this.frame.height - this.state.bottom, flex: 0 };
         }
@@ -40314,8 +40926,8 @@ const KeyboardAvoidingView = React.createClass({
         );
 
       case 'position':
-        const positionStyle = { bottom: this.state.bottom };
-        const { contentContainerStyle } = this.props;
+        var positionStyle = { bottom: this.state.bottom };
+        var { contentContainerStyle: contentContainerStyle } = this.props;
 
         return React.createElement(
           View,
@@ -40328,7 +40940,7 @@ const KeyboardAvoidingView = React.createClass({
         );
 
       case 'padding':
-        const paddingStyle = { paddingBottom: this.state.bottom };
+        var paddingStyle = { paddingBottom: this.state.bottom };
         return React.createElement(
           View,
           babelHelpers.extends({ ref: viewRef, style: [style, paddingStyle], onLayout: this.onLayout }, props),
@@ -40350,14 +40962,14 @@ module.exports = KeyboardAvoidingView;
 __d(/* LayoutAnimation */function(global, require, module, exports) {
 'use strict';
 
-const PropTypes = require(19          ); // 19 = prop-types
-const UIManager = require(73         ); // 73 = UIManager
+var PropTypes = require(19          ); // 19 = prop-types
+var UIManager = require(73         ); // 73 = UIManager
 
-const keyMirror = require(129                 ); // 129 = fbjs/lib/keyMirror
+var keyMirror = require(129                 ); // 129 = fbjs/lib/keyMirror
 
-const { checkPropTypes } = PropTypes;
+var { checkPropTypes: checkPropTypes } = PropTypes;
 
-const TypesEnum = {
+var TypesEnum = {
   spring: true,
   linear: true,
   easeInEaseOut: true,
@@ -40365,15 +40977,15 @@ const TypesEnum = {
   easeOut: true,
   keyboard: true
 };
-const Types = keyMirror(TypesEnum);
+var Types = keyMirror(TypesEnum);
 
-const PropertiesEnum = {
+var PropertiesEnum = {
   opacity: true,
   scaleXY: true
 };
-const Properties = keyMirror(PropertiesEnum);
+var Properties = keyMirror(PropertiesEnum);
 
-const animType = PropTypes.shape({
+var animType = PropTypes.shape({
   duration: PropTypes.number,
   delay: PropTypes.number,
   springDamping: PropTypes.number,
@@ -40382,7 +40994,7 @@ const animType = PropTypes.shape({
   property: PropTypes.oneOf(Object.keys(Properties))
 });
 
-const configType = PropTypes.shape({
+var configType = PropTypes.shape({
   duration: PropTypes.number.isRequired,
   create: animType,
   update: animType,
@@ -40390,7 +41002,7 @@ const configType = PropTypes.shape({
 });
 
 function checkConfig(config, location, name) {
-  checkPropTypes({ config: configType }, { config }, location, name);
+  checkPropTypes({ config: configType }, { config: config }, location, name);
 }
 
 function configureNext(config, onAnimationDidEnd) {
@@ -40402,22 +41014,22 @@ function configureNext(config, onAnimationDidEnd) {
 
 function create(duration, type, creationProp) {
   return {
-    duration,
+    duration: duration,
     create: {
-      type,
+      type: type,
       property: creationProp
     },
     update: {
-      type
+      type: type
     },
     delete: {
-      type,
+      type: type,
       property: creationProp
     }
   };
 }
 
-const Presets = {
+var Presets = {
   easeInEaseOut: create(300, Types.easeInEaseOut, Properties.opacity),
   linear: create(500, Types.linear, Properties.opacity),
   spring: {
@@ -40437,14 +41049,14 @@ const Presets = {
   }
 };
 
-const LayoutAnimation = {
-  configureNext,
+var LayoutAnimation = {
+  configureNext: configureNext,
 
-  create,
-  Types,
-  Properties,
-  checkConfig,
-  Presets,
+  create: create,
+  Types: Types,
+  Properties: Properties,
+  checkConfig: checkConfig,
+  Presets: Presets,
   easeInEaseOut: configureNext.bind(null, Presets.easeInEaseOut),
   linear: configureNext.bind(null, Presets.linear),
   spring: configureNext.bind(null, Presets.spring)
@@ -40457,30 +41069,30 @@ __d(/* Modal */function(global, require, module, exports) {
 
 var _class, _temp;
 
-const AppContainer = require(229           ); // 229 = AppContainer
-const I18nManager = require(250          ); // 250 = I18nManager
-const Platform = require(46        ); // 46 = Platform
-const React = require(125    ); // 125 = React
-const PropTypes = require(19          ); // 19 = prop-types
-const StyleSheet = require(151         ); // 151 = StyleSheet
-const View = require(124   ); // 124 = View
+var AppContainer = require(229           ); // 229 = AppContainer
+var I18nManager = require(250          ); // 250 = I18nManager
+var Platform = require(46        ); // 46 = Platform
+var React = require(125    ); // 125 = React
+var PropTypes = require(19          ); // 19 = prop-types
+var StyleSheet = require(151         ); // 151 = StyleSheet
+var View = require(124   ); // 124 = View
 
-const deprecatedPropType = require(133                 ); // 133 = deprecatedPropType
-const requireNativeComponent = require(149                     ); // 149 = requireNativeComponent
-const RCTModalHostView = requireNativeComponent('RCTModalHostView', null);
+var deprecatedPropType = require(133                 ); // 133 = deprecatedPropType
+var requireNativeComponent = require(149                     ); // 149 = requireNativeComponent
+var RCTModalHostView = requireNativeComponent('RCTModalHostView', null);
 
-let Modal = (_temp = _class = class Modal extends React.Component {
+var Modal = (_temp = _class = class Modal extends React.Component {
 
   render() {
     if (this.props.visible === false) {
       return null;
     }
 
-    const containerStyles = {
+    var containerStyles = {
       backgroundColor: this.props.transparent ? 'transparent' : 'white'
     };
 
-    let animationType = this.props.animationType;
+    var animationType = this.props.animationType;
     if (!animationType) {
       animationType = 'none';
       if (this.props.animated) {
@@ -40488,7 +41100,7 @@ let Modal = (_temp = _class = class Modal extends React.Component {
       }
     }
 
-    const innerChildren = __DEV__ ? React.createElement(
+    var innerChildren = __DEV__ ? React.createElement(
       AppContainer,
       { rootTag: this.context.rootTag },
       this.props.children
@@ -40543,8 +41155,8 @@ let Modal = (_temp = _class = class Modal extends React.Component {
 }, _temp);
 
 
-const side = I18nManager.isRTL ? 'right' : 'left';
-const styles = StyleSheet.create({
+var side = I18nManager.isRTL ? 'right' : 'left';
+var styles = StyleSheet.create({
   modal: {
     position: 'absolute'
   },
@@ -40563,14 +41175,14 @@ __d(/* AppContainer */function(global, require, module, exports) {
 
 var _class, _temp2;
 
-const EmitterSubscription = require(65                   ); // 65 = EmitterSubscription
-const RCTDeviceEventEmitter = require(68                     ); // 68 = RCTDeviceEventEmitter
-const React = require(125    ); // 125 = React
-const ReactNative = require(32           ); // 32 = ReactNative
-const StyleSheet = require(151         ); // 151 = StyleSheet
-const View = require(124   ); // 124 = View
+var EmitterSubscription = require(65                   ); // 65 = EmitterSubscription
+var RCTDeviceEventEmitter = require(68                     ); // 68 = RCTDeviceEventEmitter
+var React = require(125    ); // 125 = React
+var ReactNative = require(32           ); // 32 = ReactNative
+var StyleSheet = require(151         ); // 151 = StyleSheet
+var View = require(124   ); // 124 = View
 
-let AppContainer = (_temp2 = _class = class AppContainer extends React.Component {
+var AppContainer = (_temp2 = _class = class AppContainer extends React.Component {
   constructor(...args) {
     var _temp;
 
@@ -40587,17 +41199,23 @@ let AppContainer = (_temp2 = _class = class AppContainer extends React.Component
   }
 
   componentDidMount() {
+    var _this = this;
+
     if (__DEV__) {
       if (!global.__RCTProfileIsProfiling) {
-        this._subscription = RCTDeviceEventEmitter.addListener('toggleElementInspector', () => {
-          const Inspector = require(230        ); // 230 = Inspector
-          const inspector = this.state.inspector ? null : React.createElement(Inspector, {
-            inspectedViewTag: ReactNative.findNodeHandle(this._mainRef),
-            onRequestRerenderApp: updateInspectedViewTag => {
-              this.setState(s => ({ mainKey: s.mainKey + 1 }), () => updateInspectedViewTag(ReactNative.findNodeHandle(this._mainRef)));
+        this._subscription = RCTDeviceEventEmitter.addListener('toggleElementInspector', function () {
+          var Inspector = require(230        ); // 230 = Inspector
+          var inspector = _this.state.inspector ? null : React.createElement(Inspector, {
+            inspectedViewTag: ReactNative.findNodeHandle(_this._mainRef),
+            onRequestRerenderApp: function (updateInspectedViewTag) {
+              _this.setState(function (s) {
+                return { mainKey: s.mainKey + 1 };
+              }, function () {
+                return updateInspectedViewTag(ReactNative.findNodeHandle(_this._mainRef));
+              });
             }
           });
-          this.setState({ inspector });
+          _this.setState({ inspector: inspector });
         });
       }
     }
@@ -40610,10 +41228,12 @@ let AppContainer = (_temp2 = _class = class AppContainer extends React.Component
   }
 
   render() {
-    let yellowBox = null;
+    var _this2 = this;
+
+    var yellowBox = null;
     if (__DEV__) {
       if (!global.__RCTProfileIsProfiling) {
-        const YellowBox = require(249        ); // 249 = YellowBox
+        var YellowBox = require(249        ); // 249 = YellowBox
         yellowBox = React.createElement(YellowBox, null);
       }
     }
@@ -40627,8 +41247,8 @@ let AppContainer = (_temp2 = _class = class AppContainer extends React.Component
           collapsable: !this.state.inspector,
           key: this.state.mainKey,
           pointerEvents: 'box-none',
-          style: styles.appContainer, ref: ref => {
-            this._mainRef = ref;
+          style: styles.appContainer, ref: function (ref) {
+            _this2._mainRef = ref;
           } },
         this.props.children
       ),
@@ -40641,7 +41261,7 @@ let AppContainer = (_temp2 = _class = class AppContainer extends React.Component
 }, _temp2);
 
 
-const styles = StyleSheet.create({
+var styles = StyleSheet.create({
   appContainer: {
     flex: 1
   }
@@ -40655,33 +41275,33 @@ __d(/* Inspector */function(global, require, module, exports) {
 
 var _class, _temp, _initialiseProps;
 
-const Dimensions = require(153         ); // 153 = Dimensions
-const InspectorOverlay = require(231               ); // 231 = InspectorOverlay
-const InspectorPanel = require(235             ); // 235 = InspectorPanel
-const Platform = require(46        ); // 46 = Platform
-const React = require(125    ); // 125 = React
-const ReactNative = require(32           ); // 32 = ReactNative
-const StyleSheet = require(151         ); // 151 = StyleSheet
-const Touchable = require(175        ); // 175 = Touchable
-const UIManager = require(73         ); // 73 = UIManager
-const View = require(124   ); // 124 = View
+var Dimensions = require(153         ); // 153 = Dimensions
+var InspectorOverlay = require(231               ); // 231 = InspectorOverlay
+var InspectorPanel = require(235             ); // 235 = InspectorPanel
+var Platform = require(46        ); // 46 = Platform
+var React = require(125    ); // 125 = React
+var ReactNative = require(32           ); // 32 = ReactNative
+var StyleSheet = require(151         ); // 151 = StyleSheet
+var Touchable = require(175        ); // 175 = Touchable
+var UIManager = require(73         ); // 73 = UIManager
+var View = require(124   ); // 124 = View
 
-const emptyObject = require(17                    ); // 17 = fbjs/lib/emptyObject
-const invariant = require(248        ); // 248 = invariant
+var emptyObject = require(17                    ); // 17 = fbjs/lib/emptyObject
+var invariant = require(248        ); // 248 = invariant
 
-const hook = window.__REACT_DEVTOOLS_GLOBAL_HOOK__;
-const renderer = findRenderer();
+var hook = window.__REACT_DEVTOOLS_GLOBAL_HOOK__;
+var renderer = findRenderer();
 
 hook.resolveRNStyle = require(110           ); // 110 = flattenStyle
 
 function findRenderer() {
-  const renderers = hook._renderers;
-  const keys = Object.keys(renderers);
+  var renderers = hook._renderers;
+  var keys = Object.keys(renderers);
   invariant(keys.length === 1, 'Expected to find exactly one React Native renderer on DevTools hook.');
   return renderers[keys[0]];
 }
 
-let Inspector = (_temp = _class = class Inspector extends React.Component {
+var Inspector = (_temp = _class = class Inspector extends React.Component {
 
   constructor(props) {
     super(props);
@@ -40711,7 +41331,9 @@ let Inspector = (_temp = _class = class Inspector extends React.Component {
 
   componentWillUnmount() {
     if (this._subs) {
-      this._subs.map(fn => fn());
+      this._subs.map(function (fn) {
+        return fn();
+      });
     }
     hook.off('react-devtools', this.attachToDevtools);
   }
@@ -40721,20 +41343,22 @@ let Inspector = (_temp = _class = class Inspector extends React.Component {
   }
 
   setSelection(i) {
-    const hierarchyItem = this.state.hierarchy[i];
+    var _this = this;
 
-    const {
-      measure,
-      props,
-      source
+    var hierarchyItem = this.state.hierarchy[i];
+
+    var {
+      measure: measure,
+      props: props,
+      source: source
     } = hierarchyItem.getInspectorData(ReactNative.findNodeHandle);
 
-    measure((x, y, width, height, left, top) => {
-      this.setState({
+    measure(function (x, y, width, height, left, top) {
+      _this.setState({
         inspected: {
-          frame: { left, top, width, height },
+          frame: { left: left, top: top, width: width, height: height },
           style: props.style,
-          source
+          source: source
         },
         selection: i
       });
@@ -40742,26 +41366,26 @@ let Inspector = (_temp = _class = class Inspector extends React.Component {
   }
 
   onTouchViewTag(touchedViewTag, frame, pointerY) {
-    const {
-      hierarchy,
-      props,
-      selection,
-      source
+    var {
+      hierarchy: hierarchy,
+      props: props,
+      selection: selection,
+      source: source
     } = renderer.getInspectorDataForViewTag(touchedViewTag);
 
     if (this.state.devtoolsAgent) {
-      const offsetFromLeaf = hierarchy.length - 1 - selection;
+      var offsetFromLeaf = hierarchy.length - 1 - selection;
       this.state.devtoolsAgent.selectFromDOMNode(touchedViewTag, true, offsetFromLeaf);
     }
 
     this.setState({
       panelPos: pointerY > Dimensions.get('window').height / 2 ? 'top' : 'bottom',
-      selection,
-      hierarchy,
+      selection: selection,
+      hierarchy: hierarchy,
       inspected: {
         style: props.style,
-        frame,
-        source
+        frame: frame,
+        source: source
       }
     });
   }
@@ -40783,9 +41407,11 @@ let Inspector = (_temp = _class = class Inspector extends React.Component {
   }
 
   setTouchTargetting(val) {
+    var _this2 = this;
+
     Touchable.TOUCH_TARGET_DEBUG = val;
-    this.props.onRequestRerenderApp(inspectedViewTag => {
-      this.setState({ inspectedViewTag });
+    this.props.onRequestRerenderApp(function (inspectedViewTag) {
+      _this2.setState({ inspectedViewTag: inspectedViewTag });
     });
   }
 
@@ -40799,7 +41425,7 @@ let Inspector = (_temp = _class = class Inspector extends React.Component {
   }
 
   render() {
-    const panelContainerStyle = this.state.panelPos === 'bottom' ? { bottom: 0 } : { top: Platform.OS === 'ios' ? 20 : 0 };
+    var panelContainerStyle = this.state.panelPos === 'bottom' ? { bottom: 0 } : { top: Platform.OS === 'ios' ? 20 : 0 };
     return React.createElement(
       View,
       { style: styles.container, pointerEvents: 'box-none' },
@@ -40830,50 +41456,52 @@ let Inspector = (_temp = _class = class Inspector extends React.Component {
     );
   }
 }, _initialiseProps = function () {
-  this.attachToDevtools = agent => {
-    let _hideWait = null;
-    const hlSub = agent.sub('highlight', ({ node, name, props }) => {
+  var _this3 = this;
+
+  this.attachToDevtools = function (agent) {
+    var _hideWait = null;
+    var hlSub = agent.sub('highlight', function ({ node: node, name: name, props: props }) {
       clearTimeout(_hideWait);
 
       if (typeof node !== 'number') {
         node = ReactNative.findNodeHandle(node);
       }
 
-      UIManager.measure(node, (x, y, width, height, left, top) => {
-        this.setState({
+      UIManager.measure(node, function (x, y, width, height, left, top) {
+        _this3.setState({
           hierarchy: [],
           inspected: {
-            frame: { left, top, width, height },
+            frame: { left: left, top: top, width: width, height: height },
             style: props ? props.style : emptyObject
           }
         });
       });
     });
-    const hideSub = agent.sub('hideHighlight', () => {
-      if (this.state.inspected === null) {
+    var hideSub = agent.sub('hideHighlight', function () {
+      if (_this3.state.inspected === null) {
         return;
       }
 
-      _hideWait = setTimeout(() => {
-        this.setState({
+      _hideWait = setTimeout(function () {
+        _this3.setState({
           inspected: null
         });
       }, 100);
     });
-    this._subs = [hlSub, hideSub];
+    _this3._subs = [hlSub, hideSub];
 
-    agent.on('shutdown', () => {
-      this.setState({ devtoolsAgent: null });
-      this._subs = null;
+    agent.on('shutdown', function () {
+      _this3.setState({ devtoolsAgent: null });
+      _this3._subs = null;
     });
-    this.setState({
+    _this3.setState({
       devtoolsAgent: agent
     });
   };
 }, _temp);
 
 
-const styles = StyleSheet.create({
+var styles = StyleSheet.create({
   container: {
     position: 'absolute',
     backgroundColor: 'transparent',
@@ -40904,17 +41532,17 @@ var StyleSheet = require(151         ); // 151 = StyleSheet
 var UIManager = require(73         ); // 73 = UIManager
 var View = require(124   ); // 124 = View
 
-let InspectorOverlay = (_temp2 = _class = class InspectorOverlay extends React.Component {
+var InspectorOverlay = (_temp2 = _class = class InspectorOverlay extends React.Component {
   constructor(...args) {
-    var _temp;
+    var _temp, _this;
 
-    return _temp = super(...args), this.findViewForTouchEvent = e => {
-      var { locationX, locationY } = e.nativeEvent.touches[0];
-      UIManager.findSubviewIn(this.props.inspectedViewTag, [locationX, locationY], (nativeViewTag, left, top, width, height) => {
-        this.props.onTouchViewTag(nativeViewTag, { left, top, width, height }, locationY);
+    return _temp = _this = super(...args), this.findViewForTouchEvent = function (e) {
+      var { locationX: locationX, locationY: locationY } = e.nativeEvent.touches[0];
+      UIManager.findSubviewIn(_this.props.inspectedViewTag, [locationX, locationY], function (nativeViewTag, left, top, width, height) {
+        _this.props.onTouchViewTag(nativeViewTag, { left: left, top: top, width: width, height: height }, locationY);
       });
-    }, this.shouldSetResponser = e => {
-      this.findViewForTouchEvent(e);
+    }, this.shouldSetResponser = function (e) {
+      _this.findViewForTouchEvent(e);
       return true;
     }, _temp;
   }
@@ -40967,7 +41595,7 @@ var resolveBoxStyle = require(234              ); // 234 = resolveBoxStyle
 
 var flattenStyle = require(110           ); // 110 = flattenStyle
 
-let ElementBox = class ElementBox extends React.Component {
+var ElementBox = class ElementBox extends React.Component {
   render() {
     var style = flattenStyle(this.props.style) || {};
     var margin = resolveBoxStyle('margin', style);
@@ -41031,7 +41659,7 @@ __d(/* BorderBox */function(global, require, module, exports) {
 var React = require(125    ); // 125 = React
 var View = require(124   ); // 124 = View
 
-let BorderBox = class BorderBox extends React.Component {
+var BorderBox = class BorderBox extends React.Component {
   render() {
     var box = this.props.box;
     if (!box) {
@@ -41061,7 +41689,7 @@ function resolveBoxStyle(prefix, style) {
   var res = {};
   var subs = ['top', 'left', 'bottom', 'right'];
   var set = false;
-  subs.forEach(sub => {
+  subs.forEach(function (sub) {
     res[sub] = style[prefix] || 0;
   });
   if (style[prefix]) {
@@ -41075,7 +41703,7 @@ function resolveBoxStyle(prefix, style) {
     res.left = res.right = style[prefix + 'Horizontal'];
     set = true;
   }
-  subs.forEach(sub => {
+  subs.forEach(function (sub) {
     var val = style[prefix + capFirst(sub)];
     if (val) {
       res[sub] = val;
@@ -41097,18 +41725,18 @@ module.exports = resolveBoxStyle;
 __d(/* InspectorPanel */function(global, require, module, exports) {
 'use strict';
 
-const ElementProperties = require(236                ); // 236 = ElementProperties
-const NetworkOverlay = require(244             ); // 244 = NetworkOverlay
-const PerformanceOverlay = require(247                 ); // 247 = PerformanceOverlay
-const React = require(125    ); // 125 = React
-const PropTypes = require(19          ); // 19 = prop-types
-const ScrollView = require(196         ); // 196 = ScrollView
-const StyleSheet = require(151         ); // 151 = StyleSheet
-const Text = require(174   ); // 174 = Text
-const TouchableHighlight = require(239                 ); // 239 = TouchableHighlight
-const View = require(124   ); // 124 = View
+var ElementProperties = require(236                ); // 236 = ElementProperties
+var NetworkOverlay = require(244             ); // 244 = NetworkOverlay
+var PerformanceOverlay = require(247                 ); // 247 = PerformanceOverlay
+var React = require(125    ); // 125 = React
+var PropTypes = require(19          ); // 19 = prop-types
+var ScrollView = require(196         ); // 196 = ScrollView
+var StyleSheet = require(151         ); // 151 = StyleSheet
+var Text = require(174   ); // 174 = Text
+var TouchableHighlight = require(239                 ); // 239 = TouchableHighlight
+var View = require(124   ); // 124 = View
 
-let InspectorPanel = class InspectorPanel extends React.Component {
+var InspectorPanel = class InspectorPanel extends React.Component {
   renderWaiting() {
     if (this.props.inspecting) {
       return React.createElement(
@@ -41125,7 +41753,7 @@ let InspectorPanel = class InspectorPanel extends React.Component {
   }
 
   render() {
-    let contents;
+    var contents = void 0;
     if (this.props.inspected) {
       contents = React.createElement(
         ScrollView,
@@ -41193,11 +41821,15 @@ InspectorPanel.propTypes = {
   setNetworking: PropTypes.func
 };
 
-let Button = class Button extends React.Component {
+var Button = class Button extends React.Component {
   render() {
+    var _this = this;
+
     return React.createElement(
       TouchableHighlight,
-      { onPress: () => this.props.onClick(!this.props.pressed), style: [styles.button, this.props.pressed && styles.buttonPressed] },
+      { onPress: function () {
+          return _this.props.onClick(!_this.props.pressed);
+        }, style: [styles.button, this.props.pressed && styles.buttonPressed] },
       React.createElement(
         Text,
         { style: styles.buttonText },
@@ -41208,7 +41840,7 @@ let Button = class Button extends React.Component {
 };
 
 
-const styles = StyleSheet.create({
+var styles = StyleSheet.create({
   buttonRow: {
     flexDirection: 'row'
   },
@@ -41251,32 +41883,34 @@ __d(/* ElementProperties */function(global, require, module, exports) {
 
 var _class, _temp;
 
-const BoxInspector = require(237           ); // 237 = BoxInspector
-const PropTypes = require(19          ); // 19 = prop-types
-const React = require(125    ); // 125 = React
-const StyleInspector = require(238             ); // 238 = StyleInspector
-const StyleSheet = require(151         ); // 151 = StyleSheet
-const Text = require(174   ); // 174 = Text
-const TouchableHighlight = require(239                 ); // 239 = TouchableHighlight
-const TouchableWithoutFeedback = require(206                       ); // 206 = TouchableWithoutFeedback
-const View = require(124   ); // 124 = View
+var BoxInspector = require(237           ); // 237 = BoxInspector
+var PropTypes = require(19          ); // 19 = prop-types
+var React = require(125    ); // 125 = React
+var StyleInspector = require(238             ); // 238 = StyleInspector
+var StyleSheet = require(151         ); // 151 = StyleSheet
+var Text = require(174   ); // 174 = Text
+var TouchableHighlight = require(239                 ); // 239 = TouchableHighlight
+var TouchableWithoutFeedback = require(206                       ); // 206 = TouchableWithoutFeedback
+var View = require(124   ); // 124 = View
 
-const flattenStyle = require(110           ); // 110 = flattenStyle
-const mapWithSeparator = require(242               ); // 242 = mapWithSeparator
-const openFileInEditor = require(243               ); // 243 = openFileInEditor
+var flattenStyle = require(110           ); // 110 = flattenStyle
+var mapWithSeparator = require(242               ); // 242 = mapWithSeparator
+var openFileInEditor = require(243               ); // 243 = openFileInEditor
 
-let ElementProperties = (_temp = _class = class ElementProperties extends React.Component {
+var ElementProperties = (_temp = _class = class ElementProperties extends React.Component {
 
   render() {
-    const style = flattenStyle(this.props.style);
+    var _this = this;
 
-    const selection = this.props.selection;
-    let openFileButton;
-    const source = this.props.source;
-    const { fileName, lineNumber } = source || {};
+    var style = flattenStyle(this.props.style);
+
+    var selection = this.props.selection;
+    var openFileButton = void 0;
+    var source = this.props.source;
+    var { fileName: fileName, lineNumber: lineNumber } = source || {};
     if (fileName && lineNumber) {
-      const parts = fileName.split('/');
-      const fileNameShort = parts[parts.length - 1];
+      var parts = fileName.split('/');
+      var fileNameShort = parts[parts.length - 1];
       openFileButton = React.createElement(
         TouchableHighlight,
         {
@@ -41301,23 +41935,29 @@ let ElementProperties = (_temp = _class = class ElementProperties extends React.
         React.createElement(
           View,
           { style: styles.breadcrumb },
-          mapWithSeparator(this.props.hierarchy, (hierarchyItem, i) => React.createElement(
-            TouchableHighlight,
-            {
-              key: 'item-' + i,
-              style: [styles.breadItem, i === selection && styles.selected],
+          mapWithSeparator(this.props.hierarchy, function (hierarchyItem, i) {
+            return React.createElement(
+              TouchableHighlight,
+              {
+                key: 'item-' + i,
+                style: [styles.breadItem, i === selection && styles.selected],
 
-              onPress: () => this.props.setSelection(i) },
-            React.createElement(
+                onPress: function () {
+                  return _this.props.setSelection(i);
+                } },
+              React.createElement(
+                Text,
+                { style: styles.breadItemText },
+                hierarchyItem.name
+              )
+            );
+          }, function (i) {
+            return React.createElement(
               Text,
-              { style: styles.breadItemText },
-              hierarchyItem.name
-            )
-          ), i => React.createElement(
-            Text,
-            { key: 'sep-' + i, style: styles.breadSep },
-            '\u25B8'
-          ))
+              { key: 'sep-' + i, style: styles.breadSep },
+              '\u25B8'
+            );
+          })
         ),
         React.createElement(
           View,
@@ -41343,7 +41983,7 @@ let ElementProperties = (_temp = _class = class ElementProperties extends React.
 }, _temp);
 
 
-const styles = StyleSheet.create({
+var styles = StyleSheet.create({
   breadSep: {
     fontSize: 8,
     color: 'white'
@@ -41410,7 +42050,7 @@ var blank = {
   bottom: 0
 };
 
-let BoxInspector = class BoxInspector extends React.Component {
+var BoxInspector = class BoxInspector extends React.Component {
   render() {
     var frame = this.props.frame;
     var style = this.props.style;
@@ -41446,7 +42086,7 @@ let BoxInspector = class BoxInspector extends React.Component {
     );
   }
 };
-let BoxContainer = class BoxContainer extends React.Component {
+var BoxContainer = class BoxContainer extends React.Component {
   render() {
     var box = this.props.box;
     return React.createElement(
@@ -41543,8 +42183,10 @@ var StyleSheet = require(151         ); // 151 = StyleSheet
 var Text = require(174   ); // 174 = Text
 var View = require(124   ); // 124 = View
 
-let StyleInspector = class StyleInspector extends React.Component {
+var StyleInspector = class StyleInspector extends React.Component {
   render() {
+    var _this = this;
+
     if (!this.props.style) {
       return React.createElement(
         Text,
@@ -41559,18 +42201,20 @@ let StyleInspector = class StyleInspector extends React.Component {
       React.createElement(
         View,
         null,
-        names.map(name => React.createElement(
-          Text,
-          { key: name, style: styles.attr },
-          name,
-          ':'
-        ))
+        names.map(function (name) {
+          return React.createElement(
+            Text,
+            { key: name, style: styles.attr },
+            name,
+            ':'
+          );
+        })
       ),
       React.createElement(
         View,
         null,
-        names.map(name => {
-          var value = typeof this.props.style[name] === 'object' ? JSON.stringify(this.props.style[name]) : this.props.style[name];
+        names.map(function (name) {
+          var value = typeof _this.props.style[name] === 'object' ? JSON.stringify(_this.props.style[name]) : _this.props.style[name];
           return React.createElement(
             Text,
             { key: name, style: styles.value },
@@ -41614,7 +42258,7 @@ __d(/* TouchableHighlight */function(global, require, module, exports) {
 
 var ColorPropType = require(29             ); // 29 = ColorPropType
 var NativeMethodsMixin = require(31                  ); // 31 = NativeMethodsMixin
-const PropTypes = require(19          ); // 19 = prop-types
+var PropTypes = require(19          ); // 19 = prop-types
 var React = require(125    ); // 125 = React
 var ReactNativeViewAttributes = require(139                        ); // 139 = ReactNativeViewAttributes
 var StyleSheet = require(151         ); // 151 = StyleSheet
@@ -41622,7 +42266,7 @@ var TimerMixin = require(205                ); // 205 = react-timer-mixin
 var Touchable = require(175        ); // 175 = Touchable
 var TouchableWithoutFeedback = require(206                       ); // 206 = TouchableWithoutFeedback
 var View = require(124   ); // 124 = View
-const ViewPropTypes = require(140            ); // 140 = ViewPropTypes
+var ViewPropTypes = require(140            ); // 140 = ViewPropTypes
 
 var ensureComponentIsNative = require(240                      ); // 240 = ensureComponentIsNative
 var ensurePositiveDelayProps = require(207                       ); // 207 = ensurePositiveDelayProps
@@ -41655,7 +42299,9 @@ var TouchableHighlight = React.createClass({
 
   mixins: [NativeMethodsMixin, TimerMixin, Touchable.Mixin],
 
-  getDefaultProps: () => DEFAULT_PROPS,
+  getDefaultProps: function () {
+    return DEFAULT_PROPS;
+  },
 
   _computeSyntheticState: function (props) {
     return {
@@ -41848,10 +42494,10 @@ __d(/* mapWithSeparator */function(global, require, module, exports) {
 'use strict';
 
 function mapWithSeparator(items, itemRenderer, spacerRenderer) {
-  const mapped = [];
+  var mapped = [];
   if (items.length > 0) {
     mapped.push(itemRenderer(items[0], 0, items));
-    for (let ii = 1; ii < items.length; ii++) {
+    for (var ii = 1; ii < items.length; ii++) {
       mapped.push(spacerRenderer(ii - 1), itemRenderer(items[ii], ii, items));
     }
   }
@@ -41863,12 +42509,12 @@ module.exports = mapWithSeparator;
 __d(/* openFileInEditor */function(global, require, module, exports) {
 'use strict';
 
-const getDevServer = require(54            ); // 54 = getDevServer
+var getDevServer = require(54            ); // 54 = getDevServer
 
 function openFileInEditor(file, lineNumber) {
   fetch(getDevServer().url + 'open-stack-frame', {
     method: 'POST',
-    body: JSON.stringify({ file, lineNumber })
+    body: JSON.stringify({ file: file, lineNumber: lineNumber })
   });
 }
 
@@ -41877,28 +42523,30 @@ module.exports = openFileInEditor;
 __d(/* NetworkOverlay */function(global, require, module, exports) {
 'use strict';
 
-const ListView = require(212       ); // 212 = ListView
-const React = require(125    ); // 125 = React
-const ScrollView = require(196         ); // 196 = ScrollView
-const StyleSheet = require(151         ); // 151 = StyleSheet
-const Text = require(174   ); // 174 = Text
-const TouchableHighlight = require(239                 ); // 239 = TouchableHighlight
-const View = require(124   ); // 124 = View
-const WebSocketInterceptor = require(245                   ); // 245 = WebSocketInterceptor
-const XHRInterceptor = require(246             ); // 246 = XHRInterceptor
+var ListView = require(212       ); // 212 = ListView
+var React = require(125    ); // 125 = React
+var ScrollView = require(196         ); // 196 = ScrollView
+var StyleSheet = require(151         ); // 151 = StyleSheet
+var Text = require(174   ); // 174 = Text
+var TouchableHighlight = require(239                 ); // 239 = TouchableHighlight
+var View = require(124   ); // 124 = View
+var WebSocketInterceptor = require(245                   ); // 245 = WebSocketInterceptor
+var XHRInterceptor = require(246             ); // 246 = XHRInterceptor
 
-const LISTVIEW_CELL_HEIGHT = 15;
-const SEPARATOR_THICKNESS = 2;
+var LISTVIEW_CELL_HEIGHT = 15;
+var SEPARATOR_THICKNESS = 2;
 
-let nextXHRId = 0;
+var nextXHRId = 0;
 
-let NetworkOverlay = class NetworkOverlay extends React.Component {
+var NetworkOverlay = class NetworkOverlay extends React.Component {
 
   constructor(props) {
     super(props);
     this._requests = [];
     this._detailViewItems = [];
-    this._listViewDataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+    this._listViewDataSource = new ListView.DataSource({ rowHasChanged: function (r1, r2) {
+        return r1 !== r2;
+      } });
     this.state = {
       dataSource: this._listViewDataSource.cloneWithRows([]),
       newDetailInfo: false,
@@ -41916,148 +42564,152 @@ let NetworkOverlay = class NetworkOverlay extends React.Component {
   }
 
   _enableXHRInterception() {
+    var _this = this;
+
     if (XHRInterceptor.isInterceptorEnabled()) {
       return;
     }
 
-    XHRInterceptor.setOpenCallback((method, url, xhr) => {
+    XHRInterceptor.setOpenCallback(function (method, url, xhr) {
       xhr._index = nextXHRId++;
-      const xhrIndex = this._requests.length;
-      this._xhrIdMap[xhr._index] = xhrIndex;
+      var xhrIndex = _this._requests.length;
+      _this._xhrIdMap[xhr._index] = xhrIndex;
 
-      const _xhr = {
+      var _xhr = {
         'type': 'XMLHttpRequest',
         'method': method,
         'url': url
       };
-      this._requests.push(_xhr);
-      this._detailViewItems.push([]);
-      this._genDetailViewItem(xhrIndex);
-      this.setState({ dataSource: this._listViewDataSource.cloneWithRows(this._requests) }, this._scrollToBottom());
+      _this._requests.push(_xhr);
+      _this._detailViewItems.push([]);
+      _this._genDetailViewItem(xhrIndex);
+      _this.setState({ dataSource: _this._listViewDataSource.cloneWithRows(_this._requests) }, _this._scrollToBottom());
     });
 
-    XHRInterceptor.setRequestHeaderCallback((header, value, xhr) => {
-      const xhrIndex = this._getRequestIndexByXHRID(xhr._index);
+    XHRInterceptor.setRequestHeaderCallback(function (header, value, xhr) {
+      var xhrIndex = _this._getRequestIndexByXHRID(xhr._index);
       if (xhrIndex === -1) {
         return;
       }
-      const networkInfo = this._requests[xhrIndex];
+      var networkInfo = _this._requests[xhrIndex];
       if (!networkInfo.requestHeaders) {
         networkInfo.requestHeaders = {};
       }
       networkInfo.requestHeaders[header] = value;
-      this._genDetailViewItem(xhrIndex);
+      _this._genDetailViewItem(xhrIndex);
     });
 
-    XHRInterceptor.setSendCallback((data, xhr) => {
-      const xhrIndex = this._getRequestIndexByXHRID(xhr._index);
+    XHRInterceptor.setSendCallback(function (data, xhr) {
+      var xhrIndex = _this._getRequestIndexByXHRID(xhr._index);
       if (xhrIndex === -1) {
         return;
       }
-      this._requests[xhrIndex].dataSent = data;
-      this._genDetailViewItem(xhrIndex);
+      _this._requests[xhrIndex].dataSent = data;
+      _this._genDetailViewItem(xhrIndex);
     });
 
-    XHRInterceptor.setHeaderReceivedCallback((type, size, responseHeaders, xhr) => {
-      const xhrIndex = this._getRequestIndexByXHRID(xhr._index);
+    XHRInterceptor.setHeaderReceivedCallback(function (type, size, responseHeaders, xhr) {
+      var xhrIndex = _this._getRequestIndexByXHRID(xhr._index);
       if (xhrIndex === -1) {
         return;
       }
-      const networkInfo = this._requests[xhrIndex];
+      var networkInfo = _this._requests[xhrIndex];
       networkInfo.responseContentType = type;
       networkInfo.responseSize = size;
       networkInfo.responseHeaders = responseHeaders;
-      this._genDetailViewItem(xhrIndex);
+      _this._genDetailViewItem(xhrIndex);
     });
 
-    XHRInterceptor.setResponseCallback((status, timeout, response, responseURL, responseType, xhr) => {
-      const xhrIndex = this._getRequestIndexByXHRID(xhr._index);
+    XHRInterceptor.setResponseCallback(function (status, timeout, response, responseURL, responseType, xhr) {
+      var xhrIndex = _this._getRequestIndexByXHRID(xhr._index);
       if (xhrIndex === -1) {
         return;
       }
-      const networkInfo = this._requests[xhrIndex];
+      var networkInfo = _this._requests[xhrIndex];
       networkInfo.status = status;
       networkInfo.timeout = timeout;
       networkInfo.response = response;
       networkInfo.responseURL = responseURL;
       networkInfo.responseType = responseType;
-      this._genDetailViewItem(xhrIndex);
+      _this._genDetailViewItem(xhrIndex);
     });
 
     XHRInterceptor.enableInterception();
   }
 
   _enableWebSocketInterception() {
+    var _this2 = this;
+
     if (WebSocketInterceptor.isInterceptorEnabled()) {
       return;
     }
 
-    WebSocketInterceptor.setConnectCallback((url, protocols, options, socketId) => {
-      const socketIndex = this._requests.length;
-      this._socketIdMap[socketId] = socketIndex;
-      const _webSocket = {
+    WebSocketInterceptor.setConnectCallback(function (url, protocols, options, socketId) {
+      var socketIndex = _this2._requests.length;
+      _this2._socketIdMap[socketId] = socketIndex;
+      var _webSocket = {
         'type': 'WebSocket',
         'url': url,
         'protocols': protocols
       };
-      this._requests.push(_webSocket);
-      this._detailViewItems.push([]);
-      this._genDetailViewItem(socketIndex);
-      this.setState({ dataSource: this._listViewDataSource.cloneWithRows(this._requests) }, this._scrollToBottom());
+      _this2._requests.push(_webSocket);
+      _this2._detailViewItems.push([]);
+      _this2._genDetailViewItem(socketIndex);
+      _this2.setState({ dataSource: _this2._listViewDataSource.cloneWithRows(_this2._requests) }, _this2._scrollToBottom());
     });
 
-    WebSocketInterceptor.setCloseCallback((statusCode, closeReason, socketId) => {
-      const socketIndex = this._socketIdMap[socketId];
+    WebSocketInterceptor.setCloseCallback(function (statusCode, closeReason, socketId) {
+      var socketIndex = _this2._socketIdMap[socketId];
       if (socketIndex === undefined) {
         return;
       }
       if (statusCode !== null && closeReason !== null) {
-        this._requests[socketIndex].status = statusCode;
-        this._requests[socketIndex].closeReason = closeReason;
+        _this2._requests[socketIndex].status = statusCode;
+        _this2._requests[socketIndex].closeReason = closeReason;
       }
-      this._genDetailViewItem(socketIndex);
+      _this2._genDetailViewItem(socketIndex);
     });
 
-    WebSocketInterceptor.setSendCallback((data, socketId) => {
-      const socketIndex = this._socketIdMap[socketId];
+    WebSocketInterceptor.setSendCallback(function (data, socketId) {
+      var socketIndex = _this2._socketIdMap[socketId];
       if (socketIndex === undefined) {
         return;
       }
-      if (!this._requests[socketIndex].messages) {
-        this._requests[socketIndex].messages = '';
+      if (!_this2._requests[socketIndex].messages) {
+        _this2._requests[socketIndex].messages = '';
       }
-      this._requests[socketIndex].messages += 'Sent: ' + JSON.stringify(data) + '\n';
-      this._genDetailViewItem(socketIndex);
+      _this2._requests[socketIndex].messages += 'Sent: ' + JSON.stringify(data) + '\n';
+      _this2._genDetailViewItem(socketIndex);
     });
 
-    WebSocketInterceptor.setOnMessageCallback((socketId, message) => {
-      const socketIndex = this._socketIdMap[socketId];
+    WebSocketInterceptor.setOnMessageCallback(function (socketId, message) {
+      var socketIndex = _this2._socketIdMap[socketId];
       if (socketIndex === undefined) {
         return;
       }
-      if (!this._requests[socketIndex].messages) {
-        this._requests[socketIndex].messages = '';
+      if (!_this2._requests[socketIndex].messages) {
+        _this2._requests[socketIndex].messages = '';
       }
-      this._requests[socketIndex].messages += 'Received: ' + JSON.stringify(message) + '\n';
-      this._genDetailViewItem(socketIndex);
+      _this2._requests[socketIndex].messages += 'Received: ' + JSON.stringify(message) + '\n';
+      _this2._genDetailViewItem(socketIndex);
     });
 
-    WebSocketInterceptor.setOnCloseCallback((socketId, message) => {
-      const socketIndex = this._socketIdMap[socketId];
+    WebSocketInterceptor.setOnCloseCallback(function (socketId, message) {
+      var socketIndex = _this2._socketIdMap[socketId];
       if (socketIndex === undefined) {
         return;
       }
-      this._requests[socketIndex].serverClose = message;
-      this._genDetailViewItem(socketIndex);
+      _this2._requests[socketIndex].serverClose = message;
+      _this2._genDetailViewItem(socketIndex);
     });
 
-    WebSocketInterceptor.setOnErrorCallback((socketId, message) => {
-      const socketIndex = this._socketIdMap[socketId];
+    WebSocketInterceptor.setOnErrorCallback(function (socketId, message) {
+      var socketIndex = _this2._socketIdMap[socketId];
       if (socketIndex === undefined) {
         return;
       }
-      this._requests[socketIndex].serverError = message;
-      this._genDetailViewItem(socketIndex);
+      _this2._requests[socketIndex].serverError = message;
+      _this2._genDetailViewItem(socketIndex);
     });
 
     WebSocketInterceptor.enableInterception();
@@ -42074,16 +42726,18 @@ let NetworkOverlay = class NetworkOverlay extends React.Component {
   }
 
   _renderRow(rowData, sectionID, rowID, highlightRow) {
-    let urlCellViewStyle = styles.urlEvenCellView;
-    let methodCellViewStyle = styles.methodEvenCellView;
+    var _this3 = this;
+
+    var urlCellViewStyle = styles.urlEvenCellView;
+    var methodCellViewStyle = styles.methodEvenCellView;
     if (rowID % 2 === 1) {
       urlCellViewStyle = styles.urlOddCellView;
       methodCellViewStyle = styles.methodOddCellView;
     }
     return React.createElement(
       TouchableHighlight,
-      { onPress: () => {
-          this._pressRow(rowID);
+      { onPress: function () {
+          _this3._pressRow(rowID);
           highlightRow(sectionID, rowID);
         } },
       React.createElement(
@@ -42117,7 +42771,7 @@ let NetworkOverlay = class NetworkOverlay extends React.Component {
 
   _renderSeperator(sectionID, rowID, adjacentRowHighlighted) {
     return React.createElement(View, {
-      key: `${sectionID}-${rowID}`,
+      key: sectionID + '-' + rowID,
       style: {
         height: adjacentRowHighlighted ? SEPARATOR_THICKNESS : 0,
         backgroundColor: adjacentRowHighlighted ? '#3B5998' : '#CCCCCC'
@@ -42127,9 +42781,9 @@ let NetworkOverlay = class NetworkOverlay extends React.Component {
 
   _scrollToBottom() {
     if (this._listView) {
-      const scrollResponder = this._listView.getScrollResponder();
+      var scrollResponder = this._listView.getScrollResponder();
       if (scrollResponder) {
-        const scrollY = Math.max(this._requests.length * LISTVIEW_CELL_HEIGHT + (this._listViewHighlighted ? 2 * SEPARATOR_THICKNESS : 0) - this._listViewHeight, 0);
+        var scrollY = Math.max(this._requests.length * LISTVIEW_CELL_HEIGHT + (this._listViewHighlighted ? 2 * SEPARATOR_THICKNESS : 0) - this._listViewHeight, 0);
         scrollResponder.scrollResponderScrollTo({
           x: 0,
           y: scrollY,
@@ -42144,7 +42798,7 @@ let NetworkOverlay = class NetworkOverlay extends React.Component {
   }
 
   _listViewOnLayout(event) {
-    const { height } = event.nativeEvent.layout;
+    var { height: height } = event.nativeEvent.layout;
     this._listViewHeight = height;
   }
 
@@ -42187,7 +42841,7 @@ let NetworkOverlay = class NetworkOverlay extends React.Component {
     if (index === undefined) {
       return -1;
     }
-    const xhrIndex = this._xhrIdMap[index];
+    var xhrIndex = this._xhrIdMap[index];
     if (xhrIndex === undefined) {
       return -1;
     } else {
@@ -42207,21 +42861,21 @@ let NetworkOverlay = class NetworkOverlay extends React.Component {
 
   _genDetailViewItem(index) {
     this._detailViewItems[index] = [];
-    const detailViewItem = this._detailViewItems[index];
-    const requestItem = this._requests[index];
-    for (let key in requestItem) {
+    var detailViewItem = this._detailViewItems[index];
+    var requestItem = this._requests[index];
+    for (var _key in requestItem) {
       detailViewItem.push(React.createElement(
         View,
-        { style: styles.detailViewRow, key: key },
+        { style: styles.detailViewRow, key: _key },
         React.createElement(
           Text,
           { style: [styles.detailViewText, styles.detailKeyCellView] },
-          key
+          _key
         ),
         React.createElement(
           Text,
           { style: [styles.detailViewText, styles.detailValueCellView] },
-          this._getStringByValue(requestItem[key])
+          this._getStringByValue(requestItem[_key])
         )
       ));
     }
@@ -42297,7 +42951,7 @@ let NetworkOverlay = class NetworkOverlay extends React.Component {
 };
 
 
-const styles = StyleSheet.create({
+var styles = StyleSheet.create({
   container: {
     paddingTop: 10,
     paddingBottom: 10,
@@ -42417,88 +43071,80 @@ module.exports = NetworkOverlay;
 __d(/* WebSocketInterceptor */function(global, require, module, exports) {
 'use strict';
 
-const RCTWebSocketModule = require(36             ).WebSocketModule; // 36 = NativeModules
-const NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
+var RCTWebSocketModule = require(36             ).WebSocketModule; // 36 = NativeModules
+var NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
 
-const base64 = require(79         ); // 79 = base64-js
+var base64 = require(79         ); // 79 = base64-js
 
-const originalRCTWebSocketConnect = RCTWebSocketModule.connect;
-const originalRCTWebSocketSend = RCTWebSocketModule.send;
-const originalRCTWebSocketSendBinary = RCTWebSocketModule.sendBinary;
-const originalRCTWebSocketClose = RCTWebSocketModule.close;
+var originalRCTWebSocketConnect = RCTWebSocketModule.connect;
+var originalRCTWebSocketSend = RCTWebSocketModule.send;
+var originalRCTWebSocketSendBinary = RCTWebSocketModule.sendBinary;
+var originalRCTWebSocketClose = RCTWebSocketModule.close;
 
-let eventEmitter;
-let subscriptions;
+var eventEmitter = void 0;
+var subscriptions = void 0;
 
-let closeCallback;
-let sendCallback;
-let connectCallback;
-let onOpenCallback;
-let onMessageCallback;
-let onErrorCallback;
-let onCloseCallback;
+var closeCallback = void 0;
+var sendCallback = void 0;
+var connectCallback = void 0;
+var onOpenCallback = void 0;
+var onMessageCallback = void 0;
+var onErrorCallback = void 0;
+var onCloseCallback = void 0;
 
-let isInterceptorEnabled = false;
+var isInterceptorEnabled = false;
 
-const WebSocketInterceptor = {
-  setCloseCallback(callback) {
+var WebSocketInterceptor = {
+  setCloseCallback: function (callback) {
     closeCallback = callback;
   },
-
-  setSendCallback(callback) {
+  setSendCallback: function (callback) {
     sendCallback = callback;
   },
-
-  setConnectCallback(callback) {
+  setConnectCallback: function (callback) {
     connectCallback = callback;
   },
-
-  setOnOpenCallback(callback) {
+  setOnOpenCallback: function (callback) {
     onOpenCallback = callback;
   },
-
-  setOnMessageCallback(callback) {
+  setOnMessageCallback: function (callback) {
     onMessageCallback = callback;
   },
-
-  setOnErrorCallback(callback) {
+  setOnErrorCallback: function (callback) {
     onErrorCallback = callback;
   },
-
-  setOnCloseCallback(callback) {
+  setOnCloseCallback: function (callback) {
     onCloseCallback = callback;
   },
-
-  isInterceptorEnabled() {
+  isInterceptorEnabled: function () {
     return isInterceptorEnabled;
   },
-
-  _unregisterEvents() {
-    subscriptions.forEach(e => e.remove());
+  _unregisterEvents: function () {
+    subscriptions.forEach(function (e) {
+      return e.remove();
+    });
     subscriptions = [];
   },
-
-  _registerEvents() {
-    subscriptions = [eventEmitter.addListener('websocketMessage', ev => {
+  _registerEvents: function () {
+    subscriptions = [eventEmitter.addListener('websocketMessage', function (ev) {
       if (onMessageCallback) {
         onMessageCallback(ev.id, ev.type === 'binary' ? WebSocketInterceptor._arrayBufferToString(ev.data) : ev.data);
       }
-    }), eventEmitter.addListener('websocketOpen', ev => {
+    }), eventEmitter.addListener('websocketOpen', function (ev) {
       if (onOpenCallback) {
         onOpenCallback(ev.id);
       }
-    }), eventEmitter.addListener('websocketClosed', ev => {
+    }), eventEmitter.addListener('websocketClosed', function (ev) {
       if (onCloseCallback) {
         onCloseCallback(ev.id, { code: ev.code, reason: ev.reason });
       }
-    }), eventEmitter.addListener('websocketFailed', ev => {
+    }), eventEmitter.addListener('websocketFailed', function (ev) {
       if (onErrorCallback) {
         onErrorCallback(ev.id, { message: ev.message });
       }
     })];
   },
-
-  enableInterception() {
+  enableInterception: function () {
     if (isInterceptorEnabled) {
       return;
     }
@@ -42539,19 +43185,17 @@ const WebSocketInterceptor = {
 
     isInterceptorEnabled = true;
   },
-
-  _arrayBufferToString(data) {
-    const value = base64.toByteArray(data).buffer;
+  _arrayBufferToString: function (data) {
+    var value = base64.toByteArray(data).buffer;
     if (value === undefined || value === null) {
       return '(no value)';
     }
     if (typeof ArrayBuffer !== 'undefined' && typeof Uint8Array !== 'undefined' && value instanceof ArrayBuffer) {
-      return `ArrayBuffer {${String(Array.from(new Uint8Array(value)))}}`;
+      return 'ArrayBuffer {' + String(Array.from(new Uint8Array(value))) + '}';
     }
     return value;
   },
-
-  disableInterception() {
+  disableInterception: function () {
     if (!isInterceptorEnabled) {
       return;
     }
@@ -42578,10 +43222,10 @@ module.exports = WebSocketInterceptor;
 __d(/* XHRInterceptor */function(global, require, module, exports) {
 'use strict';
 
-const XMLHttpRequest = require(97              ); // 97 = XMLHttpRequest
-const originalXHROpen = XMLHttpRequest.prototype.open;
-const originalXHRSend = XMLHttpRequest.prototype.send;
-const originalXHRSetRequestHeader = XMLHttpRequest.prototype.setRequestHeader;
+var XMLHttpRequest = require(97              ); // 97 = XMLHttpRequest
+var originalXHROpen = XMLHttpRequest.prototype.open;
+var originalXHRSend = XMLHttpRequest.prototype.send;
+var originalXHRSetRequestHeader = XMLHttpRequest.prototype.setRequestHeader;
 
 var openCallback;
 var sendCallback;
@@ -42591,32 +43235,26 @@ var responseCallback;
 
 var isInterceptorEnabled = false;
 
-const XHRInterceptor = {
-  setOpenCallback(callback) {
+var XHRInterceptor = {
+  setOpenCallback: function (callback) {
     openCallback = callback;
   },
-
-  setSendCallback(callback) {
+  setSendCallback: function (callback) {
     sendCallback = callback;
   },
-
-  setHeaderReceivedCallback(callback) {
+  setHeaderReceivedCallback: function (callback) {
     headerReceivedCallback = callback;
   },
-
-  setResponseCallback(callback) {
+  setResponseCallback: function (callback) {
     responseCallback = callback;
   },
-
-  setRequestHeaderCallback(callback) {
+  setRequestHeaderCallback: function (callback) {
     requestHeaderCallback = callback;
   },
-
-  isInterceptorEnabled() {
+  isInterceptorEnabled: function () {
     return isInterceptorEnabled;
   },
-
-  enableInterception() {
+  enableInterception: function () {
     if (isInterceptorEnabled) {
       return;
     }
@@ -42636,18 +43274,21 @@ const XHRInterceptor = {
     };
 
     XMLHttpRequest.prototype.send = function (data) {
+      var _this = this;
+
       if (sendCallback) {
         sendCallback(data, this);
       }
       if (this.addEventListener) {
-        this.addEventListener('readystatechange', () => {
+        this.addEventListener('readystatechange', function () {
           if (!isInterceptorEnabled) {
             return;
           }
-          if (this.readyState === this.HEADERS_RECEIVED) {
-            const contentTypeString = this.getResponseHeader('Content-Type');
-            const contentLengthString = this.getResponseHeader('Content-Length');
-            let responseContentType, responseSize;
+          if (_this.readyState === _this.HEADERS_RECEIVED) {
+            var contentTypeString = _this.getResponseHeader('Content-Type');
+            var contentLengthString = _this.getResponseHeader('Content-Length');
+            var responseContentType = void 0,
+                responseSize = void 0;
             if (contentTypeString) {
               responseContentType = contentTypeString.split(';')[0];
             }
@@ -42655,12 +43296,12 @@ const XHRInterceptor = {
               responseSize = parseInt(contentLengthString, 10);
             }
             if (headerReceivedCallback) {
-              headerReceivedCallback(responseContentType, responseSize, this.getAllResponseHeaders(), this);
+              headerReceivedCallback(responseContentType, responseSize, _this.getAllResponseHeaders(), _this);
             }
           }
-          if (this.readyState === this.DONE) {
+          if (_this.readyState === _this.DONE) {
             if (responseCallback) {
-              responseCallback(this.status, this.timeout, this.response, this.responseURL, this.responseType, this);
+              responseCallback(_this.status, _this.timeout, _this.response, _this.responseURL, _this.responseType, _this);
             }
           }
         }, false);
@@ -42669,8 +43310,7 @@ const XHRInterceptor = {
     };
     isInterceptorEnabled = true;
   },
-
-  disableInterception() {
+  disableInterception: function () {
     if (!isInterceptorEnabled) {
       return;
     }
@@ -42697,7 +43337,7 @@ var StyleSheet = require(151         ); // 151 = StyleSheet
 var Text = require(174   ); // 174 = Text
 var View = require(124   ); // 124 = View
 
-let PerformanceOverlay = class PerformanceOverlay extends React.Component {
+var PerformanceOverlay = class PerformanceOverlay extends React.Component {
   render() {
     var perfLogs = PerformanceLogger.getTimespans();
     var items = [];
@@ -42789,22 +43429,22 @@ __d(/* YellowBox */function(global, require, module, exports) {
 
 'use strict';
 
-const EventEmitter = require(64            ); // 64 = EventEmitter
-const Platform = require(46        ); // 46 = Platform
-const React = require(125    ); // 125 = React
-const StyleSheet = require(151         ); // 151 = StyleSheet
+var EventEmitter = require(64            ); // 64 = EventEmitter
+var Platform = require(46        ); // 46 = Platform
+var React = require(125    ); // 125 = React
+var StyleSheet = require(151         ); // 151 = StyleSheet
 
-const infoLog = require(119      ); // 119 = infoLog
-const openFileInEditor = require(243               ); // 243 = openFileInEditor
-const parseErrorStack = require(47               ); // 47 = parseErrorStack
-const symbolicateStackTrace = require(53                     ); // 53 = symbolicateStackTrace
+var infoLog = require(119      ); // 119 = infoLog
+var openFileInEditor = require(243               ); // 243 = openFileInEditor
+var parseErrorStack = require(47               ); // 47 = parseErrorStack
+var symbolicateStackTrace = require(53                     ); // 53 = symbolicateStackTrace
 
-const _warningEmitter = new EventEmitter();
-const _warningMap = new Map();
-const IGNORED_WARNINGS = [];
+var _warningEmitter = new EventEmitter();
+var _warningMap = new Map();
+var IGNORED_WARNINGS = [];
 
 if (__DEV__) {
-  const { error, warn } = console;
+  var { error: error, warn: warn } = console;
 
   console.error = function () {
     error.apply(console, arguments);
@@ -42830,30 +43470,32 @@ if (__DEV__) {
 }
 
 function sprintf(format, ...args) {
-  let index = 0;
-  return format.replace(/%s/g, match => args[index++]);
+  var index = 0;
+  return format.replace(/%s/g, function (match) {
+    return args[index++];
+  });
 }
 
 function updateWarningMap(format, ...args) {
   if (console.disableYellowBox) {
     return;
   }
-  const stringifySafe = require(51             ); // 51 = stringifySafe
+  var stringifySafe = require(51             ); // 51 = stringifySafe
 
   format = String(format);
-  const argCount = (format.match(/%s/g) || []).length;
-  const warning = [sprintf(format, ...args.slice(0, argCount)), ...args.slice(argCount).map(stringifySafe)].join(' ');
+  var argCount = (format.match(/%s/g) || []).length;
+  var warning = [sprintf.apply(undefined, [format].concat(babelHelpers.toConsumableArray(args.slice(0, argCount))))].concat(babelHelpers.toConsumableArray(args.slice(argCount).map(stringifySafe))).join(' ');
 
-  const warningInfo = _warningMap.get(warning);
+  var warningInfo = _warningMap.get(warning);
   if (warningInfo) {
     warningInfo.count += 1;
   } else {
-    const error = new Error();
-    error.framesToPop = 2;
+    var _error = new Error();
+    _error.framesToPop = 2;
 
     _warningMap.set(warning, {
       count: 1,
-      stacktrace: parseErrorStack(error),
+      stacktrace: parseErrorStack(_error),
       symbolicated: false
     });
   }
@@ -42862,20 +43504,20 @@ function updateWarningMap(format, ...args) {
 }
 
 function ensureSymbolicatedWarning(warning) {
-  const prevWarningInfo = _warningMap.get(warning);
+  var prevWarningInfo = _warningMap.get(warning);
   if (!prevWarningInfo || prevWarningInfo.symbolicated) {
     return;
   }
   prevWarningInfo.symbolicated = true;
 
-  symbolicateStackTrace(prevWarningInfo.stacktrace).then(stack => {
-    const nextWarningInfo = _warningMap.get(warning);
+  symbolicateStackTrace(prevWarningInfo.stacktrace).then(function (stack) {
+    var nextWarningInfo = _warningMap.get(warning);
     if (nextWarningInfo) {
       nextWarningInfo.stacktrace = stack;
       _warningEmitter.emit('warning', _warningMap);
     }
-  }, error => {
-    const nextWarningInfo = _warningMap.get(warning);
+  }, function (error) {
+    var nextWarningInfo = _warningMap.get(warning);
     if (nextWarningInfo) {
       infoLog('Failed to symbolicate warning, "%s":', warning, error);
       _warningEmitter.emit('warning', _warningMap);
@@ -42884,21 +43526,25 @@ function ensureSymbolicatedWarning(warning) {
 }
 
 function isWarningIgnored(warning) {
-  const isIgnored = IGNORED_WARNINGS.some(ignoredWarning => warning.startsWith(ignoredWarning));
+  var isIgnored = IGNORED_WARNINGS.some(function (ignoredWarning) {
+    return warning.startsWith(ignoredWarning);
+  });
 
   if (isIgnored) {
     return true;
   }
 
-  return Array.isArray(console.ignoredYellowBox) && console.ignoredYellowBox.some(ignorePrefix => warning.startsWith(String(ignorePrefix)));
+  return Array.isArray(console.ignoredYellowBox) && console.ignoredYellowBox.some(function (ignorePrefix) {
+    return warning.startsWith(String(ignorePrefix));
+  });
 }
 
-const WarningRow = ({ count, warning, onPress }) => {
-  const Text = require(174   ); // 174 = Text
-  const TouchableHighlight = require(239                 ); // 239 = TouchableHighlight
-  const View = require(124   ); // 124 = View
+var WarningRow = function ({ count: count, warning: warning, onPress: onPress }) {
+  var Text = require(174   ); // 174 = Text
+  var TouchableHighlight = require(239                 ); // 239 = TouchableHighlight
+  var View = require(124   ); // 124 = View
 
-  const countText = count > 1 ? React.createElement(
+  var countText = count > 1 ? React.createElement(
     Text,
     { style: styles.listRowCount },
     '(' + count + ') '
@@ -42924,13 +43570,13 @@ const WarningRow = ({ count, warning, onPress }) => {
   );
 };
 
-const StackRow = ({ frame }) => {
-  const Text = require(174   ); // 174 = Text
-  const TouchableHighlight = require(239                 ); // 239 = TouchableHighlight
-  const { file, lineNumber } = frame;
-  let fileName;
+var StackRow = function ({ frame: frame }) {
+  var Text = require(174   ); // 174 = Text
+  var TouchableHighlight = require(239                 ); // 239 = TouchableHighlight
+  var { file: file, lineNumber: lineNumber } = frame;
+  var fileName = void 0;
   if (file) {
-    const fileParts = file.split('/');
+    var fileParts = file.split('/');
     fileName = fileParts[fileParts.length - 1];
   } else {
     fileName = '<unknown file>';
@@ -42953,29 +43599,31 @@ const StackRow = ({ frame }) => {
   );
 };
 
-const WarningInspector = ({
-  warningInfo,
-  warning,
-  stacktraceVisible,
-  onDismiss,
-  onDismissAll,
-  onMinimize,
-  toggleStacktrace
-}) => {
-  const ScrollView = require(196         ); // 196 = ScrollView
-  const Text = require(174   ); // 174 = Text
-  const TouchableHighlight = require(239                 ); // 239 = TouchableHighlight
-  const View = require(124   ); // 124 = View
-  const { count, stacktrace } = warningInfo || {};
+var WarningInspector = function ({
+  warningInfo: warningInfo,
+  warning: warning,
+  stacktraceVisible: stacktraceVisible,
+  onDismiss: onDismiss,
+  onDismissAll: onDismissAll,
+  onMinimize: onMinimize,
+  toggleStacktrace: toggleStacktrace
+}) {
+  var ScrollView = require(196         ); // 196 = ScrollView
+  var Text = require(174   ); // 174 = Text
+  var TouchableHighlight = require(239                 ); // 239 = TouchableHighlight
+  var View = require(124   ); // 124 = View
+  var { count: count, stacktrace: stacktrace } = warningInfo || {};
 
-  const countSentence = 'Warning encountered ' + count + ' time' + (count - 1 ? 's' : '') + '.';
+  var countSentence = 'Warning encountered ' + count + ' time' + (count - 1 ? 's' : '') + '.';
 
-  let stacktraceList;
+  var stacktraceList = void 0;
   if (stacktraceVisible && stacktrace) {
     stacktraceList = React.createElement(
       View,
       { style: styles.stacktraceList },
-      stacktrace.map((frame, ii) => React.createElement(StackRow, { frame: frame, key: ii }))
+      stacktrace.map(function (frame, ii) {
+        return React.createElement(StackRow, { frame: frame, key: ii });
+      })
     );
   }
 
@@ -43057,31 +43705,33 @@ const WarningInspector = ({
   );
 };
 
-let YellowBox = class YellowBox extends React.Component {
+var YellowBox = class YellowBox extends React.Component {
 
   constructor(props, context) {
-    super(props, context);
+    var _this;
+
+    _this = super(props, context);
     this.state = {
       inspecting: null,
       stacktraceVisible: false,
       warningMap: _warningMap
     };
-    this.dismissWarning = warning => {
-      const { inspecting, warningMap } = this.state;
+    this.dismissWarning = function (warning) {
+      var { inspecting: inspecting, warningMap: warningMap } = _this.state;
       if (warning) {
         warningMap.delete(warning);
       } else {
         warningMap.clear();
       }
-      this.setState({
+      _this.setState({
         inspecting: warning && inspecting !== warning ? inspecting : null,
-        warningMap
+        warningMap: warningMap
       });
     };
   }
 
   static ignoreWarnings(warnings) {
-    warnings.forEach(warning => {
+    warnings.forEach(function (warning) {
       if (IGNORED_WARNINGS.indexOf(warning) === -1) {
         IGNORED_WARNINGS.push(warning);
       }
@@ -43089,19 +43739,21 @@ let YellowBox = class YellowBox extends React.Component {
   }
 
   componentDidMount() {
-    let scheduled = null;
-    this._listener = _warningEmitter.addListener('warning', warningMap => {
-      scheduled = scheduled || setImmediate(() => {
+    var _this2 = this;
+
+    var scheduled = null;
+    this._listener = _warningEmitter.addListener('warning', function (warningMap) {
+      scheduled = scheduled || setImmediate(function () {
         scheduled = null;
-        this.setState({
-          warningMap
+        _this2.setState({
+          warningMap: warningMap
         });
       });
     });
   }
 
   componentDidUpdate() {
-    const { inspecting } = this.state;
+    var { inspecting: inspecting } = this.state;
     if (inspecting != null) {
       ensureSymbolicatedWarning(inspecting);
     }
@@ -43114,37 +43766,51 @@ let YellowBox = class YellowBox extends React.Component {
   }
 
   render() {
+    var _this3 = this;
+
     if (console.disableYellowBox || this.state.warningMap.size === 0) {
       return null;
     }
-    const ScrollView = require(196         ); // 196 = ScrollView
-    const View = require(124   ); // 124 = View
+    var ScrollView = require(196         ); // 196 = ScrollView
+    var View = require(124   ); // 124 = View
 
-    const { inspecting, stacktraceVisible } = this.state;
-    const inspector = inspecting !== null ? React.createElement(WarningInspector, {
+    var { inspecting: inspecting, stacktraceVisible: stacktraceVisible } = this.state;
+    var inspector = inspecting !== null ? React.createElement(WarningInspector, {
       warningInfo: this.state.warningMap.get(inspecting),
       warning: inspecting,
       stacktraceVisible: stacktraceVisible,
-      onDismiss: () => this.dismissWarning(inspecting),
-      onDismissAll: () => this.dismissWarning(null),
-      onMinimize: () => this.setState({ inspecting: null }),
-      toggleStacktrace: () => this.setState({ stacktraceVisible: !stacktraceVisible })
+      onDismiss: function () {
+        return _this3.dismissWarning(inspecting);
+      },
+      onDismissAll: function () {
+        return _this3.dismissWarning(null);
+      },
+      onMinimize: function () {
+        return _this3.setState({ inspecting: null });
+      },
+      toggleStacktrace: function () {
+        return _this3.setState({ stacktraceVisible: !stacktraceVisible });
+      }
     }) : null;
 
-    const rows = [];
-    this.state.warningMap.forEach((warningInfo, warning) => {
+    var rows = [];
+    this.state.warningMap.forEach(function (warningInfo, warning) {
       if (!isWarningIgnored(warning)) {
         rows.push(React.createElement(WarningRow, {
           key: warning,
           count: warningInfo.count,
           warning: warning,
-          onPress: () => this.setState({ inspecting: warning }),
-          onDismiss: () => this.dismissWarning(warning)
+          onPress: function () {
+            return _this3.setState({ inspecting: warning });
+          },
+          onDismiss: function () {
+            return _this3.dismissWarning(warning);
+          }
         }));
       }
     });
 
-    const listStyle = [styles.list, { height: Math.min(rows.length, 4.4) * (rowGutter + rowHeight) }];
+    var listStyle = [styles.list, { height: Math.min(rows.length, 4.4) * (rowGutter + rowHeight) }];
     return React.createElement(
       View,
       { style: inspector ? styles.fullScreen : listStyle },
@@ -43159,12 +43825,14 @@ let YellowBox = class YellowBox extends React.Component {
 };
 
 
-const backgroundColor = opacity => 'rgba(250, 186, 48, ' + opacity + ')';
-const textColor = 'white';
-const rowGutter = 1;
-const rowHeight = 46;
+var backgroundColor = function (opacity) {
+  return 'rgba(250, 186, 48, ' + opacity + ')';
+};
+var textColor = 'white';
+var rowGutter = 1;
+var rowHeight = 46;
 
-const elevation = Platform.OS === 'android' ? Number.MAX_SAFE_INTEGER : undefined;
+var elevation = Platform.OS === 'android' ? Number.MAX_SAFE_INTEGER : undefined;
 
 var styles = StyleSheet.create({
   fullScreen: {
@@ -43253,10 +43921,10 @@ module.exports = YellowBox;
 __d(/* I18nManager */function(global, require, module, exports) {
 'use strict';
 
-const I18nManager = require(36             ).I18nManager || { // 36 = NativeModules
+var I18nManager = require(36             ).I18nManager || { // 36 = NativeModules
   isRTL: false,
-  allowRTL: () => {},
-  forceRTL: () => {}
+  allowRTL: function () {},
+  forceRTL: function () {}
 };
 
 module.exports = I18nManager;
@@ -43277,11 +43945,11 @@ var PickerIOS = require(253        ); // 253 = PickerIOS
 var PickerAndroid = require(254            ); // 254 = PickerAndroid
 var Platform = require(46        ); // 46 = Platform
 var React = require(125    ); // 125 = React
-const PropTypes = require(19          ); // 19 = prop-types
+var PropTypes = require(19          ); // 19 = prop-types
 var StyleSheetPropType = require(146                 ); // 146 = StyleSheetPropType
 var TextStylePropTypes = require(134                 ); // 134 = TextStylePropTypes
 var UnimplementedView = require(150                ); // 150 = UnimplementedView
-const ViewPropTypes = require(140            ); // 140 = ViewPropTypes
+var ViewPropTypes = require(140            ); // 140 = ViewPropTypes
 var ViewStylePropTypes = require(135                 ); // 135 = ViewStylePropTypes
 
 var itemStylePropType = StyleSheetPropType(TextStylePropTypes);
@@ -43293,7 +43961,7 @@ var pickerStyleType = StyleSheetPropType(babelHelpers.extends({}, ViewStylePropT
 var MODE_DIALOG = 'dialog';
 var MODE_DROPDOWN = 'dropdown';
 
-let PickerItem = (_temp = _class = class PickerItem extends React.Component {
+var PickerItem = (_temp = _class = class PickerItem extends React.Component {
 
   render() {
     throw null;
@@ -43307,7 +43975,7 @@ let PickerItem = (_temp = _class = class PickerItem extends React.Component {
 
   testID: PropTypes.string
 }, _temp);
-let Picker = (_temp2 = _class2 = class Picker extends React.Component {
+var Picker = (_temp2 = _class2 = class Picker extends React.Component {
 
   render() {
     if (Platform.OS === 'ios') {
@@ -43375,21 +44043,21 @@ __d(/* SectionList */function(global, require, module, exports) {
 
 var _class, _temp2;
 
-const MetroListView = require(211            ); // 211 = MetroListView
-const Platform = require(46        ); // 46 = Platform
-const React = require(125    ); // 125 = React
-const VirtualizedSectionList = require(258                     ); // 258 = VirtualizedSectionList
+var MetroListView = require(211            ); // 211 = MetroListView
+var Platform = require(46        ); // 46 = Platform
+var React = require(125    ); // 125 = React
+var VirtualizedSectionList = require(258                     ); // 258 = VirtualizedSectionList
 
-const defaultProps = babelHelpers.extends({}, VirtualizedSectionList.defaultProps, {
+var defaultProps = babelHelpers.extends({}, VirtualizedSectionList.defaultProps, {
   stickySectionHeadersEnabled: Platform.OS === 'ios'
 });
 
-let SectionList = (_temp2 = _class = class SectionList extends React.PureComponent {
+var SectionList = (_temp2 = _class = class SectionList extends React.PureComponent {
   constructor(...args) {
-    var _temp;
+    var _temp, _this;
 
-    return _temp = super(...args), this._captureRef = ref => {
-      this._wrapperListRef = ref;
+    return _temp = _this = super(...args), this._captureRef = function (ref) {
+      _this._wrapperListRef = ref;
     }, _temp;
   }
 
@@ -43398,31 +44066,31 @@ let SectionList = (_temp2 = _class = class SectionList extends React.PureCompone
   }
 
   recordInteraction() {
-    const listRef = this._wrapperListRef && this._wrapperListRef.getListRef();
+    var listRef = this._wrapperListRef && this._wrapperListRef.getListRef();
     listRef && listRef.recordInteraction();
   }
 
   flashScrollIndicators() {
-    const listRef = this._wrapperListRef && this._wrapperListRef.getListRef();
+    var listRef = this._wrapperListRef && this._wrapperListRef.getListRef();
     listRef && listRef.flashScrollIndicators();
   }
 
   getScrollResponder() {
-    const listRef = this._wrapperListRef && this._wrapperListRef.getListRef();
+    var listRef = this._wrapperListRef && this._wrapperListRef.getListRef();
     if (listRef) {
       return listRef.getScrollResponder();
     }
   }
 
   getScrollableNode() {
-    const listRef = this._wrapperListRef && this._wrapperListRef.getListRef();
+    var listRef = this._wrapperListRef && this._wrapperListRef.getListRef();
     if (listRef) {
       return listRef.getScrollableNode();
     }
   }
 
   render() {
-    const List = this.props.legacyImplementation ? MetroListView : VirtualizedSectionList;
+    var List = this.props.legacyImplementation ? MetroListView : VirtualizedSectionList;
     return React.createElement(List, babelHelpers.extends({}, this.props, { ref: this._captureRef }));
   }
 
@@ -43436,21 +44104,21 @@ __d(/* VirtualizedSectionList */function(global, require, module, exports) {
 
 var _class, _temp;
 
-const React = require(125    ); // 125 = React
-const View = require(124   ); // 124 = View
-const VirtualizedList = require(218              ); // 218 = VirtualizedList
+var React = require(125    ); // 125 = React
+var View = require(124   ); // 124 = View
+var VirtualizedList = require(218              ); // 218 = VirtualizedList
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-let VirtualizedSectionList = (_temp = _class = class VirtualizedSectionList extends React.PureComponent {
+var VirtualizedSectionList = (_temp = _class = class VirtualizedSectionList extends React.PureComponent {
 
   scrollToLocation(params) {
-    let index = params.itemIndex + 1;
-    for (let ii = 0; ii < params.sectionIndex; ii++) {
+    var index = params.itemIndex + 1;
+    for (var ii = 0; ii < params.sectionIndex; ii++) {
       index += this.props.sections[ii].data.length + 2;
     }
-    const toIndexParams = babelHelpers.extends({}, params, {
-      index
+    var toIndexParams = babelHelpers.extends({}, params, {
+      index: index
     });
     this._listRef.scrollToIndex(toIndexParams);
   }
@@ -43460,39 +44128,39 @@ let VirtualizedSectionList = (_temp = _class = class VirtualizedSectionList exte
   }
 
   _subExtractor(index) {
-    let itemIndex = index;
-    const defaultKeyExtractor = this.props.keyExtractor;
-    for (let ii = 0; ii < this.props.sections.length; ii++) {
-      const section = this.props.sections[ii];
-      const key = section.key || String(ii);
+    var itemIndex = index;
+    var defaultKeyExtractor = this.props.keyExtractor;
+    for (var ii = 0; ii < this.props.sections.length; ii++) {
+      var _section = this.props.sections[ii];
+      var _key = _section.key || String(ii);
       itemIndex -= 1;
-      if (itemIndex >= section.data.length + 1) {
-        itemIndex -= section.data.length + 1;
+      if (itemIndex >= _section.data.length + 1) {
+        itemIndex -= _section.data.length + 1;
       } else if (itemIndex === -1) {
         return {
-          section,
-          key: key + ':header',
+          section: _section,
+          key: _key + ':header',
           index: null,
           header: true,
           trailingSection: this.props.sections[ii + 1]
         };
-      } else if (itemIndex === section.data.length) {
+      } else if (itemIndex === _section.data.length) {
         return {
-          section,
-          key: key + ':footer',
+          section: _section,
+          key: _key + ':footer',
           index: null,
           header: false,
           trailingSection: this.props.sections[ii + 1]
         };
       } else {
-        const keyExtractor = section.keyExtractor || defaultKeyExtractor;
+        var _keyExtractor = _section.keyExtractor || defaultKeyExtractor;
         return {
-          section,
-          key: key + ':' + keyExtractor(section.data[itemIndex], itemIndex),
+          section: _section,
+          key: _key + ':' + _keyExtractor(_section.data[itemIndex], itemIndex),
           index: itemIndex,
-          leadingItem: section.data[itemIndex - 1],
+          leadingItem: _section.data[itemIndex - 1],
           leadingSection: this.props.sections[ii - 1],
-          trailingItem: section.data[itemIndex + 1],
+          trailingItem: _section.data[itemIndex + 1],
           trailingSection: this.props.sections[ii + 1]
         };
       }
@@ -43504,10 +44172,10 @@ let VirtualizedSectionList = (_temp = _class = class VirtualizedSectionList exte
     if (!info) {
       return null;
     }
-    const ItemSeparatorComponent = info.section.ItemSeparatorComponent || this.props.ItemSeparatorComponent;
-    const { SectionSeparatorComponent } = this.props;
-    const isLastItemInList = index === this.state.childProps.getItemCount() - 1;
-    const isLastItemInSection = info.index === info.section.data.length - 1;
+    var ItemSeparatorComponent = info.section.ItemSeparatorComponent || this.props.ItemSeparatorComponent;
+    var { SectionSeparatorComponent: SectionSeparatorComponent } = this.props;
+    var isLastItemInList = index === this.state.childProps.getItemCount() - 1;
+    var isLastItemInSection = info.index === info.section.data.length - 1;
     if (SectionSeparatorComponent && isLastItemInSection) {
       return SectionSeparatorComponent;
     }
@@ -43518,9 +44186,9 @@ let VirtualizedSectionList = (_temp = _class = class VirtualizedSectionList exte
   }
 
   _computeState(props) {
-    const offset = props.ListHeaderComponent ? 1 : 0;
-    const stickyHeaderIndices = [];
-    const itemCount = props.sections.reduce((v, section) => {
+    var offset = props.ListHeaderComponent ? 1 : 0;
+    var stickyHeaderIndices = [];
+    var itemCount = props.sections.reduce(function (v, section) {
       stickyHeaderIndices.push(v + offset);
       return v + section.data.length + 2;
     }, 0);
@@ -43530,8 +44198,10 @@ let VirtualizedSectionList = (_temp = _class = class VirtualizedSectionList exte
         renderItem: this._renderItem,
         ItemSeparatorComponent: undefined,
         data: props.sections,
-        getItemCount: () => itemCount,
-        getItem,
+        getItemCount: function () {
+          return itemCount;
+        },
+        getItem: getItem,
         keyExtractor: this._keyExtractor,
         onViewableItemsChanged: props.onViewableItemsChanged ? this._onViewableItemsChanged : undefined,
         stickyHeaderIndices: props.stickySectionHeadersEnabled ? stickyHeaderIndices : undefined
@@ -43540,20 +44210,22 @@ let VirtualizedSectionList = (_temp = _class = class VirtualizedSectionList exte
   }
 
   constructor(props, context) {
-    super(props, context);
+    var _this;
 
-    this._keyExtractor = (item, index) => {
-      const info = this._subExtractor(index);
+    _this = super(props, context);
+
+    this._keyExtractor = function (item, index) {
+      var info = _this._subExtractor(index);
       return info && info.key || String(index);
     };
 
-    this._convertViewable = viewable => {
+    this._convertViewable = function (viewable) {
       invariant(viewable.index != null, 'Received a broken ViewToken');
-      const info = this._subExtractor(viewable.index);
+      var info = _this._subExtractor(viewable.index);
       if (!info) {
         return null;
       }
-      const keyExtractor = info.section.keyExtractor || this.props.keyExtractor;
+      var keyExtractor = info.section.keyExtractor || _this.props.keyExtractor;
       return babelHelpers.extends({}, viewable, {
         index: info.index,
         key: keyExtractor(viewable.item, info.index),
@@ -43561,48 +44233,48 @@ let VirtualizedSectionList = (_temp = _class = class VirtualizedSectionList exte
       });
     };
 
-    this._onViewableItemsChanged = ({ viewableItems, changed }) => {
-      if (this.props.onViewableItemsChanged) {
-        this.props.onViewableItemsChanged({
-          viewableItems: viewableItems.map(this._convertViewable, this).filter(Boolean),
-          changed: changed.map(this._convertViewable, this).filter(Boolean)
+    this._onViewableItemsChanged = function ({ viewableItems: viewableItems, changed: changed }) {
+      if (_this.props.onViewableItemsChanged) {
+        _this.props.onViewableItemsChanged({
+          viewableItems: viewableItems.map(_this._convertViewable, _this).filter(Boolean),
+          changed: changed.map(_this._convertViewable, _this).filter(Boolean)
         });
       }
     };
 
-    this._renderItem = ({ item, index }) => {
-      const info = this._subExtractor(index);
+    this._renderItem = function ({ item: item, index: index }) {
+      var info = _this._subExtractor(index);
       if (!info) {
         return null;
       }
-      const infoIndex = info.index;
+      var infoIndex = info.index;
       if (infoIndex == null) {
-        const { section } = info;
+        var { section: _section2 } = info;
         if (info.header === true) {
-          const { renderSectionHeader } = this.props;
-          return renderSectionHeader ? renderSectionHeader({ section }) : null;
+          var { renderSectionHeader: _renderSectionHeader } = _this.props;
+          return _renderSectionHeader ? _renderSectionHeader({ section: _section2 }) : null;
         } else {
-          const { renderSectionFooter } = this.props;
-          return renderSectionFooter ? renderSectionFooter({ section }) : null;
+          var { renderSectionFooter: _renderSectionFooter } = _this.props;
+          return _renderSectionFooter ? _renderSectionFooter({ section: _section2 }) : null;
         }
       } else {
-        const renderItem = info.section.renderItem || this.props.renderItem;
-        const SeparatorComponent = this._getSeparatorComponent(index, info);
-        invariant(renderItem, 'no renderItem!');
+        var _renderItem = info.section.renderItem || _this.props.renderItem;
+        var _SeparatorComponent = _this._getSeparatorComponent(index, info);
+        invariant(_renderItem, 'no renderItem!');
         return React.createElement(ItemWithSeparator, {
-          SeparatorComponent: SeparatorComponent,
-          LeadingSeparatorComponent: infoIndex === 0 ? this.props.SectionSeparatorComponent : undefined,
+          SeparatorComponent: _SeparatorComponent,
+          LeadingSeparatorComponent: infoIndex === 0 ? _this.props.SectionSeparatorComponent : undefined,
           cellKey: info.key,
           index: infoIndex,
           item: item,
           leadingItem: info.leadingItem,
           leadingSection: info.leadingSection,
-          onUpdateSeparator: this._onUpdateSeparator,
-          prevCellKey: (this._subExtractor(index - 1) || {}).key,
-          ref: ref => {
-            this._cellRefs[info.key] = ref;
+          onUpdateSeparator: _this._onUpdateSeparator,
+          prevCellKey: (_this._subExtractor(index - 1) || {}).key,
+          ref: function (ref) {
+            _this._cellRefs[info.key] = ref;
           },
-          renderItem: renderItem,
+          renderItem: _renderItem,
           section: info.section,
           trailingItem: info.trailingItem,
           trailingSection: info.trailingSection
@@ -43610,15 +44282,15 @@ let VirtualizedSectionList = (_temp = _class = class VirtualizedSectionList exte
       }
     };
 
-    this._onUpdateSeparator = (key, newProps) => {
-      const ref = this._cellRefs[key];
+    this._onUpdateSeparator = function (key, newProps) {
+      var ref = _this._cellRefs[key];
       ref && ref.updateSeparatorProps(newProps);
     };
 
     this._cellRefs = {};
 
-    this._captureRef = ref => {
-      this._listRef = ref;
+    this._captureRef = function (ref) {
+      _this._listRef = ref;
     };
 
     this.state = this._computeState(props);
@@ -43635,11 +44307,11 @@ let VirtualizedSectionList = (_temp = _class = class VirtualizedSectionList exte
 }, _class.defaultProps = babelHelpers.extends({}, VirtualizedList.defaultProps, {
   data: []
 }), _temp);
-let ItemWithSeparator = class ItemWithSeparator extends React.Component {
+var ItemWithSeparator = class ItemWithSeparator extends React.Component {
   constructor(...args) {
-    var _temp2;
+    var _temp2, _this2;
 
-    return _temp2 = super(...args), this.state = {
+    return _temp2 = _this2 = super(...args), this.state = {
       separatorProps: {
         highlighted: false,
         leadingItem: this.props.item,
@@ -43657,39 +44329,47 @@ let ItemWithSeparator = class ItemWithSeparator extends React.Component {
         trailingSection: this.props.trailingSection
       }
     }, this._separators = {
-      highlight: () => {
-        ['leading', 'trailing'].forEach(s => this._separators.updateProps(s, { highlighted: true }));
+      highlight: function () {
+        ['leading', 'trailing'].forEach(function (s) {
+          return _this2._separators.updateProps(s, { highlighted: true });
+        });
       },
-      unhighlight: () => {
-        ['leading', 'trailing'].forEach(s => this._separators.updateProps(s, { highlighted: false }));
+      unhighlight: function () {
+        ['leading', 'trailing'].forEach(function (s) {
+          return _this2._separators.updateProps(s, { highlighted: false });
+        });
       },
-      updateProps: (select, newProps) => {
-        const { LeadingSeparatorComponent, cellKey, prevCellKey } = this.props;
+      updateProps: function (select, newProps) {
+        var { LeadingSeparatorComponent: LeadingSeparatorComponent, cellKey: cellKey, prevCellKey: prevCellKey } = _this2.props;
         if (select === 'leading' && LeadingSeparatorComponent) {
-          this.setState(state => ({
-            leadingSeparatorProps: babelHelpers.extends({}, state.leadingSeparatorProps, newProps)
-          }));
+          _this2.setState(function (state) {
+            return {
+              leadingSeparatorProps: babelHelpers.extends({}, state.leadingSeparatorProps, newProps)
+            };
+          });
         } else {
-          this.props.onUpdateSeparator(select === 'leading' && prevCellKey || cellKey, newProps);
+          _this2.props.onUpdateSeparator(select === 'leading' && prevCellKey || cellKey, newProps);
         }
       }
     }, _temp2;
   }
 
   updateSeparatorProps(newProps) {
-    this.setState(state => ({ separatorProps: babelHelpers.extends({}, state.separatorProps, newProps) }));
+    this.setState(function (state) {
+      return { separatorProps: babelHelpers.extends({}, state.separatorProps, newProps) };
+    });
   }
 
   render() {
-    const { LeadingSeparatorComponent, SeparatorComponent, item, index, section } = this.props;
-    const element = this.props.renderItem({
-      item,
-      index,
-      section,
+    var { LeadingSeparatorComponent: LeadingSeparatorComponent, SeparatorComponent: SeparatorComponent, item: item, index: index, section: section } = this.props;
+    var element = this.props.renderItem({
+      item: item,
+      index: index,
+      section: section,
       separators: this._separators
     });
-    const leadingSeparator = LeadingSeparatorComponent && React.createElement(LeadingSeparatorComponent, this.state.leadingSeparatorProps);
-    const separator = SeparatorComponent && React.createElement(SeparatorComponent, this.state.separatorProps);
+    var leadingSeparator = LeadingSeparatorComponent && React.createElement(LeadingSeparatorComponent, this.state.leadingSeparatorProps);
+    var separator = SeparatorComponent && React.createElement(SeparatorComponent, this.state.separatorProps);
     return leadingSeparator || separator ? React.createElement(
       View,
       null,
@@ -43705,8 +44385,8 @@ function getItem(sections, index) {
   if (!sections) {
     return null;
   }
-  let itemIdx = index - 1;
-  for (let ii = 0; ii < sections.length; ii++) {
+  var itemIdx = index - 1;
+  for (var ii = 0; ii < sections.length; ii++) {
     if (itemIdx === -1 || itemIdx === sections[ii].data.length) {
       return sections[ii];
     } else if (itemIdx < sections[ii].data.length) {
@@ -43796,34 +44476,38 @@ var Slider = React.createClass({
   },
 
   render: function () {
-    const _props = this.props,
-          { style, onValueChange, onSlidingComplete } = _props,
-          props = babelHelpers.objectWithoutProperties(_props, ['style', 'onValueChange', 'onSlidingComplete']);
+    var _props = this.props,
+        { style: style, onValueChange: onValueChange, onSlidingComplete: onSlidingComplete } = _props,
+        props = babelHelpers.objectWithoutProperties(_props, ['style', 'onValueChange', 'onSlidingComplete']);
     props.style = [styles.slider, style];
 
-    props.onValueChange = onValueChange && (event => {
-      let userEvent = true;
+    props.onValueChange = onValueChange && function (event) {
+      var userEvent = true;
       if (Platform.OS === 'android') {
         userEvent = event.nativeEvent.fromUser;
       }
       onValueChange && userEvent && onValueChange(event.nativeEvent.value);
-    });
+    };
 
     props.onChange = props.onValueChange;
 
-    props.onSlidingComplete = onSlidingComplete && (event => {
+    props.onSlidingComplete = onSlidingComplete && function (event) {
       onSlidingComplete && onSlidingComplete(event.nativeEvent.value);
-    });
+    };
 
     return React.createElement(RCTSlider, babelHelpers.extends({}, props, {
       enabled: !this.props.disabled,
-      onStartShouldSetResponder: () => true,
-      onResponderTerminationRequest: () => false
+      onStartShouldSetResponder: function () {
+        return true;
+      },
+      onResponderTerminationRequest: function () {
+        return false;
+      }
     }));
   }
 });
 
-let styles;
+var styles = void 0;
 if (Platform.OS === 'ios') {
   styles = StyleSheet.create({
     slider: {
@@ -43836,7 +44520,7 @@ if (Platform.OS === 'ios') {
   });
 }
 
-let options = {};
+var options = {};
 if (Platform.OS === 'android') {
   options = {
     nativeOnly: {
@@ -43844,7 +44528,7 @@ if (Platform.OS === 'android') {
     }
   };
 }
-const RCTSlider = requireNativeComponent('RCTSlider', Slider, options);
+var RCTSlider = requireNativeComponent('RCTSlider', Slider, options);
 
 module.exports = Slider;
 }, 260, null, "Slider");
@@ -43860,9 +44544,9 @@ var ColorPropType = require(29             ); // 29 = ColorPropType
 var NativeMethodsMixin = require(31                  ); // 31 = NativeMethodsMixin
 var Platform = require(46        ); // 46 = Platform
 var React = require(125    ); // 125 = React
-const PropTypes = require(19          ); // 19 = prop-types
+var PropTypes = require(19          ); // 19 = prop-types
 var StyleSheet = require(151         ); // 151 = StyleSheet
-const ViewPropTypes = require(140            ); // 140 = ViewPropTypes
+var ViewPropTypes = require(140            ); // 140 = ViewPropTypes
 
 var requireNativeComponent = require(149                     ); // 149 = requireNativeComponent
 
@@ -43905,9 +44589,15 @@ var Switch = React.createClass({
   },
 
   render: function () {
+    var _this = this;
+
     var props = babelHelpers.extends({}, this.props);
-    props.onStartShouldSetResponder = () => true;
-    props.onResponderTerminationRequest = () => false;
+    props.onStartShouldSetResponder = function () {
+      return true;
+    };
+    props.onResponderTerminationRequest = function () {
+      return false;
+    };
     if (Platform.OS === 'android') {
       props.enabled = !this.props.disabled;
       props.on = this.props.value;
@@ -43917,8 +44607,8 @@ var Switch = React.createClass({
       props.style = [styles.rctSwitchIOS, this.props.style];
     }
     return React.createElement(RCTSwitch, babelHelpers.extends({}, props, {
-      ref: ref => {
-        this._rctSwitch = ref;
+      ref: function (ref) {
+        _this._rctSwitch = ref;
       },
       onChange: this._onChange
     }));
@@ -43956,18 +44646,18 @@ __d(/* StatusBar */function(global, require, module, exports) {
 
 var _class, _temp2;
 
-const React = require(125    ); // 125 = React
-const PropTypes = require(19          ); // 19 = prop-types
-const ColorPropType = require(29             ); // 29 = ColorPropType
-const Platform = require(46        ); // 46 = Platform
+var React = require(125    ); // 125 = React
+var PropTypes = require(19          ); // 19 = prop-types
+var ColorPropType = require(29             ); // 29 = ColorPropType
+var Platform = require(46        ); // 46 = Platform
 
-const processColor = require(85            ); // 85 = processColor
+var processColor = require(85            ); // 85 = processColor
 
-const StatusBarManager = require(36             ).StatusBarManager; // 36 = NativeModules
+var StatusBarManager = require(36             ).StatusBarManager; // 36 = NativeModules
 
 function mergePropsStack(propsStack, defaultValues) {
-  return propsStack.reduce((prev, cur) => {
-    for (const prop in cur) {
+  return propsStack.reduce(function (prev, cur) {
+    for (var prop in cur) {
       if (cur[prop] != null) {
         prev[prop] = cur[prop];
       }
@@ -43996,15 +44686,15 @@ function createStackEntry(props) {
   };
 }
 
-let StatusBar = (_temp2 = _class = class StatusBar extends React.Component {
+var StatusBar = (_temp2 = _class = class StatusBar extends React.Component {
   constructor(...args) {
     var _temp;
 
-    return _temp = super(...args), this._stackEntry = null, this._updatePropsStack = () => {
+    return _temp = super(...args), this._stackEntry = null, this._updatePropsStack = function () {
       clearImmediate(StatusBar._updateImmediate);
-      StatusBar._updateImmediate = setImmediate(() => {
-        const oldProps = StatusBar._currentValues;
-        const mergedProps = mergePropsStack(StatusBar._propsStack, StatusBar._defaultProps);
+      StatusBar._updateImmediate = setImmediate(function () {
+        var oldProps = StatusBar._currentValues;
+        var mergedProps = mergePropsStack(StatusBar._propsStack, StatusBar._defaultProps);
 
         if (Platform.OS === 'ios') {
           if (!oldProps || oldProps.barStyle.value !== mergedProps.barStyle.value) {
@@ -44092,14 +44782,14 @@ let StatusBar = (_temp2 = _class = class StatusBar extends React.Component {
   }
 
   componentWillUnmount() {
-    const index = StatusBar._propsStack.indexOf(this._stackEntry);
+    var index = StatusBar._propsStack.indexOf(this._stackEntry);
     StatusBar._propsStack.splice(index, 1);
 
     this._updatePropsStack();
   }
 
   componentDidUpdate() {
-    const index = StatusBar._propsStack.indexOf(this._stackEntry);
+    var index = StatusBar._propsStack.indexOf(this._stackEntry);
     this._stackEntry = createStackEntry(this.props);
     StatusBar._propsStack[index] = this._stackEntry;
 
@@ -44144,65 +44834,83 @@ __d(/* SwipeableListView */function(global, require, module, exports) {
 
 var _class, _temp;
 
-const ListView = require(212       ); // 212 = ListView
-const React = require(125    ); // 125 = React
-const SwipeableListViewDataSource = require(265                          ); // 265 = SwipeableListViewDataSource
-const SwipeableRow = require(266           ); // 266 = SwipeableRow
+var ListView = require(212       ); // 212 = ListView
+var React = require(125    ); // 125 = React
+var SwipeableListViewDataSource = require(265                          ); // 265 = SwipeableListViewDataSource
+var SwipeableRow = require(266           ); // 266 = SwipeableRow
 
-const { PropTypes } = React;
+var { PropTypes: PropTypes } = React;
 
-let SwipeableListView = (_temp = _class = class SwipeableListView extends React.Component {
+var SwipeableListView = (_temp = _class = class SwipeableListView extends React.Component {
 
   static getNewDataSource() {
     return new SwipeableListViewDataSource({
-      getRowData: (data, sectionID, rowID) => data[sectionID][rowID],
-      getSectionHeaderData: (data, sectionID) => data[sectionID],
-      rowHasChanged: (row1, row2) => row1 !== row2,
-      sectionHeaderHasChanged: (s1, s2) => s1 !== s2
+      getRowData: function (data, sectionID, rowID) {
+        return data[sectionID][rowID];
+      },
+      getSectionHeaderData: function (data, sectionID) {
+        return data[sectionID];
+      },
+      rowHasChanged: function (row1, row2) {
+        return row1 !== row2;
+      },
+      sectionHeaderHasChanged: function (s1, s2) {
+        return s1 !== s2;
+      }
     });
   }
 
   constructor(props, context) {
-    super(props, context);
+    var _this;
+
+    _this = super(props, context);
 
     this._listViewRef = null;
     this._shouldBounceFirstRowOnMount = false;
 
-    this._onScroll = e => {
-      if (this.props.dataSource.getOpenRowID()) {
-        this.setState({
-          dataSource: this.state.dataSource.setOpenRowID(null)
+    this._onScroll = function (e) {
+      if (_this.props.dataSource.getOpenRowID()) {
+        _this.setState({
+          dataSource: _this.state.dataSource.setOpenRowID(null)
         });
       }
-      this.props.onScroll && this.props.onScroll(e);
+      _this.props.onScroll && _this.props.onScroll(e);
     };
 
-    this._renderRow = (rowData, sectionID, rowID) => {
-      const slideoutView = this.props.renderQuickActions(rowData, sectionID, rowID);
+    this._renderRow = function (rowData, sectionID, rowID) {
+      var slideoutView = _this.props.renderQuickActions(rowData, sectionID, rowID);
 
       if (!slideoutView) {
-        return this.props.renderRow(rowData, sectionID, rowID);
+        return _this.props.renderRow(rowData, sectionID, rowID);
       }
 
-      let shouldBounceOnMount = false;
-      if (this._shouldBounceFirstRowOnMount) {
-        this._shouldBounceFirstRowOnMount = false;
-        shouldBounceOnMount = rowID === this.props.dataSource.getFirstRowID();
+      var shouldBounceOnMount = false;
+      if (_this._shouldBounceFirstRowOnMount) {
+        _this._shouldBounceFirstRowOnMount = false;
+        shouldBounceOnMount = rowID === _this.props.dataSource.getFirstRowID();
       }
 
       return React.createElement(
         SwipeableRow,
         {
           slideoutView: slideoutView,
-          isOpen: rowData.id === this.props.dataSource.getOpenRowID(),
-          maxSwipeDistance: this._getMaxSwipeDistance(rowData, sectionID, rowID),
+          isOpen: rowData.id === _this.props.dataSource.getOpenRowID(),
+          maxSwipeDistance: _this._getMaxSwipeDistance(rowData, sectionID, rowID),
           key: rowID,
-          onOpen: () => this._onOpen(rowData.id),
-          onClose: () => this._onClose(rowData.id),
-          onSwipeEnd: () => this._setListViewScrollable(true),
-          onSwipeStart: () => this._setListViewScrollable(false),
+          onOpen: function () {
+            return _this._onOpen(rowData.id);
+          },
+          onClose: function () {
+            return _this._onClose(rowData.id);
+          },
+          onSwipeEnd: function () {
+            return _this._setListViewScrollable(true);
+          },
+          onSwipeStart: function () {
+            return _this._setListViewScrollable(false);
+          },
           shouldBounceOnMount: shouldBounceOnMount },
-        this.props.renderRow(rowData, sectionID, rowID)
+        _this.props.renderRow(rowData, sectionID, rowID)
       );
     };
 
@@ -44221,9 +44929,11 @@ let SwipeableListView = (_temp = _class = class SwipeableListView extends React.
   }
 
   render() {
+    var _this2 = this;
+
     return React.createElement(ListView, babelHelpers.extends({}, this.props, {
-      ref: ref => {
-        this._listViewRef = ref;
+      ref: function (ref) {
+        _this2._listViewRef = ref;
       },
       dataSource: this.state.dataSource.getDataSource(),
       onScroll: this._onScroll,
@@ -44276,7 +44986,9 @@ let SwipeableListView = (_temp = _class = class SwipeableListView extends React.
   renderQuickActions: PropTypes.func.isRequired
 }, _class.defaultProps = {
   bounceFirstRowOnMount: false,
-  renderQuickActions: () => null
+  renderQuickActions: function () {
+    return null;
+  }
 }, _temp);
 
 
@@ -44285,16 +44997,18 @@ module.exports = SwipeableListView;
 __d(/* SwipeableListViewDataSource */function(global, require, module, exports) {
 'use strict';
 
-const ListViewDataSource = require(213                 ); // 213 = ListViewDataSource
+var ListViewDataSource = require(213                 ); // 213 = ListViewDataSource
 
-let SwipeableListViewDataSource = class SwipeableListViewDataSource {
+var SwipeableListViewDataSource = class SwipeableListViewDataSource {
 
   constructor(params) {
+    var _this = this;
+
     this._dataSource = new ListViewDataSource({
       getRowData: params.getRowData,
       getSectionHeaderData: params.getSectionHeaderData,
-      rowHasChanged: (row1, row2) => {
-        return row1.id !== this._previousOpenRowID && row2.id === this._openRowID || row1.id === this._previousOpenRowID && row2.id !== this._openRowID || params.rowHasChanged(row1, row2);
+      rowHasChanged: function (row1, row2) {
+        return row1.id !== _this._previousOpenRowID && row2.id === _this._openRowID || row1.id === _this._previousOpenRowID && row2.id !== _this._openRowID || params.rowHasChanged(row1, row2);
       },
       sectionHeaderHasChanged: params.sectionHeaderHasChanged
     });
@@ -44341,38 +45055,38 @@ module.exports = SwipeableListViewDataSource;
 __d(/* SwipeableRow */function(global, require, module, exports) {
 'use strict';
 
-const Animated = require(184       ); // 184 = Animated
-const I18nManager = require(250          ); // 250 = I18nManager
-const PanResponder = require(267           ); // 267 = PanResponder
-const React = require(125    ); // 125 = React
-const PropTypes = require(19          ); // 19 = prop-types
-const StyleSheet = require(151         ); // 151 = StyleSheet
-const TimerMixin = require(205                ); // 205 = react-timer-mixin
-const View = require(124   ); // 124 = View
+var Animated = require(184       ); // 184 = Animated
+var I18nManager = require(250          ); // 250 = I18nManager
+var PanResponder = require(267           ); // 267 = PanResponder
+var React = require(125    ); // 125 = React
+var PropTypes = require(19          ); // 19 = prop-types
+var StyleSheet = require(151         ); // 151 = StyleSheet
+var TimerMixin = require(205                ); // 205 = react-timer-mixin
+var View = require(124   ); // 124 = View
 
-const emptyFunction = require(16                      ); // 16 = fbjs/lib/emptyFunction
+var emptyFunction = require(16                      ); // 16 = fbjs/lib/emptyFunction
 
-const IS_RTL = I18nManager.isRTL;
+var IS_RTL = I18nManager.isRTL;
 
-const CLOSED_LEFT_POSITION = 0;
+var CLOSED_LEFT_POSITION = 0;
 
-const HORIZONTAL_SWIPE_DISTANCE_THRESHOLD = 10;
+var HORIZONTAL_SWIPE_DISTANCE_THRESHOLD = 10;
 
-const HORIZONTAL_FULL_SWIPE_SPEED_THRESHOLD = 0.3;
+var HORIZONTAL_FULL_SWIPE_SPEED_THRESHOLD = 0.3;
 
-const SLOW_SPEED_SWIPE_FACTOR = 4;
+var SLOW_SPEED_SWIPE_FACTOR = 4;
 
-const SWIPE_DURATION = 300;
+var SWIPE_DURATION = 300;
 
-const ON_MOUNT_BOUNCE_DELAY = 700;
-const ON_MOUNT_BOUNCE_DURATION = 400;
+var ON_MOUNT_BOUNCE_DELAY = 700;
+var ON_MOUNT_BOUNCE_DURATION = 400;
 
-const RIGHT_SWIPE_BOUNCE_BACK_DISTANCE = 30;
-const RIGHT_SWIPE_BOUNCE_BACK_DURATION = 300;
+var RIGHT_SWIPE_BOUNCE_BACK_DISTANCE = 30;
+var RIGHT_SWIPE_BOUNCE_BACK_DURATION = 300;
 
-const RIGHT_SWIPE_THRESHOLD = 30 * SLOW_SPEED_SWIPE_FACTOR;
+var RIGHT_SWIPE_THRESHOLD = 30 * SLOW_SPEED_SWIPE_FACTOR;
 
-const SwipeableRow = React.createClass({
+var SwipeableRow = React.createClass({
   _panResponder: {},
   _previousLeft: CLOSED_LEFT_POSITION,
 
@@ -44394,7 +45108,7 @@ const SwipeableRow = React.createClass({
     swipeThreshold: PropTypes.number.isRequired
   },
 
-  getInitialState() {
+  getInitialState: function () {
     return {
       currentLeft: new Animated.Value(this._previousLeft),
 
@@ -44402,8 +45116,7 @@ const SwipeableRow = React.createClass({
       rowHeight: null
     };
   },
-
-  getDefaultProps() {
+  getDefaultProps: function () {
     return {
       isOpen: false,
       maxSwipeDistance: 0,
@@ -44414,8 +45127,7 @@ const SwipeableRow = React.createClass({
       swipeThreshold: 30
     };
   },
-
-  componentWillMount() {
+  componentWillMount: function () {
     this._panResponder = PanResponder.create({
       onMoveShouldSetPanResponderCapture: this._handleMoveShouldSetPanResponderCapture,
       onPanResponderGrant: this._handlePanResponderGrant,
@@ -44423,34 +45135,34 @@ const SwipeableRow = React.createClass({
       onPanResponderRelease: this._handlePanResponderEnd,
       onPanResponderTerminationRequest: this._onPanResponderTerminationRequest,
       onPanResponderTerminate: this._handlePanResponderEnd,
-      onShouldBlockNativeResponder: (event, gestureState) => false
+      onShouldBlockNativeResponder: function (event, gestureState) {
+        return false;
+      }
     });
   },
+  componentDidMount: function () {
+    var _this = this;
 
-  componentDidMount() {
     if (this.props.shouldBounceOnMount) {
-      this.setTimeout(() => {
-        this._animateBounceBack(ON_MOUNT_BOUNCE_DURATION);
+      this.setTimeout(function () {
+        _this._animateBounceBack(ON_MOUNT_BOUNCE_DURATION);
       }, ON_MOUNT_BOUNCE_DELAY);
     }
   },
-
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps: function (nextProps) {
     if (this.props.isOpen && !nextProps.isOpen) {
       this._animateToClosedPosition();
     }
   },
-
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate: function (nextProps, nextState) {
     if (this.props.shouldBounceOnMount && !nextProps.shouldBounceOnMount) {
       return false;
     }
 
     return true;
   },
-
-  render() {
-    let slideOutView;
+  render: function () {
+    var slideOutView = void 0;
     if (this.state.isSwipeableViewRendered && this.state.rowHeight) {
       slideOutView = React.createElement(
         View,
@@ -44459,7 +45171,7 @@ const SwipeableRow = React.createClass({
       );
     }
 
-    const swipeableView = React.createElement(
+    var swipeableView = React.createElement(
       Animated.View,
       {
         onLayout: this._onSwipeableViewLayout,
@@ -44474,21 +45186,17 @@ const SwipeableRow = React.createClass({
       swipeableView
     );
   },
-
-  _onSwipeableViewLayout(event) {
+  _onSwipeableViewLayout: function (event) {
     this.setState({
       isSwipeableViewRendered: true,
       rowHeight: event.nativeEvent.layout.height
     });
   },
-
-  _handleMoveShouldSetPanResponderCapture(event, gestureState) {
+  _handleMoveShouldSetPanResponderCapture: function (event, gestureState) {
     return gestureState.dy < 10 && this._isValidSwipe(gestureState);
   },
-
-  _handlePanResponderGrant(event, gestureState) {},
-
-  _handlePanResponderMove(event, gestureState) {
+  _handlePanResponderGrant: function (event, gestureState) {},
+  _handlePanResponderMove: function (event, gestureState) {
     if (this._isSwipingExcessivelyRightFromClosedPosition(gestureState)) {
       return;
     }
@@ -44501,75 +45209,63 @@ const SwipeableRow = React.createClass({
       this._swipeFullSpeed(gestureState);
     }
   },
-
-  _isSwipingRightFromClosed(gestureState) {
-    const gestureStateDx = IS_RTL ? -gestureState.dx : gestureState.dx;
+  _isSwipingRightFromClosed: function (gestureState) {
+    var gestureStateDx = IS_RTL ? -gestureState.dx : gestureState.dx;
     return this._previousLeft === CLOSED_LEFT_POSITION && gestureStateDx > 0;
   },
-
-  _swipeFullSpeed(gestureState) {
+  _swipeFullSpeed: function (gestureState) {
     this.state.currentLeft.setValue(this._previousLeft + gestureState.dx);
   },
-
-  _swipeSlowSpeed(gestureState) {
+  _swipeSlowSpeed: function (gestureState) {
     this.state.currentLeft.setValue(this._previousLeft + gestureState.dx / SLOW_SPEED_SWIPE_FACTOR);
   },
-
-  _isSwipingExcessivelyRightFromClosedPosition(gestureState) {
-    const gestureStateDx = IS_RTL ? -gestureState.dx : gestureState.dx;
+  _isSwipingExcessivelyRightFromClosedPosition: function (gestureState) {
+    var gestureStateDx = IS_RTL ? -gestureState.dx : gestureState.dx;
     return this._isSwipingRightFromClosed(gestureState) && gestureStateDx > RIGHT_SWIPE_THRESHOLD;
   },
-
-  _onPanResponderTerminationRequest(event, gestureState) {
+  _onPanResponderTerminationRequest: function (event, gestureState) {
     return false;
   },
+  _animateTo: function (toValue, duration = SWIPE_DURATION, callback = emptyFunction) {
+    var _this2 = this;
 
-  _animateTo(toValue, duration = SWIPE_DURATION, callback = emptyFunction) {
     Animated.timing(this.state.currentLeft, {
-      duration,
-      toValue
-    }).start(() => {
-      this._previousLeft = toValue;
+      duration: duration,
+      toValue: toValue
+    }).start(function () {
+      _this2._previousLeft = toValue;
       callback();
     });
   },
-
-  _animateToOpenPosition() {
-    const maxSwipeDistance = IS_RTL ? -this.props.maxSwipeDistance : this.props.maxSwipeDistance;
+  _animateToOpenPosition: function () {
+    var maxSwipeDistance = IS_RTL ? -this.props.maxSwipeDistance : this.props.maxSwipeDistance;
     this._animateTo(-maxSwipeDistance);
   },
-
-  _animateToOpenPositionWith(speed, distMoved) {
+  _animateToOpenPositionWith: function (speed, distMoved) {
     speed = speed > HORIZONTAL_FULL_SWIPE_SPEED_THRESHOLD ? speed : HORIZONTAL_FULL_SWIPE_SPEED_THRESHOLD;
 
-    const duration = Math.abs((this.props.maxSwipeDistance - Math.abs(distMoved)) / speed);
-    const maxSwipeDistance = IS_RTL ? -this.props.maxSwipeDistance : this.props.maxSwipeDistance;
+    var duration = Math.abs((this.props.maxSwipeDistance - Math.abs(distMoved)) / speed);
+    var maxSwipeDistance = IS_RTL ? -this.props.maxSwipeDistance : this.props.maxSwipeDistance;
     this._animateTo(-maxSwipeDistance, duration);
   },
-
-  _animateToClosedPosition(duration = SWIPE_DURATION) {
+  _animateToClosedPosition: function (duration = SWIPE_DURATION) {
     this._animateTo(CLOSED_LEFT_POSITION, duration);
   },
-
-  _animateToClosedPositionDuringBounce() {
+  _animateToClosedPositionDuringBounce: function () {
     this._animateToClosedPosition(RIGHT_SWIPE_BOUNCE_BACK_DURATION);
   },
-
-  _animateBounceBack(duration) {
-    const swipeBounceBackDistance = IS_RTL ? -RIGHT_SWIPE_BOUNCE_BACK_DISTANCE : RIGHT_SWIPE_BOUNCE_BACK_DISTANCE;
+  _animateBounceBack: function (duration) {
+    var swipeBounceBackDistance = IS_RTL ? -RIGHT_SWIPE_BOUNCE_BACK_DISTANCE : RIGHT_SWIPE_BOUNCE_BACK_DISTANCE;
     this._animateTo(-swipeBounceBackDistance, duration, this._animateToClosedPositionDuringBounce);
   },
-
-  _isValidSwipe(gestureState) {
+  _isValidSwipe: function (gestureState) {
     return Math.abs(gestureState.dx) > HORIZONTAL_SWIPE_DISTANCE_THRESHOLD;
   },
-
-  _shouldAnimateRemainder(gestureState) {
+  _shouldAnimateRemainder: function (gestureState) {
     return Math.abs(gestureState.dx) > this.props.swipeThreshold || gestureState.vx > HORIZONTAL_FULL_SWIPE_SPEED_THRESHOLD;
   },
-
-  _handlePanResponderEnd(event, gestureState) {
-    const horizontalDistance = IS_RTL ? -gestureState.dx : gestureState.dx;
+  _handlePanResponderEnd: function (event, gestureState) {
+    var horizontalDistance = IS_RTL ? -gestureState.dx : gestureState.dx;
     if (this._isSwipingRightFromClosed(gestureState)) {
       this.props.onOpen();
       this._animateBounceBack(RIGHT_SWIPE_BOUNCE_BACK_DURATION);
@@ -44593,7 +45289,7 @@ const SwipeableRow = React.createClass({
   }
 });
 
-const styles = StyleSheet.create({
+var styles = StyleSheet.create({
   slideOutContainer: {
     bottom: 0,
     left: 0,
@@ -44609,17 +45305,17 @@ __d(/* PanResponder */function(global, require, module, exports) {
 
 'use strict';
 
-const InteractionManager = require(186                   ); // 186 = ./InteractionManager
-const TouchHistoryMath = require(268               ); // 268 = TouchHistoryMath
+var InteractionManager = require(186                   ); // 186 = ./InteractionManager
+var TouchHistoryMath = require(268               ); // 268 = TouchHistoryMath
 
-const currentCentroidXOfTouchesChangedAfter = TouchHistoryMath.currentCentroidXOfTouchesChangedAfter;
-const currentCentroidYOfTouchesChangedAfter = TouchHistoryMath.currentCentroidYOfTouchesChangedAfter;
-const previousCentroidXOfTouchesChangedAfter = TouchHistoryMath.previousCentroidXOfTouchesChangedAfter;
-const previousCentroidYOfTouchesChangedAfter = TouchHistoryMath.previousCentroidYOfTouchesChangedAfter;
-const currentCentroidX = TouchHistoryMath.currentCentroidX;
-const currentCentroidY = TouchHistoryMath.currentCentroidY;
+var currentCentroidXOfTouchesChangedAfter = TouchHistoryMath.currentCentroidXOfTouchesChangedAfter;
+var currentCentroidYOfTouchesChangedAfter = TouchHistoryMath.currentCentroidYOfTouchesChangedAfter;
+var previousCentroidXOfTouchesChangedAfter = TouchHistoryMath.previousCentroidXOfTouchesChangedAfter;
+var previousCentroidYOfTouchesChangedAfter = TouchHistoryMath.previousCentroidYOfTouchesChangedAfter;
+var currentCentroidX = TouchHistoryMath.currentCentroidX;
+var currentCentroidY = TouchHistoryMath.currentCentroidY;
 
-const PanResponder = {
+var PanResponder = {
 
   _initializeGestureState: function (gestureState) {
     gestureState.moveX = 0;
@@ -44639,15 +45335,15 @@ const PanResponder = {
     gestureState.numberActiveTouches = touchHistory.numberActiveTouches;
     gestureState.moveX = currentCentroidXOfTouchesChangedAfter(touchHistory, gestureState._accountsForMovesUpTo);
     gestureState.moveY = currentCentroidYOfTouchesChangedAfter(touchHistory, gestureState._accountsForMovesUpTo);
-    const movedAfter = gestureState._accountsForMovesUpTo;
-    const prevX = previousCentroidXOfTouchesChangedAfter(touchHistory, movedAfter);
-    const x = currentCentroidXOfTouchesChangedAfter(touchHistory, movedAfter);
-    const prevY = previousCentroidYOfTouchesChangedAfter(touchHistory, movedAfter);
-    const y = currentCentroidYOfTouchesChangedAfter(touchHistory, movedAfter);
-    const nextDX = gestureState.dx + (x - prevX);
-    const nextDY = gestureState.dy + (y - prevY);
+    var movedAfter = gestureState._accountsForMovesUpTo;
+    var prevX = previousCentroidXOfTouchesChangedAfter(touchHistory, movedAfter);
+    var x = currentCentroidXOfTouchesChangedAfter(touchHistory, movedAfter);
+    var prevY = previousCentroidYOfTouchesChangedAfter(touchHistory, movedAfter);
+    var y = currentCentroidYOfTouchesChangedAfter(touchHistory, movedAfter);
+    var nextDX = gestureState.dx + (x - prevX);
+    var nextDY = gestureState.dy + (y - prevY);
 
-    const dt = touchHistory.mostRecentTimeStamp - gestureState._accountsForMovesUpTo;
+    var dt = touchHistory.mostRecentTimeStamp - gestureState._accountsForMovesUpTo;
     gestureState.vx = (nextDX - gestureState.dx) / dt;
     gestureState.vy = (nextDY - gestureState.dy) / dt;
 
@@ -44657,14 +45353,14 @@ const PanResponder = {
   },
 
   create: function (config) {
-    const interactionState = {
+    var interactionState = {
       handle: null
     };
-    const gestureState = {
+    var gestureState = {
       stateID: Math.random()
     };
     PanResponder._initializeGestureState(gestureState);
-    const panHandlers = {
+    var panHandlers = {
       onStartShouldSetResponder: function (e) {
         return config.onStartShouldSetPanResponder === undefined ? false : config.onStartShouldSetPanResponder(e, gestureState);
       },
@@ -44680,7 +45376,7 @@ const PanResponder = {
       },
 
       onMoveShouldSetResponderCapture: function (e) {
-        const touchHistory = e.touchHistory;
+        var touchHistory = e.touchHistory;
 
         if (gestureState._accountsForMovesUpTo === touchHistory.mostRecentTimeStamp) {
           return false;
@@ -44714,7 +45410,7 @@ const PanResponder = {
       },
 
       onResponderStart: function (e) {
-        const touchHistory = e.touchHistory;
+        var touchHistory = e.touchHistory;
         gestureState.numberActiveTouches = touchHistory.numberActiveTouches;
         if (config.onPanResponderStart) {
           config.onPanResponderStart(e, gestureState);
@@ -44722,7 +45418,7 @@ const PanResponder = {
       },
 
       onResponderMove: function (e) {
-        const touchHistory = e.touchHistory;
+        var touchHistory = e.touchHistory;
 
         if (gestureState._accountsForMovesUpTo === touchHistory.mostRecentTimeStamp) {
           return;
@@ -44735,7 +45431,7 @@ const PanResponder = {
       },
 
       onResponderEnd: function (e) {
-        const touchHistory = e.touchHistory;
+        var touchHistory = e.touchHistory;
         gestureState.numberActiveTouches = touchHistory.numberActiveTouches;
         clearInteractionHandle(interactionState, config.onPanResponderEnd, e, gestureState);
       },
@@ -44750,8 +45446,8 @@ const PanResponder = {
       }
     };
     return {
-      panHandlers,
-      getInteractionHandle() {
+      panHandlers: panHandlers,
+      getInteractionHandle: function () {
         return interactionState.handle;
       }
     };
@@ -44774,8 +45470,8 @@ __d(/* TouchHistoryMath */function(global, require, module, exports) {
 
 'use strict';
 
-const {
-  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
+var {
+  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED: __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
 } = require(32           ); // 32 = ReactNative
 
 module.exports = __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.TouchHistoryMath;
@@ -44786,12 +45482,12 @@ __d(/* TabBarIOS */function(global, require, module, exports) {
 
 var _class, _temp;
 
-const React = require(125    ); // 125 = React
-const StyleSheet = require(151         ); // 151 = StyleSheet
-const TabBarItemIOS = require(270            ); // 270 = TabBarItemIOS
-const View = require(124   ); // 124 = View
+var React = require(125    ); // 125 = React
+var StyleSheet = require(151         ); // 151 = StyleSheet
+var TabBarItemIOS = require(270            ); // 270 = TabBarItemIOS
+var View = require(124   ); // 124 = View
 
-let DummyTabBarIOS = (_temp = _class = class DummyTabBarIOS extends React.Component {
+var DummyTabBarIOS = (_temp = _class = class DummyTabBarIOS extends React.Component {
 
   render() {
     return React.createElement(
@@ -44803,7 +45499,7 @@ let DummyTabBarIOS = (_temp = _class = class DummyTabBarIOS extends React.Compon
 }, _class.Item = TabBarItemIOS, _temp);
 
 
-const styles = StyleSheet.create({
+var styles = StyleSheet.create({
   tabGroup: {
     flex: 1
   }
@@ -44819,7 +45515,7 @@ var React = require(125    ); // 125 = React
 var View = require(124   ); // 124 = View
 var StyleSheet = require(151         ); // 151 = StyleSheet
 
-let DummyTab = class DummyTab extends React.Component {
+var DummyTab = class DummyTab extends React.Component {
   render() {
     if (!this.props.selected) {
       return React.createElement(View, null);
@@ -44849,28 +45545,28 @@ module.exports = DummyTab;
 __d(/* TextInput */function(global, require, module, exports) {
 'use strict';
 
-const ColorPropType = require(29             ); // 29 = ColorPropType
-const DocumentSelectionState = require(272                     ); // 272 = DocumentSelectionState
-const EventEmitter = require(64            ); // 64 = EventEmitter
-const NativeMethodsMixin = require(31                  ); // 31 = NativeMethodsMixin
-const Platform = require(46        ); // 46 = Platform
-const React = require(125    ); // 125 = React
-const PropTypes = require(19          ); // 19 = prop-types
-const ReactNative = require(32           ); // 32 = ReactNative
-const StyleSheet = require(151         ); // 151 = StyleSheet
-const Text = require(174   ); // 174 = Text
-const TextInputState = require(72              ); // 72 = TextInputState
-const TimerMixin = require(205                ); // 205 = react-timer-mixin
-const TouchableWithoutFeedback = require(206                       ); // 206 = TouchableWithoutFeedback
-const UIManager = require(73         ); // 73 = UIManager
-const ViewPropTypes = require(140            ); // 140 = ViewPropTypes
+var ColorPropType = require(29             ); // 29 = ColorPropType
+var DocumentSelectionState = require(272                     ); // 272 = DocumentSelectionState
+var EventEmitter = require(64            ); // 64 = EventEmitter
+var NativeMethodsMixin = require(31                  ); // 31 = NativeMethodsMixin
+var Platform = require(46        ); // 46 = Platform
+var React = require(125    ); // 125 = React
+var PropTypes = require(19          ); // 19 = prop-types
+var ReactNative = require(32           ); // 32 = ReactNative
+var StyleSheet = require(151         ); // 151 = StyleSheet
+var Text = require(174   ); // 174 = Text
+var TextInputState = require(72              ); // 72 = TextInputState
+var TimerMixin = require(205                ); // 205 = react-timer-mixin
+var TouchableWithoutFeedback = require(206                       ); // 206 = TouchableWithoutFeedback
+var UIManager = require(73         ); // 73 = UIManager
+var ViewPropTypes = require(140            ); // 140 = ViewPropTypes
 
-const emptyFunction = require(16                      ); // 16 = fbjs/lib/emptyFunction
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
-const requireNativeComponent = require(149                     ); // 149 = requireNativeComponent
-const warning = require(15                ); // 15 = fbjs/lib/warning
+var emptyFunction = require(16                      ); // 16 = fbjs/lib/emptyFunction
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var requireNativeComponent = require(149                     ); // 149 = requireNativeComponent
+var warning = require(15                ); // 15 = fbjs/lib/warning
 
-const onlyMultiline = {
+var onlyMultiline = {
   onTextInput: true,
   children: true
 };
@@ -44882,9 +45578,9 @@ if (Platform.OS === 'android') {
   var RCTTextField = requireNativeComponent('RCTTextField', null);
 }
 
-const DataDetectorTypes = ['phoneNumber', 'link', 'address', 'calendarEvent', 'none', 'all'];
+var DataDetectorTypes = ['phoneNumber', 'link', 'address', 'calendarEvent', 'none', 'all'];
 
-const TextInput = React.createClass({
+var TextInput = React.createClass({
   statics: {
     State: TextInputState
   },
@@ -44999,6 +45695,8 @@ const TextInput = React.createClass({
   _lastNativeSelection: undefined,
 
   componentDidMount: function () {
+    var _this = this;
+
     this._lastNativeText = this.props.value;
     if (!this.context.focusEmitter) {
       if (this.props.autoFocus) {
@@ -45006,11 +45704,11 @@ const TextInput = React.createClass({
       }
       return;
     }
-    this._focusSubscription = this.context.focusEmitter.addListener('focus', el => {
-      if (this === el) {
-        this.requestAnimationFrame(this.focus);
-      } else if (this.isFocused()) {
-        this.blur();
+    this._focusSubscription = this.context.focusEmitter.addListener('focus', function (el) {
+      if (_this === el) {
+        _this.requestAnimationFrame(_this.focus);
+      } else if (_this.isFocused()) {
+        _this.blur();
       }
     });
     if (this.props.autoFocus) {
@@ -45067,7 +45765,7 @@ const TextInput = React.createClass({
       if (__DEV__) {
         for (var propKey in onlyMultiline) {
           if (props[propKey]) {
-            const error = new Error('TextInput prop `' + propKey + '` is only supported with multiline.');
+            var error = new Error('TextInput prop `' + propKey + '` is only supported with multiline.');
             warning(false, '%s', error.stack);
           }
         }
@@ -45085,7 +45783,9 @@ const TextInput = React.createClass({
     } else {
       var children = props.children;
       var childCount = 0;
-      React.Children.forEach(children, () => ++childCount);
+      React.Children.forEach(children, function () {
+        return ++childCount;
+      });
       invariant(!(props.value && childCount), 'Cannot specify both value and children.');
       if (childCount >= 1) {
         children = React.createElement(
@@ -45131,12 +45831,14 @@ const TextInput = React.createClass({
   },
 
   _renderAndroid: function () {
-    const props = Object.assign({}, this.props);
+    var props = Object.assign({}, this.props);
     props.style = [this.props.style];
     props.autoCapitalize = UIManager.AndroidTextInput.Constants.AutoCapitalizationType[this.props.autoCapitalize];
     var children = this.props.children;
     var childCount = 0;
-    React.Children.forEach(children, () => ++childCount);
+    React.Children.forEach(children, function () {
+      return ++childCount;
+    });
     invariant(!(this.props.value && childCount), 'Cannot specify both value and children.');
     if (childCount > 1) {
       children = React.createElement(
@@ -45150,7 +45852,7 @@ const TextInput = React.createClass({
       props.selection = { start: props.selection.start, end: props.selection.start };
     }
 
-    const textContainer = React.createElement(AndroidTextInput, babelHelpers.extends({
+    var textContainer = React.createElement(AndroidTextInput, babelHelpers.extends({
       ref: this._setNativeRef
     }, props, {
       mostRecentEventCount: 0,
@@ -45230,13 +45932,13 @@ const TextInput = React.createClass({
   },
 
   componentDidUpdate: function () {
-    const nativeProps = {};
+    var nativeProps = {};
 
     if (this._lastNativeText !== this.props.value && typeof this.props.value === 'string') {
       nativeProps.text = this.props.value;
     }
 
-    const { selection } = this.props;
+    var { selection: selection } = this.props;
     if (this._lastNativeSelection && selection && (this._lastNativeSelection.start !== selection.start || this._lastNativeSelection.end !== selection.end)) {
       nativeProps.selection = this.props.selection;
     }
@@ -45284,7 +45986,7 @@ __d(/* DocumentSelectionState */function(global, require, module, exports) {
 
 var mixInEventEmitter = require(273                ); // 273 = mixInEventEmitter
 
-let DocumentSelectionState = class DocumentSelectionState {
+var DocumentSelectionState = class DocumentSelectionState {
   constructor(anchor, focus) {
     this._anchorOffset = anchor;
     this._focusOffset = focus;
@@ -45362,23 +46064,23 @@ module.exports = DocumentSelectionState;
 __d(/* mixInEventEmitter */function(global, require, module, exports) {
 'use strict';
 
-const EventEmitter = require(64            ); // 64 = EventEmitter
-const EventEmitterWithHolding = require(274                      ); // 274 = EventEmitterWithHolding
-const EventHolder = require(275          ); // 275 = EventHolder
+var EventEmitter = require(64            ); // 64 = EventEmitter
+var EventEmitterWithHolding = require(274                      ); // 274 = EventEmitterWithHolding
+var EventHolder = require(275          ); // 275 = EventHolder
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
-const keyOf = require(241             ); // 241 = fbjs/lib/keyOf
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var keyOf = require(241             ); // 241 = fbjs/lib/keyOf
 
-const TYPES_KEY = keyOf({ __types: true });
+var TYPES_KEY = keyOf({ __types: true });
 
 function mixInEventEmitter(cls, types) {
   invariant(types, 'Must supply set of valid event types');
 
-  const target = cls.prototype || cls;
+  var target = cls.prototype || cls;
 
   invariant(!target.__eventEmitter, 'An active emitter is already mixed in');
 
-  const ctor = cls.constructor;
+  var ctor = cls.constructor;
   if (ctor) {
     invariant(ctor === Object || ctor === Function, 'Mix EventEmitter into a class, not an instance');
   }
@@ -45393,7 +46095,7 @@ function mixInEventEmitter(cls, types) {
   Object.assign(target, EventEmitterMixin);
 }
 
-const EventEmitterMixin = {
+var EventEmitterMixin = {
   emit: function (eventType, a, b, c, d, e, _) {
     return this.__getEventEmitter().emit(eventType, a, b, c, d, e, _);
   },
@@ -45436,13 +46138,13 @@ const EventEmitterMixin = {
 
   __getEventEmitter: function () {
     if (!this.__eventEmitter) {
-      let emitter = new EventEmitter();
+      var emitter = new EventEmitter();
       if (__DEV__) {
-        const EventValidator = require(276             ); // 276 = EventValidator
+        var EventValidator = require(276             ); // 276 = EventValidator
         emitter = EventValidator.addValidation(emitter, this.__types);
       }
 
-      const holder = new EventHolder();
+      var holder = new EventHolder();
       this.__eventEmitter = new EventEmitterWithHolding(emitter, holder);
     }
     return this.__eventEmitter;
@@ -45454,7 +46156,7 @@ module.exports = mixInEventEmitter;
 __d(/* EventEmitterWithHolding */function(global, require, module, exports) {
 'use strict';
 
-let EventEmitterWithHolding = class EventEmitterWithHolding {
+var EventEmitterWithHolding = class EventEmitterWithHolding {
   constructor(emitter, holder) {
     this._emitter = emitter;
     this._eventHolder = holder;
@@ -45471,7 +46173,7 @@ let EventEmitterWithHolding = class EventEmitterWithHolding {
   }
 
   addRetroactiveListener(eventType, listener, context) {
-    const subscription = this._emitter.addListener(eventType, listener, context);
+    var subscription = this._emitter.addListener(eventType, listener, context);
 
     this._emittingHeldEvents = true;
     this._eventHolder.emitToListener(eventType, listener, context);
@@ -45493,12 +46195,16 @@ let EventEmitterWithHolding = class EventEmitterWithHolding {
   }
 
   emit(eventType, ...args) {
-    this._emitter.emit(eventType, ...args);
+    var _emitter;
+
+    (_emitter = this._emitter).emit.apply(_emitter, [eventType].concat(args));
   }
 
   emitAndHold(eventType, ...args) {
-    this._currentEventToken = this._eventHolder.holdEvent(eventType, ...args);
-    this._emitter.emit(eventType, ...args);
+    var _eventHolder, _emitter2;
+
+    this._currentEventToken = (_eventHolder = this._eventHolder).holdEvent.apply(_eventHolder, [eventType].concat(args));
+    (_emitter2 = this._emitter).emit.apply(_emitter2, [eventType].concat(args));
     this._currentEventToken = null;
   }
 
@@ -45521,9 +46227,9 @@ module.exports = EventEmitterWithHolding;
 __d(/* EventHolder */function(global, require, module, exports) {
 'use strict';
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-let EventHolder = class EventHolder {
+var EventHolder = class EventHolder {
 
   constructor() {
     this._heldEvents = {};
@@ -45532,8 +46238,8 @@ let EventHolder = class EventHolder {
 
   holdEvent(eventType, ...args) {
     this._heldEvents[eventType] = this._heldEvents[eventType] || [];
-    const eventsOfType = this._heldEvents[eventType];
-    const key = {
+    var eventsOfType = this._heldEvents[eventType];
+    var key = {
       eventType: eventType,
       index: eventsOfType.length
     };
@@ -45542,16 +46248,18 @@ let EventHolder = class EventHolder {
   }
 
   emitToListener(eventType, listener, context) {
-    const eventsOfType = this._heldEvents[eventType];
+    var _this = this;
+
+    var eventsOfType = this._heldEvents[eventType];
     if (!eventsOfType) {
       return;
     }
-    const origEventKey = this._currentEventKey;
-    eventsOfType.forEach((eventHeld, index) => {
+    var origEventKey = this._currentEventKey;
+    eventsOfType.forEach(function (eventHeld, index) {
       if (!eventHeld) {
         return;
       }
-      this._currentEventKey = {
+      _this._currentEventKey = {
         eventType: eventType,
         index: index
       };
@@ -45580,10 +46288,10 @@ module.exports = EventHolder;
 __d(/* EventValidator */function(global, require, module, exports) {
 'use strict';
 
-const EventValidator = {
+var EventValidator = {
   addValidation: function (emitter, types) {
-    const eventTypes = Object.keys(types);
-    const emitterWithValidation = Object.create(emitter);
+    var eventTypes = Object.keys(types);
+    var emitterWithValidation = Object.create(emitter);
 
     Object.assign(emitterWithValidation, {
       emit: function emit(type, a, b, c, d, e, _) {
@@ -45603,7 +46311,7 @@ function assertAllowsEventType(type, allowedTypes) {
 }
 
 function errorMessageFor(type, allowedTypes) {
-  let message = 'Unknown event type "' + type + '". ';
+  var message = 'Unknown event type "' + type + '". ';
   if (__DEV__) {
     message += recommendationFor(type, allowedTypes);
   }
@@ -45613,7 +46321,7 @@ function errorMessageFor(type, allowedTypes) {
 
 if (__DEV__) {
   var recommendationFor = function (type, allowedTypes) {
-    const closestTypeRecommendation = closestTypeFor(type, allowedTypes);
+    var closestTypeRecommendation = closestTypeFor(type, allowedTypes);
     if (isCloseEnough(closestTypeRecommendation, type)) {
       return 'Did you mean "' + closestTypeRecommendation.type + '"? ';
     } else {
@@ -45622,7 +46330,7 @@ if (__DEV__) {
   };
 
   var closestTypeFor = function (type, allowedTypes) {
-    const typeRecommendations = allowedTypes.map(typeRecommendationFor.bind(this, type));
+    var typeRecommendations = allowedTypes.map(typeRecommendationFor.bind(this, type));
     return typeRecommendations.sort(recommendationSort)[0];
   };
 
@@ -45648,8 +46356,9 @@ if (__DEV__) {
   };
 
   var damerauLevenshteinDistance = function (a, b) {
-    let i, j;
-    const d = [];
+    var i = void 0,
+        j = void 0;
+    var d = [];
 
     for (i = 0; i <= a.length; i++) {
       d[i] = [i];
@@ -45661,7 +46370,7 @@ if (__DEV__) {
 
     for (i = 1; i <= a.length; i++) {
       for (j = 1; j <= b.length; j++) {
-        const cost = a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1;
+        var cost = a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1;
 
         d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
 
@@ -45716,13 +46425,12 @@ var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 var processColor = require(85            ); // 85 = processColor
 
 var ActionSheetIOS = {
-  showActionSheetWithOptions(options, callback) {
+  showActionSheetWithOptions: function (options, callback) {
     invariant(typeof options === 'object' && options !== null, 'Options must be a valid object');
     invariant(typeof callback === 'function', 'Must provide a valid callback');
     RCTActionSheetManager.showActionSheetWithOptions(babelHelpers.extends({}, options, { tintColor: processColor(options.tintColor) }), callback);
   },
-
-  showShareActionSheetWithOptions(options, failureCallback, successCallback) {
+  showShareActionSheetWithOptions: function (options, failureCallback, successCallback) {
     invariant(typeof options === 'object' && options !== null, 'Options must be a valid object');
     invariant(typeof failureCallback === 'function', 'Must provide a valid failureCallback');
     invariant(typeof successCallback === 'function', 'Must provide a valid successCallback');
@@ -45750,25 +46458,27 @@ module.exports = {
 __d(/* AppRegistry */function(global, require, module, exports) {
 'use strict';
 
-const BatchedBridge = require(37             ); // 37 = BatchedBridge
-const BugReporting = require(284           ); // 284 = BugReporting
-const NativeModules = require(36             ); // 36 = NativeModules
-const ReactNative = require(32           ); // 32 = ReactNative
-const SceneTracker = require(286           ); // 286 = SceneTracker
+var BatchedBridge = require(37             ); // 37 = BatchedBridge
+var BugReporting = require(284           ); // 284 = BugReporting
+var NativeModules = require(36             ); // 36 = NativeModules
+var ReactNative = require(32           ); // 32 = ReactNative
+var SceneTracker = require(286           ); // 286 = SceneTracker
 
-const infoLog = require(119      ); // 119 = infoLog
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
-const renderApplication = require(287                ); // 287 = renderApplication
+var infoLog = require(119      ); // 119 = infoLog
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var renderApplication = require(287                ); // 287 = renderApplication
 
-const runnables = {};
-let runCount = 1;
-const sections = {};
-const tasks = new Map();
-let componentProviderInstrumentationHook = component => component();
+var runnables = {};
+var runCount = 1;
+var sections = {};
+var tasks = new Map();
+var componentProviderInstrumentationHook = function (component) {
+  return component();
+};
 
-const AppRegistry = {
-  registerConfig(config) {
-    config.forEach(appConfig => {
+var AppRegistry = {
+  registerConfig: function (config) {
+    config.forEach(function (appConfig) {
       if (appConfig.run) {
         AppRegistry.registerRunnable(appConfig.appKey, appConfig.run);
       } else {
@@ -45777,86 +46487,78 @@ const AppRegistry = {
       }
     });
   },
-
-  registerComponent(appKey, componentProvider, section) {
+  registerComponent: function (appKey, componentProvider, section) {
     runnables[appKey] = {
-      componentProvider,
-      run: appParameters => renderApplication(componentProviderInstrumentationHook(componentProvider), appParameters.initialProps, appParameters.rootTag)
+      componentProvider: componentProvider,
+      run: function (appParameters) {
+        return renderApplication(componentProviderInstrumentationHook(componentProvider), appParameters.initialProps, appParameters.rootTag);
+      }
     };
     if (section) {
       sections[appKey] = runnables[appKey];
     }
     return appKey;
   },
-
-  registerRunnable(appKey, run) {
-    runnables[appKey] = { run };
+  registerRunnable: function (appKey, run) {
+    runnables[appKey] = { run: run };
     return appKey;
   },
-
-  registerSection(appKey, component) {
+  registerSection: function (appKey, component) {
     AppRegistry.registerComponent(appKey, component, true);
   },
-
-  getAppKeys() {
+  getAppKeys: function () {
     return Object.keys(runnables);
   },
-
-  getSectionKeys() {
+  getSectionKeys: function () {
     return Object.keys(sections);
   },
-
-  getSections() {
+  getSections: function () {
     return babelHelpers.extends({}, sections);
   },
-
-  getRunnable(appKey) {
+  getRunnable: function (appKey) {
     return runnables[appKey];
   },
-
-  getRegistry() {
+  getRegistry: function () {
     return {
       sections: AppRegistry.getSectionKeys(),
       runnables: babelHelpers.extends({}, runnables)
     };
   },
-
-  setComponentProviderInstrumentationHook(hook) {
+  setComponentProviderInstrumentationHook: function (hook) {
     componentProviderInstrumentationHook = hook;
   },
-
-  runApplication(appKey, appParameters) {
-    const msg = 'Running application "' + appKey + '" with appParams: ' + JSON.stringify(appParameters) + '. ' + '__DEV__ === ' + String(__DEV__) + ', development-level warning are ' + (__DEV__ ? 'ON' : 'OFF') + ', performance optimizations are ' + (__DEV__ ? 'OFF' : 'ON');
+  runApplication: function (appKey, appParameters) {
+    var msg = 'Running application "' + appKey + '" with appParams: ' + JSON.stringify(appParameters) + '. ' + '__DEV__ === ' + String(__DEV__) + ', development-level warning are ' + (__DEV__ ? 'ON' : 'OFF') + ', performance optimizations are ' + (__DEV__ ? 'OFF' : 'ON');
     infoLog(msg);
-    BugReporting.addSource('AppRegistry.runApplication' + runCount++, () => msg);
+    BugReporting.addSource('AppRegistry.runApplication' + runCount++, function () {
+      return msg;
+    });
     invariant(runnables[appKey] && runnables[appKey].run, 'Application ' + appKey + ' has not been registered.\n\n' + 'Hint: This error often happens when you\'re running the packager ' + '(local dev server) from a wrong folder. For example you have ' + 'multiple apps and the packager is still running for the app you ' + 'were working on before.\nIf this is the case, simply kill the old ' + 'packager instance (e.g. close the packager terminal window) ' + 'and start the packager in the correct app folder (e.g. cd into app ' + 'folder and run \'npm start\').\n\n' + 'This error can also happen due to a require() error during ' + 'initialization or failure to call AppRegistry.registerComponent.\n\n');
 
     SceneTracker.setActiveScene({ name: appKey });
     runnables[appKey].run(appParameters);
   },
-
-  unmountApplicationComponentAtRootTag(rootTag) {
+  unmountApplicationComponentAtRootTag: function (rootTag) {
     ReactNative.unmountComponentAtNodeAndRemoveContainer(rootTag);
   },
-
-  registerHeadlessTask(taskKey, task) {
+  registerHeadlessTask: function (taskKey, task) {
     if (tasks.has(taskKey)) {
-      console.warn(`registerHeadlessTask called multiple times for same key '${taskKey}'`);
+      console.warn('registerHeadlessTask called multiple times for same key \'' + taskKey + '\'');
     }
     tasks.set(taskKey, task);
   },
-
-  startHeadlessTask(taskId, taskKey, data) {
-    const taskProvider = tasks.get(taskKey);
+  startHeadlessTask: function (taskId, taskKey, data) {
+    var taskProvider = tasks.get(taskKey);
     if (!taskProvider) {
-      throw new Error(`No task registered for key ${taskKey}`);
+      throw new Error('No task registered for key ' + taskKey);
     }
-    taskProvider()(data).then(() => NativeModules.HeadlessJsTaskSupport.notifyTaskFinished(taskId)).catch(reason => {
+    taskProvider()(data).then(function () {
+      return NativeModules.HeadlessJsTaskSupport.notifyTaskFinished(taskId);
+    }).catch(function (reason) {
       console.error(reason);
       NativeModules.HeadlessJsTaskSupport.notifyTaskFinished(taskId);
     });
   }
-
 };
 
 BatchedBridge.registerCallableModule('AppRegistry', AppRegistry);
@@ -45868,15 +46570,17 @@ __d(/* BugReporting */function(global, require, module, exports) {
 
 var _class, _temp;
 
-const RCTDeviceEventEmitter = require(68                     ); // 68 = RCTDeviceEventEmitter
-const Map = require(102  ); // 102 = Map
-const infoLog = require(119      ); // 119 = infoLog
+var RCTDeviceEventEmitter = require(68                     ); // 68 = RCTDeviceEventEmitter
+var Map = require(102  ); // 102 = Map
+var infoLog = require(119      ); // 119 = infoLog
 
 function defaultExtras() {
-  BugReporting.addFileSource('react_hierarchy.txt', () => require(285            )()); // 285 = dumpReactTree
+  BugReporting.addFileSource('react_hierarchy.txt', function () {
+    return require(285            )(); // 285 = dumpReactTree
+  });
 }
 
-let BugReporting = (_temp = _class = class BugReporting {
+var BugReporting = (_temp = _class = class BugReporting {
 
   static _maybeInit() {
     if (!BugReporting._subscription) {
@@ -45896,25 +46600,25 @@ let BugReporting = (_temp = _class = class BugReporting {
   static _addSource(key, callback, source) {
     BugReporting._maybeInit();
     if (source.has(key)) {
-      console.warn(`BugReporting.add* called multiple times for same key '${key}'`);
+      console.warn('BugReporting.add* called multiple times for same key \'' + key + '\'');
     }
     source.set(key, callback);
-    return { remove: () => {
+    return { remove: function () {
         source.delete(key);
       } };
   }
 
   static collectExtraData() {
-    const extraData = {};
-    for (const [key, callback] of BugReporting._extraSources) {
-      extraData[key] = callback();
+    var extraData = {};
+    for (var [_key, callback] of BugReporting._extraSources) {
+      extraData[_key] = callback();
     }
-    const fileData = {};
-    for (const [key, callback] of BugReporting._fileSources) {
-      fileData[key] = callback();
+    var fileData = {};
+    for (var [_key2, _callback] of BugReporting._fileSources) {
+      fileData[_key2] = _callback();
     }
     infoLog('BugReporting extraData:', extraData);
-    const BugReportingNativeModule = require(36             ).BugReporting; // 36 = NativeModules
+    var BugReportingNativeModule = require(36             ).BugReporting; // 36 = NativeModules
     BugReportingNativeModule && BugReportingNativeModule.setExtraData && BugReportingNativeModule.setExtraData(extraData, fileData);
 
     return { extras: extraData, files: fileData };
@@ -45945,25 +46649,27 @@ __d(/* SceneTracker */function(global, require, module, exports) {
 
 'use strict';
 
-let _listeners = [];
+var _listeners = [];
 
-let _activeScene = { name: 'default' };
+var _activeScene = { name: 'default' };
 
-const SceneTracker = {
-  setActiveScene(scene) {
+var SceneTracker = {
+  setActiveScene: function (scene) {
     _activeScene = scene;
-    _listeners.forEach(listener => listener(_activeScene));
+    _listeners.forEach(function (listener) {
+      return listener(_activeScene);
+    });
   },
-
-  getActiveScene() {
+  getActiveScene: function () {
     return _activeScene;
   },
-
-  addActiveSceneChangedListener(callback) {
+  addActiveSceneChangedListener: function (callback) {
     _listeners.push(callback);
     return {
-      remove: () => {
-        _listeners = _listeners.filter(listener => callback !== listener);
+      remove: function () {
+        _listeners = _listeners.filter(function (listener) {
+          return callback !== listener;
+        });
       }
     };
   }
@@ -46002,13 +46708,14 @@ __d(/* BackHandler */function(global, require, module, exports) {
 
 function emptyFunction() {}
 
-let BackHandler = {
+var BackHandler = {
   exitApp: emptyFunction,
-  addEventListener() {
+  addEventListener: function () {
     return {
       remove: emptyFunction
     };
   },
+
   removeEventListener: emptyFunction
 };
 
@@ -46017,9 +46724,9 @@ module.exports = BackHandler;
 __d(/* AsyncStorage */function(global, require, module, exports) {
 'use strict';
 
-const NativeModules = require(36             ); // 36 = NativeModules
+var NativeModules = require(36             ); // 36 = NativeModules
 
-const RCTAsyncStorage = NativeModules.AsyncRocksDBStorage || NativeModules.AsyncSQLiteDBStorage || NativeModules.AsyncLocalStorage;
+var RCTAsyncStorage = NativeModules.AsyncRocksDBStorage || NativeModules.AsyncSQLiteDBStorage || NativeModules.AsyncLocalStorage;
 
 var AsyncStorage = {
   _getRequests: [],
@@ -46027,7 +46734,7 @@ var AsyncStorage = {
   _immediate: null,
 
   getItem: function (key, callback) {
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
       RCTAsyncStorage.multiGet([key], function (errors, result) {
         var value = result && result[0] && result[0][1] ? result[0][1] : null;
         var errs = convertErrors(errors);
@@ -46042,7 +46749,7 @@ var AsyncStorage = {
   },
 
   setItem: function (key, value, callback) {
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
       RCTAsyncStorage.multiSet([[key, value]], function (errors) {
         var errs = convertErrors(errors);
         callback && callback(errs && errs[0]);
@@ -46056,7 +46763,7 @@ var AsyncStorage = {
   },
 
   removeItem: function (key, callback) {
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
       RCTAsyncStorage.multiRemove([key], function (errors) {
         var errs = convertErrors(errors);
         callback && callback(errs && errs[0]);
@@ -46070,7 +46777,7 @@ var AsyncStorage = {
   },
 
   mergeItem: function (key, value, callback) {
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
       RCTAsyncStorage.multiMerge([[key, value]], function (errors) {
         var errs = convertErrors(errors);
         callback && callback(errs && errs[0]);
@@ -46084,7 +46791,7 @@ var AsyncStorage = {
   },
 
   clear: function (callback) {
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
       RCTAsyncStorage.clear(function (error) {
         callback && callback(convertError(error));
         if (error && convertError(error)) {
@@ -46097,7 +46804,7 @@ var AsyncStorage = {
   },
 
   getAllKeys: function (callback) {
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
       RCTAsyncStorage.getAllKeys(function (error, keys) {
         callback && callback(convertError(error), keys);
         if (error) {
@@ -46110,22 +46817,24 @@ var AsyncStorage = {
   },
 
   flushGetRequests: function () {
-    const getRequests = this._getRequests;
-    const getKeys = this._getKeys;
+    var getRequests = this._getRequests;
+    var getKeys = this._getKeys;
 
     this._getRequests = [];
     this._getKeys = [];
 
     RCTAsyncStorage.multiGet(getKeys, function (errors, result) {
-      const map = {};
-      result && result.forEach(([key, value]) => {
+      var map = {};
+      result && result.forEach(function ([key, value]) {
         map[key] = value;return value;
       });
-      const reqLength = getRequests.length;
-      for (let i = 0; i < reqLength; i++) {
-        const request = getRequests[i];
-        const requestKeys = request.keys;
-        const requestResult = requestKeys.map(key => [key, map[key]]);
+      var reqLength = getRequests.length;
+      for (var i = 0; i < reqLength; i++) {
+        var request = getRequests[i];
+        var requestKeys = request.keys;
+        var requestResult = requestKeys.map(function (key) {
+          return [key, map[key]];
+        });
         request.callback && request.callback(null, requestResult);
         request.resolve && request.resolve(requestResult);
       }
@@ -46133,10 +46842,12 @@ var AsyncStorage = {
   },
 
   multiGet: function (keys, callback) {
+    var _this = this;
+
     if (!this._immediate) {
-      this._immediate = setImmediate(() => {
-        this._immediate = null;
-        this.flushGetRequests();
+      this._immediate = setImmediate(function () {
+        _this._immediate = null;
+        _this.flushGetRequests();
       });
     }
 
@@ -46149,16 +46860,16 @@ var AsyncStorage = {
       reject: null
     };
 
-    var promiseResult = new Promise((resolve, reject) => {
+    var promiseResult = new Promise(function (resolve, reject) {
       getRequest.resolve = resolve;
       getRequest.reject = reject;
     });
 
     this._getRequests.push(getRequest);
 
-    keys.forEach(key => {
-      if (this._getKeys.indexOf(key) === -1) {
-        this._getKeys.push(key);
+    keys.forEach(function (key) {
+      if (_this._getKeys.indexOf(key) === -1) {
+        _this._getKeys.push(key);
       }
     });
 
@@ -46166,7 +46877,7 @@ var AsyncStorage = {
   },
 
   multiSet: function (keyValuePairs, callback) {
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
       RCTAsyncStorage.multiSet(keyValuePairs, function (errors) {
         var error = convertErrors(errors);
         callback && callback(error);
@@ -46180,7 +46891,7 @@ var AsyncStorage = {
   },
 
   multiRemove: function (keys, callback) {
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
       RCTAsyncStorage.multiRemove(keys, function (errors) {
         var error = convertErrors(errors);
         callback && callback(error);
@@ -46194,7 +46905,7 @@ var AsyncStorage = {
   },
 
   multiMerge: function (keyValuePairs, callback) {
-    return new Promise((resolve, reject) => {
+    return new Promise(function (resolve, reject) {
       RCTAsyncStorage.multiMerge(keyValuePairs, function (errors) {
         var error = convertErrors(errors);
         callback && callback(error);
@@ -46217,7 +46928,9 @@ function convertErrors(errs) {
   if (!errs) {
     return null;
   }
-  return (Array.isArray(errs) ? errs : [errs]).map(e => convertError(e));
+  return (Array.isArray(errs) ? errs : [errs]).map(function (e) {
+    return convertError(e);
+  });
 }
 
 function convertError(error) {
@@ -46265,13 +46978,13 @@ __d(/* CameraRoll */function(global, require, module, exports) {
 
 var _class, _temp;
 
-const { PropTypes, checkPropTypes } = require(125    ); // 125 = React
-const RCTCameraRollManager = require(36             ).CameraRollManager; // 36 = NativeModules
+var { PropTypes: PropTypes, checkPropTypes: checkPropTypes } = require(125    ); // 125 = React
+var RCTCameraRollManager = require(36             ).CameraRollManager; // 36 = NativeModules
 
-const createStrictShapeTypeChecker = require(142                           ); // 142 = createStrictShapeTypeChecker
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var createStrictShapeTypeChecker = require(142                           ); // 142 = createStrictShapeTypeChecker
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-const GROUP_TYPES_OPTIONS = {
+var GROUP_TYPES_OPTIONS = {
   Album: 'Album',
   All: 'All',
   Event: 'Event',
@@ -46280,13 +46993,13 @@ const GROUP_TYPES_OPTIONS = {
   PhotoStream: 'PhotoStream',
   SavedPhotos: 'SavedPhotos' };
 
-const ASSET_TYPE_OPTIONS = {
+var ASSET_TYPE_OPTIONS = {
   All: 'All',
   Videos: 'Videos',
   Photos: 'Photos'
 };
 
-const getPhotosParamChecker = createStrictShapeTypeChecker({
+var getPhotosParamChecker = createStrictShapeTypeChecker({
   first: PropTypes.number.isRequired,
 
   after: PropTypes.string,
@@ -46300,7 +47013,7 @@ const getPhotosParamChecker = createStrictShapeTypeChecker({
   mimeTypes: PropTypes.arrayOf(PropTypes.string)
 });
 
-const getPhotosReturnChecker = createStrictShapeTypeChecker({
+var getPhotosReturnChecker = createStrictShapeTypeChecker({
   edges: PropTypes.arrayOf(createStrictShapeTypeChecker({
     node: createStrictShapeTypeChecker({
       type: PropTypes.string.isRequired,
@@ -46328,7 +47041,7 @@ const getPhotosReturnChecker = createStrictShapeTypeChecker({
   }).isRequired
 });
 
-let CameraRoll = (_temp = _class = class CameraRoll {
+var CameraRoll = (_temp = _class = class CameraRoll {
   static saveImageWithTag(tag) {
     console.warn('`CameraRoll.saveImageWithTag()` is deprecated. Use `CameraRoll.saveToCameraRoll()` instead.');
     return this.saveToCameraRoll(tag, 'photo');
@@ -46337,9 +47050,9 @@ let CameraRoll = (_temp = _class = class CameraRoll {
   static saveToCameraRoll(tag, type) {
     invariant(typeof tag === 'string', 'CameraRoll.saveToCameraRoll must be a valid string.');
 
-    invariant(type === 'photo' || type === 'video' || type === undefined, `The second argument to saveToCameraRoll must be 'photo' or 'video'. You passed ${type}`);
+    invariant(type === 'photo' || type === 'video' || type === undefined, 'The second argument to saveToCameraRoll must be \'photo\' or \'video\'. You passed ' + type);
 
-    let mediaType = 'photo';
+    var mediaType = 'photo';
     if (type) {
       mediaType = type;
     } else if (['mov', 'mp4'].indexOf(tag.split('.').slice(-1)[0]) >= 0) {
@@ -46351,19 +47064,19 @@ let CameraRoll = (_temp = _class = class CameraRoll {
 
   static getPhotos(params) {
     if (__DEV__) {
-      checkPropTypes({ params: getPhotosParamChecker }, { params }, 'params', 'CameraRoll.getPhotos');
+      checkPropTypes({ params: getPhotosParamChecker }, { params: params }, 'params', 'CameraRoll.getPhotos');
     }
     if (arguments.length > 1) {
       console.warn('CameraRoll.getPhotos(tag, success, error) is deprecated.  Use the returned Promise instead');
-      let successCallback = arguments[1];
+      var successCallback = arguments[1];
       if (__DEV__) {
-        const callback = arguments[1];
-        successCallback = response => {
-          checkPropTypes({ response: getPhotosReturnChecker }, { response }, 'response', 'CameraRoll.getPhotos callback');
+        var callback = arguments[1];
+        successCallback = function (response) {
+          checkPropTypes({ response: getPhotosReturnChecker }, { response: response }, 'response', 'CameraRoll.getPhotos callback');
           callback(response);
         };
       }
-      const errorCallback = arguments[2] || (() => {});
+      var errorCallback = arguments[2] || function () {};
       RCTCameraRollManager.getPhotos(params).then(successCallback, errorCallback);
     }
 
@@ -46377,14 +47090,13 @@ module.exports = CameraRoll;
 __d(/* Clipboard */function(global, require, module, exports) {
 'use strict';
 
-const Clipboard = require(36             ).Clipboard; // 36 = NativeModules
+var Clipboard = require(36             ).Clipboard; // 36 = NativeModules
 
 module.exports = {
-  getString() {
+  getString: function () {
     return Clipboard.getString();
   },
-
-  setString(content) {
+  setString: function (content) {
     Clipboard.setString(content);
   }
 };
@@ -46392,8 +47104,8 @@ module.exports = {
 __d(/* DatePickerAndroid */function(global, require, module, exports) {
 "use strict";
 
-const DatePickerAndroid = {
-  async open(options) {
+var DatePickerAndroid = {
+  open: async function (options) {
     return Promise.reject({
       message: "DatePickerAndroid is not supported on this platform."
     });
@@ -46434,15 +47146,15 @@ module.exports = ImagePickerIOS;
 __d(/* Linking */function(global, require, module, exports) {
 'use strict';
 
-const NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
-const NativeModules = require(36             ); // 36 = NativeModules
-const Platform = require(46        ); // 46 = Platform
+var NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
+var NativeModules = require(36             ); // 36 = NativeModules
+var Platform = require(46        ); // 46 = Platform
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-const LinkingManager = Platform.OS === 'android' ? NativeModules.IntentAndroid : NativeModules.LinkingManager;
+var LinkingManager = Platform.OS === 'android' ? NativeModules.IntentAndroid : NativeModules.LinkingManager;
 
-let Linking = class Linking extends NativeEventEmitter {
+var Linking = class Linking extends NativeEventEmitter {
 
   constructor() {
     super(LinkingManager);
@@ -46482,19 +47194,19 @@ module.exports = new Linking();
 __d(/* NetInfo */function(global, require, module, exports) {
 'use strict';
 
-const Map = require(102  ); // 102 = Map
-const NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
-const NativeModules = require(36             ); // 36 = NativeModules
-const Platform = require(46        ); // 46 = Platform
-const RCTNetInfo = NativeModules.NetInfo;
+var Map = require(102  ); // 102 = Map
+var NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
+var NativeModules = require(36             ); // 36 = NativeModules
+var Platform = require(46        ); // 46 = Platform
+var RCTNetInfo = NativeModules.NetInfo;
 
-const NetInfoEventEmitter = new NativeEventEmitter(RCTNetInfo);
+var NetInfoEventEmitter = new NativeEventEmitter(RCTNetInfo);
 
-const DEVICE_CONNECTIVITY_EVENT = 'networkStatusDidChange';
+var DEVICE_CONNECTIVITY_EVENT = 'networkStatusDidChange';
 
-const _subscriptions = new Map();
+var _subscriptions = new Map();
 
-let _isConnected;
+var _isConnected = void 0;
 if (Platform.OS === 'ios') {
   _isConnected = function (reachability) {
     return reachability !== 'none' && reachability !== 'unknown';
@@ -46505,56 +47217,60 @@ if (Platform.OS === 'ios') {
   };
 }
 
-const _isConnectedSubscriptions = new Map();
+var _isConnectedSubscriptions = new Map();
 
-const NetInfo = {
-  addEventListener(eventName, handler) {
-    const listener = NetInfoEventEmitter.addListener(DEVICE_CONNECTIVITY_EVENT, appStateData => {
+var NetInfo = {
+  addEventListener: function (eventName, handler) {
+    var listener = NetInfoEventEmitter.addListener(DEVICE_CONNECTIVITY_EVENT, function (appStateData) {
       handler(appStateData.network_info);
     });
     _subscriptions.set(handler, listener);
     return {
-      remove: () => NetInfo.removeEventListener(eventName, handler)
+      remove: function () {
+        return NetInfo.removeEventListener(eventName, handler);
+      }
     };
   },
-
-  removeEventListener(eventName, handler) {
-    const listener = _subscriptions.get(handler);
+  removeEventListener: function (eventName, handler) {
+    var listener = _subscriptions.get(handler);
     if (!listener) {
       return;
     }
     listener.remove();
     _subscriptions.delete(handler);
   },
-
-  fetch() {
-    return RCTNetInfo.getCurrentConnectivity().then(resp => resp.network_info);
+  fetch: function () {
+    return RCTNetInfo.getCurrentConnectivity().then(function (resp) {
+      return resp.network_info;
+    });
   },
 
   isConnected: {
-    addEventListener(eventName, handler) {
-      const listener = connection => {
+    addEventListener: function (eventName, handler) {
+      var listener = function (connection) {
         handler(_isConnected(connection));
       };
       _isConnectedSubscriptions.set(handler, listener);
       NetInfo.addEventListener(eventName, listener);
       return {
-        remove: () => NetInfo.isConnected.removeEventListener(eventName, handler)
+        remove: function () {
+          return NetInfo.isConnected.removeEventListener(eventName, handler);
+        }
       };
     },
-
-    removeEventListener(eventName, handler) {
-      const listener = _isConnectedSubscriptions.get(handler);
+    removeEventListener: function (eventName, handler) {
+      var listener = _isConnectedSubscriptions.get(handler);
       NetInfo.removeEventListener(eventName, listener);
       _isConnectedSubscriptions.delete(handler);
     },
-
-    fetch() {
-      return NetInfo.fetch().then(connection => _isConnected(connection));
+    fetch: function () {
+      return NetInfo.fetch().then(function (connection) {
+        return _isConnected(connection);
+      });
     }
   },
 
-  isConnectionExpensive() {
+  isConnectionExpensive: function () {
     return Platform.OS === 'android' ? RCTNetInfo.isConnectionMetered() : Promise.reject(new Error('Currently not supported on iOS'));
   }
 };
@@ -46566,20 +47282,20 @@ __d(/* PushNotificationIOS */function(global, require, module, exports) {
 
 var _class, _temp;
 
-const NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
-const RCTPushNotificationManager = require(36             ).PushNotificationManager; // 36 = NativeModules
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var NativeEventEmitter = require(63                  ); // 63 = NativeEventEmitter
+var RCTPushNotificationManager = require(36             ).PushNotificationManager; // 36 = NativeModules
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
 
-const PushNotificationEmitter = new NativeEventEmitter(RCTPushNotificationManager);
+var PushNotificationEmitter = new NativeEventEmitter(RCTPushNotificationManager);
 
-const _notifHandlers = new Map();
+var _notifHandlers = new Map();
 
-const DEVICE_NOTIF_EVENT = 'remoteNotificationReceived';
-const NOTIF_REGISTER_EVENT = 'remoteNotificationsRegistered';
-const NOTIF_REGISTRATION_ERROR_EVENT = 'remoteNotificationRegistrationError';
-const DEVICE_LOCAL_NOTIF_EVENT = 'localNotificationReceived';
+var DEVICE_NOTIF_EVENT = 'remoteNotificationReceived';
+var NOTIF_REGISTER_EVENT = 'remoteNotificationsRegistered';
+var NOTIF_REGISTRATION_ERROR_EVENT = 'remoteNotificationRegistrationError';
+var DEVICE_LOCAL_NOTIF_EVENT = 'localNotificationReceived';
 
-let PushNotificationIOS = (_temp = _class = class PushNotificationIOS {
+var PushNotificationIOS = (_temp = _class = class PushNotificationIOS {
   static presentLocalNotification(details) {
     RCTPushNotificationManager.presentLocalNotification(details);
   }
@@ -46624,19 +47340,19 @@ let PushNotificationIOS = (_temp = _class = class PushNotificationIOS {
     invariant(type === 'notification' || type === 'register' || type === 'registrationError' || type === 'localNotification', 'PushNotificationIOS only supports `notification`, `register`, `registrationError`, and `localNotification` events');
     var listener;
     if (type === 'notification') {
-      listener = PushNotificationEmitter.addListener(DEVICE_NOTIF_EVENT, notifData => {
+      listener = PushNotificationEmitter.addListener(DEVICE_NOTIF_EVENT, function (notifData) {
         handler(new PushNotificationIOS(notifData));
       });
     } else if (type === 'localNotification') {
-      listener = PushNotificationEmitter.addListener(DEVICE_LOCAL_NOTIF_EVENT, notifData => {
+      listener = PushNotificationEmitter.addListener(DEVICE_LOCAL_NOTIF_EVENT, function (notifData) {
         handler(new PushNotificationIOS(notifData));
       });
     } else if (type === 'register') {
-      listener = PushNotificationEmitter.addListener(NOTIF_REGISTER_EVENT, registrationInfo => {
+      listener = PushNotificationEmitter.addListener(NOTIF_REGISTER_EVENT, function (registrationInfo) {
         handler(registrationInfo.deviceToken);
       });
     } else if (type === 'registrationError') {
-      listener = PushNotificationEmitter.addListener(NOTIF_REGISTRATION_ERROR_EVENT, errorInfo => {
+      listener = PushNotificationEmitter.addListener(NOTIF_REGISTRATION_ERROR_EVENT, function (errorInfo) {
         handler(errorInfo);
       });
     }
@@ -46681,12 +47397,14 @@ let PushNotificationIOS = (_temp = _class = class PushNotificationIOS {
   }
 
   static getInitialNotification() {
-    return RCTPushNotificationManager.getInitialNotification().then(notification => {
+    return RCTPushNotificationManager.getInitialNotification().then(function (notification) {
       return notification && new PushNotificationIOS(notification);
     });
   }
 
   constructor(nativeNotif) {
+    var _this = this;
+
     this._data = {};
     this._remoteNotificationCompleteCalllbackCalled = false;
     this._isRemote = nativeNotif.remote;
@@ -46695,15 +47413,15 @@ let PushNotificationIOS = (_temp = _class = class PushNotificationIOS {
     }
 
     if (nativeNotif.remote) {
-      Object.keys(nativeNotif).forEach(notifKey => {
+      Object.keys(nativeNotif).forEach(function (notifKey) {
         var notifVal = nativeNotif[notifKey];
         if (notifKey === 'aps') {
-          this._alert = notifVal.alert;
-          this._sound = notifVal.sound;
-          this._badgeCount = notifVal.badge;
-          this._category = notifVal.category;
+          _this._alert = notifVal.alert;
+          _this._sound = notifVal.sound;
+          _this._badgeCount = notifVal.badge;
+          _this._category = notifVal.category;
         } else {
-          this._data[notifKey] = notifVal;
+          _this._data[notifKey] = notifVal;
         }
       });
     } else {
@@ -46760,21 +47478,18 @@ __d(/* Settings */function(global, require, module, exports) {
 "use strict";
 
 var Settings = {
-  get(key) {
+  get: function (key) {
     console.warn("Settings is not yet supported on Web");
     return null;
   },
-
-  set(settings) {
+  set: function (settings) {
     console.warn("Settings is not yet supported on Web");
   },
-
-  watchKeys(keys, callback) {
+  watchKeys: function (keys, callback) {
     console.warn("Settings is not yet supported on Web");
     return -1;
   },
-
-  clearWatch(watchId) {
+  clearWatch: function (watchId) {
     console.warn("Settings is not yet supported on Web");
   }
 };
@@ -46784,17 +47499,17 @@ module.exports = Settings;
 __d(/* Share */function(global, require, module, exports) {
 'use strict';
 
-const Platform = require(46        ); // 46 = Platform
+var Platform = require(46        ); // 46 = Platform
 
-const invariant = require(18                  ); // 18 = fbjs/lib/invariant
-const processColor = require(85            ); // 85 = processColor
+var invariant = require(18                  ); // 18 = fbjs/lib/invariant
+var processColor = require(85            ); // 85 = processColor
 
-const {
-  ActionSheetManager,
-  ShareModule
+var {
+  ActionSheetManager: ActionSheetManager,
+  ShareModule: ShareModule
 } = require(36             ); // 36 = NativeModules
 
-let Share = class Share {
+var Share = class Share {
   static share(content, options = {}) {
     invariant(typeof content === 'object' && content !== null, 'Content to share must be a valid object');
     invariant(typeof content.url === 'string' || typeof content.message === 'string', 'At least one of URL and message is required');
@@ -46804,8 +47519,10 @@ let Share = class Share {
       invariant(!content.title || typeof content.title === 'string', 'Invalid title: title should be a string.');
       return ShareModule.share(content, options.dialogTitle);
     } else if (Platform.OS === 'ios') {
-      return new Promise((resolve, reject) => {
-        ActionSheetManager.showShareActionSheetWithOptions(babelHelpers.extends({}, content, options, { tintColor: processColor(options.tintColor) }), error => reject(error), (success, activityType) => {
+      return new Promise(function (resolve, reject) {
+        ActionSheetManager.showShareActionSheetWithOptions(babelHelpers.extends({}, content, options, { tintColor: processColor(options.tintColor) }), function (error) {
+          return reject(error);
+        }, function (success, activityType) {
           if (success) {
             resolve({
               'action': 'sharedAction',
@@ -46839,8 +47556,8 @@ module.exports = Share;
 __d(/* TimePickerAndroid */function(global, require, module, exports) {
 'use strict';
 
-const TimePickerAndroid = {
-  async open(options) {
+var TimePickerAndroid = {
+  open: async function (options) {
     return Promise.reject({
       message: 'TimePickerAndroid is not supported on this platform.'
     });
@@ -46871,7 +47588,9 @@ function vibrateByPattern(pattern, repeat = false) {
     _vibrating = false;
     return;
   }
-  setTimeout(() => vibrateScheduler(++_id, pattern, repeat, 1), pattern[0]);
+  setTimeout(function () {
+    return vibrateScheduler(++_id, pattern, repeat, 1);
+  }, pattern[0]);
 }
 
 function vibrateScheduler(id, pattern, repeat, nextIndex) {
@@ -46887,7 +47606,9 @@ function vibrateScheduler(id, pattern, repeat, nextIndex) {
       return;
     }
   }
-  setTimeout(() => vibrateScheduler(id, pattern, repeat, nextIndex + 1), pattern[nextIndex]);
+  setTimeout(function () {
+    return vibrateScheduler(id, pattern, repeat, nextIndex + 1);
+  }, pattern[nextIndex]);
 }
 
 var Vibration = {
@@ -46942,8 +47663,8 @@ __d(/* takeSnapshot */function(global, require, module, exports) {
 
 'use strict';
 
-const {
-  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
+var {
+  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED: __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
 } = require(32           ); // 32 = ReactNative
 
 module.exports = __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.takeSnapshot;

@@ -5,6 +5,8 @@
 
 import type RCTBridge from "RCTBridge";
 
+import detectIt from "detect-it";
+
 import invariant from "Invariant";
 import UIView from "UIView";
 import RCTEventDispatcher from "RCTEventDispatcher";
@@ -30,6 +32,10 @@ type ReactTouch = {
   locationY?: number,
   timestamp?: number
 };
+
+const TOUCH_LISTENER_OPTIONS = detectIt.passiveEvents
+  ? { passive: true }
+  : false;
 
 class RCTTouchHandler {
   eventDispatcher: RCTEventDispatcher;
@@ -115,12 +121,20 @@ class RCTTouchHandler {
 
   attachToView(view: UIView) {
     this.view = view;
-    view.addGestureRecognizer(this);
+    view.addGestureRecognizer(
+      this,
+      detectIt.deviceType,
+      TOUCH_LISTENER_OPTIONS
+    );
   }
 
   detachFromView(view: UIView) {
     this.view = undefined;
-    view.removeGestureRecognizer(this);
+    view.removeGestureRecognizer(
+      this,
+      detectIt.deviceType,
+      TOUCH_LISTENER_OPTIONS
+    );
   }
 
   recordNewTouches(touches: Array<UITouch>) {
@@ -279,8 +293,16 @@ class RCTTouchHandler {
 
     const view = this.view;
     if (view) {
-      view.addEventListener("touchend", this.nativeTouchEnded);
-      view.addEventListener("touchmove", this.nativeTouchMoved);
+      view.addEventListener(
+        "touchend",
+        this.nativeTouchEnded,
+        TOUCH_LISTENER_OPTIONS
+      );
+      view.addEventListener(
+        "touchmove",
+        this.nativeTouchMoved,
+        TOUCH_LISTENER_OPTIONS
+      );
     }
   };
 
@@ -299,8 +321,16 @@ class RCTTouchHandler {
 
     const view = this.view;
     if (view) {
-      view.removeEventListener("touchend", this.nativeTouchEnded);
-      view.removeEventListener("touchmove", this.nativeTouchMoved);
+      view.removeEventListener(
+        "touchend",
+        this.nativeTouchEnded,
+        TOUCH_LISTENER_OPTIONS
+      );
+      view.removeEventListener(
+        "touchmove",
+        this.nativeTouchMoved,
+        TOUCH_LISTENER_OPTIONS
+      );
     }
   };
 

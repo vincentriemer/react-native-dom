@@ -1,19 +1,21 @@
 {
   "sourceMaps": "inline",
-  "ignore": ["node_modules/yoga-layout", "node_modules/yoga-js"],
+  "ignore": ["node_modules/yoga-layout"],
   "presets": [],
   "plugins": [
     "syntax-flow",
     "transform-flow-strip-types",
+    "preval",
     "transform-es2015-modules-commonjs",
     "transform-react-jsx",
     "transform-decorators-legacy",
     "transform-class-properties",
     "transform-object-rest-spread",
     "transform-inline-environment-variables",
-    "preval"
-  ],
-  "parserOpts": {
-    "sourceType": "module"
-  }
+    "transform-es2015-shorthand-properties",
+    "transform-es2015-template-literals",
+    "transform-es2015-arrow-functions",
+    "transform-es2015-spread",
+    "transform-es2015-block-scoping"
+  ]
 }

@@ -4,6 +4,9 @@ var path = require("path");
 const blacklist = require("metro-bundler/build/blacklist");
 
 var config = {
+  extraNodeModules: {
+    "react-native-web": path.resolve(__dirname, "ReactWeb", "index")
+  },
   getProjectRoots() {
     return getRoots();
   },

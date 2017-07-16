@@ -1,7 +1,7 @@
 <html>
 
 <head>
-  <title>Layout Animations Example</title>
+  <title>ScrollView Example</title>
   <style>
     html,
     body,
@@ -135,18 +135,16 @@
     }
   </style>
   <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width">
-  <link rel="prefetch" href="index.web.js">
 </head>
 
 <body>
   <!--Web Components Polyfill-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/1.0.1/webcomponents-loader.js"></script>
-  <!--Web Animations API Polyfill-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/web-animations/2.2.5/web-animations.min.js"></script>
   <!--Bundle Paths-->
   <script>
-    var clientBundlePath = "client.js";
-    var rnBundlePath = "index.web.js";
+    var clientBundlePath = "./client.bundle?platform=web";
+    var rnBundlePath = "../index.web.bundle?platform=web&dev=true";
   </script>
 
   <!--Helper Functions-->

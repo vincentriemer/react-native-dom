@@ -11,7 +11,7 @@ global.__BUNDLE_START_TIME__ = global.nativePerformanceNow ? global.nativePerfor
 global.require = _require;
 global.__d = define;
 
-const modules = Object.create(null);
+var modules = Object.create(null);
 if (__DEV__) {
   var verboseNamesToModuleIds = Object.create(null);
 }
@@ -21,16 +21,16 @@ function define(factory, moduleId, dependencyMap) {
     return;
   }
   modules[moduleId] = {
-    dependencyMap,
+    dependencyMap: dependencyMap,
     exports: undefined,
-    factory,
+    factory: factory,
     hasError: false,
     isInitialized: false };
 
   if (__DEV__) {
     modules[moduleId].hot = createHotReloadingObject();
 
-    const verboseName = arguments[3];
+    var verboseName = arguments[3];
     if (verboseName) {
       modules[moduleId].verboseName = verboseName;
       verboseNamesToModuleIds[verboseName] = moduleId;
@@ -40,25 +40,25 @@ function define(factory, moduleId, dependencyMap) {
 
 function _require(moduleId) {
   if (__DEV__ && typeof moduleId === 'string') {
-    const verboseName = moduleId;
+    var verboseName = moduleId;
     moduleId = verboseNamesToModuleIds[moduleId];
     if (moduleId == null) {
-      throw new Error(`Unknown named module: '${verboseName}'`);
+      throw new Error('Unknown named module: \'' + verboseName + '\'');
     } else {
-      console.warn(`Requiring module '${verboseName}' by name is only supported for ` + 'debugging purposes and will BREAK IN PRODUCTION!');
+      console.warn('Requiring module \'' + verboseName + '\' by name is only supported for ' + 'debugging purposes and will BREAK IN PRODUCTION!');
     }
   }
 
-  const moduleIdReallyIsNumber = moduleId;
-  const module = modules[moduleIdReallyIsNumber];
+  var moduleIdReallyIsNumber = moduleId;
+  var module = modules[moduleIdReallyIsNumber];
   return module && module.isInitialized ? module.exports : guardedLoadModule(moduleIdReallyIsNumber, module);
 }
 
-let inGuard = false;
+var inGuard = false;
 function guardedLoadModule(moduleId, module) {
   if (!inGuard && global.ErrorUtils) {
     inGuard = true;
-    let returnValue;
+    var returnValue = void 0;
     try {
       returnValue = loadModuleImplementation(moduleId, module);
     } catch (e) {
@@ -72,7 +72,7 @@ function guardedLoadModule(moduleId, module) {
 }
 
 function loadModuleImplementation(moduleId, module) {
-  const nativeRequire = global.nativeRequire;
+  var nativeRequire = global.nativeRequire;
   if (!module && nativeRequire) {
     nativeRequire(moduleId);
     module = modules[moduleId];
@@ -91,14 +91,14 @@ function loadModuleImplementation(moduleId, module) {
   }
 
   module.isInitialized = true;
-  const exports = module.exports = {};var _module = module;const factory = _module.factory,
-        dependencyMap = _module.dependencyMap;
+  var exports = module.exports = {};var _module = module;var factory = _module.factory,
+      dependencyMap = _module.dependencyMap;
   try {
     if (__DEV__) {
       Systrace.beginEvent('JS_require_' + (module.verboseName || moduleId));
     }
 
-    const moduleObject = { exports };
+    var moduleObject = { exports: exports };
     if (__DEV__ && module.hot) {
       moduleObject.hot = module.hot;
     }
@@ -124,7 +124,7 @@ function loadModuleImplementation(moduleId, module) {
 }
 
 function unknownModuleError(id) {
-  let message = 'Requiring unknown module "' + id + '".';
+  var message = 'Requiring unknown module "' + id + '".';
   if (__DEV__) {
     message += 'If you are sure the module is there, try restarting the packager. ' + 'You may also want to run `npm install`, or `yarn` (depending on your environment).';
   }
@@ -132,49 +132,51 @@ function unknownModuleError(id) {
 }
 
 function moduleThrewError(id, error) {
-  const displayName = __DEV__ && modules[id] && modules[id].verboseName || id;
+  var displayName = __DEV__ && modules[id] && modules[id].verboseName || id;
   return Error('Requiring module "' + displayName + '", which threw an exception: ' + error);
 }
 
 if (__DEV__) {
-  _require.Systrace = { beginEvent: () => {}, endEvent: () => {} };
+  _require.Systrace = { beginEvent: function () {}, endEvent: function () {} };
 
   var createHotReloadingObject = function () {
-    const hot = {
+    var hot = {
       acceptCallback: null,
-      accept: callback => {
+      accept: function (callback) {
         hot.acceptCallback = callback;
       } };
 
     return hot;
   };
 
-  const acceptAll = function (dependentModules, inverseDependencies) {
+  var acceptAll = function (dependentModules, inverseDependencies) {
     if (!dependentModules || dependentModules.length === 0) {
       return true;
     }
 
-    const notAccepted = dependentModules.filter(module => !accept(module, undefined, inverseDependencies));
+    var notAccepted = dependentModules.filter(function (module) {
+      return !accept(module, undefined, inverseDependencies);
+    });
 
-    const parents = [];
-    for (let i = 0; i < notAccepted.length; i++) {
+    var parents = [];
+    for (var i = 0; i < notAccepted.length; i++) {
       if (inverseDependencies[notAccepted[i]].length === 0) {
         return false;
       }
 
-      parents.push(...inverseDependencies[notAccepted[i]]);
+      parents.push.apply(parents, babelHelpers.toConsumableArray(inverseDependencies[notAccepted[i]]));
     }
 
     return acceptAll(parents, inverseDependencies);
   };
 
-  const accept = function (id, factory, inverseDependencies) {
-    const mod = modules[id];
+  var accept = function (id, factory, inverseDependencies) {
+    var mod = modules[id];
 
     if (!mod && factory) {
       define(factory, id);
       return true;
-    }const hot = mod.hot;
+    }var hot = mod.hot;
     if (!hot) {
       console.warn('Cannot accept module because Hot Module Replacement ' + 'API was not installed.');
 
@@ -243,7 +245,7 @@ Object.assign = function (target, sources) {
 })(typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : this);
 (function(global) {'use strict';
 
-const inspect = function () {
+var inspect = function () {
 
   function inspect(obj, opts) {
     var ctx = {
@@ -521,20 +523,20 @@ const inspect = function () {
   return inspect;
 }();
 
-const OBJECT_COLUMN_NAME = '(index)';
-const LOG_LEVELS = {
+var OBJECT_COLUMN_NAME = '(index)';
+var LOG_LEVELS = {
   trace: 0,
   info: 1,
   warn: 2,
   error: 3 };
 
-const INSPECTOR_LEVELS = [];
+var INSPECTOR_LEVELS = [];
 INSPECTOR_LEVELS[LOG_LEVELS.trace] = 'debug';
 INSPECTOR_LEVELS[LOG_LEVELS.info] = 'log';
 INSPECTOR_LEVELS[LOG_LEVELS.warn] = 'warning';
 INSPECTOR_LEVELS[LOG_LEVELS.error] = 'error';
 
-const INSPECTOR_FRAMES_TO_SKIP = __DEV__ ? 2 : 1;
+var INSPECTOR_FRAMES_TO_SKIP = __DEV__ ? 2 : 1;
 
 function setupConsole(global) {
   if (!global.nativeLoggingHook) {
@@ -543,7 +545,7 @@ function setupConsole(global) {
 
   function getNativeLogFunction(level) {
     return function () {
-      let str;
+      var str = void 0;
       if (arguments.length === 1 && typeof arguments[0] === 'string') {
         str = arguments[0];
       } else {
@@ -552,7 +554,7 @@ function setupConsole(global) {
         }).join(', ');
       }
 
-      let logLevel = level;
+      var logLevel = level;
       if (str.slice(0, 9) === 'Warning: ' && logLevel >= LOG_LEVELS.error) {
         logLevel = LOG_LEVELS.warn;
       }
@@ -639,11 +641,11 @@ function setupConsole(global) {
     table: consoleTablePolyfill };
 
   if (__DEV__ && originalConsole) {
-    Object.keys(console).forEach(methodName => {
+    Object.keys(console).forEach(function (methodName) {
       var reactNativeMethod = console[methodName];
       if (originalConsole[methodName]) {
         console[methodName] = function () {
-          originalConsole[methodName](...arguments);
+          originalConsole[methodName].apply(originalConsole, arguments);
           reactNativeMethod.apply(console, arguments);
         };
       }
@@ -659,26 +661,26 @@ if (typeof module !== 'undefined') {
 })(typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : this);
 (function(global) {'use strict';
 
-let _inGuard = 0;
+var _inGuard = 0;
 
-let _globalHandler = function onError(e) {
+var _globalHandler = function onError(e) {
   throw e;
 };
 
-const ErrorUtils = {
-  setGlobalHandler(fun) {
+var ErrorUtils = {
+  setGlobalHandler: function (fun) {
     _globalHandler = fun;
   },
-  getGlobalHandler() {
+  getGlobalHandler: function () {
     return _globalHandler;
   },
-  reportError(error) {
+  reportError: function (error) {
     _globalHandler && _globalHandler(error);
   },
-  reportFatalError(error) {
+  reportFatalError: function (error) {
     _globalHandler && _globalHandler(error, true);
   },
-  applyWithGuard(fun, context, args) {
+  applyWithGuard: function (fun, context, args) {
     try {
       _inGuard++;
       return fun.apply(context, args);
@@ -689,7 +691,7 @@ const ErrorUtils = {
     }
     return null;
   },
-  applyWithGuardIfNeeded(fun, context, args) {
+  applyWithGuardIfNeeded: function (fun, context, args) {
     if (ErrorUtils.inGuard()) {
       return fun.apply(context, args);
     } else {
@@ -697,10 +699,10 @@ const ErrorUtils = {
     }
     return null;
   },
-  inGuard() {
+  inGuard: function () {
     return _inGuard;
   },
-  guard(fun, name, context) {
+  guard: function (fun, name, context) {
     if (typeof fun !== 'function') {
       console.warn('A function must be passed to ErrorUtils.guard, got ', fun);
       return null;
@@ -711,7 +713,8 @@ const ErrorUtils = {
     }
 
     return guarded;
-  } };
+  }
+};
 
 global.ErrorUtils = ErrorUtils;
 })(typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : this);
@@ -730,7 +733,7 @@ if (Number.MIN_SAFE_INTEGER === undefined) {
     value: -(Math.pow(2, 53) - 1) });
 }
 if (!Number.isNaN) {
-  const globalIsNaN = global.isNaN;
+  var globalIsNaN = global.isNaN;
   Object.defineProperty(Number, 'isNaN', {
     configurable: true,
     enumerable: false,
@@ -963,7 +966,7 @@ if (!Array.from) {
 (function () {
   'use strict';
 
-  const hasOwnProperty = Object.prototype.hasOwnProperty;
+  var hasOwnProperty = Object.prototype.hasOwnProperty;
 
   if (typeof Object.entries !== 'function') {
     Object.entries = function (object) {
@@ -971,8 +974,8 @@ if (!Array.from) {
         throw new TypeError('Object.entries called on non-object');
       }
 
-      const entries = [];
-      for (const key in object) {
+      var entries = [];
+      for (var key in object) {
         if (hasOwnProperty.call(object, key)) {
           entries.push([key, object[key]]);
         }
@@ -987,8 +990,8 @@ if (!Array.from) {
         throw new TypeError('Object.values called on non-object');
       }
 
-      const values = [];
-      for (const key in object) {
+      var values = [];
+      for (var key in object) {
         if (hasOwnProperty.call(object, key)) {
           values.push(object[key]);
         }
@@ -1215,9 +1218,9 @@ babelHelpers.toArray = function (arr) {
 
 babelHelpers.toConsumableArray = function (arr) {
   if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
-    return arr2;
+    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }return arr2;
   } else {
     return Array.from(arr);
   }
@@ -1228,13 +1231,13 @@ __d(/* layout-animations-example/web/client.js */function(global, require, modul
 var _reactNativeWeb = require(12                ); // 12 = react-native-web
 
 function init(bundle, parent, options) {
-  const web = new _reactNativeWeb.RNWebInstance(bundle, "layoutanimations", parent, babelHelpers.extends({}, options));
+  var web = new _reactNativeWeb.RNWebInstance(bundle, "layoutanimations", parent, babelHelpers.extends({}, options));
 
   web.start();
   return web;
 }
 
-window.ReactWeb = { init };
+window.ReactWeb = { init: init };
 }, 0, null, "layout-animations-example/web/client.js");
 __d(/* react-native-webapp/ReactWeb/index.js */function(global, require, module, exports) {"use strict";
 
@@ -1249,27 +1252,27 @@ var _RCTRootView = require(14           ); // 14 = RCTRootView
 
 var _RCTRootView2 = babelHelpers.interopRequireDefault(_RCTRootView);
 
-var _BundleFromRoot = require(48              ); // 48 = BundleFromRoot
+var _BundleFromRoot = require(49              ); // 49 = BundleFromRoot
 
 var _BundleFromRoot2 = babelHelpers.interopRequireDefault(_BundleFromRoot);
 
-require(33                  ); // 33 = RCTEventDispatcher
+require(34                  ); // 34 = RCTEventDispatcher
 
-require(34             ); // 34 = RCTDeviceInfo
+require(35             ); // 35 = RCTDeviceInfo
 
-require(49           ); // 49 = RCTPlatform
+require(50           ); // 50 = RCTPlatform
 
-require(44         ); // 44 = RCTTiming
+require(45         ); // 45 = RCTTiming
 
 require(20            ); // 20 = RCTUIManager
 
 require(22              ); // 22 = RCTViewManager
 
-require(50              ); // 50 = RCTTextManager
+require(51              ); // 51 = RCTTextManager
 
-require(54                 ); // 54 = RCTRawTextManager
+require(55                 ); // 55 = RCTRawTextManager
 
-let RNWebInstance = exports.RNWebInstance = class RNWebInstance {
+var RNWebInstance = exports.RNWebInstance = class RNWebInstance {
 
   constructor(bundle, moduleName, parent) {
     this.rootView = new _RCTRootView2.default((0, _BundleFromRoot2.default)(bundle), moduleName, parent);
@@ -1288,7 +1291,7 @@ __d(/* proxy-polyfill/proxy.js */function(global, require, module, exports) {
   if (scope['Proxy']) {
     return;
   }
-  let lastRevokeFn = null;
+  var lastRevokeFn = null;
 
   function isObject(o) {
     return o ? typeof o == 'object' || typeof o == 'function' : false;
@@ -1299,18 +1302,18 @@ __d(/* proxy-polyfill/proxy.js */function(global, require, module, exports) {
       throw new TypeError('Cannot create proxy with a non-object as target or handler');
     }
 
-    let throwRevoked = function () {};
+    var throwRevoked = function () {};
     lastRevokeFn = function () {
       throwRevoked = function (trap) {
-        throw new TypeError(`Cannot perform '${trap}' on a proxy that has been revoked`);
+        throw new TypeError('Cannot perform \'' + trap + '\' on a proxy that has been revoked');
       };
     };
 
-    const unsafeHandler = handler;
+    var unsafeHandler = handler;
     handler = { 'get': null, 'set': null, 'apply': null, 'construct': null };
-    for (let k in unsafeHandler) {
+    for (var k in unsafeHandler) {
       if (!(k in handler)) {
-        throw new TypeError(`Proxy polyfill does not support trap '${k}'`);
+        throw new TypeError('Proxy polyfill does not support trap \'' + k + '\'');
       }
       handler[k] = unsafeHandler[k];
     }
@@ -1318,13 +1321,13 @@ __d(/* proxy-polyfill/proxy.js */function(global, require, module, exports) {
       handler.apply = unsafeHandler.apply.bind(unsafeHandler);
     }
 
-    let proxy = this;
-    let isMethod = false;
-    const targetIsFunction = typeof target == 'function';
+    var proxy = this;
+    var isMethod = false;
+    var targetIsFunction = typeof target == 'function';
     if (handler.apply || handler['construct'] || targetIsFunction) {
       proxy = function Proxy() {
-        const usingNew = this && this.constructor === proxy;
-        const args = Array.prototype.slice.call(arguments);
+        var usingNew = this && this.constructor === proxy;
+        var args = Array.prototype.slice.call(arguments);
         throwRevoked(usingNew ? 'construct' : 'apply');
 
         if (usingNew && handler['construct']) {
@@ -1334,7 +1337,7 @@ __d(/* proxy-polyfill/proxy.js */function(global, require, module, exports) {
         } else if (targetIsFunction) {
           if (usingNew) {
             args.unshift(target);
-            const f = target.bind.apply(target, args);
+            var f = target.bind.apply(target, args);
             return new f();
           }
           return target.apply(this, args);
@@ -1344,30 +1347,30 @@ __d(/* proxy-polyfill/proxy.js */function(global, require, module, exports) {
       isMethod = true;
     }
 
-    const getter = handler.get ? function (prop) {
+    var getter = handler.get ? function (prop) {
       throwRevoked('get');
       return handler.get(this, prop, proxy);
     } : function (prop) {
       throwRevoked('get');
       return this[prop];
     };
-    const setter = handler.set ? function (prop, value) {
+    var setter = handler.set ? function (prop, value) {
       throwRevoked('set');
-      const status = handler.set(this, prop, value, proxy);
+      var status = handler.set(this, prop, value, proxy);
       if (!status) {}
     } : function (prop, value) {
       throwRevoked('set');
       this[prop] = value;
     };
 
-    const propertyNames = Object.getOwnPropertyNames(target);
-    const propertyMap = {};
+    var propertyNames = Object.getOwnPropertyNames(target);
+    var propertyMap = {};
     propertyNames.forEach(function (prop) {
       if (isMethod && prop in proxy) {
         return;
       }
-      const real = Object.getOwnPropertyDescriptor(target, prop);
-      const desc = {
+      var real = Object.getOwnPropertyDescriptor(target, prop);
+      var desc = {
         enumerable: !!real.enumerable,
         get: getter.bind(target, prop),
         set: setter.bind(target, prop)
@@ -1376,7 +1379,7 @@ __d(/* proxy-polyfill/proxy.js */function(global, require, module, exports) {
       propertyMap[prop] = true;
     });
 
-    let prototypeOk = true;
+    var prototypeOk = true;
     if (Object.setPrototypeOf) {
       Object.setPrototypeOf(proxy, Object.getPrototypeOf(target));
     } else if (proxy.__proto__) {
@@ -1385,11 +1388,11 @@ __d(/* proxy-polyfill/proxy.js */function(global, require, module, exports) {
       prototypeOk = false;
     }
     if (handler.get || !prototypeOk) {
-      for (let k in target) {
-        if (propertyMap[k]) {
+      for (var _k in target) {
+        if (propertyMap[_k]) {
           continue;
         }
-        Object.defineProperty(proxy, k, { get: getter.bind(target, k) });
+        Object.defineProperty(proxy, _k, { get: getter.bind(target, _k) });
       }
     }
 
@@ -1400,7 +1403,7 @@ __d(/* proxy-polyfill/proxy.js */function(global, require, module, exports) {
   };
 
   scope.Proxy.revocable = function (target, handler) {
-    const p = new scope.Proxy(target, handler);
+    var p = new scope.Proxy(target, handler);
     return { 'proxy': p, 'revoke': lastRevokeFn };
   };
 
@@ -1428,19 +1431,19 @@ var _UIView = require(23      ); // 23 = UIView
 
 var _UIView2 = babelHelpers.interopRequireDefault(_UIView);
 
-var _NotificationCenter = require(36                  ); // 36 = NotificationCenter
+var _NotificationCenter = require(37                  ); // 37 = NotificationCenter
 
 var _NotificationCenter2 = babelHelpers.interopRequireDefault(_NotificationCenter);
 
-var _RCTDeviceInfo = require(34             ); // 34 = RCTDeviceInfo
+var _RCTDeviceInfo = require(35             ); // 35 = RCTDeviceInfo
 
 var _RCTDeviceInfo2 = babelHelpers.interopRequireDefault(_RCTDeviceInfo);
 
-var _RCTTiming = require(44         ); // 44 = RCTTiming
+var _RCTTiming = require(45         ); // 45 = RCTTiming
 
 var _RCTTiming2 = babelHelpers.interopRequireDefault(_RCTTiming);
 
-var _RCTTouchHandler = require(45               ); // 45 = RCTTouchHandler
+var _RCTTouchHandler = require(46               ); // 46 = RCTTouchHandler
 
 var _RCTTouchHandler2 = babelHelpers.interopRequireDefault(_RCTTouchHandler);
 
@@ -1455,7 +1458,7 @@ function getAvailableSize() {
   };
 }
 
-let RCTRootView = (_dec = (0, _CustomElement2.default)("rct-root-view"), _dec(_class = class RCTRootView extends _UIView2.default {
+var RCTRootView = (_dec = (0, _CustomElement2.default)("rct-root-view"), _dec(_class = class RCTRootView extends _UIView2.default {
 
   constructor(bundle, moduleName, parent) {
     super();
@@ -1467,9 +1470,9 @@ let RCTRootView = (_dec = (0, _CustomElement2.default)("rct-root-view"), _dec(_c
     this.bridge.bundleFinishedLoading = this.bundleFinishedLoading.bind(this);
     this.bridge.initializeModules();
 
-    const deviceInfoModule = this.bridge.modulesByName["DeviceInfo"];
+    var deviceInfoModule = this.bridge.modulesByName["DeviceInfo"];
 
-    const dimensions = deviceInfoModule.exportedDimensions().window;
+    var dimensions = deviceInfoModule.exportedDimensions().window;
     this.availableSize = {
       width: dimensions.width,
       height: dimensions.height
@@ -1489,12 +1492,12 @@ let RCTRootView = (_dec = (0, _CustomElement2.default)("rct-root-view"), _dec(_c
 
   set width(value) {
     this._width = value;
-    this.style.width = `${value}px`;
+    this.style.width = value + "px";
   }
 
   set height(value) {
     this._height = value;
-    this.style.height = `${value}px`;
+    this.style.height = value + "px";
   }
 
   get reactTag() {
@@ -1510,7 +1513,7 @@ let RCTRootView = (_dec = (0, _CustomElement2.default)("rct-root-view"), _dec(_c
   }
 
   runApplication() {
-    const appParameters = {
+    var appParameters = {
       rootTag: this.reactTag,
       initialProps: {}
     };
@@ -1561,14 +1564,14 @@ exports.RCTFunctionTypeSync = _RCTBridgeMethod.RCTFunctionTypeSync;
 exports.RCTFunctionType = _RCTBridgeMethod.RCTFunctionType;
 
 
-const MODULE_IDS = 0;
-const METHOD_IDS = 1;
-const PARAMS = 2;
+var MODULE_IDS = 0;
+var METHOD_IDS = 1;
+var PARAMS = 2;
 
-const DEVTOOLS_FLAG = /\bdevtools\b/;
-const HOTRELOAD_FLAG = /\bhotreload\b/;
+var DEVTOOLS_FLAG = /\bdevtools\b/;
+var HOTRELOAD_FLAG = /\bhotreload\b/;
 
-let WORKER_SRC = "ErrorUtils = {\n  setGlobalHandler: () => {},\n  reportFatalError: console.error,\n};\n\nfunction sendMessage(topic, payload) {\n  postMessage(JSON.stringify({ topic, payload }));\n}\n\nvar Status = undefined;\n\nonmessage = ({ data }) => {\n  const { topic, payload } = JSON.parse(data);\n  //console.log(\"Recieved message from main thread:\", topic, payload);\n\n  switch (topic) {\n    case \"loadBridgeConfig\": {\n      const { config, bundle } = payload;\n\n      __fbBatchedBridgeConfig = config;\n      importScripts(bundle);\n\n      sendMessage(\"bundleFinishedLoading\");\n      break;\n    }\n    case \"callFunctionReturnFlushedQueue\": {\n      const flushedQueue = __fbBatchedBridge.callFunctionReturnFlushedQueue(\n        ...payload\n      );\n      sendMessage(\"flushedQueue\", flushedQueue);\n      break;\n    }\n    case \"invokeCallbackAndReturnFlushedQueue\": {\n      const flushedQueue = __fbBatchedBridge.invokeCallbackAndReturnFlushedQueue(\n        ...payload\n      );\n      sendMessage(\"flushedQueue\", flushedQueue);\n      break;\n    }\n    case \"flush\":{\n      const flushedQueue = __fbBatchedBridge.flushedQueue.apply(null);\n      sendMessage(\"flushedQueue\", flushedQueue);\n      break;\n    }\n  }\n};";
+var WORKER_SRC = "ErrorUtils = {\n  setGlobalHandler: () => {},\n  reportFatalError: console.error,\n};\n\nfunction sendMessage(topic, payload) {\n  postMessage(JSON.stringify({ topic, payload }));\n}\n\nvar Status = undefined;\n\nonmessage = ({ data }) => {\n  const { topic, payload } = JSON.parse(data);\n  //console.log(\"Recieved message from main thread:\", topic, payload);\n\n  switch (topic) {\n    case \"loadBridgeConfig\": {\n      const { config, bundle } = payload;\n\n      __fbBatchedBridgeConfig = config;\n      importScripts(bundle);\n\n      sendMessage(\"bundleFinishedLoading\");\n      break;\n    }\n    case \"callFunctionReturnFlushedQueue\": {\n      const flushedQueue = __fbBatchedBridge.callFunctionReturnFlushedQueue(\n        ...payload\n      );\n      sendMessage(\"flushedQueue\", flushedQueue);\n      break;\n    }\n    case \"invokeCallbackAndReturnFlushedQueue\": {\n      const flushedQueue = __fbBatchedBridge.invokeCallbackAndReturnFlushedQueue(\n        ...payload\n      );\n      sendMessage(\"flushedQueue\", flushedQueue);\n      break;\n    }\n    case \"flush\":{\n      const flushedQueue = __fbBatchedBridge.flushedQueue.apply(null);\n      sendMessage(\"flushedQueue\", flushedQueue);\n      break;\n    }\n  }\n};";
 
 if (__DEV__) {
   if (DEVTOOLS_FLAG.test(location.search)) {
@@ -1582,12 +1585,12 @@ if (__DEV__) {
 function getPropertyNames(obj) {
   if (obj == null) return [];
 
-  const currentPropertyNames = Object.getOwnPropertyNames(obj);
+  var currentPropertyNames = Object.getOwnPropertyNames(obj);
   return currentPropertyNames.concat(getPropertyNames(Object.getPrototypeOf(obj)));
 }
 
 function bridgeModuleNameForClass(cls) {
-  let name = cls.__moduleName;
+  var name = cls.__moduleName;
 
   if (name != null) {
     if (name.startsWith("RK")) {
@@ -1602,17 +1605,19 @@ function bridgeModuleNameForClass(cls) {
 }
 
 function generateModuleConfig(name, bridgeModule) {
-  const methodNames = [...new Set(getPropertyNames(bridgeModule))].filter(methodName => methodName.startsWith("__rct_export__"));
+  var methodNames = [].concat(babelHelpers.toConsumableArray(new Set(getPropertyNames(bridgeModule)))).filter(function (methodName) {
+    return methodName.startsWith("__rct_export__");
+  });
 
-  const constants = bridgeModule.constantsToExport ? bridgeModule.constantsToExport() : undefined;
+  var constants = bridgeModule.constantsToExport ? bridgeModule.constantsToExport() : undefined;
 
-  const allMethods = [];
-  const promiseMethods = [];
-  const syncMethods = [];
+  var allMethods = [];
+  var promiseMethods = [];
+  var syncMethods = [];
 
-  methodNames.forEach(rctName => {
+  methodNames.forEach(function (rctName) {
     if (bridgeModule[rctName]) {
-      const [methodName, methodType] = bridgeModule[rctName].call(bridgeModule);
+      var [methodName, methodType] = bridgeModule[rctName].call(bridgeModule);
       allMethods.push(methodName);
 
       if (methodType === _RCTBridgeMethod.RCTFunctionTypePromise) {
@@ -1628,7 +1633,7 @@ function generateModuleConfig(name, bridgeModule) {
   return [name, constants, allMethods, promiseMethods, syncMethods];
 }
 
-let RCTBridge = (_temp = _class = class RCTBridge {
+var RCTBridge = (_temp = _class = class RCTBridge {
 
   constructor(moduleName, bundle) {
     _initialiseProps.call(this);
@@ -1636,8 +1641,8 @@ let RCTBridge = (_temp = _class = class RCTBridge {
     this.moduleName = moduleName;
     this.bundleLocation = bundle;
 
-    const bridgeCodeBlob = new Blob([WORKER_SRC]);
-    const worker = new Worker(URL.createObjectURL(bridgeCodeBlob));
+    var bridgeCodeBlob = new Blob([WORKER_SRC]);
+    var worker = new Worker(URL.createObjectURL(bridgeCodeBlob));
     this.setThread(worker);
   }
 
@@ -1653,30 +1658,30 @@ let RCTBridge = (_temp = _class = class RCTBridge {
 
   sendMessage(topic, payload) {
     if (this.thread) {
-      this.thread.postMessage(JSON.stringify({ topic, payload }));
+      this.thread.postMessage(JSON.stringify({ topic: topic, payload: payload }));
     }
   }
 
   callNativeModule(moduleId, methodId, params) {
-    const moduleConfig = this.moduleConfigs[moduleId];
+    var moduleConfig = this.moduleConfigs[moduleId];
 
-    (0, _Invariant2.default)(moduleConfig, `No such module with id: ${moduleId}`);
-    const [name,, functions] = moduleConfig;
+    (0, _Invariant2.default)(moduleConfig, "No such module with id: " + moduleId);
+    var [name,, functions] = moduleConfig;
 
-    (0, _Invariant2.default)(functions, `Module ${name} has no methods to call`);
-    const functionName = functions[methodId];
+    (0, _Invariant2.default)(functions, "Module " + name + " has no methods to call");
+    var functionName = functions[methodId];
 
-    (0, _Invariant2.default)(functionName, `No such function in module ${name} with id ${methodId}`);
-    const nativeModule = this.modulesByName[name];
+    (0, _Invariant2.default)(functionName, "No such function in module " + name + " with id " + methodId);
+    var nativeModule = this.modulesByName[name];
 
-    (0, _Invariant2.default)(nativeModule, `No such module with name ${name}`);
-    (0, _Invariant2.default)(nativeModule[functionName], `No such method ${functionName} on module ${name}`);
+    (0, _Invariant2.default)(nativeModule, "No such module with name " + name);
+    (0, _Invariant2.default)(nativeModule[functionName], "No such method " + functionName + " on module " + name);
 
     nativeModule[functionName].apply(nativeModule, params);
   }
 
   onMessage(message) {
-    const { topic, payload } = JSON.parse(message.data);
+    var { topic: topic, payload: payload } = JSON.parse(message.data);
 
     switch (topic) {
       case "bundleFinishedLoading":
@@ -1689,8 +1694,8 @@ let RCTBridge = (_temp = _class = class RCTBridge {
       case "flushedQueue":
         {
           if (payload != null && Array.isArray(payload)) {
-            const [moduleIds, methodIds, params] = payload;
-            for (let i = 0; i < moduleIds.length; i++) {
+            var [moduleIds, methodIds, params] = payload;
+            for (var i = 0; i < moduleIds.length; i++) {
               this.messages.push({
                 moduleId: moduleIds[i],
                 methodId: methodIds[i],
@@ -1702,23 +1707,25 @@ let RCTBridge = (_temp = _class = class RCTBridge {
         }
       default:
         {
-          console.log(`Unknown topic: ${topic}`);
+          console.log("Unknown topic: " + topic);
         }
     }
   }
 
   generateModuleConfig(name, bridgeModule) {
-    const methodNames = [...new Set(getPropertyNames(bridgeModule))].filter(methodName => methodName.startsWith("__rct_export__"));
+    var methodNames = [].concat(babelHelpers.toConsumableArray(new Set(getPropertyNames(bridgeModule)))).filter(function (methodName) {
+      return methodName.startsWith("__rct_export__");
+    });
 
-    const constants = bridgeModule.constantsToExport ? bridgeModule.constantsToExport() : undefined;
+    var constants = bridgeModule.constantsToExport ? bridgeModule.constantsToExport() : undefined;
 
-    const allMethods = [];
-    const promiseMethods = [];
-    const syncMethods = [];
+    var allMethods = [];
+    var promiseMethods = [];
+    var syncMethods = [];
 
-    methodNames.forEach(rctName => {
+    methodNames.forEach(function (rctName) {
       if (bridgeModule[rctName]) {
-        const [methodName, methodType] = bridgeModule[rctName].call(bridgeModule);
+        var [methodName, methodType] = bridgeModule[rctName].call(bridgeModule);
         allMethods.push(methodName);
 
         if (methodType === _RCTBridgeMethod.RCTFunctionTypePromise) {
@@ -1735,9 +1742,9 @@ let RCTBridge = (_temp = _class = class RCTBridge {
   }
 
   loadBridgeConfig() {
-    const config = this.getInitialModuleConfig();
+    var config = this.getInitialModuleConfig();
     this.sendMessage("loadBridgeConfig", {
-      config,
+      config: config,
       bundle: this.bundleLocation
     });
   }
@@ -1747,9 +1754,9 @@ let RCTBridge = (_temp = _class = class RCTBridge {
   }
 
   enqueueJSCallWithDotMethod(moduleDotMethod, args) {
-    const ids = moduleDotMethod.split(".");
-    const module = ids[0];
-    const method = ids[1];
+    var ids = moduleDotMethod.split(".");
+    var module = ids[0];
+    var method = ids[1];
     this.enqueueJSCall(module, method, args);
   }
 
@@ -1758,24 +1765,30 @@ let RCTBridge = (_temp = _class = class RCTBridge {
   }
 
   callbackFromId(id) {
-    return (...args) => {
-      this.enqueueJSCallback(id, args);
+    var _this = this;
+
+    return function (...args) {
+      _this.enqueueJSCallback(id, args);
     };
   }
 
   frame() {
+    var _this2 = this;
+
     this.sendMessage("flush");
 
-    const messages = [...this.messages];
+    var messages = [].concat(babelHelpers.toConsumableArray(this.messages));
     this.messages = [];
 
-    messages.forEach(({ moduleId, methodId, args }) => {
-      this.callNativeModule(moduleId, methodId, args);
+    messages.forEach(function ({ moduleId: moduleId, methodId: methodId, args: args }) {
+      _this2.callNativeModule(moduleId, methodId, args);
     });
   }
-}, _class.RCTModuleClasses = [], _class.RCTRegisterModule = cls => {
+}, _class.RCTModuleClasses = [], _class.RCTRegisterModule = function (cls) {
   RCTBridge.RCTModuleClasses.push(cls);
 }, _initialiseProps = function () {
+  var _this3 = this;
+
   this.modulesByName = {};
   this.moduleClasses = [];
   this.moduleConfigs = [];
@@ -1783,29 +1796,31 @@ let RCTBridge = (_temp = _class = class RCTBridge {
   this.queue = [];
   this.executing = false;
 
-  this.initializeModules = () => {
-    this.moduleClasses = [...RCTBridge.RCTModuleClasses];
-    RCTBridge.RCTModuleClasses.forEach(moduleClass => {
-      const module = new moduleClass(this);
-      const moduleName = bridgeModuleNameForClass(moduleClass);
-      this.modulesByName[moduleName] = module;
+  this.initializeModules = function () {
+    _this3.moduleClasses = [].concat(babelHelpers.toConsumableArray(RCTBridge.RCTModuleClasses));
+    RCTBridge.RCTModuleClasses.forEach(function (moduleClass) {
+      var module = new moduleClass(_this3);
+      var moduleName = bridgeModuleNameForClass(moduleClass);
+      _this3.modulesByName[moduleName] = module;
     });
   };
 
-  this.getInitialModuleConfig = () => {
-    const remoteModuleConfig = Object.keys(this.modulesByName).map(moduleName => {
-      const bridgeModule = this.modulesByName[moduleName];
-      return this.generateModuleConfig(moduleName, bridgeModule);
+  this.getInitialModuleConfig = function () {
+    var remoteModuleConfig = Object.keys(_this3.modulesByName).map(function (moduleName) {
+      var bridgeModule = _this3.modulesByName[moduleName];
+      return _this3.generateModuleConfig(moduleName, bridgeModule);
     });
-    return { remoteModuleConfig };
+    return { remoteModuleConfig: remoteModuleConfig };
   };
 }, _temp);
 exports.default = RCTBridge;
 function RCT_EXPORT_METHOD(type) {
-  return (target, key, descriptor) => {
+  return function (target, key, descriptor) {
     if (typeof descriptor.value === "function") {
-      Object.defineProperty(target, `__rct_export__${key}`, babelHelpers.extends({}, descriptor, {
-        value: () => [key, type]
+      Object.defineProperty(target, "__rct_export__" + key, babelHelpers.extends({}, descriptor, {
+        value: function () {
+          return [key, type];
+        }
       }));
     }
 
@@ -1813,7 +1828,7 @@ function RCT_EXPORT_METHOD(type) {
   };
 }
 
-const RCT_EXPORT_MODULE = exports.RCT_EXPORT_MODULE = target => {
+var RCT_EXPORT_MODULE = exports.RCT_EXPORT_MODULE = function (target) {
   target.__moduleName = target.prototype.constructor.name;
   RCTBridge.RCTRegisterModule(target);
 };
@@ -1882,9 +1897,9 @@ __d(/* RCTBridgeMethod */function(global, require, module, exports) {"use strict
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-const RCTFunctionTypeNormal = exports.RCTFunctionTypeNormal = "async";
-const RCTFunctionTypePromise = exports.RCTFunctionTypePromise = "promise";
-const RCTFunctionTypeSync = exports.RCTFunctionTypeSync = "sync";
+var RCTFunctionTypeNormal = exports.RCTFunctionTypeNormal = "async";
+var RCTFunctionTypePromise = exports.RCTFunctionTypePromise = "promise";
+var RCTFunctionTypeSync = exports.RCTFunctionTypeSync = "sync";
 }, 19, null, "RCTBridgeMethod");
 __d(/* RCTUIManager */function(global, require, module, exports) {"use strict";
 
@@ -1918,15 +1933,15 @@ var _RCTRootView = require(14           ); // 14 = RCTRootView
 
 var _RCTRootView2 = babelHelpers.interopRequireDefault(_RCTRootView);
 
-var _RCTDeviceInfo = require(34             ); // 34 = RCTDeviceInfo
+var _RCTDeviceInfo = require(35             ); // 35 = RCTDeviceInfo
 
 var _RCTDeviceInfo2 = babelHelpers.interopRequireDefault(_RCTDeviceInfo);
 
-var _RCTRootShadowView = require(38                 ); // 38 = RCTRootShadowView
+var _RCTRootShadowView = require(39                 ); // 39 = RCTRootShadowView
 
 var _RCTRootShadowView2 = babelHelpers.interopRequireDefault(_RCTRootShadowView);
 
-var _RCTLayoutAnimationManager = require(39                         ); // 39 = RCTLayoutAnimationManager
+var _RCTLayoutAnimationManager = require(40                         ); // 40 = RCTLayoutAnimationManager
 
 var _RCTLayoutAnimationManager2 = babelHelpers.interopRequireDefault(_RCTLayoutAnimationManager);
 
@@ -1959,22 +1974,28 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
   return desc;
 }
 
-let rootTagCounter = 0;
+var rootTagCounter = 0;
 
-let RCTUIManager = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), _dec2 = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), _dec3 = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), _dec4 = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), _dec5 = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), _dec6 = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), _dec7 = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), _dec8 = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = (_class2 = class RCTUIManager {
+var RCTUIManager = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), _dec2 = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), _dec3 = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), _dec4 = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), _dec5 = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), _dec6 = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), _dec7 = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), _dec8 = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = (_class2 = class RCTUIManager {
 
   constructor(bridge) {
+    var _this = this;
+
     this.pendingUIBlocks = [];
 
-    this.didUpdateDimensions = ({ window: { width, height } }) => {
-      for (let rootViewTag of this.rootViewTags) {
-        const rootView = this.viewRegistry.get(rootViewTag);
+    this.didUpdateDimensions = function ({ window: { width: width, height: height } }) {
+      var _loop = function (rootViewTag) {
+        var rootView = _this.viewRegistry.get(rootViewTag);
 
         (0, _Invariant2.default)(rootView, "Root view must exist");
         (0, _Invariant2.default)(rootView instanceof _RCTRootView2.default, "View must be an RCTRootView");
-        this.addUIBlock(() => {
-          this.setAvailableSize({ width, height }, rootView);
+        _this.addUIBlock(function () {
+          _this.setAvailableSize({ width: width, height: height }, rootView);
         });
+      };
+
+      for (var rootViewTag of _this.rootViewTags) {
+        _loop(rootViewTag);
       }
     };
 
@@ -1986,33 +2007,33 @@ let RCTUIManager = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunct
     this.rootViewTags = new Set();
 
     this.componentDataByName = new Map();
-    this.bridge.moduleClasses.forEach(moduleClass => {
+    this.bridge.moduleClasses.forEach(function (moduleClass) {
       if (moduleClass.__isViewManager) {
-        const componentData = new _RCTComponentData2.default(moduleClass, this.bridge);
-        this.componentDataByName.set(componentData.name, componentData);
+        var componentData = new _RCTComponentData2.default(moduleClass, _this.bridge);
+        _this.componentDataByName.set(componentData.name, componentData);
       }
     });
 
     this.layoutAnimationManager = new _RCTLayoutAnimationManager2.default(this);
 
     (0, _Invariant2.default)(this.bridge, "Bridge must be set");
-    const deviceInfoModule = this.bridge.modulesByName["DeviceInfo"];
+    var deviceInfoModule = this.bridge.modulesByName["DeviceInfo"];
     deviceInfoModule.addListener("didUpdateDimensions", this.didUpdateDimensions);
   }
 
   get allocateRootTag() {
-    const tag = rootTagCounter;
+    var tag = rootTagCounter;
     rootTagCounter++;
     return tag * 10 + 1;
   }
 
   registerRootView(rootView) {
-    const reactTag = rootView.reactTag;
-    const availableSize = rootView.availableSize;
+    var reactTag = rootView.reactTag;
+    var availableSize = rootView.availableSize;
 
     this.viewRegistry.set(reactTag, rootView);
 
-    const shadowView = new _RCTRootShadowView2.default();
+    var shadowView = new _RCTRootShadowView2.default();
     shadowView.availableSize = availableSize;
     shadowView.reactTag = reactTag;
     shadowView.backgroundColor = rootView.backgroundColor;
@@ -2023,9 +2044,11 @@ let RCTUIManager = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunct
   }
 
   setAvailableSize(size, rootView) {
-    this.pendingUIBlocks.push(() => {
-      const reactTag = rootView.reactTag;
-      const rootShadowView = this.shadowViewRegistry.get(reactTag);
+    var _this2 = this;
+
+    this.pendingUIBlocks.push(function () {
+      var reactTag = rootView.reactTag;
+      var rootShadowView = _this2.shadowViewRegistry.get(reactTag);
       if (rootShadowView && rootShadowView instanceof _RCTRootShadowView2.default) rootShadowView.updateAvailableSize(size);
     });
   }
@@ -2033,7 +2056,7 @@ let RCTUIManager = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunct
   rootViewForReactTag(reactTag, completion) {}
 
   purgeView(reactTag) {
-    const shadowView = this.shadowViewRegistry.get(reactTag);
+    var shadowView = this.shadowViewRegistry.get(reactTag);
     if (shadowView) {
       this.shadowViewRegistry.delete(reactTag);
       shadowView.purge();
@@ -2042,8 +2065,8 @@ let RCTUIManager = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunct
     if (this.layoutAnimationManager.isPending()) {
       this.layoutAnimationManager.queueRemovedNode(reactTag);
     } else {
-      this.addUIBlock((uiManager, viewRegistry) => {
-        const view = viewRegistry.get(reactTag);
+      this.addUIBlock(function (uiManager, viewRegistry) {
+        var view = viewRegistry.get(reactTag);
         viewRegistry.delete(reactTag);
         view.purge();
       });
@@ -2051,26 +2074,28 @@ let RCTUIManager = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunct
   }
 
   frame() {
+    var _this3 = this;
+
     if (this.pendingUIBlocks.length > 0) {
-      const uiBlocks = [...this.pendingUIBlocks];
+      var uiBlocks = [].concat(babelHelpers.toConsumableArray(this.pendingUIBlocks));
       this.pendingUIBlocks = [];
 
-      uiBlocks.forEach(block => {
-        block.call(null, this, this.viewRegistry);
+      uiBlocks.forEach(function (block) {
+        block.call(null, _this3, _this3.viewRegistry);
       });
     }
 
-    this.rootViewTags.forEach(rootTag => {
-      const rootShadowView = this.shadowViewRegistry.get(rootTag);
+    this.rootViewTags.forEach(function (rootTag) {
+      var rootShadowView = _this3.shadowViewRegistry.get(rootTag);
       if (rootShadowView != null && rootShadowView.isDirty) {
         (0, _Invariant2.default)(rootShadowView instanceof _RCTRootShadowView2.default, "attempting to recalculate from shadowView that isn't root");
-        const layoutChanges = rootShadowView.recalculateLayout();
+        var layoutChanges = rootShadowView.recalculateLayout();
 
-        if (this.layoutAnimationManager.isPending()) {
-          this.layoutAnimationManager.addLayoutChanges(layoutChanges);
+        if (_this3.layoutAnimationManager.isPending()) {
+          _this3.layoutAnimationManager.addLayoutChanges(layoutChanges);
         } else {
-          this.addUIBlock(() => {
-            this.applyLayoutChanges(layoutChanges);
+          _this3.addUIBlock(function () {
+            _this3.applyLayoutChanges(layoutChanges);
           });
         }
       }
@@ -2082,34 +2107,41 @@ let RCTUIManager = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunct
   }
 
   applyLayoutChanges(layoutChanges) {
-    layoutChanges.forEach(layoutChange => {
-      const { reactTag, layout } = layoutChange;
-      const view = this.viewRegistry.get(reactTag);
-      (0, _Invariant2.default)(view, `View with reactTag ${reactTag} does not exist`);
+    var _this4 = this;
+
+    layoutChanges.forEach(function (layoutChange) {
+      var { reactTag: reactTag, layout: layout } = layoutChange;
+      var view = _this4.viewRegistry.get(reactTag);
+      (0, _Invariant2.default)(view, "View with reactTag " + reactTag + " does not exist");
       view.frame = layout;
     });
   }
 
   measure(reactTag, callbackId) {
-    const cb = this.bridge.callbackFromId(callbackId);
+    var cb = this.bridge.callbackFromId(callbackId);
 
-    let shadowView = this.shadowViewRegistry.get(reactTag);
+    var shadowView = this.shadowViewRegistry.get(reactTag);
 
     if (!shadowView || !shadowView.measurement) {
       cb();
       return;
     }
 
-    let { left, top, width, height } = shadowView.measurement;
+    var { left: globalX, top: globalY, width: width, height: height } = shadowView.measurement;
 
-    cb(left, top, width, height);
+    (0, _Invariant2.default)(shadowView.previousLayout, "Shadow view has no previous layout");
+    var { left: left, top: top } = shadowView.previousLayout;
+
+    cb(left, top, width, height, globalX, globalY);
   }
 
   setJSResponder(reactTag) {
-    this.addUIBlock(() => {
-      this.jsResponder = this.viewRegistry.get(reactTag);
-      if (!this.jsResponder) {
-        console.error(`Invalid view set to be the JS responder - tag ${reactTag}`);
+    var _this5 = this;
+
+    this.addUIBlock(function () {
+      _this5.jsResponder = _this5.viewRegistry.get(reactTag);
+      if (!_this5.jsResponder) {
+        console.error("Invalid view set to be the JS responder - tag " + reactTag);
       }
     });
   }
@@ -2119,8 +2151,10 @@ let RCTUIManager = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunct
   }
 
   configureNextLayoutAnimation(config, onAnimationDidEnd) {
-    this.addUIBlock(() => {
-      this.layoutAnimationManager.configureNext(config, this.bridge.callbackFromId(onAnimationDidEnd));
+    var _this6 = this;
+
+    this.addUIBlock(function () {
+      _this6.layoutAnimationManager.configureNext(config, _this6.bridge.callbackFromId(onAnimationDidEnd));
     });
   }
 
@@ -2134,35 +2168,35 @@ let RCTUIManager = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunct
   setChildren(containerTag, reactTags) {
     RCTUIManager.RCTSetChildren(containerTag, reactTags, this.shadowViewRegistry);
 
-    this.addUIBlock((uiManager, viewRegistry) => {
+    this.addUIBlock(function (uiManager, viewRegistry) {
       RCTUIManager.RCTSetChildren(containerTag, reactTags, viewRegistry);
     });
   }
 
   static RCTSetChildren(containerTag, reactTags, registry) {
-    const container = registry.get(containerTag);
-    let index = 0;
-    reactTags.forEach(reactTag => {
-      const view = registry.get(reactTag);
-      (0, _Invariant2.default)(container, `No container view found with id: ${containerTag}`);
-      (0, _Invariant2.default)(view, `No view found with id: ${reactTag}`);
+    var container = registry.get(containerTag);
+    var index = 0;
+    reactTags.forEach(function (reactTag) {
+      var view = registry.get(reactTag);
+      (0, _Invariant2.default)(container, "No container view found with id: " + containerTag);
+      (0, _Invariant2.default)(view, "No view found with id: " + reactTag);
       container.insertReactSubviewAtIndex(view, index++);
     });
   }
 
   createView(reactTag, viewName, rootTag, props) {
-    const componentData = this.componentDataByName.get(viewName);
-    (0, _Invariant2.default)(componentData, `No component found for view with name ${viewName}`);
+    var componentData = this.componentDataByName.get(viewName);
+    (0, _Invariant2.default)(componentData, "No component found for view with name " + viewName);
 
-    const shadowView = componentData.createShadowView(reactTag);
+    var shadowView = componentData.createShadowView(reactTag);
     if (shadowView != null) {
       componentData.setPropsForShadowView(props, shadowView);
       this.shadowViewRegistry.set(reactTag, shadowView);
     }
 
-    const backgroundColor = shadowView.backgroundColor;
+    var backgroundColor = shadowView.backgroundColor;
 
-    const view = componentData.createView(reactTag);
+    var view = componentData.createView(reactTag);
     if (view != null) {
       componentData.setPropsForView(props, view);
 
@@ -2175,37 +2209,39 @@ let RCTUIManager = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunct
   }
 
   updateView(reactTag, viewName, updatedProps) {
-    const componentData = this.componentDataByName.get(viewName);
-    (0, _Invariant2.default)(componentData, `No component found for view with name ${viewName}`);
+    var componentData = this.componentDataByName.get(viewName);
+    (0, _Invariant2.default)(componentData, "No component found for view with name " + viewName);
 
-    const shadowView = this.shadowViewRegistry.get(reactTag);
+    var shadowView = this.shadowViewRegistry.get(reactTag);
     if (shadowView) {
       componentData.setPropsForShadowView(updatedProps, shadowView);
     }
 
-    const view = this.viewRegistry.get(reactTag);
+    var view = this.viewRegistry.get(reactTag);
     if (view) {
       componentData.setPropsForView(updatedProps, view);
     }
   }
 
   manageChildren(tag, moveFrom, moveTo, addChildTags, addAtIndices, removeFrom) {
-    const viewToManage = this.viewRegistry.get(tag);
-    const shadowViewToManage = this.shadowViewRegistry.get(tag);
+    var _this7 = this;
+
+    var viewToManage = this.viewRegistry.get(tag);
+    var shadowViewToManage = this.shadowViewRegistry.get(tag);
 
     if (!viewToManage || !shadowViewToManage) return;
 
-    const numToMove = !moveFrom ? 0 : moveFrom.length;
+    var numToMove = !moveFrom ? 0 : moveFrom.length;
 
-    const viewsToAdd = [];
-    const indicesToRemove = [];
-    const tagsToRemove = [];
-    const tagsToDelete = [];
+    var viewsToAdd = [];
+    var indicesToRemove = [];
+    var tagsToRemove = [];
+    var tagsToDelete = [];
 
     if (moveFrom && moveTo) {
-      for (let i = 0; i < moveFrom.length; i++) {
-        const moveFromIndex = moveFrom[i];
-        const tagToMove = viewToManage.reactSubviews[moveFromIndex].reactTag;
+      for (var i = 0; i < moveFrom.length; i++) {
+        var moveFromIndex = moveFrom[i];
+        var tagToMove = viewToManage.reactSubviews[moveFromIndex].reactTag;
         viewsToAdd[i] = {
           tag: tagToMove,
           index: moveTo[i]
@@ -2216,10 +2252,10 @@ let RCTUIManager = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunct
     }
 
     if (addChildTags) {
-      for (let i = 0; i < addChildTags.length; i++) {
-        const viewTagToAdd = addChildTags[i];
-        const indexToAddAt = addAtIndices[i];
-        viewsToAdd[numToMove + i] = {
+      for (var _i = 0; _i < addChildTags.length; _i++) {
+        var viewTagToAdd = addChildTags[_i];
+        var indexToAddAt = addAtIndices[_i];
+        viewsToAdd[numToMove + _i] = {
           tag: viewTagToAdd,
           index: indexToAddAt
         };
@@ -2227,12 +2263,12 @@ let RCTUIManager = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunct
     }
 
     if (removeFrom) {
-      for (let i = 0; i < removeFrom.length; i++) {
-        const indexToRemove = removeFrom[i];
-        const tagToRemove = viewToManage.reactSubviews[indexToRemove].reactTag;
-        indicesToRemove[numToMove + i] = indexToRemove;
-        tagsToRemove[numToMove + i] = tagToRemove;
-        tagsToDelete[i] = tagToRemove;
+      for (var _i2 = 0; _i2 < removeFrom.length; _i2++) {
+        var indexToRemove = removeFrom[_i2];
+        var tagToRemove = viewToManage.reactSubviews[indexToRemove].reactTag;
+        indicesToRemove[numToMove + _i2] = indexToRemove;
+        tagsToRemove[numToMove + _i2] = tagToRemove;
+        tagsToDelete[_i2] = tagToRemove;
       }
     }
 
@@ -2243,59 +2279,67 @@ let RCTUIManager = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunct
       return a - b;
     });
 
-    for (let i = indicesToRemove.length - 1; i >= 0; i--) {
-      const childIndex = indicesToRemove[i];
+    var _loop2 = function (_i3) {
+      var childIndex = indicesToRemove[_i3];
 
-      const shadowSubView = shadowViewToManage.reactSubviews[childIndex];
+      var shadowSubView = shadowViewToManage.reactSubviews[childIndex];
       if (shadowSubView) shadowViewToManage.removeReactSubview(shadowSubView);
 
-      this.addUIBlock((uiManager, viewRegistry) => {
-        const subView = viewToManage.reactSubviews[childIndex];
+      _this7.addUIBlock(function (uiManager, viewRegistry) {
+        var subView = viewToManage.reactSubviews[childIndex];
         viewToManage.removeReactSubview(subView);
       });
+    };
+
+    for (var _i3 = indicesToRemove.length - 1; _i3 >= 0; _i3--) {
+      _loop2(_i3);
     }
 
-    for (let i = 0; i < viewsToAdd.length; i++) {
-      const { tag: tagToAdd, index: indexToAdd } = viewsToAdd[i];
+    var _loop3 = function (_i4) {
+      var { tag: tagToAdd, index: indexToAdd } = viewsToAdd[_i4];
 
-      const shadowSubView = this.shadowViewRegistry.get(tagToAdd);
+      var shadowSubView = _this7.shadowViewRegistry.get(tagToAdd);
       if (shadowSubView) {
         shadowViewToManage.insertReactSubviewAtIndex(shadowSubView, indexToAdd);
         shadowSubView.makeDirty();
       }
 
-      this.addUIBlock((uiManager, viewRegistry) => {
-        const subView = viewRegistry.get(tagToAdd);
+      _this7.addUIBlock(function (uiManager, viewRegistry) {
+        var subView = viewRegistry.get(tagToAdd);
         viewToManage.insertReactSubviewAtIndex(subView, indexToAdd);
       });
+    };
+
+    for (var _i4 = 0; _i4 < viewsToAdd.length; _i4++) {
+      _loop3(_i4);
     }
 
-    const postShadowChildren = shadowViewToManage.reactSubviews.length;
+    var postShadowChildren = shadowViewToManage.reactSubviews.length;
 
-    for (let i = 0; i < tagsToDelete.length; i++) {
-      this.purgeView(tagsToDelete[i]);
+    for (var _i5 = 0; _i5 < tagsToDelete.length; _i5++) {
+      this.purgeView(tagsToDelete[_i5]);
     }
   }
 
   constantsToExport() {
-    const constants = {};
-    const bubblingEvents = {};
+    var constants = {};
+    var bubblingEvents = {};
 
-    for (const [name, componentData] of this.componentDataByName) {
-      const moduleConstants = {};
+    for (var [name, componentData] of this.componentDataByName) {
+      var moduleConstants = {};
 
       moduleConstants.Manager = (0, _RCTBridge.bridgeModuleNameForClass)(componentData.managerClass);
 
-      const viewConfig = componentData.viewConfig;
+      var viewConfig = componentData.viewConfig;
       moduleConstants.NativeProps = viewConfig.propTypes;
 
-      for (let eventName of viewConfig.bubblingEvents) {
+      for (var eventName of viewConfig.bubblingEvents) {
         if (!bubblingEvents[eventName]) {
-          const bubbleName = `on${eventName.substring(3)}`;
+          var bubbleName = "on" + eventName.substring(3);
           bubblingEvents[eventName] = {
             phasedRegistrationNames: {
               bubbled: bubbleName,
-              captured: `${bubbleName}Capture`
+              captured: bubbleName + "Capture"
             }
           };
         }
@@ -2334,11 +2378,11 @@ var _RCTViewManager = require(22              ); // 22 = RCTViewManager
 
 var _RCTViewManager2 = babelHelpers.interopRequireDefault(_RCTViewManager);
 
-var _RCTShadowView = require(25             ); // 25 = RCTShadowView
+var _RCTShadowView = require(26             ); // 26 = RCTShadowView
 
 var _RCTShadowView2 = babelHelpers.interopRequireDefault(_RCTShadowView);
 
-var _RCTComponent = require(32            ); // 32 = RCTComponent
+var _RCTComponent = require(33            ); // 33 = RCTComponent
 
 var _RCTComponent2 = babelHelpers.interopRequireDefault(_RCTComponent);
 
@@ -2346,9 +2390,9 @@ var _UIView = require(23      ); // 23 = UIView
 
 var _UIView2 = babelHelpers.interopRequireDefault(_UIView);
 
-var _RCTEventDispatcher = require(33                  ); // 33 = RCTEventDispatcher
+var _RCTEventDispatcher = require(34                  ); // 34 = RCTEventDispatcher
 
-let RCTComponentData = class RCTComponentData {
+var RCTComponentData = class RCTComponentData {
 
   constructor(managerClass, bridge) {
     this.bridge = bridge;
@@ -2356,15 +2400,15 @@ let RCTComponentData = class RCTComponentData {
     this.viewPropBlocks = {};
     this.shadowPropBlocks = {};
 
-    this.name = (() => {
-      const moduleName = managerClass.__moduleName;
+    this.name = function () {
+      var moduleName = managerClass.__moduleName;
 
       if (moduleName.endsWith("Manager")) {
         return moduleName.substring(0, moduleName.length - "Manager".length);
       }
 
       return moduleName;
-    })();
+    }();
   }
 
   get manager() {
@@ -2376,18 +2420,18 @@ let RCTComponentData = class RCTComponentData {
   }
 
   get viewConfig() {
-    const count = 0;
-    const propTypes = {};
-    const bubblingEvents = [];
+    var count = 0;
+    var propTypes = {};
+    var bubblingEvents = [];
 
     if (this.manager.customBubblingEventTypes) {
-      const events = this.manager.customBubblingEventTypes();
-      for (let event of events) {
+      var events = this.manager.customBubblingEventTypes();
+      for (var event of events) {
         bubblingEvents.push((0, _RCTEventDispatcher.normalizeInputEventName)(event));
       }
     }
 
-    this.manager.__props.forEach(({ name, type, exported }) => {
+    this.manager.__props.forEach(function ({ name: name, type: type, exported: exported }) {
       if (exported) {
         if (type === "RCTBubblingEventBlock") {
           bubblingEvents.push((0, _RCTEventDispatcher.normalizeInputEventName)(name));
@@ -2399,21 +2443,23 @@ let RCTComponentData = class RCTComponentData {
     });
 
     return {
-      propTypes,
-      bubblingEvents,
+      propTypes: propTypes,
+      bubblingEvents: bubblingEvents,
       uiClassViewName: (0, _RCTBridge.bridgeModuleNameForClass)(this.manager.constructor)
     };
   }
 
   generatePropConfig(rawPropConfig) {
-    return rawPropConfig.reduce((propConfig, raw) => babelHelpers.extends({}, propConfig, {
-      [raw.name]: {
-        type: raw.type,
-        setter: raw.setter ? raw.setter : (view, value) => {
-          view[raw.name] = value;
+    return rawPropConfig.reduce(function (propConfig, raw) {
+      return babelHelpers.extends({}, propConfig, {
+        [raw.name]: {
+          type: raw.type,
+          setter: raw.setter ? raw.setter : function (view, value) {
+            view[raw.name] = value;
+          }
         }
-      }
-    }), {});
+      });
+    }, {});
   }
 
   get propConfig() {
@@ -2433,40 +2479,44 @@ let RCTComponentData = class RCTComponentData {
   }
 
   createView(tag) {
-    const view = this.manager.view();
+    var view = this.manager.view();
     view.reactTag = tag;
     return view;
   }
 
   createShadowView(tag) {
-    const shadowView = this.manager.shadowView();
+    var shadowView = this.manager.shadowView();
     shadowView.reactTag = tag;
     return shadowView;
   }
 
   setPropsForView(props, view) {
-    if (props) {
-      Object.keys(props).forEach(propName => {
-        if (this.propConfig.hasOwnProperty(propName)) {
-          const propConfig = this.propConfig[propName];
-          const propValue = props[propName];
-          const setter = propConfig.setter;
+    var _this = this;
 
-          setter(view, propValue);
+    if (props) {
+      Object.keys(props).forEach(function (propName) {
+        if (_this.propConfig.hasOwnProperty(propName)) {
+          var propConfig = _this.propConfig[propName];
+          var propValue = props[propName];
+          var _setter = propConfig.setter;
+
+          _setter(view, propValue);
         }
       });
     }
   }
 
   setPropsForShadowView(props, shadowView) {
-    if (props) {
-      Object.keys(props).forEach(propName => {
-        if (this.shadowPropConfig.hasOwnProperty(propName)) {
-          const propConfig = this.shadowPropConfig[propName];
-          const propValue = props[propName];
-          const setter = propConfig.setter;
+    var _this2 = this;
 
-          setter(shadowView, propValue);
+    if (props) {
+      Object.keys(props).forEach(function (propName) {
+        if (_this2.shadowPropConfig.hasOwnProperty(propName)) {
+          var propConfig = _this2.shadowPropConfig[propName];
+          var propValue = props[propName];
+          var _setter2 = propConfig.setter;
+
+          _setter2(shadowView, propValue);
         }
       });
     }
@@ -2480,7 +2530,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _dec, _dec2, _dec3, _dec4, _dec5, _class, _desc, _value, _class2, _class3, _temp;
+var _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _class, _desc, _value, _class2, _class3, _temp;
 
 exports.RCT_EXPORT_VIEW_PROP = RCT_EXPORT_VIEW_PROP;
 exports.RCT_EXPORT_SHADOW_PROP = RCT_EXPORT_SHADOW_PROP;
@@ -2495,11 +2545,11 @@ var _UIView = require(23      ); // 23 = UIView
 
 var _UIView2 = babelHelpers.interopRequireDefault(_UIView);
 
-var _RCTShadowView = require(25             ); // 25 = RCTShadowView
+var _RCTShadowView = require(26             ); // 26 = RCTShadowView
 
 var _RCTShadowView2 = babelHelpers.interopRequireDefault(_RCTShadowView);
 
-var _RCTView = require(31       ); // 31 = RCTView
+var _RCTView = require(32       ); // 32 = RCTView
 
 var _RCTView2 = babelHelpers.interopRequireDefault(_RCTView);
 
@@ -2533,17 +2583,17 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 }
 
 function RCT_EXPORT_VIEW_PROP(name, type, exported = true) {
-  return (target, key, descriptor) => {
+  return function (target, key, descriptor) {
     if (typeof descriptor.value === "function") {
       if (target.__props == null) {
         target.__props = [];
       }
 
       target.__props = target.__props.concat([{
-        name,
-        type,
+        name: name,
+        type: type,
         setter: descriptor.value,
-        exported
+        exported: exported
       }]);
     }
 
@@ -2552,17 +2602,17 @@ function RCT_EXPORT_VIEW_PROP(name, type, exported = true) {
 }
 
 function RCT_EXPORT_SHADOW_PROP(name, type, exported = true) {
-  return (target, key, descriptor) => {
+  return function (target, key, descriptor) {
     if (typeof descriptor.value === "function") {
       if (target.__shadowProps == null) {
         target.__shadowProps = [];
       }
 
       target.__shadowProps = target.__shadowProps.concat([{
-        name,
-        type,
+        name: name,
+        type: type,
         setter: descriptor.value,
-        exported
+        exported: exported
       }]);
     }
 
@@ -2571,9 +2621,9 @@ function RCT_EXPORT_SHADOW_PROP(name, type, exported = true) {
 }
 
 function RCT_EXPORT_MIRRORED_PROP(...exportArgs) {
-  return (...descriptorArgs) => {
-    RCT_EXPORT_VIEW_PROP(...exportArgs)(...descriptorArgs);
-    RCT_EXPORT_SHADOW_PROP(...exportArgs)(...descriptorArgs);
+  return function (...descriptorArgs) {
+    RCT_EXPORT_VIEW_PROP.apply(undefined, exportArgs).apply(undefined, descriptorArgs);
+    RCT_EXPORT_SHADOW_PROP.apply(undefined, exportArgs).apply(undefined, descriptorArgs);
     return descriptorArgs[2];
   };
 }
@@ -2584,11 +2634,13 @@ function RCT_EXPORT_DIRECT_SHADOW_PROPS(target, key, descriptor) {
       target.__shadowProps = [];
     }
 
-    const directPropConfigs = descriptor.value().map(([name, type]) => ({
-      name,
-      type,
-      exported: false
-    }));
+    var directPropConfigs = descriptor.value().map(function ([name, type]) {
+      return {
+        name: name,
+        type: type,
+        exported: false
+      };
+    });
 
     target.__shadowProps = target.__shadowProps.concat(directPropConfigs);
   }
@@ -2596,7 +2648,7 @@ function RCT_EXPORT_DIRECT_SHADOW_PROPS(target, key, descriptor) {
   return descriptor;
 }
 
-let RCTViewManager = (_dec = RCT_EXPORT_VIEW_PROP("backgroundColor", "Color"), _dec2 = RCT_EXPORT_VIEW_PROP("opacity", "number"), _dec3 = RCT_EXPORT_MIRRORED_PROP("transform", "array"), _dec4 = RCT_EXPORT_VIEW_PROP("borderRadius", "number"), _dec5 = RCT_EXPORT_VIEW_PROP("onStartShouldSetResponder", "bool"), (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = (_class2 = (_temp = _class3 = class RCTViewManager {
+var RCTViewManager = (_dec = RCT_EXPORT_VIEW_PROP("backgroundColor", "Color"), _dec2 = RCT_EXPORT_VIEW_PROP("opacity", "number"), _dec3 = RCT_EXPORT_VIEW_PROP("borderRadius", "number"), _dec4 = RCT_EXPORT_VIEW_PROP("onStartShouldSetResponder", "bool"), _dec5 = RCT_EXPORT_VIEW_PROP("borderWidth", "number"), _dec6 = RCT_EXPORT_VIEW_PROP("borderColor", "number"), _dec7 = RCT_EXPORT_VIEW_PROP("borderStyle", "string"), (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = (_class2 = (_temp = _class3 = class RCTViewManager {
 
   view() {
     return new _RCTView2.default();
@@ -2618,10 +2670,6 @@ let RCTViewManager = (_dec = RCT_EXPORT_VIEW_PROP("backgroundColor", "Color"), _
     view.opacity = value;
   }
 
-  setTransform(view, value) {
-    view.transform = value;
-  }
-
   setBorderRadius(view, value) {
     view.borderRadius = value;
   }
@@ -2630,10 +2678,22 @@ let RCTViewManager = (_dec = RCT_EXPORT_VIEW_PROP("backgroundColor", "Color"), _
     view.touchable = value;
   }
 
+  setBorderWidth(view, value) {
+    view.borderWidth = value;
+  }
+
+  setBorderColor(view, value) {
+    view.borderColor = value;
+  }
+
+  setBorderStyle(view, value) {
+    view.style.borderStyle = value;
+  }
+
   getDirectShadowViewProps() {
     return [["top", "string"], ["right", "string"], ["bottom", "string"], ["left", "string"], ["width", "string"], ["height", "string"], ["minWidth", "string"], ["maxWidth", "string"], ["minHeight", "string"], ["minWidth", "string"], ["borderTopWidth", "string"], ["borderRightWidth", "string"], ["borderBottomWidth", "string"], ["borderLeftWidth", "string"], ["borderWidth", "string"], ["marginTop", "string"], ["marginRight", "string"], ["marginBottom", "string"], ["marginLeft", "string"], ["marginVertical", "string"], ["marginHorizontal", "string"], ["margin", "string"], ["paddingTop", "string"], ["paddingRight", "string"], ["paddingBottom", "string"], ["paddingLeft", "string"], ["paddingVertical", "string"], ["paddingHorizontal", "string"], ["padding", "string"], ["flex", "string"], ["flexGrow", "string"], ["flexShrink", "string"], ["flexBasis", "string"], ["flexDirection", "string"], ["flexWrap", "string"], ["justifyContent", "string"], ["alignItems", "string"], ["alignSelf", "string"], ["alignContent", "string"], ["position", "string"], ["aspectRatio", "string"], ["overflow", "string"], ["display", "string"]];
   }
-}, _class3.__isViewManager = true, _class3.__props = [], _temp), (_applyDecoratedDescriptor(_class2.prototype, "setBackgroundColor", [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, "setBackgroundColor"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setOpacity", [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, "setOpacity"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setTransform", [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, "setTransform"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setBorderRadius", [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, "setBorderRadius"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setOnStartShouldSetResponder", [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, "setOnStartShouldSetResponder"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "getDirectShadowViewProps", [RCT_EXPORT_DIRECT_SHADOW_PROPS], Object.getOwnPropertyDescriptor(_class2.prototype, "getDirectShadowViewProps"), _class2.prototype)), _class2)) || _class);
+}, _class3.__isViewManager = true, _class3.__props = [], _temp), (_applyDecoratedDescriptor(_class2.prototype, "setBackgroundColor", [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, "setBackgroundColor"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setOpacity", [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, "setOpacity"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setBorderRadius", [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, "setBorderRadius"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setOnStartShouldSetResponder", [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, "setOnStartShouldSetResponder"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setBorderWidth", [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, "setBorderWidth"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setBorderColor", [_dec6], Object.getOwnPropertyDescriptor(_class2.prototype, "setBorderColor"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setBorderStyle", [_dec7], Object.getOwnPropertyDescriptor(_class2.prototype, "setBorderStyle"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "getDirectShadowViewProps", [RCT_EXPORT_DIRECT_SHADOW_PROPS], Object.getOwnPropertyDescriptor(_class2.prototype, "getDirectShadowViewProps"), _class2.prototype)), _class2)) || _class);
 exports.default = RCTViewManager;
 }, 22, null, "RCTViewManager");
 __d(/* UIView */function(global, require, module, exports) {"use strict";
@@ -2648,6 +2708,10 @@ var _dec, _class;
 var _CustomElement = require(24             ); // 24 = CustomElement
 
 var _CustomElement2 = babelHelpers.interopRequireDefault(_CustomElement);
+
+var _ColorArrayFromHexARGB = require(25                     ); // 25 = ColorArrayFromHexARGB
+
+var _ColorArrayFromHexARGB2 = babelHelpers.interopRequireDefault(_ColorArrayFromHexARGB);
 
 (function () {
   var typesToPatch = ["DocumentType", "Element", "CharacterData"],
@@ -2665,21 +2729,16 @@ var _CustomElement2 = babelHelpers.interopRequireDefault(_CustomElement);
   }
 })();
 
-const FrameZero = exports.FrameZero = {
+var FrameZero = exports.FrameZero = {
   top: 0,
   left: 0,
   width: 0,
   height: 0
 };
 
-const ColorArrayFromHexARGB = function (hex) {
-  hex = Math.floor(hex);
-  return [(hex >> 24 & 255) / 255, hex >> 16 & 255, hex >> 8 & 255, hex & 255];
-};
+var baseDimension = 1000;
 
-const baseDimension = 1000;
-
-let UIView = (_dec = (0, _CustomElement2.default)("ui-view"), _dec(_class = class UIView extends HTMLElement {
+var UIView = (_dec = (0, _CustomElement2.default)("ui-view"), _dec(_class = class UIView extends HTMLElement {
 
   constructor() {
     super();
@@ -2691,6 +2750,7 @@ let UIView = (_dec = (0, _CustomElement2.default)("ui-view"), _dec(_class = clas
     this.position = "absolute";
     this.backgroundColor = "transparent";
     this.style.overflow = "hidden";
+    this.style.boxSizing = "border-box";
     this.borderRadius = 0;
   }
 
@@ -2743,7 +2803,7 @@ let UIView = (_dec = (0, _CustomElement2.default)("ui-view"), _dec(_class = clas
 
   set bottom(value) {
     this._bottom = value;
-    this.style.bottom = `${value}px`;
+    this.style.bottom = value + "px";
   }
 
   get right() {
@@ -2752,14 +2812,14 @@ let UIView = (_dec = (0, _CustomElement2.default)("ui-view"), _dec(_class = clas
 
   set right(value) {
     this._right = value;
-    this.style.right = `${value}px`;
+    this.style.right = value + "px";
   }
 
   updatePosition() {
-    let transformString = "";
+    var transformString = "";
 
-    if (this._left) transformString += `translateX(${this._left}px)`;
-    if (this._top) transformString += `translateY(${this._top}px)`;
+    if (this._left) transformString += "translateX(" + this._left + "px)";
+    if (this._top) transformString += "translateY(" + this._top + "px)";
 
     this.style.transform = transformString;
   }
@@ -2770,7 +2830,7 @@ let UIView = (_dec = (0, _CustomElement2.default)("ui-view"), _dec(_class = clas
 
   set width(value) {
     this._width = value;
-    this.style.width = `${value}px`;
+    this.style.width = value + "px";
   }
 
   get height() {
@@ -2779,7 +2839,7 @@ let UIView = (_dec = (0, _CustomElement2.default)("ui-view"), _dec(_class = clas
 
   set height(value) {
     this._height = value;
-    this.style.height = `${value}px`;
+    this.style.height = value + "px";
   }
 
   get backgroundColor() {
@@ -2788,8 +2848,8 @@ let UIView = (_dec = (0, _CustomElement2.default)("ui-view"), _dec(_class = clas
 
   set backgroundColor(value) {
     if (typeof value === "number") {
-      const [a, r, g, b] = ColorArrayFromHexARGB(value);
-      const stringValue = `rgba(${r},${g},${b},${a})`;
+      var [a, r, g, b] = (0, _ColorArrayFromHexARGB2.default)(value);
+      var stringValue = "rgba(" + r + "," + g + "," + b + "," + a + ")";
       this.style.backgroundColor = stringValue;
     } else {
       this.style.backgroundColor = value;
@@ -2802,7 +2862,7 @@ let UIView = (_dec = (0, _CustomElement2.default)("ui-view"), _dec(_class = clas
 
   set opacity(value) {
     this._opacity = value;
-    this.style.opacity = `${value}`;
+    this.style.opacity = "" + value;
   }
 
   get borderRadius() {
@@ -2811,7 +2871,30 @@ let UIView = (_dec = (0, _CustomElement2.default)("ui-view"), _dec(_class = clas
 
   set borderRadius(value) {
     this._borderRadius = value;
-    this.style.borderRadius = `${value}px`;
+    this.style.borderRadius = value + "px";
+  }
+
+  get borderColor() {
+    return this._borderColor;
+  }
+
+  set borderColor(value) {
+    if (typeof value === "number") {
+      var [a, r, g, b] = (0, _ColorArrayFromHexARGB2.default)(value);
+      var stringValue = "rgba(" + r + "," + g + "," + b + "," + a + ")";
+      this.style.borderColor = stringValue;
+    } else {
+      this.style.borderColor = value;
+    }
+  }
+
+  get borderWidth() {
+    return this._borderWidth;
+  }
+
+  set borderWidth(value) {
+    this._borderWidth = value;
+    this.style.borderWidth = value + "px";
   }
 
   get touchable() {
@@ -2827,7 +2910,7 @@ let UIView = (_dec = (0, _CustomElement2.default)("ui-view"), _dec(_class = clas
     if (index === this.reactSubviews.length) {
       this.appendChild(subview);
     } else {
-      const beforeElement = this.reactSubviews[index];
+      var beforeElement = this.reactSubviews[index];
       this.insertBefore(subview, beforeElement);
     }
 
@@ -2837,7 +2920,9 @@ let UIView = (_dec = (0, _CustomElement2.default)("ui-view"), _dec(_class = clas
 
   removeReactSubview(subview) {
     subview.reactSuperview = undefined;
-    this.reactSubviews = this.reactSubviews.filter(s => s !== subview);
+    this.reactSubviews = this.reactSubviews.filter(function (s) {
+      return s !== subview;
+    });
   }
 
   purge() {
@@ -2845,7 +2930,8 @@ let UIView = (_dec = (0, _CustomElement2.default)("ui-view"), _dec(_class = clas
   }
 
   addGestureRecognizer(handler) {
-    this.addEventListener("mousedown", handler.mouseClickBegan.bind(handler));
+    this.addEventListener("mousedown", handler.mouseClickBegan);
+    this.addEventListener("touchstart", handler.nativeTouchBegan);
   }
 
   removeGestureRecognizer(handler) {}
@@ -2864,6 +2950,17 @@ function CustomElement(name) {
   };
 }
 }, 24, null, "CustomElement");
+__d(/* ColorArrayFromHexARGB */function(global, require, module, exports) {"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports.default = function (hex) {
+  hex = Math.floor(hex);
+  return [(hex >> 24 & 255) / 255, hex >> 16 & 255, hex >> 8 & 255, hex & 255];
+};
+}, 25, null, "ColorArrayFromHexARGB");
 __d(/* RCTShadowView */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2871,7 +2968,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.SHADOW_PROPS = undefined;
 
-var _yogaJs = require(26       ); // 26 = yoga-js
+var _yogaJs = require(27       ); // 27 = yoga-js
 
 var _yogaJs2 = babelHelpers.interopRequireDefault(_yogaJs);
 
@@ -2879,25 +2976,29 @@ var _Invariant = require(16         ); // 16 = Invariant
 
 var _Invariant2 = babelHelpers.interopRequireDefault(_Invariant);
 
-const SHADOW_PROPS = exports.SHADOW_PROPS = ["top", "right", "bottom", "left", "width", "height", "minWidth", "maxWidth", "minHeight", "minWidth", "borderTopWidth", "borderRightWidth", "borderBottomWidth", "borderLeftWidth", "borderWidth", "marginTop", "marginRight", "marginBottom", "marginLeft", "marginVertical", "marginHorizontal", "margin", "paddingTop", "paddingRight", "paddingBottom", "paddingLeft", "paddingVertical", "paddingHorizontal", "padding", "flex", "flexGrow", "flexShrink", "flexBasis", "flexDirection", "flexWrap", "justifyContent", "alignItems", "alignSelf", "alignContent", "position", "aspectRatio", "overflow", "display"];
+var SHADOW_PROPS = exports.SHADOW_PROPS = ["top", "right", "bottom", "left", "width", "height", "minWidth", "maxWidth", "minHeight", "minWidth", "borderTopWidth", "borderRightWidth", "borderBottomWidth", "borderLeftWidth", "borderWidth", "marginTop", "marginRight", "marginBottom", "marginLeft", "marginVertical", "marginHorizontal", "margin", "paddingTop", "paddingRight", "paddingBottom", "paddingLeft", "paddingVertical", "paddingHorizontal", "padding", "flex", "flexGrow", "flexShrink", "flexBasis", "flexDirection", "flexWrap", "justifyContent", "alignItems", "alignSelf", "alignContent", "position", "aspectRatio", "overflow", "display"];
 
-const LAYOUT_PROPS = ["top", "left", "width", "height"];
+var LAYOUT_PROPS = ["top", "left", "width", "height"];
 
-let RCTShadowView = class RCTShadowView {
+var RCTShadowView = class RCTShadowView {
 
   constructor() {
+    var _this = this;
+
     this.isDirty = true;
     this.reactSubviews = [];
 
     this.yogaNode = new _yogaJs2.default();
 
-    SHADOW_PROPS.forEach(shadowPropName => {
-      Object.defineProperty(this, shadowPropName, {
+    SHADOW_PROPS.forEach(function (shadowPropName) {
+      Object.defineProperty(_this, shadowPropName, {
         configurable: true,
-        get: () => this.yogaNode.style[shadowPropName],
-        set: value => {
-          this.yogaNode.style[shadowPropName] = value;
-          this.makeDirty();
+        get: function () {
+          return _this.yogaNode.style[shadowPropName];
+        },
+        set: function (value) {
+          _this.yogaNode.style[shadowPropName] = value;
+          _this.makeDirty();
           return true;
         }
       });
@@ -2916,18 +3017,20 @@ let RCTShadowView = class RCTShadowView {
   }
 
   getLayoutChanges(previousPosition) {
-    let layoutChanges = [];
+    var _this2 = this;
 
-    const newLayout = this.yogaNode.layout;
+    var layoutChanges = [];
 
-    const currentPosition = {
+    var newLayout = this.yogaNode.layout;
+
+    var currentPosition = {
       top: previousPosition.top + newLayout.top,
       left: previousPosition.left + newLayout.left
     };
 
-    const previousMeasurement = this.measurement ? babelHelpers.extends({}, this.measurement) : null;
+    var previousMeasurement = this.measurement ? babelHelpers.extends({}, this.measurement) : null;
 
-    const nextMeasurement = babelHelpers.extends({}, currentPosition, {
+    var nextMeasurement = babelHelpers.extends({}, currentPosition, {
       width: newLayout.width,
       height: newLayout.height
     });
@@ -2936,28 +3039,28 @@ let RCTShadowView = class RCTShadowView {
       layoutChanges.push({
         reactTag: this.reactTag,
         layout: newLayout,
-        previousMeasurement,
-        nextMeasurement
+        previousMeasurement: previousMeasurement,
+        nextMeasurement: nextMeasurement
       });
 
       this.previousLayout = newLayout;
 
-      this.reactSubviews.forEach(subView => {
+      this.reactSubviews.forEach(function (subView) {
         layoutChanges = layoutChanges.concat(subView.getLayoutChanges(currentPosition));
       });
     } else {
-      const shouldUpdateChildren = (() => {
-        let result = false;
-        this.reactSubviews.forEach(subView => {
+      var shouldUpdateChildren = function () {
+        var result = false;
+        _this2.reactSubviews.forEach(function (subView) {
           if (subView.isDirty) {
             result = true;
           }
         });
         return result;
-      })();
+      }();
 
       if (shouldUpdateChildren) {
-        this.reactSubviews.forEach(subView => {
+        this.reactSubviews.forEach(function (subView) {
           layoutChanges = layoutChanges.concat(subView.getLayoutChanges(currentPosition));
         });
       }
@@ -2971,7 +3074,7 @@ let RCTShadowView = class RCTShadowView {
   makeDirty() {
     this.isDirty = true;
 
-    let view = this;
+    var view = this;
     while (view.reactSuperview) {
       view = view.reactSuperview;
       view.isDirty = true;
@@ -2979,7 +3082,7 @@ let RCTShadowView = class RCTShadowView {
   }
 
   makeDirtyRecursive() {
-    this.reactSubviews.forEach(subView => {
+    this.reactSubviews.forEach(function (subView) {
       subView.makeDirtyRecursive();
     });
     this.isDirty = true;
@@ -2994,7 +3097,9 @@ let RCTShadowView = class RCTShadowView {
 
   removeReactSubview(subview) {
     subview.reactSuperview = undefined;
-    this.reactSubviews = this.reactSubviews.filter(s => s !== subview);
+    this.reactSubviews = this.reactSubviews.filter(function (s) {
+      return s !== subview;
+    });
     this.yogaNode.removeChild(subview.yogaNode);
     this.makeDirty();
   }
@@ -3010,24 +3115,56 @@ let RCTShadowView = class RCTShadowView {
   }
 };
 exports.default = RCTShadowView;
-}, 25, null, "RCTShadowView");
+}, 26, null, "RCTShadowView");
 __d(/* yoga-js/dist/yogajs.cjs.js */function(global, require, module, exports) {'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+function _interopDefault(ex) {
+  return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex;
+}
 
-var Yoga = _interopDefault(require(27           )); // 27 = yoga-layout
+var Yoga = _interopDefault(require(28           )); // 28 = yoga-layout
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+  };
+}();
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }return target;
+};
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });
+  } else {
+    obj[key] = value;
+  }return obj;
+}
 
 var MEASURE_MODE_EXACTLY = Yoga.MEASURE_MODE_EXACTLY;
 var MEASURE_MODE_UNDEFINED = Yoga.MEASURE_MODE_UNDEFINED;
@@ -3287,11 +3424,9 @@ var YogaNode = function () {
 
     this._node = Yoga.Node.create();
 
-    // this.children = Object.freeze([]);
     this.children = [];
     this.style = new Proxy({}, styleHandlerFactory(this._node));
 
-    // return proxied instance
     return new Proxy(this, {
       get: function get(target, name) {
         switch (name) {
@@ -3453,8 +3588,7 @@ exports.MEASURE_MODE_UNDEFINED = MEASURE_MODE_UNDEFINED;
 exports.MEASURE_MODE_COUNT = MEASURE_MODE_COUNT;
 exports.MEASURE_MODE_AT_MOST = MEASURE_MODE_AT_MOST;
 exports['default'] = YogaNode;
-
-}, 26, null, "yoga-js/dist/yogajs.cjs.js");
+}, 27, null, "yoga-js/dist/yogajs.cjs.js");
 __d(/* yoga-layout/sources/entry-browser.js */function(global, require, module, exports) {/**
  * Copyright (c) 2014-present, Facebook, Inc.
  * All rights reserved.
@@ -3464,7 +3598,7 @@ __d(/* yoga-layout/sources/entry-browser.js */function(global, require, module, 
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-var nbind = require(28                         ); // 28 = ../build/Release/nbind.js
+var nbind = require(29                         ); // 29 = ../build/Release/nbind.js
 
 var ran = false;
 var ret = null;
@@ -3486,9 +3620,9 @@ nbind({}, function (err, result) {
 if (!ran)
     throw new Error('Failed to load the yoga module - it needed to be loaded synchronously, but didn\'t');
 
-module.exports = require(29              )(ret.bind, ret.lib); // 29 = ./entry-common
+module.exports = require(30              )(ret.bind, ret.lib); // 30 = ./entry-common
 
-}, 27, null, "yoga-layout/sources/entry-browser.js");
+}, 28, null, "yoga-layout/sources/entry-browser.js");
 __d(/* yoga-layout/build/Release/nbind.js */function(global, require, module, exports) {(function (root, wrapper) {
   if (typeof define == "function" && define.amd) define([], function () {
     return wrapper;
@@ -14067,7 +14201,7 @@ __d(/* yoga-layout/build/Release/nbind.js */function(global, require, module, ex
   }run();
 });
 
-}, 28, null, "yoga-layout/build/Release/nbind.js");
+}, 29, null, "yoga-layout/build/Release/nbind.js");
 __d(/* yoga-layout/sources/entry-common.js */function(global, require, module, exports) {/**
  * Copyright (c) 2014-present, Facebook, Inc.
  * All rights reserved.
@@ -14093,7 +14227,7 @@ module.exports = function (bind, lib) {
 
         UNDEFINED: NaN
 
-    }, require(30         )); // 30 = ./YGEnums
+    }, require(31         )); // 31 = ./YGEnums
 
     class Layout {
 
@@ -14318,7 +14452,7 @@ module.exports = function (bind, lib) {
 
 };
 
-}, 29, null, "yoga-layout/sources/entry-common.js");
+}, 30, null, "yoga-layout/sources/entry-common.js");
 __d(/* yoga-layout/sources/YGEnums.js */function(global, require, module, exports) {/**
  * Copyright (c) 2014-present, Facebook, Inc.
  * All rights reserved.
@@ -14424,7 +14558,7 @@ module.exports = {
 
 };
 
-}, 30, null, "yoga-layout/sources/YGEnums.js");
+}, 31, null, "yoga-layout/sources/YGEnums.js");
 __d(/* RCTView */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14441,15 +14575,15 @@ var _CustomElement = require(24             ); // 24 = CustomElement
 
 var _CustomElement2 = babelHelpers.interopRequireDefault(_CustomElement);
 
-let RCTView = (_dec = (0, _CustomElement2.default)("rct-view"), _dec(_class = class RCTView extends _UIView2.default {
+var RCTView = (_dec = (0, _CustomElement2.default)("rct-view"), _dec(_class = class RCTView extends _UIView2.default {
   constructor() {
     super(_UIView.FrameZero);
   }
 }) || _class);
 exports.default = RCTView;
-}, 31, null, "RCTView");
+}, 32, null, "RCTView");
 __d(/* RCTComponent */function(global, require, module, exports) {"use strict";
-}, 32, null, "RCTComponent");
+}, 33, null, "RCTComponent");
 __d(/* RCTEventDispatcher */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14469,7 +14603,7 @@ var _Invariant = require(16         ); // 16 = Invariant
 
 var _Invariant2 = babelHelpers.interopRequireDefault(_Invariant);
 
-const RCTTextEventType = exports.RCTTextEventType = {
+var RCTTextEventType = exports.RCTTextEventType = {
   RCTTextEventTypeFocus: 0,
   RCTTextEventTypeBlur: 1,
   RCTTextEventTypeChange: 2,
@@ -14484,19 +14618,19 @@ function capitalizeFirstLetter(string) {
 
 function normalizeInputEventName(eventName) {
   if (eventName.startsWith("on")) {
-    eventName = `top${eventName.substring(2)}`;
+    eventName = "top" + eventName.substring(2);
   } else if (!eventName.startsWith("top")) {
-    eventName = `top${capitalizeFirstLetter(eventName)}`;
+    eventName = "top" + capitalizeFirstLetter(eventName);
   }
 
   return eventName;
 }
 
 function stringToHash(input) {
-  let hash = 0,
-      chr;
+  var hash = 0,
+      chr = void 0;
   if (input.length === 0) return hash;
-  for (let i = 0; i < input.length; i++) {
+  for (var i = 0; i < input.length; i++) {
     chr = input.charCodeAt(i);
     hash = (hash << 5) - hash + chr;
     hash |= 0;
@@ -14504,7 +14638,7 @@ function stringToHash(input) {
   return hash;
 }
 
-let RCTEventDispatcher = (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = class RCTEventDispatcher {
+var RCTEventDispatcher = (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = class RCTEventDispatcher {
 
   static RCTGetEventID(event) {
     return event.viewTag | (stringToHash(event.eventName) & 0xffff) << 32 | event.coalescingKey << 48;
@@ -14523,10 +14657,10 @@ let RCTEventDispatcher = (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = class RCTEve
   }
 
   sendTextEvent(type, reactTag, text, key, eventCount) {
-    const events = ["focus", "blur", "change", "submitEditing", "endEditing", "keyPress"];
+    var events = ["focus", "blur", "change", "submitEditing", "endEditing", "keyPress"];
 
-    const body = {
-      eventCount,
+    var body = {
+      eventCount: eventCount,
       target: reactTag
     };
 
@@ -14540,11 +14674,11 @@ let RCTEventDispatcher = (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = class RCTEve
   }
 
   sendEvent(event) {
-    const eventID = RCTEventDispatcher.RCTGetEventID(event);
+    var eventID = RCTEventDispatcher.RCTGetEventID(event);
 
-    const previousEvent = this.events[eventID];
+    var previousEvent = this.events[eventID];
     if (previousEvent) {
-      (0, _Invariant2.default)(event.canCoalesce(), `Got event which cannot be coalesced, but has the same eventID ${eventID} as the previous event`);
+      (0, _Invariant2.default)(event.canCoalesce(), "Got event which cannot be coalesced, but has the same eventID " + eventID + " as the previous event");
       event = previousEvent.coalesceWithEvent(previousEvent);
     } else {
       this.eventQueue.push(eventID);
@@ -14552,7 +14686,7 @@ let RCTEventDispatcher = (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = class RCTEve
 
     this.events[eventID] = event;
 
-    let scheduleEventsDispatch = false;
+    var scheduleEventsDispatch = false;
     if (!this.eventsDispatchScheduled) {
       this.eventsDispatchScheduled = true;
       scheduleEventsDispatch = true;
@@ -14568,22 +14702,24 @@ let RCTEventDispatcher = (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = class RCTEve
   }
 
   flushEventsQueue() {
-    const events = babelHelpers.extends({}, this.events);
+    var _this = this;
+
+    var events = babelHelpers.extends({}, this.events);
     this.events = {};
 
-    const eventQueue = [...this.eventQueue];
+    var eventQueue = [].concat(babelHelpers.toConsumableArray(this.eventQueue));
     this.eventQueue = [];
 
     this.eventsDispatchScheduled = false;
 
-    eventQueue.forEach(eventId => {
-      this.dispatchEvent(events[eventId]);
+    eventQueue.forEach(function (eventId) {
+      _this.dispatchEvent(events[eventId]);
     });
   }
 }) || _class;
 
 exports.default = RCTEventDispatcher;
-}, 33, null, "RCTEventDispatcher");
+}, 34, null, "RCTEventDispatcher");
 __d(/* RCTDeviceInfo */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14596,11 +14732,11 @@ var _RCTBridge = require(15         ); // 15 = RCTBridge
 
 var _RCTBridge2 = babelHelpers.interopRequireDefault(_RCTBridge);
 
-var _RCTNativeEventEmitter = require(35                     ); // 35 = RCTNativeEventEmitter
+var _RCTNativeEventEmitter = require(36                     ); // 36 = RCTNativeEventEmitter
 
 var _RCTNativeEventEmitter2 = babelHelpers.interopRequireDefault(_RCTNativeEventEmitter);
 
-let RCTDeviceInfo = (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = class RCTDeviceInfo extends _RCTNativeEventEmitter2.default {
+var RCTDeviceInfo = (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = class RCTDeviceInfo extends _RCTNativeEventEmitter2.default {
   constructor(bridge) {
     super(bridge);
 
@@ -14620,7 +14756,7 @@ let RCTDeviceInfo = (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = class RCTDeviceIn
   }
 
   exportedDimensions() {
-    const dims = {
+    var dims = {
       width: Math.ceil(window.innerWidth),
       height: Math.ceil(window.innerHeight),
       scale: this.getDevicePixelRatio(),
@@ -14634,7 +14770,7 @@ let RCTDeviceInfo = (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = class RCTDeviceIn
   }
 
   getDevicePixelRatio() {
-    let ratio = 1;
+    var ratio = 1;
 
     if (window.screen.systemXDPI !== undefined && window.screen.logicalXDPI !== undefined && window.screen.systemXDPI > window.screen.logicalXDPI) {
       ratio = window.screen.systemXDPI / window.screen.logicalXDPI;
@@ -14650,7 +14786,7 @@ let RCTDeviceInfo = (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = class RCTDeviceIn
 }) || _class;
 
 exports.default = RCTDeviceInfo;
-}, 34, null, "RCTDeviceInfo");
+}, 35, null, "RCTDeviceInfo");
 __d(/* RCTNativeEventEmitter */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14667,7 +14803,7 @@ var _RCTBridge = require(15         ); // 15 = RCTBridge
 
 var _RCTBridge2 = babelHelpers.interopRequireDefault(_RCTBridge);
 
-var _NotificationCenter = require(36                  ); // 36 = NotificationCenter
+var _NotificationCenter = require(37                  ); // 37 = NotificationCenter
 
 var _NotificationCenter2 = babelHelpers.interopRequireDefault(_NotificationCenter);
 
@@ -14700,7 +14836,7 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
   return desc;
 }
 
-let RCTEventEmitter = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), _dec2 = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), (_class = class RCTEventEmitter {
+var RCTEventEmitter = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), _dec2 = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), (_class = class RCTEventEmitter {
 
   constructor(bridge) {
     this.listenerCount = 0;
@@ -14713,13 +14849,13 @@ let RCTEventEmitter = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFu
   }
 
   sendEventWithName(eventName, body) {
-    (0, _Invariant2.default)(this.bridge, "bridge is not set. This is probably because you've" + `explicitly synthesized the bridge in ${this.constructor.name}, even though it's inherited ` + "from RCTEventEmitter.");
+    (0, _Invariant2.default)(this.bridge, "bridge is not set. This is probably because you've" + ("explicitly synthesized the bridge in " + this.constructor.name + ", even though it's inherited ") + "from RCTEventEmitter.");
 
     if (this.listenerCount > 0) {
       this.bridge.enqueueJSCall("RCTDeviceEventEmitter", "emit", body ? [eventName, body] : [eventName], null);
       _NotificationCenter2.default.emitEvent(eventName, [body]);
     } else {
-      console.warn(`Sending ${eventName} with no listeners registered`);
+      console.warn("Sending " + eventName + " with no listeners registered");
     }
   }
 
@@ -14753,20 +14889,20 @@ let RCTEventEmitter = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFu
   }
 }, (_applyDecoratedDescriptor(_class.prototype, "addListener", [_dec], Object.getOwnPropertyDescriptor(_class.prototype, "addListener"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "removeListeners", [_dec2], Object.getOwnPropertyDescriptor(_class.prototype, "removeListeners"), _class.prototype)), _class));
 exports.default = RCTEventEmitter;
-}, 35, null, "RCTNativeEventEmitter");
+}, 36, null, "RCTNativeEventEmitter");
 __d(/* NotificationCenter */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _wolfy87Eventemitter = require(37                    ); // 37 = wolfy87-eventemitter
+var _wolfy87Eventemitter = require(38                    ); // 38 = wolfy87-eventemitter
 
 var _wolfy87Eventemitter2 = babelHelpers.interopRequireDefault(_wolfy87Eventemitter);
 
-let NotificationCenter = class NotificationCenter extends _wolfy87Eventemitter2.default {};
+var NotificationCenter = class NotificationCenter extends _wolfy87Eventemitter2.default {};
 exports.default = new NotificationCenter();
-}, 36, null, "NotificationCenter");
+}, 37, null, "NotificationCenter");
 __d(/* wolfy87-eventemitter/EventEmitter.js */function(global, require, module, exports) {'use strict';
 
 /*!
@@ -15043,18 +15179,18 @@ __d(/* wolfy87-eventemitter/EventEmitter.js */function(global, require, module, 
         exports.EventEmitter = EventEmitter;
     }
 })(undefined || {});
-}, 37, null, "wolfy87-eventemitter/EventEmitter.js");
+}, 38, null, "wolfy87-eventemitter/EventEmitter.js");
 __d(/* RCTRootShadowView */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _RCTShadowView = require(25             ); // 25 = RCTShadowView
+var _RCTShadowView = require(26             ); // 26 = RCTShadowView
 
 var _RCTShadowView2 = babelHelpers.interopRequireDefault(_RCTShadowView);
 
-let RCTRootShadowView = class RCTRootShadowView extends _RCTShadowView2.default {
+var RCTRootShadowView = class RCTRootShadowView extends _RCTShadowView2.default {
 
   constructor() {
     super();
@@ -15067,10 +15203,10 @@ let RCTRootShadowView = class RCTRootShadowView extends _RCTShadowView2.default 
   }
 
   recalculateLayout() {
-    const { width, height } = this.availableSize;
+    var { width: width, height: height } = this.availableSize;
     this.yogaNode.calculateLayout(width, height);
 
-    const layoutChanges = this.getLayoutChanges({
+    var layoutChanges = this.getLayoutChanges({
       top: 0,
       left: 0
     });
@@ -15079,7 +15215,7 @@ let RCTRootShadowView = class RCTRootShadowView extends _RCTShadowView2.default 
   }
 };
 exports.default = RCTRootShadowView;
-}, 38, null, "RCTRootShadowView");
+}, 39, null, "RCTRootShadowView");
 __d(/* RCTLayoutAnimationManager */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15090,16 +15226,16 @@ var _Invariant = require(16         ); // 16 = Invariant
 
 var _Invariant2 = babelHelpers.interopRequireDefault(_Invariant);
 
-var _RCTKeyframeGenerator = require(40                    ); // 40 = RCTKeyframeGenerator
+var _RCTKeyframeGenerator = require(41                    ); // 41 = RCTKeyframeGenerator
 
 var _RCTKeyframeGenerator2 = babelHelpers.interopRequireDefault(_RCTKeyframeGenerator);
 
-const PropertiesEnum = {
+var PropertiesEnum = {
   opacity: true,
   scaleXY: true
 };
 
-const TypesEnum = {
+var TypesEnum = {
   spring: true,
   linear: true,
   easeInEaseOut: true,
@@ -15107,7 +15243,7 @@ const TypesEnum = {
   easeOut: true
 };
 
-let RCTLayoutAnimationManager = class RCTLayoutAnimationManager {
+var RCTLayoutAnimationManager = class RCTLayoutAnimationManager {
 
   constructor(manager) {
     this.manager = manager;
@@ -15139,9 +15275,9 @@ let RCTLayoutAnimationManager = class RCTLayoutAnimationManager {
   }
 
   constructKeyframes(config) {
-    const { create, update, delete: del, duration } = config;
+    var { create: create, update: update, delete: del, duration: duration } = config;
 
-    const keyframes = {
+    var keyframes = {
       create: (0, _RCTKeyframeGenerator2.default)(create, duration),
       update: (0, _RCTKeyframeGenerator2.default)(update, duration),
       delete: (0, _RCTKeyframeGenerator2.default)(del, duration)
@@ -15151,14 +15287,16 @@ let RCTLayoutAnimationManager = class RCTLayoutAnimationManager {
   }
 
   createOpacityKeyframes(from, to, keyframes) {
-    return keyframes.map(keyframe => ({
-      opacity: `${to + (from - to) * (1 - keyframe)}`
-    }));
+    return keyframes.map(function (keyframe) {
+      return {
+        opacity: "" + (to + (from - to) * (1 - keyframe))
+      };
+    });
   }
 
   createAnimationKeyframes(from, to, keyframes, propName, existingKeyframes) {
-    return existingKeyframes.map((existingKeyframe, index) => {
-      let newValue = to + (from - to) * (1 - keyframes[index]);
+    return existingKeyframes.map(function (existingKeyframe, index) {
+      var newValue = to + (from - to) * (1 - keyframes[index]);
 
       if (["width", "height"].includes(propName)) {
         if (newValue < 0) {
@@ -15169,112 +15307,114 @@ let RCTLayoutAnimationManager = class RCTLayoutAnimationManager {
       }
 
       return babelHelpers.extends({}, existingKeyframe, {
-        [propName]: `${newValue}px`
+        [propName]: newValue + "px"
       });
     });
   }
 
   runAnimations(keyframes, config) {
-    const animations = [];
+    var _this = this;
 
-    const {
+    var animations = [];
+
+    var {
       create: createKeyConfig,
       update: updateKeyConfig,
       delete: deleteKeyConfig
     } = keyframes;
 
-    this.layoutChanges.forEach(layoutChange => {
-      const {
-        reactTag,
-        layout,
-        nextMeasurement,
-        previousMeasurement
+    this.layoutChanges.forEach(function (layoutChange) {
+      var {
+        reactTag: reactTag,
+        layout: layout,
+        nextMeasurement: nextMeasurement,
+        previousMeasurement: previousMeasurement
       } = layoutChange;
 
-      const view = this.manager.viewRegistry.get(reactTag);
+      var view = _this.manager.viewRegistry.get(reactTag);
 
       (0, _Invariant2.default)(view, "view does not exist");
 
       if (!previousMeasurement) {
-        const keyframes = this.createOpacityKeyframes(0, 1, createKeyConfig.keyframes);
-        const config = {
+        var _keyframes = _this.createOpacityKeyframes(0, 1, createKeyConfig.keyframes);
+        var _config = {
           duration: createKeyConfig.duration
         };
 
         view.style.willChange = "opacity";
 
-        animations.push(() => {
+        animations.push(function () {
           view.frame = layout;
 
-          const animation = view.animate(keyframes, config);
+          var animation = view.animate(_keyframes, _config);
 
-          animation.onfinish = () => {
+          animation.onfinish = function () {
             view.style.willChange = "";
           };
 
           return animation.finished;
         });
       } else {
-        let keyframes = new Array(updateKeyConfig.keyframes.length).fill({
-          translateX: `${layout.left}px`,
-          translateY: `${layout.top}px`
+        var _keyframes2 = new Array(updateKeyConfig.keyframes.length).fill({
+          translateX: layout.left + "px",
+          translateY: layout.top + "px"
         });
 
-        const {
+        var {
           left: nextLeft,
           top: nextTop,
           width: nextWidth,
           height: nextHeight
         } = nextMeasurement;
 
-        const {
+        var {
           left: prevLeft,
           top: prevTop,
           width: prevWidth,
           height: prevHeight
         } = previousMeasurement;
 
-        const { top, left, width, height } = view.frame;
+        var { top: top, left: left, width: _width, height: _height } = view.frame;
 
         if (prevLeft !== nextLeft) {
-          keyframes = this.createAnimationKeyframes(left, layout.left, updateKeyConfig.keyframes, "translateX", keyframes);
+          _keyframes2 = _this.createAnimationKeyframes(left, layout.left, updateKeyConfig.keyframes, "translateX", _keyframes2);
         }
         if (prevTop !== nextTop) {
-          keyframes = this.createAnimationKeyframes(top, layout.top, updateKeyConfig.keyframes, "translateY", keyframes);
+          _keyframes2 = _this.createAnimationKeyframes(top, layout.top, updateKeyConfig.keyframes, "translateY", _keyframes2);
         }
         if (prevWidth !== nextWidth) {
-          keyframes = this.createAnimationKeyframes(width, layout.width, updateKeyConfig.keyframes, "width", keyframes);
+          _keyframes2 = _this.createAnimationKeyframes(_width, layout.width, updateKeyConfig.keyframes, "width", _keyframes2);
         }
         if (prevHeight !== nextHeight) {
-          keyframes = this.createAnimationKeyframes(height, layout.height, updateKeyConfig.keyframes, "height", keyframes);
+          _keyframes2 = _this.createAnimationKeyframes(_height, layout.height, updateKeyConfig.keyframes, "height", _keyframes2);
         }
 
-        keyframes = keyframes.map(frame => {
-          const { translateX, translateY } = frame,
-                rest = babelHelpers.objectWithoutProperties(frame, ["translateX", "translateY"]);
+        _keyframes2 = _keyframes2.map(function (frame) {
+          var { translateX: translateX, translateY: translateY } = frame,
+              rest = babelHelpers.objectWithoutProperties(frame, ["translateX", "translateY"]);
 
-          let translateString = "";
-          translateString += translateX ? `translateX(${translateX}) ` : "";
-          translateString += translateY ? `translateY(${translateY}) ` : "";
+          var translateString = "";
+          translateString += translateX ? "translateX(" + translateX + ") " : "";
+          translateString += translateY ? "translateY(" + translateY + ") " : "";
 
           return babelHelpers.extends({}, rest, {
             transform: translateString
           });
         });
 
-        const config = {
+        var _config2 = {
           duration: updateKeyConfig.duration,
           fill: "backwards"
         };
 
         view.style.willChange = "transform, width, height";
 
-        animations.push(() => {
+        animations.push(function () {
           view.frame = layout;
 
-          const animation = view.animate(keyframes, config);
+          var animation = view.animate(_keyframes2, _config2);
 
-          animation.onfinish = () => {
+          animation.onfinish = function () {
             view.style.willChange = "";
           };
 
@@ -15282,23 +15422,23 @@ let RCTLayoutAnimationManager = class RCTLayoutAnimationManager {
         });
       }
 
-      this.removedNodes.forEach(reactTag => {
-        const view = this.manager.viewRegistry.get(reactTag);
+      _this.removedNodes.forEach(function (reactTag) {
+        var view = _this.manager.viewRegistry.get(reactTag);
         (0, _Invariant2.default)(view, "view does not exist");
 
-        const keyframes = this.createOpacityKeyframes(1, 0, deleteKeyConfig.keyframes);
-        const config = {
+        var keyframes = _this.createOpacityKeyframes(1, 0, deleteKeyConfig.keyframes);
+        var config = {
           duration: deleteKeyConfig.duration
         };
 
         view.style.willChange = "opacity";
 
-        animations.push(() => {
-          const animation = view.animate(keyframes, config);
+        animations.push(function () {
+          var animation = view.animate(keyframes, config);
 
-          animation.onfinish = () => {
+          animation.onfinish = function () {
             view.style.willChange = "";
-            this.manager.viewRegistry.delete(reactTag);
+            _this.manager.viewRegistry.delete(reactTag);
             view.purge();
           };
 
@@ -15311,40 +15451,44 @@ let RCTLayoutAnimationManager = class RCTLayoutAnimationManager {
   }
 
   applyLayoutChanges() {
-    const pendingConfig = this.pendingConfig;
-    const layoutChanges = this.layoutChanges;
-    const callback = this.pendingCallback;
+    var _this2 = this;
+
+    var pendingConfig = this.pendingConfig;
+    var layoutChanges = this.layoutChanges;
+    var callback = this.pendingCallback;
 
     (0, _Invariant2.default)(pendingConfig && layoutChanges && callback, "Attempting to apply a layoutanimation without a pending config.");
 
-    const keyframes = this.constructKeyframes(pendingConfig);
-    const animations = this.runAnimations(keyframes, pendingConfig);
+    var keyframes = this.constructKeyframes(pendingConfig);
+    var animations = this.runAnimations(keyframes, pendingConfig);
 
-    this.manager.addUIBlock(() => {
-      Promise.all(animations.map(f => f())).then(() => {
+    this.manager.addUIBlock(function () {
+      Promise.all(animations.map(function (f) {
+        return f();
+      })).then(function () {
         callback();
       });
-      this.reset();
+      _this2.reset();
     });
   }
 };
 exports.default = RCTLayoutAnimationManager;
-}, 39, null, "RCTLayoutAnimationManager");
+}, 40, null, "RCTLayoutAnimationManager");
 __d(/* RCTKeyframeGenerator */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _bezierEasing = require(41             ); // 41 = bezier-easing
+var _bezierEasing = require(42             ); // 42 = bezier-easing
 
 var _bezierEasing2 = babelHelpers.interopRequireDefault(_bezierEasing);
 
-var _rebound = require(42       ); // 42 = rebound
+var _rebound = require(43       ); // 43 = rebound
 
 var _rebound2 = babelHelpers.interopRequireDefault(_rebound);
 
-var _fastMemoize = require(43            ); // 43 = fast-memoize
+var _fastMemoize = require(44            ); // 44 = fast-memoize
 
 var _fastMemoize2 = babelHelpers.interopRequireDefault(_fastMemoize);
 
@@ -15352,46 +15496,48 @@ var _Invariant = require(16         ); // 16 = Invariant
 
 var _Invariant2 = babelHelpers.interopRequireDefault(_Invariant);
 
-const timestepCoefficient = 1;
+var timestepCoefficient = 1;
 
-const staticEasingFunctions = {
-  linear: x => x,
+var staticEasingFunctions = {
+  linear: function (x) {
+    return x;
+  },
   easeIn: (0, _bezierEasing2.default)(0.42, 0, 1, 1),
   easeOut: (0, _bezierEasing2.default)(0, 0, 0.58, 1),
   easeInEaseOut: (0, _bezierEasing2.default)(0.42, 0, 0.58, 1)
 };
 
-const springTimestep = 16.667 * timestepCoefficient;
+var springTimestep = 16.667 * timestepCoefficient;
 
 function generateStaticKeyframes(ease, duration) {
-  const numSteps = duration / springTimestep;
-  const timestep = 1.0 / numSteps;
+  var numSteps = duration / springTimestep;
+  var timestep = 1.0 / numSteps;
 
-  const keyframes = [];
+  var keyframes = [];
 
-  let currentX = 0;
-  for (let i = 0; i < numSteps; i++) {
+  var currentX = 0;
+  for (var i = 0; i < numSteps; i++) {
     keyframes.push(ease(currentX));
     currentX += timestep;
   }
 
   keyframes.push(1);
 
-  return { keyframes, duration };
+  return { keyframes: keyframes, duration: duration };
 }
 
-const looper = new _rebound2.default.SimulationLooper(springTimestep);
-const springSystem = new _rebound2.default.SpringSystem(looper);
+var looper = new _rebound2.default.SimulationLooper(springTimestep);
+var springSystem = new _rebound2.default.SpringSystem(looper);
 
 function generateSpringKeyframes(springDamping, initialVelocity = 0) {
-  const mass = 1;
-  const tension = 40;
-  const friction = springDamping * (2 * Math.sqrt(mass * tension));
+  var mass = 1;
+  var tension = 40;
+  var friction = springDamping * (2 * Math.sqrt(mass * tension));
 
-  const springConfig = _rebound2.default.SpringConfig.fromOrigamiTensionAndFriction(tension, friction);
-  const spring = springSystem.createSpringWithConfig(springConfig);
+  var springConfig = _rebound2.default.SpringConfig.fromOrigamiTensionAndFriction(tension, friction);
+  var spring = springSystem.createSpringWithConfig(springConfig);
 
-  const result = [];
+  var result = [];
   function readStep(spring) {
     result.push(spring.getCurrentValue());
   }
@@ -15402,17 +15548,17 @@ function generateSpringKeyframes(springDamping, initialVelocity = 0) {
   springSystem.activateSpring(spring.getId());
   spring.removeAllListeners();
 
-  const springDuration = result.length * springTimestep;
+  var springDuration = result.length * springTimestep;
 
   return { keyframes: result, duration: springDuration };
 }
 
-const generateKeyframes = (0, _fastMemoize2.default)((config, duration) => {
-  const { type, springDamping, initialVelocity } = config;
+var generateKeyframes = (0, _fastMemoize2.default)(function (config, duration) {
+  var { type: type, springDamping: springDamping, initialVelocity: initialVelocity } = config;
 
   if (type && type !== "spring") {
-    const easingFunction = staticEasingFunctions[type];
-    const resolvedDuration = config.duration ? config.duration : duration;
+    var easingFunction = staticEasingFunctions[type];
+    var resolvedDuration = config.duration ? config.duration : duration;
 
     return generateStaticKeyframes(easingFunction, resolvedDuration);
   }
@@ -15425,7 +15571,7 @@ const generateKeyframes = (0, _fastMemoize2.default)((config, duration) => {
 });
 
 exports.default = generateKeyframes;
-}, 40, null, "RCTKeyframeGenerator");
+}, 41, null, "RCTKeyframeGenerator");
 __d(/* bezier-easing/src/index.js */function(global, require, module, exports) {'use strict';
 
 var NEWTON_ITERATIONS = 4;
@@ -15533,7 +15679,7 @@ module.exports = function bezier(mX1, mY1, mX2, mY2) {
     return calcBezier(getTForX(x), mY1, mY2);
   };
 };
-}, 41, null, "bezier-easing/src/index.js");
+}, 42, null, "bezier-easing/src/index.js");
 __d(/* rebound/rebound.js */function(global, require, module, exports) {'use strict';
 
 (function () {
@@ -15640,8 +15786,9 @@ __d(/* rebound/rebound.js */function(global, require, module, exports) {'use str
     },
 
     advance: function (time, deltaTime) {
-      while (this._idleSpringIndices.length > 0) this._idleSpringIndices.pop();
-      for (var i = 0, len = this._activeSprings.length; i < len; i++) {
+      while (this._idleSpringIndices.length > 0) {
+        this._idleSpringIndices.pop();
+      }for (var i = 0, len = this._activeSprings.length; i < len; i++) {
         var spring = this._activeSprings[i];
         if (spring.systemShouldAdvance()) {
           spring.advance(time / 1000.0, deltaTime / 1000.0);
@@ -16271,7 +16418,7 @@ __d(/* rebound/rebound.js */function(global, require, module, exports) {'use str
     window.rebound = rebound;
   }
 })();
-}, 42, null, "rebound/rebound.js");
+}, 43, null, "rebound/rebound.js");
 __d(/* fast-memoize/src/index.js */function(global, require, module, exports) {'use strict';
 
 module.exports = function memoize(fn, options) {
@@ -16349,7 +16496,7 @@ var cacheDefault = {
     return new ObjectWithoutPrototypeCache();
   }
 };
-}, 43, null, "fast-memoize/src/index.js");
+}, 44, null, "fast-memoize/src/index.js");
 __d(/* RCTTiming */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16391,7 +16538,7 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
   return desc;
 }
 
-let RCTTiming = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), _dec2 = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = (_class2 = class RCTTiming {
+var RCTTiming = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), _dec2 = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunctionTypeNormal), (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = (_class2 = class RCTTiming {
 
   constructor(bridge) {
     this.bridge = bridge;
@@ -16399,16 +16546,16 @@ let RCTTiming = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunction
   }
 
   createTimer(callbackId, duration, jsSchedulingTime, repeats) {
-    const currentTimeMillis = Date.now();
-    const currentDateNowTimeMillis = jsSchedulingTime + 1000 / 60;
-    const adjustedDuration = Math.max(0.0, jsSchedulingTime - currentDateNowTimeMillis + duration);
-    const initialTargetTime = currentTimeMillis + adjustedDuration;
+    var currentTimeMillis = Date.now();
+    var currentDateNowTimeMillis = jsSchedulingTime + 1000 / 60;
+    var adjustedDuration = Math.max(0.0, jsSchedulingTime - currentDateNowTimeMillis + duration);
+    var initialTargetTime = currentTimeMillis + adjustedDuration;
 
-    const timer = {
-      callbackId,
-      duration,
+    var timer = {
+      callbackId: callbackId,
+      duration: duration,
       jsSchedulingTime: initialTargetTime,
-      repeats
+      repeats: repeats
     };
 
     if (adjustedDuration === 0) {
@@ -16427,12 +16574,12 @@ let RCTTiming = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunction
   }
 
   frame() {
-    const toRemove = [];
-    const timers = [];
-    const time = Date.now();
+    var toRemove = [];
+    var timers = [];
+    var time = Date.now();
 
-    for (const timer in this.timers) {
-      const t = this.timers[timer];
+    for (var timer in this.timers) {
+      var t = this.timers[timer];
       if (t.jsSchedulingTime <= time) {
         timers.push(this.timers[timer].callbackId);
         if (t.repeats) {
@@ -16447,13 +16594,13 @@ let RCTTiming = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunction
       this.bridge.enqueueJSCall("JSTimersExecution", "callTimers", [timers]);
     }
 
-    for (const timer of toRemove) {
-      delete this.timers[timer];
+    for (var _timer of toRemove) {
+      delete this.timers[_timer];
     }
   }
 }, (_applyDecoratedDescriptor(_class2.prototype, "createTimer", [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, "createTimer"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "deleteTimer", [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, "deleteTimer"), _class2.prototype)), _class2)) || _class);
 exports.default = RCTTiming;
-}, 44, null, "RCTTiming");
+}, 45, null, "RCTTiming");
 __d(/* RCTTouchHandler */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16468,49 +16615,86 @@ var _UIView = require(23      ); // 23 = UIView
 
 var _UIView2 = babelHelpers.interopRequireDefault(_UIView);
 
-var _RCTEventDispatcher = require(33                  ); // 33 = RCTEventDispatcher
+var _RCTEventDispatcher = require(34                  ); // 34 = RCTEventDispatcher
 
 var _RCTEventDispatcher2 = babelHelpers.interopRequireDefault(_RCTEventDispatcher);
 
-var _RCTTouchEvent = require(46             ); // 46 = RCTTouchEvent
+var _RCTTouchEvent = require(47             ); // 47 = RCTTouchEvent
 
 var _RCTTouchEvent2 = babelHelpers.interopRequireDefault(_RCTTouchEvent);
 
-var _Guid = require(47    ); // 47 = Guid
+var _Guid = require(48    ); // 48 = Guid
 
 var _Guid2 = babelHelpers.interopRequireDefault(_Guid);
 
-let RCTTouchHandler = class RCTTouchHandler {
+var RCTTouchHandler = class RCTTouchHandler {
 
   constructor(bridge) {
-    this.mouseClickBegan = event => {
-      const touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
+    var _this = this;
+
+    this.mouseClickBegan = function (event) {
+      var touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
       if (!touches) return;
 
-      this.touchesBegan(touches);
+      _this.touchesBegan(touches);
 
-      const view = this.view;
+      var view = _this.view;
       if (view) {
-        view.addEventListener("mouseup", this.mouseClickEnded);
+        view.addEventListener("mouseup", _this.mouseClickEnded);
+        view.addEventListener("mousemove", _this.mouseClickMoved);
       }
     };
 
-    this.mouseClickMoved = event => {
-      const touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
+    this.mouseClickMoved = function (event) {
+      var touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
       if (!touches) return;
 
-      this.touchesMoved(touches);
+      _this.touchesMoved(touches);
     };
 
-    this.mouseClickEnded = event => {
-      const touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
+    this.mouseClickEnded = function (event) {
+      var touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
       if (!touches) return;
 
-      this.touchesEnded(touches);
+      _this.touchesEnded(touches);
 
-      const view = this.view;
+      var view = _this.view;
       if (view) {
-        view.removeEventListener("mouseup", this.mouseClickEnded);
+        view.removeEventListener("mouseup", _this.mouseClickEnded);
+        view.removeEventListener("mousemove", _this.mouseClickMoved);
+      }
+    };
+
+    this.nativeTouchBegan = function (event) {
+      var touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
+      if (!touches) return;
+
+      _this.touchesBegan(touches);
+
+      var view = _this.view;
+      if (view) {
+        view.addEventListener("touchend", _this.nativeTouchEnded);
+        view.addEventListener("touchmove", _this.nativeTouchMoved);
+      }
+    };
+
+    this.nativeTouchMoved = function (event) {
+      var touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
+      if (!touches) return;
+
+      _this.touchesMoved(touches);
+    };
+
+    this.nativeTouchEnded = function (event) {
+      var touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
+      if (!touches) return;
+
+      _this.touchesEnded(touches);
+
+      var view = _this.view;
+      if (view) {
+        view.removeEventListener("touchend", _this.nativeTouchEnded);
+        view.removeEventListener("touchmove", _this.nativeTouchMoved);
       }
     };
 
@@ -16525,9 +16709,9 @@ let RCTTouchHandler = class RCTTouchHandler {
   static RCTNormalizeInteractionEvent(rawEvent) {
     if (rawEvent instanceof MouseEvent) {
       rawEvent.preventDefault();
-      const target = rawEvent.target;
+      var _target = rawEvent.target;
 
-      (0, _Invariant2.default)(target instanceof _UIView2.default, "Cannot normalize interaction event on object which does not inherit from UIView");
+      (0, _Invariant2.default)(_target instanceof _UIView2.default, "Cannot normalize interaction event on object which does not inherit from UIView");
 
       if ("which" in rawEvent && rawEvent.which === 3) {
         return null;
@@ -16536,7 +16720,7 @@ let RCTTouchHandler = class RCTTouchHandler {
       }
 
       return [{
-        view: target,
+        view: _target,
         identifier: 0,
         pageX: rawEvent.pageX,
         pageY: rawEvent.pageY,
@@ -16544,9 +16728,34 @@ let RCTTouchHandler = class RCTTouchHandler {
         locationY: rawEvent.offsetY,
         timestamp: rawEvent.timeStamp
       }];
-    } else {
-      throw new Error("Invalid Event");
+    } else if (rawEvent.changedTouches) {
+      rawEvent.preventDefault();
+
+      var rawTouches = rawEvent.changedTouches;
+      var resultingTouchList = [];
+
+      for (var i = 0; i < rawTouches.length; i++) {
+        var rawTouch = rawTouches[i];
+        var _target2 = rawTouch.target;
+
+        (0, _Invariant2.default)(_target2 instanceof _UIView2.default, "Cannot normalize interaction event on object which does not inherit from UIView");
+
+        resultingTouchList.push({
+          view: _target2,
+          identifier: rawTouch.identifier,
+          pageX: rawTouch.pageX,
+          pageY: rawTouch.pageY,
+          locationX: rawTouch.clientX,
+          locationY: rawTouch.clientY,
+          timestamp: rawEvent.timeStamp
+        });
+      }
+
+      return resultingTouchList;
     }
+
+    console.error(rawEvent);
+    throw new Error("Invalid Event");
   }
 
   attachToView(view) {
@@ -16560,40 +16769,42 @@ let RCTTouchHandler = class RCTTouchHandler {
   }
 
   recordNewTouches(touches) {
-    touches.forEach(touch => {
-      (0, _Invariant2.default)(!this.nativeTouchesByIdentifier.hasOwnProperty(touch.identifier), "Touch is already recorded. This is a critical bug");
+    var _this2 = this;
 
-      let targetView = touch.view;
+    touches.forEach(function (touch) {
+      (0, _Invariant2.default)(!_this2.nativeTouchesByIdentifier.hasOwnProperty(touch.identifier), "Touch is already recorded. This is a critical bug");
+
+      var targetView = touch.view;
       while (targetView) {
-        if (targetView === this.view) break;
+        if (targetView === _this2.view) break;
         if (targetView.reactTag && targetView.touchable) break;
         targetView = targetView.parentElement;
       }
 
-      const reactTag = targetView.reactTag;
-      const touchID = touch.identifier;
+      var reactTag = targetView.reactTag;
+      var touchID = touch.identifier;
 
-      const reactTouch = {
+      var reactTouch = {
         target: reactTag,
         identifier: touchID
       };
 
-      this.touchViews.push(targetView);
-      this.nativeTouches.push(touch);
-      this.nativeTouchesByIdentifier[touchID] = touch;
-      this.reactTouches.push(reactTouch);
+      _this2.touchViews.push(targetView);
+      _this2.nativeTouches.push(touch);
+      _this2.nativeTouchesByIdentifier[touchID] = touch;
+      _this2.reactTouches.push(reactTouch);
     });
   }
 
   recordRemovedTouches(touches) {
-    for (let touch of touches) {
-      const nativeTouch = this.nativeTouchesByIdentifier[touch.identifier];
+    for (var touch of touches) {
+      var nativeTouch = this.nativeTouchesByIdentifier[touch.identifier];
 
       if (!nativeTouch) {
         continue;
       }
 
-      const index = this.nativeTouches.indexOf(nativeTouch);
+      var index = this.nativeTouches.indexOf(nativeTouch);
 
       this.touchViews.splice(index, 1);
       this.nativeTouches.splice(index, 1);
@@ -16603,9 +16814,9 @@ let RCTTouchHandler = class RCTTouchHandler {
   }
 
   updateReactTouch(touchIndex) {
-    const nativeTouch = this.nativeTouches[touchIndex];
+    var nativeTouch = this.nativeTouches[touchIndex];
 
-    const updatedReactTouch = babelHelpers.extends({}, this.reactTouches[touchIndex], {
+    var updatedReactTouch = babelHelpers.extends({}, this.reactTouches[touchIndex], {
       pageX: nativeTouch.pageX,
       pageY: nativeTouch.pageY,
       locationX: nativeTouch.locationX,
@@ -16617,15 +16828,15 @@ let RCTTouchHandler = class RCTTouchHandler {
   }
 
   updateAndDispatchTouches(touches, eventName) {
-    const changedIndexes = [];
-    for (let touch of touches) {
-      const nativeTouch = this.nativeTouchesByIdentifier[touch.identifier];
+    var changedIndexes = [];
+    for (var touch of touches) {
+      var nativeTouch = this.nativeTouchesByIdentifier[touch.identifier];
       if (!nativeTouch) {
         console.log("updateAndDispatch failed");
         continue;
       }
 
-      const index = this.nativeTouches.indexOf(nativeTouch);
+      var index = this.nativeTouches.indexOf(nativeTouch);
 
       if (index === -1) continue;
 
@@ -16638,9 +16849,11 @@ let RCTTouchHandler = class RCTTouchHandler {
       return;
     }
 
-    const reactTouches = this.reactTouches.map(reactTouch => babelHelpers.extends({}, reactTouch));
+    var reactTouches = this.reactTouches.map(function (reactTouch) {
+      return babelHelpers.extends({}, reactTouch);
+    });
 
-    const canBeCoalesced = eventName === "touchMove";
+    var canBeCoalesced = eventName === "touchMove";
 
     if (!canBeCoalesced) {
       this.coalescingKey++;
@@ -16648,7 +16861,7 @@ let RCTTouchHandler = class RCTTouchHandler {
 
     (0, _Invariant2.default)(this.view, "attempting to send event to unknown view");
 
-    const event = new _RCTTouchEvent2.default(eventName, this.view.reactTag, reactTouches, changedIndexes, this.coalescingKey);
+    var event = new _RCTTouchEvent2.default(eventName, this.view.reactTag, reactTouches, changedIndexes, this.coalescingKey);
 
     if (!canBeCoalesced) {
       this.coalescingKey++;
@@ -16672,7 +16885,7 @@ let RCTTouchHandler = class RCTTouchHandler {
   }
 };
 exports.default = RCTTouchHandler;
-}, 45, null, "RCTTouchHandler");
+}, 46, null, "RCTTouchHandler");
 __d(/* RCTTouchEvent */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16683,11 +16896,11 @@ var _Invariant = require(16         ); // 16 = Invariant
 
 var _Invariant2 = babelHelpers.interopRequireDefault(_Invariant);
 
-var _RCTEventDispatcher = require(33                  ); // 33 = RCTEventDispatcher
+var _RCTEventDispatcher = require(34                  ); // 34 = RCTEventDispatcher
 
 var _RCTEventDispatcher2 = babelHelpers.interopRequireDefault(_RCTEventDispatcher);
 
-let RCTTouchEvent = class RCTTouchEvent {
+var RCTTouchEvent = class RCTTouchEvent {
 
   constructor(eventName, reactTag, reactTouches, changedIndexes, coalescingKey) {
     this.viewTag = reactTag;
@@ -16705,12 +16918,12 @@ let RCTTouchEvent = class RCTTouchEvent {
     (0, _Invariant2.default)(event instanceof RCTTouchEvent, "Touch event cannot be coalesced with any other type of event");
     (0, _Invariant2.default)(this.reactTouches.length !== event.reactTouches.length, "Touch events have different number of touches.");
 
-    let newEventIsMoreRecent = false;
-    let oldEventIsMoreRecent = false;
-    let count = this.reactTouches.length;
-    for (let i = 0; i < count; i++) {
-      const touch = this.reactTouches[i];
-      const newTouch = event.reactTouches[i];
+    var newEventIsMoreRecent = false;
+    var oldEventIsMoreRecent = false;
+    var count = this.reactTouches.length;
+    for (var i = 0; i < count; i++) {
+      var touch = this.reactTouches[i];
+      var newTouch = event.reactTouches[i];
 
       (0, _Invariant2.default)(touch.identifier !== newTouch.identifier, "Touch events doesn't have touches in the same order.");
 
@@ -16721,7 +16934,9 @@ let RCTTouchEvent = class RCTTouchEvent {
       }
     }
 
-    (0, _Invariant2.default)([oldEventIsMoreRecent, newEventIsMoreRecent].filter(e => e).length === 1, "Neither touch event is exclusively more recent than the other one.");
+    (0, _Invariant2.default)([oldEventIsMoreRecent, newEventIsMoreRecent].filter(function (e) {
+      return e;
+    }).length === 1, "Neither touch event is exclusively more recent than the other one.");
 
     return newEventIsMoreRecent ? event : this;
   }
@@ -16739,7 +16954,7 @@ let RCTTouchEvent = class RCTTouchEvent {
   }
 };
 exports.default = RCTTouchEvent;
-}, 46, null, "RCTTouchEvent");
+}, 47, null, "RCTTouchEvent");
 __d(/* Guid */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16752,7 +16967,7 @@ function guid() {
   }
   return s4() + s4() + "-" + s4() + "-" + s4() + "-" + s4() + "-" + s4() + s4() + s4();
 }
-}, 47, null, "Guid");
+}, 48, null, "Guid");
 __d(/* BundleFromRoot */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16760,7 +16975,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = bundleFromRoot;
 function bundleFromRoot(root) {
-  let path = location.pathname;
+  var path = location.pathname;
   if (!path.endsWith("/")) {
     path = path.substr(0, path.lastIndexOf("/"));
   } else {
@@ -16768,7 +16983,7 @@ function bundleFromRoot(root) {
   }
   return location.protocol + "//" + location.host + path + "/" + root;
 }
-}, 48, null, "BundleFromRoot");
+}, 49, null, "BundleFromRoot");
 __d(/* RCTPlatform */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16779,9 +16994,9 @@ var _class;
 
 var _RCTBridge = require(15         ); // 15 = RCTBridge
 
-const supportsTouchForceChange = "ontouchforcechange" in window.document;
+var supportsTouchForceChange = "ontouchforcechange" in window.document;
 
-let RCTPlatformConstants = (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = class RCTPlatformConstants {
+var RCTPlatformConstants = (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = class RCTPlatformConstants {
   constantsToExport() {
     return {
       forceTouchAvailable: supportsTouchForceChange
@@ -16790,14 +17005,14 @@ let RCTPlatformConstants = (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = class RCTP
 }) || _class;
 
 exports.default = RCTPlatformConstants;
-}, 49, null, "RCTPlatform");
+}, 50, null, "RCTPlatform");
 __d(/* RCTTextManager */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _dec, _dec2, _dec3, _dec4, _class, _desc, _value, _class2;
+var _dec, _dec2, _dec3, _dec4, _dec5, _class, _desc, _value, _class2;
 
 var _RCTBridge = require(15         ); // 15 = RCTBridge
 
@@ -16807,11 +17022,11 @@ var _RCTViewManager = require(22              ); // 22 = RCTViewManager
 
 var _RCTViewManager2 = babelHelpers.interopRequireDefault(_RCTViewManager);
 
-var _RCTText = require(51       ); // 51 = RCTText
+var _RCTText = require(52       ); // 52 = RCTText
 
 var _RCTText2 = babelHelpers.interopRequireDefault(_RCTText);
 
-var _RCTShadowText = require(52             ); // 52 = RCTShadowText
+var _RCTShadowText = require(53             ); // 53 = RCTShadowText
 
 var _RCTShadowText2 = babelHelpers.interopRequireDefault(_RCTShadowText);
 
@@ -16844,7 +17059,7 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
   return desc;
 }
 
-let RCTTextManager = (_dec = (0, _RCTViewManager.RCT_EXPORT_MIRRORED_PROP)("fontFamily", "string"), _dec2 = (0, _RCTViewManager.RCT_EXPORT_MIRRORED_PROP)("fontSize", "number"), _dec3 = (0, _RCTViewManager.RCT_EXPORT_VIEW_PROP)("accessible", "bool"), _dec4 = (0, _RCTViewManager.RCT_EXPORT_VIEW_PROP)("selectable", "bool"), (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = (_class2 = class RCTTextManager extends _RCTViewManager2.default {
+var RCTTextManager = (_dec = (0, _RCTViewManager.RCT_EXPORT_MIRRORED_PROP)("fontFamily", "string"), _dec2 = (0, _RCTViewManager.RCT_EXPORT_MIRRORED_PROP)("fontSize", "number"), _dec3 = (0, _RCTViewManager.RCT_EXPORT_VIEW_PROP)("accessible", "bool"), _dec4 = (0, _RCTViewManager.RCT_EXPORT_VIEW_PROP)("selectable", "bool"), _dec5 = (0, _RCTViewManager.RCT_EXPORT_VIEW_PROP)("color", "number"), (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = (_class2 = class RCTTextManager extends _RCTViewManager2.default {
   view() {
     return new _RCTText2.default();
   }
@@ -16866,9 +17081,13 @@ let RCTTextManager = (_dec = (0, _RCTViewManager.RCT_EXPORT_MIRRORED_PROP)("font
   setSelectable(view, value) {
     view.selectable = value;
   }
-}, (_applyDecoratedDescriptor(_class2.prototype, "setFontFamily", [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, "setFontFamily"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setFontSize", [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, "setFontSize"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setAccessible", [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, "setAccessible"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setSelectable", [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, "setSelectable"), _class2.prototype)), _class2)) || _class);
+
+  setColor(view, value) {
+    view.color = value;
+  }
+}, (_applyDecoratedDescriptor(_class2.prototype, "setFontFamily", [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, "setFontFamily"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setFontSize", [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, "setFontSize"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setAccessible", [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, "setAccessible"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setSelectable", [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, "setSelectable"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setColor", [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, "setColor"), _class2.prototype)), _class2)) || _class);
 exports.default = RCTTextManager;
-}, 50, null, "RCTTextManager");
+}, 51, null, "RCTTextManager");
 __d(/* RCTText */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16877,7 +17096,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _dec, _class;
 
-var _RCTView = require(31       ); // 31 = RCTView
+var _RCTView = require(32       ); // 32 = RCTView
 
 var _RCTView2 = babelHelpers.interopRequireDefault(_RCTView);
 
@@ -16885,7 +17104,11 @@ var _CustomElement = require(24             ); // 24 = CustomElement
 
 var _CustomElement2 = babelHelpers.interopRequireDefault(_CustomElement);
 
-let RCTText = (_dec = (0, _CustomElement2.default)("rct-text"), _dec(_class = class RCTText extends _RCTView2.default {
+var _ColorArrayFromHexARGB = require(25                     ); // 25 = ColorArrayFromHexARGB
+
+var _ColorArrayFromHexARGB2 = babelHelpers.interopRequireDefault(_ColorArrayFromHexARGB);
+
+var RCTText = (_dec = (0, _CustomElement2.default)("rct-text"), _dec(_class = class RCTText extends _RCTView2.default {
 
   constructor() {
     super();
@@ -16897,6 +17120,20 @@ let RCTText = (_dec = (0, _CustomElement2.default)("rct-text"), _dec(_class = cl
 
     this.selectable = false;
     this.fontFamily = "sans-serif";
+  }
+
+  get color() {
+    return this._color;
+  }
+
+  set color(value) {
+    if (typeof value === "number") {
+      var [a, r, g, b] = (0, _ColorArrayFromHexARGB2.default)(value);
+      var stringValue = "rgba(" + r + "," + g + "," + b + "," + a + ")";
+      this.style.color = stringValue;
+    } else {
+      this.style.color = value;
+    }
   }
 
   get frame() {
@@ -16934,7 +17171,8 @@ let RCTText = (_dec = (0, _CustomElement2.default)("rct-text"), _dec(_class = cl
 
   set selectable(value) {
     this._selectable = value;
-    const valueResult = value ? "text" : "none";
+    var valueResult = value ? "text" : "none";
+
     Object.assign(this.style, {
       webkitUserSelect: valueResult,
       MozUserSelect: valueResult,
@@ -16943,14 +17181,14 @@ let RCTText = (_dec = (0, _CustomElement2.default)("rct-text"), _dec(_class = cl
   }
 }) || _class);
 exports.default = RCTText;
-}, 51, null, "RCTText");
+}, 52, null, "RCTText");
 __d(/* RCTShadowText */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _Guid = require(47    ); // 47 = Guid
+var _Guid = require(48    ); // 48 = Guid
 
 var _Guid2 = babelHelpers.interopRequireDefault(_Guid);
 
@@ -16958,37 +17196,43 @@ var _Invariant = require(16         ); // 16 = Invariant
 
 var _Invariant2 = babelHelpers.interopRequireDefault(_Invariant);
 
-var _RCTShadowView = require(25             ); // 25 = RCTShadowView
+var _RCTShadowView = require(26             ); // 26 = RCTShadowView
 
 var _RCTShadowView2 = babelHelpers.interopRequireDefault(_RCTShadowView);
 
-var _RCTShadowRawText = require(53                ); // 53 = RCTShadowRawText
+var _RCTShadowRawText = require(54                ); // 54 = RCTShadowRawText
 
 var _RCTShadowRawText2 = babelHelpers.interopRequireDefault(_RCTShadowRawText);
 
-var _yogaJs = require(26       ); // 26 = yoga-js
+var _yogaJs = require(27       ); // 27 = yoga-js
 
-const TEXT_SHADOW_STYLE_PROPS = ["fontFamily", "fontSize", "fontStyle", "fontWeight", "lineHeight"];
+var TEXT_SHADOW_STYLE_PROPS = ["fontFamily", "fontSize", "fontStyle", "fontWeight", "lineHeight"];
 
-let RCTShadowText = class RCTShadowText extends _RCTShadowView2.default {
+var RCTShadowText = class RCTShadowText extends _RCTShadowView2.default {
 
   constructor() {
-    super();
+    var _this;
 
-    this.yogaNode.setMeasureFunc((width, widthMeasureMode, height, heightMeasureMode) => this.measure(width, widthMeasureMode, height, heightMeasureMode));
+    _this = super();
+
+    this.yogaNode.setMeasureFunc(function (width, widthMeasureMode, height, heightMeasureMode) {
+      return _this.measure(width, widthMeasureMode, height, heightMeasureMode);
+    });
 
     this.props = {};
     this.textChildren = [];
     this.textDirty = true;
     this.numberOfLines = 0;
 
-    TEXT_SHADOW_STYLE_PROPS.forEach(shadowPropName => {
-      Object.defineProperty(this, shadowPropName, {
+    TEXT_SHADOW_STYLE_PROPS.forEach(function (shadowPropName) {
+      Object.defineProperty(_this, shadowPropName, {
         configurable: true,
-        get: () => this.props[shadowPropName],
-        set: value => {
-          this.props[shadowPropName] = value;
-          this.markTextDirty();
+        get: function () {
+          return _this.props[shadowPropName];
+        },
+        set: function (value) {
+          _this.props[shadowPropName] = value;
+          _this.markTextDirty();
           return true;
         }
       });
@@ -17008,7 +17252,7 @@ let RCTShadowText = class RCTShadowText extends _RCTShadowView2.default {
 
   get testDOMElement() {
     if (this._testDOMElement == null) {
-      const domElement = document.createElement("div");
+      var domElement = document.createElement("div");
       domElement.id = (0, _Guid2.default)();
       Object.assign(domElement.style, {
         position: "absolute",
@@ -17029,7 +17273,7 @@ let RCTShadowText = class RCTShadowText extends _RCTShadowView2.default {
   }
 
   clearTestDomElement() {
-    const testDomElement = this.testDOMElement;
+    var testDomElement = this.testDOMElement;
     while (testDomElement.firstChild) {
       testDomElement.removeChild(testDomElement.firstChild);
     }
@@ -17038,20 +17282,20 @@ let RCTShadowText = class RCTShadowText extends _RCTShadowView2.default {
   measure(width, widthMeasureMode, height, heightMeasureMode) {
     this.clearTestDomElement();
 
-    const whiteSpace = this.numberOfLines === 1 ? "nowrap" : "normal";
+    var whiteSpace = this.numberOfLines === 1 ? "nowrap" : "normal";
 
     if (widthMeasureMode !== _yogaJs.MEASURE_MODE_EXACTLY || heightMeasureMode !== _yogaJs.MEASURE_MODE_EXACTLY) {
       if (widthMeasureMode !== _yogaJs.MEASURE_MODE_UNDEFINED) {
         Object.assign(this.testDOMElement.style, {
           maxWidth: width,
           maxHeight: "auto",
-          whiteSpace
+          whiteSpace: whiteSpace
         });
       } else {
         Object.assign(this.testDOMElement.style, {
           maxWidth: "auto",
           maxHeight: height,
-          whiteSpace
+          whiteSpace: whiteSpace
         });
       }
     } else {
@@ -17075,10 +17319,10 @@ let RCTShadowText = class RCTShadowText extends _RCTShadowView2.default {
       return this._testTree;
     }
 
-    const spanWrapper = document.createElement("span");
+    var spanWrapper = document.createElement("span");
     Object.assign(spanWrapper.style, this.props);
 
-    this.textChildren.forEach(child => {
+    this.textChildren.forEach(function (child) {
       if (child instanceof _RCTShadowRawText2.default && child.text.length) {
         spanWrapper.insertAdjacentHTML("beforeend", child.text);
       } else if (child instanceof RCTShadowText) {
@@ -17100,7 +17344,9 @@ let RCTShadowText = class RCTShadowText extends _RCTShadowView2.default {
 
   removeReactSubview(subview) {
     subview.reactSuperview = undefined;
-    this.textChildren = this.textChildren.filter(s => s !== subview);
+    this.textChildren = this.textChildren.filter(function (s) {
+      return s !== subview;
+    });
     this.makeDirty();
   }
 
@@ -17112,18 +17358,18 @@ let RCTShadowText = class RCTShadowText extends _RCTShadowView2.default {
   }
 };
 exports.default = RCTShadowText;
-}, 52, null, "RCTShadowText");
+}, 53, null, "RCTShadowText");
 __d(/* RCTShadowRawText */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _RCTShadowView = require(25             ); // 25 = RCTShadowView
+var _RCTShadowView = require(26             ); // 26 = RCTShadowView
 
 var _RCTShadowView2 = babelHelpers.interopRequireDefault(_RCTShadowView);
 
-let RCTShadowRawText = class RCTShadowRawText extends _RCTShadowView2.default {
+var RCTShadowRawText = class RCTShadowRawText extends _RCTShadowView2.default {
 
   constructor() {
     super();
@@ -17133,7 +17379,7 @@ let RCTShadowRawText = class RCTShadowRawText extends _RCTShadowView2.default {
   }
 
   markTextDirty() {
-    let cur = this.reactSuperview;
+    var cur = this.reactSuperview;
     while (cur) {
       cur.isDirty = true;
       cur.markTextDirty && cur.markTextDirty();
@@ -17152,7 +17398,7 @@ let RCTShadowRawText = class RCTShadowRawText extends _RCTShadowView2.default {
   }
 };
 exports.default = RCTShadowRawText;
-}, 53, null, "RCTShadowRawText");
+}, 54, null, "RCTShadowRawText");
 __d(/* RCTRawTextManager */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17169,11 +17415,11 @@ var _RCTViewManager = require(22              ); // 22 = RCTViewManager
 
 var _RCTViewManager2 = babelHelpers.interopRequireDefault(_RCTViewManager);
 
-var _RCTRawText = require(55          ); // 55 = RCTRawText
+var _RCTRawText = require(56          ); // 56 = RCTRawText
 
 var _RCTRawText2 = babelHelpers.interopRequireDefault(_RCTRawText);
 
-var _RCTShadowRawText = require(53                ); // 53 = RCTShadowRawText
+var _RCTShadowRawText = require(54                ); // 54 = RCTShadowRawText
 
 var _RCTShadowRawText2 = babelHelpers.interopRequireDefault(_RCTShadowRawText);
 
@@ -17206,7 +17452,7 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
   return desc;
 }
 
-let RCTRawTextManager = (_dec = (0, _RCTViewManager.RCT_EXPORT_MIRRORED_PROP)("text", "string", false), (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = (_class2 = class RCTRawTextManager extends _RCTViewManager2.default {
+var RCTRawTextManager = (_dec = (0, _RCTViewManager.RCT_EXPORT_MIRRORED_PROP)("text", "string", false), (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = (_class2 = class RCTRawTextManager extends _RCTViewManager2.default {
   view() {
     return new _RCTRawText2.default();
   }
@@ -17220,7 +17466,7 @@ let RCTRawTextManager = (_dec = (0, _RCTViewManager.RCT_EXPORT_MIRRORED_PROP)("t
   }
 }, (_applyDecoratedDescriptor(_class2.prototype, "setText", [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, "setText"), _class2.prototype)), _class2)) || _class);
 exports.default = RCTRawTextManager;
-}, 54, null, "RCTRawTextManager");
+}, 55, null, "RCTRawTextManager");
 __d(/* RCTRawText */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17229,7 +17475,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _dec, _class;
 
-var _RCTView = require(31       ); // 31 = RCTView
+var _RCTView = require(32       ); // 32 = RCTView
 
 var _RCTView2 = babelHelpers.interopRequireDefault(_RCTView);
 
@@ -17237,7 +17483,7 @@ var _CustomElement = require(24             ); // 24 = CustomElement
 
 var _CustomElement2 = babelHelpers.interopRequireDefault(_CustomElement);
 
-let RCTRawText = (_dec = (0, _CustomElement2.default)("rct-raw-text"), _dec(_class = class RCTRawText extends _RCTView2.default {
+var RCTRawText = (_dec = (0, _CustomElement2.default)("rct-raw-text"), _dec(_class = class RCTRawText extends _RCTView2.default {
   constructor() {
     super();
 
@@ -17259,5 +17505,5 @@ let RCTRawText = (_dec = (0, _CustomElement2.default)("rct-raw-text"), _dec(_cla
   }
 }) || _class);
 exports.default = RCTRawText;
-}, 55, null, "RCTRawText");
+}, 56, null, "RCTRawText");
 ;require(0);
