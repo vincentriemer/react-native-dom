@@ -85,6 +85,10 @@ class RCTRootView extends UIView {
     return this._reactTag;
   }
 
+  enableExperimentalTransformLayoutAnimations() {
+    this.uiManager.layoutAnimationManager.enableExperimentalTransformLayoutAnimations();
+  }
+
   bundleFinishedLoading() {
     this.runApplication();
   }

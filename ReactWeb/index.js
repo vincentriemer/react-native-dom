@@ -12,7 +12,6 @@ import "RCTUIManager";
 import "RCTViewManager";
 import "RCTTextManager";
 import "RCTRawTextManager";
-import "RCTScrollViewManager";
 
 // React Native Web Entrypoint instance
 export class RNWebInstance {
@@ -20,6 +19,10 @@ export class RNWebInstance {
 
   constructor(bundle: string, moduleName: string, parent: Element) {
     this.rootView = new RCTRootView(bundleFromRoot(bundle), moduleName, parent);
+  }
+
+  enableExperimentalTransformLayoutAnimations() {
+    this.rootView.enableExperimentalTransformLayoutAnimations();
   }
 
   start() {

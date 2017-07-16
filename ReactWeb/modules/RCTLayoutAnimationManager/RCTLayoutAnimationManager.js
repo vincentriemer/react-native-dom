@@ -56,6 +56,24 @@ type AnimationConfig = [
   { duration: number, purge: boolean }
 ];
 
+type TransformKeyframeConfig = {
+  translateX: number,
+  translateY: number,
+  scaleX: number,
+  scaleY: number,
+  inverseScaleX: number,
+  inverseScaleY: number
+};
+
+type TransformAnimationConfig = [
+  TransformKeyframeConfig[],
+  { duration: number, layout: Frame }
+];
+
+type TransformAnimationConfigRegistry = {
+  [reactTag: number]: TransformAnimationConfig
+};
+
 type AnimationConfigRegistry = { [reactTag: number]: AnimationConfig };
 
 class RCTLayoutAnimationManager {
@@ -66,9 +84,16 @@ class RCTLayoutAnimationManager {
   removedNodes: number[];
   layoutChanges: LayoutChange[];
 
+  transformAnimations: boolean;
+
   constructor(manager: RCTUIManager) {
     this.manager = manager;
+    this.transformAnimations = false;
     this.reset();
+  }
+
+  enableExperimentalTransformLayoutAnimations() {
+    this.transformAnimations = true;
   }
 
   configureNext(config: LayoutAnimationConfig, callback: Function) {
@@ -138,7 +163,30 @@ class RCTLayoutAnimationManager {
     });
   }
 
-  runAnimations(keyframes: KeyframeConfig, config: LayoutAnimationConfig) {
+  createTransformAnimationKeyframes(
+    from: number,
+    to: number,
+    keyframes: number[],
+    propName: string,
+    existingKeyframes: any[]
+  ) {
+    return existingKeyframes.map((prevKeyframe, index) => {
+      let newValue = to + (from - to) * (1 - keyframes[index]);
+
+      if (["scaleX", "scaleY"].includes(propName)) {
+        if (newValue <= 0) {
+          newValue = 0.00001;
+        }
+      }
+
+      return {
+        ...prevKeyframe,
+        [propName]: newValue
+      };
+    });
+  }
+
+  createAnimations(keyframes: KeyframeConfig, config: LayoutAnimationConfig) {
     const animations = [];
 
     const {
@@ -314,6 +362,158 @@ class RCTLayoutAnimationManager {
     return animations;
   }
 
+  transformAnimationConfigFactory(
+    keyLength: number,
+    duration: number,
+    layout: Frame
+  ): TransformAnimationConfig {
+    return [
+      new Array(keyLength).fill({
+        translateX: 0,
+        translateY: 0,
+        scaleX: 1,
+        scaleY: 1,
+        inverseScaleX: 1,
+        inverseScaleY: 1
+      }),
+      { duration, layout }
+    ];
+  }
+
+  createTransformAnimations(
+    keyframes: KeyframeConfig,
+    config: LayoutAnimationConfig
+  ) {
+    const animations = [];
+    const registry: TransformAnimationConfig = {};
+
+    const {
+      create: createKeyConfig,
+      update: updateKeyConfig,
+      delete: deleteKeyConfig
+    } = keyframes;
+
+    this.layoutChanges.forEach(layoutChange => {
+      const {
+        reactTag,
+        layout,
+        nextMeasurement,
+        previousMeasurement
+      } = layoutChange;
+
+      const view = this.manager.viewRegistry.get(reactTag);
+
+      invariant(view, "view does not exist");
+
+      // if there's no previous measurement we can assume the view is created
+      if (!previousMeasurement) {
+        const keyframes = this.createOpacityKeyframes(
+          0,
+          1,
+          createKeyConfig.keyframes
+        );
+      } else {
+        if (!registry.hasOwnProperty(reactTag)) {
+          registry[reactTag] = this.transformAnimationConfigFactory(
+            updateKeyConfig.keyframes.length,
+            updateKeyConfig.duration,
+            layout
+          );
+        }
+
+        const {
+          top: prevTop,
+          left: prevLeft,
+          width: prevWidth,
+          height: prevHeight
+        } = view.frame;
+
+        const {
+          top: nextTop,
+          left: nextLeft,
+          width: nextWidth,
+          height: nextHeight
+        } = layout;
+
+        if (prevTop !== nextTop) {
+          const nextTranslateY = 0;
+          const prevTranslateY = nextTop - prevTop;
+
+          registry[reactTag][0] = this.createTransformAnimationKeyframes(
+            prevTranslateY,
+            nextTranslateY,
+            updateKeyConfig.keyframes,
+            "translateY",
+            registry[reactTag][0]
+          );
+        }
+
+        if (prevLeft !== nextLeft) {
+          const nextTranslateX = 0;
+          const prevTranslateX = nextLeft - prevLeft;
+
+          registry[reactTag][0] = this.createTransformAnimationKeyframes(
+            prevTranslateX,
+            nextTranslateX,
+            updateKeyConfig.keyframes,
+            "translateX",
+            registry[reactTag][0]
+          );
+        }
+      }
+    });
+
+    Object.keys(registry).forEach(tag => {
+      const [keyframeConfigs, { duration, layout }] = registry[tag];
+
+      const reactTag = parseInt(tag, 10);
+
+      const view = this.manager.viewRegistry.get(reactTag);
+      invariant(view, "view does not exist");
+
+      const keyframes = this.constructTransformKeyframes(keyframeConfigs);
+      const config = { duration, fill: "none" };
+
+      view.style.willChange = "transform, width, height";
+
+      animations.push(() => {
+        view.frame = layout;
+
+        // $FlowFixMe
+        const animation = view.animate(keyframes, config);
+
+        animation.onfinish = () => {
+          view.style.willChange = "";
+        };
+
+        return animation.finished;
+      });
+    });
+  }
+
+  constructTransformKeyframes(keyframeConfigs: TransformKeyframeConfig[]) {
+    return keyframeConfigs.map(config => {
+      const {
+        inverseScaleX,
+        inverseScaleY,
+        translateX,
+        translateY,
+        scaleX,
+        scaleY
+      } = config;
+
+      let transformString = "";
+
+      transformString += `scale(${inverseScaleX}, ${inverseScaleY}) `;
+      transformString += `translate(${translateX}px, ${translateY}px) `;
+      transformString += `scale(${scaleX}, ${scaleY})`;
+
+      return {
+        transform: transformString
+      };
+    });
+  }
+
   applyLayoutChanges() {
     const pendingConfig = this.pendingConfig;
     const layoutChanges = this.layoutChanges;
@@ -325,7 +525,14 @@ class RCTLayoutAnimationManager {
     );
 
     const keyframes = this.constructKeyframes(pendingConfig);
-    const animations = this.runAnimations(keyframes, pendingConfig);
+
+    let animations;
+
+    if (this.transformAnimations) {
+      animations = this.createTransformAnimations(keyframes, pendingConfig);
+    } else {
+      animations = this.createAnimations(keyframes, pendingConfig);
+    }
 
     this.manager.addUIBlock(() => {
       Promise.all(animations.map(f => f())).then(() => {
