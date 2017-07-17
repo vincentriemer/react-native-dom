@@ -135,15 +135,15 @@ class RCTUIManager {
   rootViewForReactTag(reactTag: number, completion: Function) {}
 
   purgeView(reactTag: number) {
-    const shadowView = this.shadowViewRegistry.get(reactTag);
-    if (shadowView) {
-      this.shadowViewRegistry.delete(reactTag);
-      shadowView.purge();
-    }
-
     if (this.layoutAnimationManager.isPending()) {
       this.layoutAnimationManager.queueRemovedNode(reactTag);
     } else {
+      const shadowView = this.shadowViewRegistry.get(reactTag);
+      if (shadowView) {
+        this.shadowViewRegistry.delete(reactTag);
+        shadowView.purge();
+      }
+
       this.addUIBlock((uiManager, viewRegistry) => {
         const view = viewRegistry.get(reactTag);
         viewRegistry.delete(reactTag);
@@ -236,12 +236,10 @@ class RCTUIManager {
     config: LayoutAnimationConfig,
     onAnimationDidEnd: number
   ) {
-    this.addUIBlock(() => {
-      this.layoutAnimationManager.configureNext(
-        config,
-        this.bridge.callbackFromId(onAnimationDidEnd)
-      );
-    });
+    this.layoutAnimationManager.configureNext(
+      config,
+      this.bridge.callbackFromId(onAnimationDidEnd)
+    );
   }
 
   addUIBlock(block: ?Function) {
@@ -426,10 +424,12 @@ class RCTUIManager {
       const shadowSubView = shadowViewToManage.reactSubviews[childIndex];
       if (shadowSubView) shadowViewToManage.removeReactSubview(shadowSubView);
 
-      this.addUIBlock((uiManager, viewRegistry) => {
-        const subView = viewToManage.reactSubviews[childIndex];
-        viewToManage.removeReactSubview(subView);
-      });
+      if (!this.layoutAnimationManager.isPending()) {
+        this.addUIBlock((uiManager, viewRegistry) => {
+          const subView = viewToManage.reactSubviews[childIndex];
+          viewToManage.removeReactSubview(subView);
+        });
+      }
     }
 
     // add the new children
@@ -447,8 +447,6 @@ class RCTUIManager {
         viewToManage.insertReactSubviewAtIndex(subView, indexToAdd);
       });
     }
-
-    const postShadowChildren = shadowViewToManage.reactSubviews.length;
 
     for (let i = 0; i < tagsToDelete.length; i++) {
       this.purgeView(tagsToDelete[i]);

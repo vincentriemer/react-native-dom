@@ -11,7 +11,7 @@ import invariant from "Invariant";
 
 import type { LayoutAnim } from "RCTLayoutAnimationManager";
 
-const timestepCoefficient = 1;
+const timestepCoefficient = 2;
 
 const staticEasingFunctions = {
   linear: x => x,
@@ -22,14 +22,16 @@ const staticEasingFunctions = {
 
 export type KeyframeResult = {
   keyframes: number[],
-  duration: number
+  duration: number,
+  delay: number
 };
 
 const springTimestep = 16.667 * timestepCoefficient;
 
 function generateStaticKeyframes(
   ease: (x: number) => number,
-  duration: number
+  duration: number,
+  delay: number
 ): KeyframeResult {
   const numSteps = duration / springTimestep;
   const timestep = 1.0 / numSteps;
@@ -44,7 +46,7 @@ function generateStaticKeyframes(
 
   keyframes.push(1);
 
-  return { keyframes, duration };
+  return { keyframes, duration, delay };
 }
 
 const looper = new Rebound.SimulationLooper(springTimestep);
@@ -52,7 +54,8 @@ const springSystem = new Rebound.SpringSystem(looper);
 
 function generateSpringKeyframes(
   springDamping: number,
-  initialVelocity: number = 0
+  initialVelocity: number = 0,
+  delay: number
 ): KeyframeResult {
   const mass = 1; /* Oragami Default */
   const tension = 40; /* Oragami Default */
@@ -64,7 +67,7 @@ function generateSpringKeyframes(
   );
   const spring = springSystem.createSpringWithConfig(springConfig);
 
-  const result = [];
+  let result = [];
   function readStep(spring) {
     result.push(spring.getCurrentValue());
   }
@@ -77,24 +80,39 @@ function generateSpringKeyframes(
 
   const springDuration = result.length * springTimestep;
 
-  return { keyframes: result, duration: springDuration };
+  return { keyframes: result, duration: springDuration, delay };
 }
 
 const generateKeyframes: (
   config: LayoutAnim,
   duration: number
-) => KeyframeResult = memoize((config: LayoutAnim, duration: number) => {
-  const { type, springDamping, initialVelocity } = config;
+) => ?KeyframeResult = memoize((config: LayoutAnim, duration: number) => {
+  const { type, springDamping, initialVelocity, delay } = config;
+
+  const resolvedDelay = delay != null ? delay : 0;
 
   if (type && type !== "spring") {
     const easingFunction = staticEasingFunctions[type];
-    const resolvedDuration = config.duration ? config.duration : duration;
+    const resolvedDuration =
+      config.duration != null ? config.duration : duration;
 
-    return generateStaticKeyframes(easingFunction, resolvedDuration);
+    if (resolvedDuration === 0) {
+      return null;
+    }
+
+    return generateStaticKeyframes(
+      easingFunction,
+      resolvedDuration,
+      resolvedDelay
+    );
   }
 
   if (type && type === "spring" && springDamping) {
-    return generateSpringKeyframes(springDamping, initialVelocity);
+    return generateSpringKeyframes(
+      springDamping,
+      initialVelocity,
+      resolvedDelay
+    );
   }
 
   invariant(false, "Invalid layoutAnimation configuration provided");

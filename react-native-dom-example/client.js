@@ -1226,20 +1226,20 @@ babelHelpers.toConsumableArray = function (arr) {
   }
 };
 })(typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : this);
-__d(/* layout-animations-example/web/client.js */function(global, require, module, exports) {"use strict";
+__d(/* transform-layout-animations-example/web/client.js */function(global, require, module, exports) {"use strict";
 
 var _reactNativeWeb = require(12                ); // 12 = react-native-web
 
 function init(bundle, parent, options) {
-  var web = new _reactNativeWeb.RNWebInstance(bundle, "layoutanimations", parent, babelHelpers.extends({}, options));
+  var web = new _reactNativeWeb.RNWebInstance(bundle, "transformlayoutanimations", parent, babelHelpers.extends({}, options));
 
   web.start();
   return web;
 }
 
 window.ReactWeb = { init: init };
-}, 0, null, "layout-animations-example/web/client.js");
-__d(/* react-native-webapp/ReactWeb/index.js */function(global, require, module, exports) {"use strict";
+}, 0, null, "transform-layout-animations-example/web/client.js");
+__d(/* react-native-web/ReactWeb/index.js */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -1252,7 +1252,7 @@ var _RCTRootView = require(14           ); // 14 = RCTRootView
 
 var _RCTRootView2 = babelHelpers.interopRequireDefault(_RCTRootView);
 
-var _BundleFromRoot = require(49              ); // 49 = BundleFromRoot
+var _BundleFromRoot = require(55              ); // 55 = BundleFromRoot
 
 var _BundleFromRoot2 = babelHelpers.interopRequireDefault(_BundleFromRoot);
 
@@ -1260,17 +1260,17 @@ require(34                  ); // 34 = RCTEventDispatcher
 
 require(35             ); // 35 = RCTDeviceInfo
 
-require(50           ); // 50 = RCTPlatform
+require(56           ); // 56 = RCTPlatform
 
-require(45         ); // 45 = RCTTiming
+require(46         ); // 46 = RCTTiming
 
 require(20            ); // 20 = RCTUIManager
 
 require(22              ); // 22 = RCTViewManager
 
-require(51              ); // 51 = RCTTextManager
+require(57              ); // 57 = RCTTextManager
 
-require(55                 ); // 55 = RCTRawTextManager
+require(61                 ); // 61 = RCTRawTextManager
 
 var RNWebInstance = exports.RNWebInstance = class RNWebInstance {
 
@@ -1278,11 +1278,15 @@ var RNWebInstance = exports.RNWebInstance = class RNWebInstance {
     this.rootView = new _RCTRootView2.default((0, _BundleFromRoot2.default)(bundle), moduleName, parent);
   }
 
+  enableExperimentalTransformLayoutAnimations() {
+    this.rootView.enableExperimentalTransformLayoutAnimations();
+  }
+
   start() {
     this.rootView.render();
   }
 };
-}, 12, null, "react-native-webapp/ReactWeb/index.js");
+}, 12, null, "react-native-web/ReactWeb/index.js");
 __d(/* proxy-polyfill/proxy.js */function(global, require, module, exports) {
 
 'use strict';
@@ -1439,11 +1443,11 @@ var _RCTDeviceInfo = require(35             ); // 35 = RCTDeviceInfo
 
 var _RCTDeviceInfo2 = babelHelpers.interopRequireDefault(_RCTDeviceInfo);
 
-var _RCTTiming = require(45         ); // 45 = RCTTiming
+var _RCTTiming = require(46         ); // 46 = RCTTiming
 
 var _RCTTiming2 = babelHelpers.interopRequireDefault(_RCTTiming);
 
-var _RCTTouchHandler = require(46               ); // 46 = RCTTouchHandler
+var _RCTTouchHandler = require(47               ); // 47 = RCTTouchHandler
 
 var _RCTTouchHandler2 = babelHelpers.interopRequireDefault(_RCTTouchHandler);
 
@@ -1506,6 +1510,10 @@ var RCTRootView = (_dec = (0, _CustomElement2.default)("rct-root-view"), _dec(_c
       this.uiManager.registerRootView(this);
     }
     return this._reactTag;
+  }
+
+  enableExperimentalTransformLayoutAnimations() {
+    this.uiManager.layoutAnimationManager.enableExperimentalTransformLayoutAnimations();
   }
 
   bundleFinishedLoading() {
@@ -2751,6 +2759,7 @@ var UIView = (_dec = (0, _CustomElement2.default)("ui-view"), _dec(_class = clas
     this.backgroundColor = "transparent";
     this.style.overflow = "hidden";
     this.style.boxSizing = "border-box";
+    this.style.transformOrigin = "top left";
     this.borderRadius = 0;
   }
 
@@ -2929,9 +2938,14 @@ var UIView = (_dec = (0, _CustomElement2.default)("ui-view"), _dec(_class = clas
     this.remove();
   }
 
-  addGestureRecognizer(handler) {
-    this.addEventListener("mousedown", handler.mouseClickBegan);
-    this.addEventListener("touchstart", handler.nativeTouchBegan);
+  addGestureRecognizer(handler, deviceType, touchListenerOptions) {
+    if (deviceType !== "touchOnly") {
+      this.addEventListener("mousedown", handler.mouseClickBegan);
+    }
+
+    if (deviceType !== "mouseOnly") {
+      this.addEventListener("touchstart", handler.nativeTouchBegan, touchListenerOptions);
+    }
   }
 
   removeGestureRecognizer(handler) {}
@@ -15230,6 +15244,11 @@ var _RCTKeyframeGenerator = require(41                    ); // 41 = RCTKeyframe
 
 var _RCTKeyframeGenerator2 = babelHelpers.interopRequireDefault(_RCTKeyframeGenerator);
 
+var _rematrix = require(45        ); // 45 = rematrix
+
+var Rematrix = babelHelpers.interopRequireWildcard(_rematrix);
+
+
 var PropertiesEnum = {
   opacity: true,
   scaleXY: true
@@ -15247,7 +15266,12 @@ var RCTLayoutAnimationManager = class RCTLayoutAnimationManager {
 
   constructor(manager) {
     this.manager = manager;
+    this.transformAnimations = false;
     this.reset();
+  }
+
+  enableExperimentalTransformLayoutAnimations() {
+    this.transformAnimations = true;
   }
 
   configureNext(config, callback) {
@@ -15294,28 +15318,80 @@ var RCTLayoutAnimationManager = class RCTLayoutAnimationManager {
     });
   }
 
-  createAnimationKeyframes(from, to, keyframes, propName, existingKeyframes) {
-    return existingKeyframes.map(function (existingKeyframe, index) {
-      var newValue = to + (from - to) * (1 - keyframes[index]);
+  createTransformAnimationKeyframes(from, to, keyframes, propName, existingKeyframes) {
+    return existingKeyframes.map(function (prevKeyframe, index) {
+      var newValue = void 0;
 
-      if (["width", "height"].includes(propName)) {
-        if (newValue < 0) {
-          newValue = 0;
-        } else {
-          newValue = Math.ceil(newValue);
+      if (["scaleX", "scaleY"].includes(propName)) {
+        newValue = from + (to - from) * keyframes[index];
+        if (newValue <= 0) {
+          newValue = 0.00001;
         }
+      } else {
+        newValue = from + (to - from) * keyframes[index];
       }
 
-      return babelHelpers.extends({}, existingKeyframe, {
-        [propName]: newValue + "px"
+      return babelHelpers.extends({}, prevKeyframe, {
+        [propName]: newValue
       });
     });
   }
 
-  runAnimations(keyframes, config) {
+  createInverseTransformAnimationKeyframes(propName, existingKeyframes, parentKeyframes) {
+    return existingKeyframes.map(function (prevKeyframe, index) {
+      var parentKeyframe = parentKeyframes[index];
+      var parentValue = parentKeyframe[propName];
+
+      var newValue = void 0;
+      if (["scaleX", "scaleY"].includes(propName)) {
+        newValue = 1 / parentValue;
+      } else {
+        newValue = -1 * parentValue;
+      }
+
+      var newPropName = "inverse" + (propName.charAt(0).toUpperCase() + propName.slice(1));
+
+      return babelHelpers.extends({}, prevKeyframe, {
+        [newPropName]: newValue
+      });
+    });
+  }
+
+  transformAnimationConfigFactory(keyLength, duration, layout) {
+    return [new Array(keyLength).fill({
+      translateX: layout.left,
+      translateY: layout.top,
+      scaleX: 1.0,
+      scaleY: 1.0,
+      inverseScaleX: 1.0,
+      inverseScaleY: 1.0,
+      inverseTranslateX: 0,
+      inverseTranslateY: 0
+    }), { duration: duration, layout: layout }];
+  }
+
+  applyInverseTransformOnChildren(shadowView, registry, updateKeyConfig, newFrames, propName) {
     var _this = this;
 
+    if (shadowView.reactSubviews.length !== 0) {
+      shadowView.reactSubviews.forEach(function (subShadowView, index) {
+        var subReactTag = subShadowView.reactTag;
+
+        if (!registry.hasOwnProperty(subReactTag)) {
+          (0, _Invariant2.default)(subShadowView.previousLayout, "shadowView has no previous layout");
+          registry[subReactTag] = _this.transformAnimationConfigFactory(updateKeyConfig.keyframes.length, updateKeyConfig.duration, subShadowView.previousLayout);
+        }
+
+        registry[subReactTag][0] = _this.createInverseTransformAnimationKeyframes(propName, registry[subReactTag][0], newFrames);
+      });
+    }
+  }
+
+  createTransformAnimations(keyframes, config) {
+    var _this2 = this;
+
     var animations = [];
+    var registry = {};
 
     var {
       create: createKeyConfig,
@@ -15331,127 +15407,139 @@ var RCTLayoutAnimationManager = class RCTLayoutAnimationManager {
         previousMeasurement: previousMeasurement
       } = layoutChange;
 
-      var view = _this.manager.viewRegistry.get(reactTag);
-
+      var view = _this2.manager.viewRegistry.get(reactTag);
       (0, _Invariant2.default)(view, "view does not exist");
 
       if (!previousMeasurement) {
-        var _keyframes = _this.createOpacityKeyframes(0, 1, createKeyConfig.keyframes);
-        var _config = {
-          duration: createKeyConfig.duration
-        };
-
-        view.style.willChange = "opacity";
-
-        animations.push(function () {
-          view.frame = layout;
-
-          var animation = view.animate(_keyframes, _config);
-
-          animation.onfinish = function () {
-            view.style.willChange = "";
-          };
-
-          return animation.finished;
-        });
+        var _keyframes = _this2.createOpacityKeyframes(0, 1, createKeyConfig.keyframes);
       } else {
-        var _keyframes2 = new Array(updateKeyConfig.keyframes.length).fill({
-          translateX: layout.left + "px",
-          translateY: layout.top + "px"
-        });
+        var shadowView = _this2.manager.shadowViewRegistry.get(reactTag);
+        (0, _Invariant2.default)(shadowView, "shadowView does not exist");
+
+        if (!registry.hasOwnProperty(reactTag)) {
+          registry[reactTag] = _this2.transformAnimationConfigFactory(updateKeyConfig.keyframes.length, updateKeyConfig.duration, layout);
+        }
 
         var {
-          left: nextLeft,
-          top: nextTop,
-          width: nextWidth,
-          height: nextHeight
-        } = nextMeasurement;
-
-        var {
-          left: prevLeft,
           top: prevTop,
+          left: prevLeft,
           width: prevWidth,
           height: prevHeight
-        } = previousMeasurement;
+        } = view.frame;
 
-        var { top: top, left: left, width: _width, height: _height } = view.frame;
+        var {
+          top: nextTop,
+          left: nextLeft,
+          width: nextWidth,
+          height: nextHeight
+        } = layout;
+
+        if (prevTop !== nextTop) {
+          var nextTranslateY = nextTop;
+          var prevTranslateY = prevTop;
+
+          var newFrames = _this2.createTransformAnimationKeyframes(prevTranslateY, nextTranslateY, updateKeyConfig.keyframes, "translateY", registry[reactTag][0]);
+
+          registry[reactTag][0] = newFrames;
+        }
 
         if (prevLeft !== nextLeft) {
-          _keyframes2 = _this.createAnimationKeyframes(left, layout.left, updateKeyConfig.keyframes, "translateX", _keyframes2);
+          var nextTranslateX = nextLeft;
+          var prevTranslateX = prevLeft;
+
+          var _newFrames = _this2.createTransformAnimationKeyframes(prevTranslateX, nextTranslateX, updateKeyConfig.keyframes, "translateX", registry[reactTag][0]);
+
+          registry[reactTag][0] = _newFrames;
         }
-        if (prevTop !== nextTop) {
-          _keyframes2 = _this.createAnimationKeyframes(top, layout.top, updateKeyConfig.keyframes, "translateY", _keyframes2);
-        }
+
         if (prevWidth !== nextWidth) {
-          _keyframes2 = _this.createAnimationKeyframes(_width, layout.width, updateKeyConfig.keyframes, "width", _keyframes2);
+          var nextScaleX = 1.0;
+          var prevScaleX = prevWidth / nextWidth;
+
+          var _newFrames2 = _this2.createTransformAnimationKeyframes(prevScaleX, nextScaleX, updateKeyConfig.keyframes, "scaleX", registry[reactTag][0]);
+
+          registry[reactTag][0] = _newFrames2;
+
+          _this2.applyInverseTransformOnChildren(shadowView, registry, updateKeyConfig, _newFrames2, "scaleX");
         }
+
         if (prevHeight !== nextHeight) {
-          _keyframes2 = _this.createAnimationKeyframes(_height, layout.height, updateKeyConfig.keyframes, "height", _keyframes2);
+          var nextScaleY = 1.0;
+          var prevScaleY = prevHeight / nextHeight;
+
+          var _newFrames3 = _this2.createTransformAnimationKeyframes(prevScaleY, nextScaleY, updateKeyConfig.keyframes, "scaleY", registry[reactTag][0]);
+
+          registry[reactTag][0] = _newFrames3;
+
+          _this2.applyInverseTransformOnChildren(shadowView, registry, updateKeyConfig, _newFrames3, "scaleY");
         }
-
-        _keyframes2 = _keyframes2.map(function (frame) {
-          var { translateX: translateX, translateY: translateY } = frame,
-              rest = babelHelpers.objectWithoutProperties(frame, ["translateX", "translateY"]);
-
-          var translateString = "";
-          translateString += translateX ? "translateX(" + translateX + ") " : "";
-          translateString += translateY ? "translateY(" + translateY + ") " : "";
-
-          return babelHelpers.extends({}, rest, {
-            transform: translateString
-          });
-        });
-
-        var _config2 = {
-          duration: updateKeyConfig.duration,
-          fill: "backwards"
-        };
-
-        view.style.willChange = "transform, width, height";
-
-        animations.push(function () {
-          view.frame = layout;
-
-          var animation = view.animate(_keyframes2, _config2);
-
-          animation.onfinish = function () {
-            view.style.willChange = "";
-          };
-
-          return animation.finished;
-        });
       }
+    });
 
-      _this.removedNodes.forEach(function (reactTag) {
-        var view = _this.manager.viewRegistry.get(reactTag);
-        (0, _Invariant2.default)(view, "view does not exist");
+    Object.keys(registry).forEach(function (tag) {
+      var reactTag = parseInt(tag, 10);
 
-        var keyframes = _this.createOpacityKeyframes(1, 0, deleteKeyConfig.keyframes);
-        var config = {
-          duration: deleteKeyConfig.duration
+      var [keyframeConfigs, { duration: duration, layout: layout }] = registry[reactTag];
+
+      var view = _this2.manager.viewRegistry.get(reactTag);
+      (0, _Invariant2.default)(view, "view does not exist");
+
+      var keyframes = _this2.constructTransformKeyframes(keyframeConfigs);
+
+      var layoutStyle = {
+        width: layout.width + "px",
+        height: layout.height + "px"
+      };
+
+      keyframes[0] = babelHelpers.extends({}, keyframes[0], layoutStyle);
+
+      keyframes[keyframes.length - 1] = babelHelpers.extends({}, keyframes[keyframes.length - 1], layoutStyle);
+
+      var config = { duration: duration, fill: "none" };
+
+      view.style.willChange = "transform";
+
+      animations.push(function () {
+        var animation = view.animate(keyframes, config);
+
+        view.frame = layout;
+
+        animation.onfinish = function () {
+          view.style.willChange = "";
         };
 
-        view.style.willChange = "opacity";
-
-        animations.push(function () {
-          var animation = view.animate(keyframes, config);
-
-          animation.onfinish = function () {
-            view.style.willChange = "";
-            _this.manager.viewRegistry.delete(reactTag);
-            view.purge();
-          };
-
-          return animation.finished;
-        });
+        return animation.finished;
       });
     });
 
     return animations;
   }
 
+  constructTransformKeyframes(keyframeConfigs) {
+    return keyframeConfigs.map(function (config) {
+      var {
+        inverseScaleX: inverseScaleX,
+        inverseScaleY: inverseScaleY,
+        translateX: translateX,
+        translateY: translateY,
+        scaleX: scaleX,
+        scaleY: scaleY
+      } = config;
+
+      var transformString = "";
+
+      transformString += "scale(" + inverseScaleX + ", " + inverseScaleY + ") ";
+      transformString += "translate(" + translateX + "px, " + translateY + "px) ";
+      transformString += "scale(" + scaleX + ", " + scaleY + ") ";
+
+      return {
+        transform: transformString
+      };
+    });
+  }
+
   applyLayoutChanges() {
-    var _this2 = this;
+    var _this3 = this;
 
     var pendingConfig = this.pendingConfig;
     var layoutChanges = this.layoutChanges;
@@ -15460,7 +15548,7 @@ var RCTLayoutAnimationManager = class RCTLayoutAnimationManager {
     (0, _Invariant2.default)(pendingConfig && layoutChanges && callback, "Attempting to apply a layoutanimation without a pending config.");
 
     var keyframes = this.constructKeyframes(pendingConfig);
-    var animations = this.runAnimations(keyframes, pendingConfig);
+    var animations = this.createTransformAnimations(keyframes, pendingConfig);
 
     this.manager.addUIBlock(function () {
       Promise.all(animations.map(function (f) {
@@ -15468,7 +15556,7 @@ var RCTLayoutAnimationManager = class RCTLayoutAnimationManager {
       })).then(function () {
         callback();
       });
-      _this2.reset();
+      _this3.reset();
     });
   }
 };
@@ -15496,7 +15584,7 @@ var _Invariant = require(16         ); // 16 = Invariant
 
 var _Invariant2 = babelHelpers.interopRequireDefault(_Invariant);
 
-var timestepCoefficient = 1;
+var timestepCoefficient = 2;
 
 var staticEasingFunctions = {
   linear: function (x) {
@@ -16497,6 +16585,263 @@ var cacheDefault = {
   }
 };
 }, 44, null, "fast-memoize/src/index.js");
+__d(/* rematrix/dist/rematrix.js */function(global, require, module, exports) {'use strict';
+
+/*  @license Rematrix v0.1.1
+
+    Copyright (c) 2017 Fisssion LLC
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    THE SOFTWARE.
+*/
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) : typeof define === 'function' && define.amd ? define(['exports'], factory) : factory(global.Rematrix = global.Rematrix || {});
+})(undefined, function (exports) {
+	'use strict';
+
+	function format(source) {
+		if (source.constructor !== Array) {
+			throw new TypeError('Expected array.');
+		}
+		if (source.length === 16) {
+			return source;
+		}
+		if (source.length === 6) {
+			var matrix = identity();
+			matrix[0] = source[0];
+			matrix[1] = source[1];
+			matrix[4] = source[2];
+			matrix[5] = source[3];
+			matrix[12] = source[4];
+			matrix[13] = source[5];
+			return matrix;
+		}
+		throw new RangeError('Expected array with either 6 or 16 values.');
+	}
+
+	function identity() {
+		var matrix = [];
+		for (var i = 0; i < 16; i++) {
+			i % 5 == 0 ? matrix.push(1) : matrix.push(0);
+		}
+		return matrix;
+	}
+
+	function inverse(source) {
+		var m = format(source);
+
+		var s0 = m[0] * m[5] - m[4] * m[1];
+		var s1 = m[0] * m[6] - m[4] * m[2];
+		var s2 = m[0] * m[7] - m[4] * m[3];
+		var s3 = m[1] * m[6] - m[5] * m[2];
+		var s4 = m[1] * m[7] - m[5] * m[3];
+		var s5 = m[2] * m[7] - m[6] * m[3];
+
+		var c5 = m[10] * m[15] - m[14] * m[11];
+		var c4 = m[9] * m[15] - m[13] * m[11];
+		var c3 = m[9] * m[14] - m[13] * m[10];
+		var c2 = m[8] * m[15] - m[12] * m[11];
+		var c1 = m[8] * m[14] - m[12] * m[10];
+		var c0 = m[8] * m[13] - m[12] * m[9];
+
+		var determinant = 1 / (s0 * c5 - s1 * c4 + s2 * c3 + s3 * c2 - s4 * c1 + s5 * c0);
+
+		if (isNaN(determinant) || determinant === Infinity) {
+			throw new Error('Inverse determinant attempted to divide by zero.');
+		}
+
+		return [(m[5] * c5 - m[6] * c4 + m[7] * c3) * determinant, (-m[1] * c5 + m[2] * c4 - m[3] * c3) * determinant, (m[13] * s5 - m[14] * s4 + m[15] * s3) * determinant, (-m[9] * s5 + m[10] * s4 - m[11] * s3) * determinant, (-m[4] * c5 + m[6] * c2 - m[7] * c1) * determinant, (m[0] * c5 - m[2] * c2 + m[3] * c1) * determinant, (-m[12] * s5 + m[14] * s2 - m[15] * s1) * determinant, (m[8] * s5 - m[10] * s2 + m[11] * s1) * determinant, (m[4] * c4 - m[5] * c2 + m[7] * c0) * determinant, (-m[0] * c4 + m[1] * c2 - m[3] * c0) * determinant, (m[12] * s4 - m[13] * s2 + m[15] * s0) * determinant, (-m[8] * s4 + m[9] * s2 - m[11] * s0) * determinant, (-m[4] * c3 + m[5] * c1 - m[6] * c0) * determinant, (m[0] * c3 - m[1] * c1 + m[2] * c0) * determinant, (-m[12] * s3 + m[13] * s1 - m[14] * s0) * determinant, (m[8] * s3 - m[9] * s1 + m[10] * s0) * determinant];
+	}
+
+	function multiply(m, x) {
+		var fm = format(m);
+		var fx = format(x);
+		var product = [];
+
+		for (var i = 0; i < 4; i++) {
+			var row = [fm[i], fm[i + 4], fm[i + 8], fm[i + 12]];
+			for (var j = 0; j < 4; j++) {
+				var k = j * 4;
+				var col = [fx[k], fx[k + 1], fx[k + 2], fx[k + 3]];
+				var result = row[0] * col[0] + row[1] * col[1] + row[2] * col[2] + row[3] * col[3];
+
+				product[i + k] = result;
+			}
+		}
+
+		return product;
+	}
+
+	function parse(source) {
+		if (typeof source === 'string') {
+			var match = source.match(/matrix(3d)?\(([^)]+)\)/);
+			if (match) {
+				var raw = match[2].split(', ').map(function (value) {
+					return parseFloat(value);
+				});
+				return format(raw);
+			}
+		}
+		return identity();
+	}
+
+	function rotateX(angle) {
+		var theta = Math.PI / 180 * angle;
+		var matrix = identity();
+
+		matrix[5] = matrix[10] = Math.cos(theta);
+		matrix[6] = matrix[9] = Math.sin(theta);
+		matrix[9] *= -1;
+
+		return matrix;
+	}
+
+	function rotateY(angle) {
+		var theta = Math.PI / 180 * angle;
+		var matrix = identity();
+
+		matrix[0] = matrix[10] = Math.cos(theta);
+		matrix[2] = matrix[8] = Math.sin(theta);
+		matrix[2] *= -1;
+
+		return matrix;
+	}
+
+	function rotateZ(angle) {
+		var theta = Math.PI / 180 * angle;
+		var matrix = identity();
+
+		matrix[0] = matrix[5] = Math.cos(theta);
+		matrix[1] = matrix[4] = Math.sin(theta);
+		matrix[4] *= -1;
+
+		return matrix;
+	}
+
+	function scale(scalar, scalarY) {
+		var matrix = identity();
+		matrix[0] = scalar;
+		matrix[5] = scalarY || scalar;
+		return matrix;
+	}
+
+	function scaleX(scalar) {
+		var matrix = identity();
+		matrix[0] = scalar;
+		return matrix;
+	}
+
+	function scaleY(scalar) {
+		var matrix = identity();
+		matrix[5] = scalar;
+		return matrix;
+	}
+
+	function scaleZ(scalar) {
+		var matrix = identity();
+		matrix[10] = scalar;
+		return matrix;
+	}
+
+	function skew(angleX, angleY) {
+		var thetaX = Math.PI / 180 * angleX;
+		var matrix = identity();
+
+		matrix[4] = Math.tan(thetaX);
+
+		if (angleY) {
+			var thetaY = Math.PI / 180 * angleY;
+			matrix[1] = Math.tan(thetaY);
+		}
+
+		return matrix;
+	}
+
+	function skewX(angle) {
+		var theta = Math.PI / 180 * angle;
+		var matrix = identity();
+
+		matrix[4] = Math.tan(theta);
+
+		return matrix;
+	}
+
+	function skewY(angle) {
+		var theta = Math.PI / 180 * angle;
+		var matrix = identity();
+
+		matrix[1] = Math.tan(theta);
+
+		return matrix;
+	}
+
+	function translate(distanceX, distanceY) {
+		var matrix = identity();
+		matrix[12] = distanceX;
+
+		if (distanceY) {
+			matrix[13] = distanceY;
+		}
+
+		return matrix;
+	}
+
+	function translateX(distance) {
+		var matrix = identity();
+		matrix[12] = distance;
+		return matrix;
+	}
+
+	function translateY(distance) {
+		var matrix = identity();
+		matrix[13] = distance;
+		return matrix;
+	}
+
+	function translateZ(distance) {
+		var matrix = identity();
+		matrix[14] = distance;
+		return matrix;
+	}
+
+	exports.format = format;
+	exports.identity = identity;
+	exports.inverse = inverse;
+	exports.multiply = multiply;
+	exports.parse = parse;
+	exports.rotateX = rotateX;
+	exports.rotateY = rotateY;
+	exports.rotateZ = rotateZ;
+	exports.scale = scale;
+	exports.scaleX = scaleX;
+	exports.scaleY = scaleY;
+	exports.scaleZ = scaleZ;
+	exports.skew = skew;
+	exports.skewX = skewX;
+	exports.skewY = skewY;
+	exports.translate = translate;
+	exports.translateX = translateX;
+	exports.translateY = translateY;
+	exports.translateZ = translateZ;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
+});
+}, 45, null, "rematrix/dist/rematrix.js");
 __d(/* RCTTiming */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16600,12 +16945,16 @@ var RCTTiming = (_dec = (0, _RCTBridge.RCT_EXPORT_METHOD)(_RCTBridge.RCTFunction
   }
 }, (_applyDecoratedDescriptor(_class2.prototype, "createTimer", [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, "createTimer"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "deleteTimer", [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, "deleteTimer"), _class2.prototype)), _class2)) || _class);
 exports.default = RCTTiming;
-}, 45, null, "RCTTiming");
+}, 46, null, "RCTTiming");
 __d(/* RCTTouchHandler */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _detectIt = require(48         ); // 48 = detect-it
+
+var _detectIt2 = babelHelpers.interopRequireDefault(_detectIt);
 
 var _Invariant = require(16         ); // 16 = Invariant
 
@@ -16619,13 +16968,15 @@ var _RCTEventDispatcher = require(34                  ); // 34 = RCTEventDispatc
 
 var _RCTEventDispatcher2 = babelHelpers.interopRequireDefault(_RCTEventDispatcher);
 
-var _RCTTouchEvent = require(47             ); // 47 = RCTTouchEvent
+var _RCTTouchEvent = require(53             ); // 53 = RCTTouchEvent
 
 var _RCTTouchEvent2 = babelHelpers.interopRequireDefault(_RCTTouchEvent);
 
-var _Guid = require(48    ); // 48 = Guid
+var _Guid = require(54    ); // 54 = Guid
 
 var _Guid2 = babelHelpers.interopRequireDefault(_Guid);
+
+var TOUCH_LISTENER_OPTIONS = _detectIt2.default.passiveEvents ? { passive: true } : false;
 
 var RCTTouchHandler = class RCTTouchHandler {
 
@@ -16673,8 +17024,8 @@ var RCTTouchHandler = class RCTTouchHandler {
 
       var view = _this.view;
       if (view) {
-        view.addEventListener("touchend", _this.nativeTouchEnded);
-        view.addEventListener("touchmove", _this.nativeTouchMoved);
+        view.addEventListener("touchend", _this.nativeTouchEnded, TOUCH_LISTENER_OPTIONS);
+        view.addEventListener("touchmove", _this.nativeTouchMoved, TOUCH_LISTENER_OPTIONS);
       }
     };
 
@@ -16693,8 +17044,8 @@ var RCTTouchHandler = class RCTTouchHandler {
 
       var view = _this.view;
       if (view) {
-        view.removeEventListener("touchend", _this.nativeTouchEnded);
-        view.removeEventListener("touchmove", _this.nativeTouchMoved);
+        view.removeEventListener("touchend", _this.nativeTouchEnded, TOUCH_LISTENER_OPTIONS);
+        view.removeEventListener("touchmove", _this.nativeTouchMoved, TOUCH_LISTENER_OPTIONS);
       }
     };
 
@@ -16760,12 +17111,12 @@ var RCTTouchHandler = class RCTTouchHandler {
 
   attachToView(view) {
     this.view = view;
-    view.addGestureRecognizer(this);
+    view.addGestureRecognizer(this, _detectIt2.default.deviceType, TOUCH_LISTENER_OPTIONS);
   }
 
   detachFromView(view) {
     this.view = undefined;
-    view.removeGestureRecognizer(this);
+    view.removeGestureRecognizer(this, _detectIt2.default.deviceType, TOUCH_LISTENER_OPTIONS);
   }
 
   recordNewTouches(touches) {
@@ -16885,7 +17236,188 @@ var RCTTouchHandler = class RCTTouchHandler {
   }
 };
 exports.default = RCTTouchHandler;
-}, 46, null, "RCTTouchHandler");
+}, 47, null, "RCTTouchHandler");
+__d(/* detect-it/lib/index.js */function(global, require, module, exports) {'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _detectHover = require(49            ); // 49 = detect-hover
+
+var _detectHover2 = _interopRequireDefault(_detectHover);
+
+var _detectPointer = require(50              ); // 50 = detect-pointer
+
+var _detectPointer2 = _interopRequireDefault(_detectPointer);
+
+var _detectTouchEvents = require(51                   ); // 51 = detect-touch-events
+
+var _detectTouchEvents2 = _interopRequireDefault(_detectTouchEvents);
+
+var _detectPassiveEvents = require(52                     ); // 52 = detect-passive-events
+
+var _detectPassiveEvents2 = _interopRequireDefault(_detectPassiveEvents);
+
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
+
+function determineDeviceType(hasTouch, anyHover, anyFine, state) {
+  if (hasTouch && (anyHover || anyFine)) return 'hybrid';
+
+  if (hasTouch && Object.keys(state.detectHover).filter(function (key) {
+    return key !== 'update';
+  }).every(function (key) {
+    return state.detectHover[key] === false;
+  }) && Object.keys(state.detectPointer).filter(function (key) {
+    return key !== 'update';
+  }).every(function (key) {
+    return state.detectPointer[key] === false;
+  })) {
+    if (window.navigator && /android/.test(window.navigator.userAgent.toLowerCase())) {
+      return 'touchOnly';
+    }
+    return 'hybrid';
+  }
+
+  return hasTouch ? 'touchOnly' : 'mouseOnly';
+}
+
+var detectIt = {
+  state: {
+    detectHover: _detectHover2.default,
+    detectPointer: _detectPointer2.default,
+    detectTouchEvents: _detectTouchEvents2.default,
+    detectPassiveEvents: _detectPassiveEvents2.default
+  },
+  update: function update() {
+    detectIt.state.detectHover.update();
+    detectIt.state.detectPointer.update();
+    detectIt.state.detectTouchEvents.update();
+    detectIt.state.detectPassiveEvents.update();
+    detectIt.updateOnlyOwnProperties();
+  },
+  updateOnlyOwnProperties: function updateOnlyOwnProperties() {
+    if (typeof window !== 'undefined') {
+      detectIt.passiveEvents = detectIt.state.detectPassiveEvents.hasSupport || false;
+
+      detectIt.hasTouch = detectIt.state.detectTouchEvents.hasSupport || false;
+
+      detectIt.deviceType = determineDeviceType(detectIt.hasTouch, detectIt.state.detectHover.anyHover, detectIt.state.detectPointer.anyFine, detectIt.state);
+
+      detectIt.hasMouse = detectIt.deviceType !== 'touchOnly';
+
+      detectIt.primaryInput = detectIt.deviceType === 'mouseOnly' && 'mouse' || detectIt.deviceType === 'touchOnly' && 'touch' || detectIt.state.detectHover.hover && 'mouse' || detectIt.state.detectHover.none && 'touch' || 'mouse';
+    }
+  }
+};
+
+detectIt.updateOnlyOwnProperties();
+exports.default = detectIt;
+}, 48, null, "detect-it/lib/index.js");
+__d(/* detect-hover/lib/index.js */function(global, require, module, exports) {'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+};
+
+var detectHover = {
+  update: function update() {
+    if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && typeof window.matchMedia === 'function') {
+      detectHover.hover = window.matchMedia('(hover: hover)').matches;
+      detectHover.none = window.matchMedia('(hover: none)').matches || window.matchMedia('(hover: on-demand)').matches;
+      detectHover.anyHover = window.matchMedia('(any-hover: hover)').matches;
+      detectHover.anyNone = window.matchMedia('(any-hover: none)').matches || window.matchMedia('(any-hover: on-demand)').matches;
+    }
+  }
+};
+
+detectHover.update();
+exports.default = detectHover;
+}, 49, null, "detect-hover/lib/index.js");
+__d(/* detect-pointer/lib/index.js */function(global, require, module, exports) {'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+};
+
+var detectPointer = {
+  update: function update() {
+    if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && typeof window.matchMedia === 'function') {
+      detectPointer.fine = window.matchMedia('(pointer: fine)').matches;
+      detectPointer.coarse = window.matchMedia('(pointer: coarse)').matches;
+      detectPointer.none = window.matchMedia('(pointer: none)').matches;
+      detectPointer.anyFine = window.matchMedia('(any-pointer: fine)').matches;
+      detectPointer.anyCoarse = window.matchMedia('(any-pointer: coarse)').matches;
+      detectPointer.anyNone = window.matchMedia('(any-pointer: none)').matches;
+    }
+  }
+};
+
+detectPointer.update();
+exports.default = detectPointer;
+}, 50, null, "detect-pointer/lib/index.js");
+__d(/* detect-touch-events/lib/index.js */function(global, require, module, exports) {'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var detectTouchEvents = {
+  update: function update() {
+    if (window !== undefined) {
+      detectTouchEvents.hasSupport = 'ontouchstart' in window;
+      detectTouchEvents.browserSupportsApi = Boolean(window.TouchEvent);
+    }
+  }
+};
+
+detectTouchEvents.update();
+exports.default = detectTouchEvents;
+}, 51, null, "detect-touch-events/lib/index.js");
+__d(/* detect-passive-events/lib/index.js */function(global, require, module, exports) {'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
+var detectPassiveEvents = {
+  update: function update() {
+    if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && typeof window.addEventListener === 'function' && typeof Object.defineProperty === 'function') {
+      var passive = false;
+      var options = Object.defineProperty({}, 'passive', {
+        get: function get() {
+          passive = true;
+        }
+      });
+      window.addEventListener('test', null, options);
+
+      detectPassiveEvents.hasSupport = passive;
+    }
+  }
+};
+
+detectPassiveEvents.update();
+exports.default = detectPassiveEvents;
+}, 52, null, "detect-passive-events/lib/index.js");
 __d(/* RCTTouchEvent */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16954,7 +17486,7 @@ var RCTTouchEvent = class RCTTouchEvent {
   }
 };
 exports.default = RCTTouchEvent;
-}, 47, null, "RCTTouchEvent");
+}, 53, null, "RCTTouchEvent");
 __d(/* Guid */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16967,7 +17499,7 @@ function guid() {
   }
   return s4() + s4() + "-" + s4() + "-" + s4() + "-" + s4() + "-" + s4() + s4() + s4();
 }
-}, 48, null, "Guid");
+}, 54, null, "Guid");
 __d(/* BundleFromRoot */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16983,7 +17515,7 @@ function bundleFromRoot(root) {
   }
   return location.protocol + "//" + location.host + path + "/" + root;
 }
-}, 49, null, "BundleFromRoot");
+}, 55, null, "BundleFromRoot");
 __d(/* RCTPlatform */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17005,7 +17537,7 @@ var RCTPlatformConstants = (0, _RCTBridge.RCT_EXPORT_MODULE)(_class = class RCTP
 }) || _class;
 
 exports.default = RCTPlatformConstants;
-}, 50, null, "RCTPlatform");
+}, 56, null, "RCTPlatform");
 __d(/* RCTTextManager */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17022,11 +17554,11 @@ var _RCTViewManager = require(22              ); // 22 = RCTViewManager
 
 var _RCTViewManager2 = babelHelpers.interopRequireDefault(_RCTViewManager);
 
-var _RCTText = require(52       ); // 52 = RCTText
+var _RCTText = require(58       ); // 58 = RCTText
 
 var _RCTText2 = babelHelpers.interopRequireDefault(_RCTText);
 
-var _RCTShadowText = require(53             ); // 53 = RCTShadowText
+var _RCTShadowText = require(59             ); // 59 = RCTShadowText
 
 var _RCTShadowText2 = babelHelpers.interopRequireDefault(_RCTShadowText);
 
@@ -17087,7 +17619,7 @@ var RCTTextManager = (_dec = (0, _RCTViewManager.RCT_EXPORT_MIRRORED_PROP)("font
   }
 }, (_applyDecoratedDescriptor(_class2.prototype, "setFontFamily", [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, "setFontFamily"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setFontSize", [_dec2], Object.getOwnPropertyDescriptor(_class2.prototype, "setFontSize"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setAccessible", [_dec3], Object.getOwnPropertyDescriptor(_class2.prototype, "setAccessible"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setSelectable", [_dec4], Object.getOwnPropertyDescriptor(_class2.prototype, "setSelectable"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setColor", [_dec5], Object.getOwnPropertyDescriptor(_class2.prototype, "setColor"), _class2.prototype)), _class2)) || _class);
 exports.default = RCTTextManager;
-}, 51, null, "RCTTextManager");
+}, 57, null, "RCTTextManager");
 __d(/* RCTText */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17181,14 +17713,14 @@ var RCTText = (_dec = (0, _CustomElement2.default)("rct-text"), _dec(_class = cl
   }
 }) || _class);
 exports.default = RCTText;
-}, 52, null, "RCTText");
+}, 58, null, "RCTText");
 __d(/* RCTShadowText */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _Guid = require(48    ); // 48 = Guid
+var _Guid = require(54    ); // 54 = Guid
 
 var _Guid2 = babelHelpers.interopRequireDefault(_Guid);
 
@@ -17200,7 +17732,7 @@ var _RCTShadowView = require(26             ); // 26 = RCTShadowView
 
 var _RCTShadowView2 = babelHelpers.interopRequireDefault(_RCTShadowView);
 
-var _RCTShadowRawText = require(54                ); // 54 = RCTShadowRawText
+var _RCTShadowRawText = require(60                ); // 60 = RCTShadowRawText
 
 var _RCTShadowRawText2 = babelHelpers.interopRequireDefault(_RCTShadowRawText);
 
@@ -17358,7 +17890,7 @@ var RCTShadowText = class RCTShadowText extends _RCTShadowView2.default {
   }
 };
 exports.default = RCTShadowText;
-}, 53, null, "RCTShadowText");
+}, 59, null, "RCTShadowText");
 __d(/* RCTShadowRawText */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17398,7 +17930,7 @@ var RCTShadowRawText = class RCTShadowRawText extends _RCTShadowView2.default {
   }
 };
 exports.default = RCTShadowRawText;
-}, 54, null, "RCTShadowRawText");
+}, 60, null, "RCTShadowRawText");
 __d(/* RCTRawTextManager */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17415,11 +17947,11 @@ var _RCTViewManager = require(22              ); // 22 = RCTViewManager
 
 var _RCTViewManager2 = babelHelpers.interopRequireDefault(_RCTViewManager);
 
-var _RCTRawText = require(56          ); // 56 = RCTRawText
+var _RCTRawText = require(62          ); // 62 = RCTRawText
 
 var _RCTRawText2 = babelHelpers.interopRequireDefault(_RCTRawText);
 
-var _RCTShadowRawText = require(54                ); // 54 = RCTShadowRawText
+var _RCTShadowRawText = require(60                ); // 60 = RCTShadowRawText
 
 var _RCTShadowRawText2 = babelHelpers.interopRequireDefault(_RCTShadowRawText);
 
@@ -17466,7 +17998,7 @@ var RCTRawTextManager = (_dec = (0, _RCTViewManager.RCT_EXPORT_MIRRORED_PROP)("t
   }
 }, (_applyDecoratedDescriptor(_class2.prototype, "setText", [_dec], Object.getOwnPropertyDescriptor(_class2.prototype, "setText"), _class2.prototype)), _class2)) || _class);
 exports.default = RCTRawTextManager;
-}, 55, null, "RCTRawTextManager");
+}, 61, null, "RCTRawTextManager");
 __d(/* RCTRawText */function(global, require, module, exports) {"use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17505,5 +18037,5 @@ var RCTRawText = (_dec = (0, _CustomElement2.default)("rct-raw-text"), _dec(_cla
   }
 }) || _class);
 exports.default = RCTRawText;
-}, 56, null, "RCTRawText");
+}, 62, null, "RCTRawText");
 ;require(0);

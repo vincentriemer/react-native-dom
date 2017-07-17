@@ -1226,7 +1226,7 @@ babelHelpers.toConsumableArray = function (arr) {
   }
 };
 })(typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : this);
-__d(/* layout-animations-example/index.web.js */function(global, require, module, exports) {"use strict";
+__d(/* transform-layout-animations-example/index.web.js */function(global, require, module, exports) {"use strict";
 
 var _react = require(12     ); // 12 = react
 
@@ -1299,16 +1299,38 @@ var AnimationExample = class AnimationExample extends _react.Component {
   }
 
   render() {
-    var leftStyle = this.state.index === 0 ? { flex: 1 } : { width: 20 };
-    var middleStyle = this.state.index === 2 ? { width: 20 } : { flex: 1 };
-    var rightStyle = { flex: 1 };
+    var containerBaseStyle = {
+      width: 400,
+      height: 400,
+      backgroundColor: "sandybrown",
+      borderRadius: 10,
+      padding: 20,
+      alignItems: "stretch",
+      justifyContent: "flex-start"
+    };
 
-    var whiteHeight = this.state.index * 80;
+    var baseChildStyle = {
+      backgroundColor: "lightblue",
+      justifyContent: "space-around",
+      alignItems: "center",
+      borderRadius: 15
+    };
 
-    var circles = [];
-    for (var i = 0; i < 5 + this.state.index; i++) {
-      circles.push(this.renderCircle(i));
-    }
+    var containerStyle = this.state.index === 0 ? { flex: 1 } : {
+      width: 500,
+      justifyContent: "center",
+      alignItems: "center"
+    };
+
+    var childStyle = this.state.index === 0 ? { flex: 1, flexDirection: "column" } : { width: 300, height: 200, flexDirection: "row" };
+
+    var baseChild2Style = {
+      width: 30,
+      height: 30,
+      backgroundColor: "red"
+    };
+
+    var child2Style = this.state.index === 0 ? {} : { height: 50 };
 
     return _react2.default.createElement(
       _reactNative.View,
@@ -1317,50 +1339,29 @@ var AnimationExample = class AnimationExample extends _react.Component {
         _reactNative.View,
         { style: styles.topButtons },
         this.renderButton(0),
-        this.renderButton(1),
-        this.renderButton(2)
+        this.renderButton(1)
       ),
       _react2.default.createElement(
         _reactNative.View,
-        { style: styles.content },
+        {
+          style: [styles.content, this.state.index === 0 ? {
+            alignItems: "stretch",
+            justifyContent: "flex-start"
+          } : {
+            alignItems: "center",
+            justifyContent: "center"
+          }]
+        },
         _react2.default.createElement(
           _reactNative.View,
-          { style: { flexDirection: "row", height: 100 } },
-          _react2.default.createElement(_reactNative.View, { style: [leftStyle, { backgroundColor: "firebrick" }] }),
-          _react2.default.createElement(_reactNative.View, { style: [middleStyle, { backgroundColor: "seagreen" }] }),
-          _react2.default.createElement(_reactNative.View, {
-            style: [rightStyle, {
-              backgroundColor: "steelblue",
-              justifyContent: "center",
-              alignItems: "center"
-            }]
-          })
-        ),
-        _react2.default.createElement(
-          _reactNative.View,
-          {
-            style: {
-              height: whiteHeight,
-              justifyContent: "center",
-              alignItems: "center",
-              overflow: "hidden"
-            },
-            removeClippedSubviews: true
-          },
+          { style: [containerBaseStyle, containerStyle] },
           _react2.default.createElement(
             _reactNative.View,
-            null,
-            _react2.default.createElement(
-              _reactNative.Text,
-              null,
-              "Stuff Goes Here"
-            )
+            { style: [baseChildStyle, childStyle] },
+            _react2.default.createElement(_reactNative.View, { style: [baseChild2Style, child2Style] }),
+            _react2.default.createElement(_reactNative.View, { style: [baseChild2Style, child2Style] }),
+            _react2.default.createElement(_reactNative.View, { style: [baseChild2Style, child2Style] })
           )
-        ),
-        _react2.default.createElement(
-          _reactNative.View,
-          { style: styles.circleContainer },
-          circles
         )
       )
     );
@@ -1393,7 +1394,8 @@ var styles = _reactNative.StyleSheet.create({
   },
   content: {
     flex: 1,
-    alignSelf: "stretch"
+    alignSelf: "stretch",
+    padding: 40
   },
   circleContainer: {
     flexDirection: "row",
@@ -1405,10 +1407,10 @@ var styles = _reactNative.StyleSheet.create({
   }
 });
 
-_reactNative.AppRegistry.registerComponent("layoutanimations", function () {
+_reactNative.AppRegistry.registerComponent("transformlayoutanimations", function () {
   return AnimationExample;
 });
-}, 0, null, "layout-animations-example/index.web.js");
+}, 0, null, "transform-layout-animations-example/index.web.js");
 __d(/* react/index.js */function(global, require, module, exports) {'use strict';
 
 if ('development' === 'production') {

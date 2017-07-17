@@ -82,6 +82,7 @@ class UIView extends HTMLElement implements RCTComponent {
     this.backgroundColor = "transparent";
     this.style.overflow = "hidden";
     this.style.boxSizing = "border-box";
+    this.style.transformOrigin = "top left";
     this.borderRadius = 0;
   }
 
@@ -117,6 +118,7 @@ class UIView extends HTMLElement implements RCTComponent {
   set top(value: number) {
     this._top = value;
     this.updatePosition();
+    // this.style.top = `${value}px`;
   }
 
   get left(): number {
@@ -126,6 +128,7 @@ class UIView extends HTMLElement implements RCTComponent {
   set left(value: number) {
     this._left = value;
     this.updatePosition();
+    // this.style.left = `${value}px`;
   }
 
   get bottom(): number {

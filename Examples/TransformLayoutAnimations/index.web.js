@@ -16,7 +16,8 @@ var CustomLayoutAnimation = {
     property: LayoutAnimation.Properties.opacity
   },
   update: {
-    type: LayoutAnimation.Types.easeOut
+    type: LayoutAnimation.Types.spring,
+    springDamping: 0.8
   },
   delete: {
     type: LayoutAnimation.Types.easeOut,
@@ -35,10 +36,10 @@ class AnimationExample extends Component {
 
   onPress(index) {
     // Uncomment to animate the next state change.
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+    // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
 
     // Or use a Custom Layout Animation
-    // LayoutAnimation.configureNext(CustomLayoutAnimation);
+    LayoutAnimation.configureNext(CustomLayoutAnimation);
 
     this.setState({ index: index });
   }
@@ -74,54 +75,90 @@ class AnimationExample extends Component {
   }
 
   render() {
-    var leftStyle = this.state.index === 0 ? { flex: 1 } : { width: 20 };
-    var middleStyle = this.state.index === 2 ? { width: 20 } : { flex: 1 };
-    var rightStyle = { flex: 1 };
+    const containerBaseStyle = {
+      width: 400,
+      height: 400,
+      backgroundColor: "sandybrown",
+      borderRadius: 5,
+      padding: 20,
+      alignItems: "stretch",
+      justifyContent: "flex-start"
+    };
 
-    var whiteHeight = this.state.index * 80;
+    const baseChildStyle = {
+      backgroundColor: "lightblue",
+      justifyContent: "space-around",
+      alignItems: "center",
+      borderRadius: 10
+    };
 
-    var circles = [];
-    for (var i = 0; i < 5 + this.state.index; i++) {
-      circles.push(this.renderCircle(i));
-    }
+    const containerStyle =
+      this.state.index === 0
+        ? { flex: 1 }
+        : {
+            width: 500,
+            justifyContent: "center",
+            alignItems: "center"
+          };
+
+    const childStyle =
+      this.state.index === 0
+        ? { flex: 1, flexDirection: "column" }
+        : { width: 400, height: 300, flexDirection: "row" };
+
+    const baseChild2Style = {
+      width: 30,
+      height: 30,
+      backgroundColor: "red"
+    };
+
+    const child2Style = this.state.index === 0 ? {} : { height: 50 };
+
+    const child3Style = {
+      width: 90,
+      height: 90,
+      backgroundColor: "red",
+      alignItems: "center",
+      justifyContent: "center"
+    };
+
+    const child4Style = {
+      width: 45,
+      height: 45,
+      backgroundColor: "blue"
+    };
 
     return (
       <View style={styles.container}>
         <View style={styles.topButtons}>
           {this.renderButton(0)}
           {this.renderButton(1)}
-          {this.renderButton(2)}
         </View>
-        <View style={styles.content}>
-          <View style={{ flexDirection: "row", height: 100 }}>
-            <View style={[leftStyle, { backgroundColor: "firebrick" }]} />
-            <View style={[middleStyle, { backgroundColor: "seagreen" }]} />
-            <View
-              style={[
-                rightStyle,
-                {
-                  backgroundColor: "steelblue",
-                  justifyContent: "center",
-                  alignItems: "center"
+        <View
+          style={[
+            styles.content,
+            this.state.index === 0
+              ? {
+                  alignItems: "stretch",
+                  justifyContent: "flex-start"
                 }
-              ]}
-            />
-          </View>
-          <View
-            style={{
-              height: whiteHeight,
-              justifyContent: "center",
-              alignItems: "center",
-              overflow: "hidden"
-            }}
-            removeClippedSubviews={true}
-          >
-            <View>
-              <Text>Stuff Goes Here</Text>
+              : {
+                  alignItems: "center",
+                  justifyContent: "center"
+                }
+          ]}
+        >
+          <View style={[containerBaseStyle, containerStyle]}>
+            <View style={[baseChildStyle, childStyle]}>
+              <View style={[baseChild2Style, child2Style]} />
+              <View style={[baseChild2Style, child2Style]} />
+              <View style={[baseChild2Style, child2Style]} />
+              {this.state.index === 0
+                ? null
+                : <View style={child3Style}>
+                    <View style={child4Style} />
+                  </View>}
             </View>
-          </View>
-          <View style={styles.circleContainer}>
-            {circles}
           </View>
         </View>
       </View>
@@ -154,7 +191,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    alignSelf: "stretch"
+    alignSelf: "stretch",
+    padding: 40
   },
   circleContainer: {
     flexDirection: "row",
