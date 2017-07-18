@@ -1,4 +1,4 @@
-import { RNWebInstance } from "react-native-web";
+import { RNWebInstance } from "react-native-dom";
 
 function init(bundle, parent, options) {
   const web = new RNWebInstance(bundle, "layoutanimations", parent, {

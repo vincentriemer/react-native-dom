@@ -1,5 +1,5 @@
 {
-  "name": "react-native-web",
+  "name": "react-native-dom",
   "version": "1.0.0",
   "main": "ReactWeb/index.js",
   "license": "MIT",
@@ -34,7 +34,7 @@
   "jest": {
     "haste": {
       "defaultPlatform": "web",
-      "providesModuleNodeModules": ["react-native-webapp"],
+      "providesModuleNodeModules": ["react-native-dom"],
       "platforms": ["web"]
     }
   },
