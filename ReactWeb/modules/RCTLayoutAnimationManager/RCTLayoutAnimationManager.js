@@ -52,9 +52,7 @@ type TransformKeyframeConfig = {
   scaleX: number,
   scaleY: number,
   inverseScaleX: number,
-  inverseScaleY: number,
-  inverseTranslateX: number,
-  inverseTranslateY: number
+  inverseScaleY: number
 };
 
 type TransformAnimationConfig = [
@@ -196,9 +194,7 @@ class RCTLayoutAnimationManager {
         scaleX: 1.0,
         scaleY: 1.0,
         inverseScaleX: 1.0,
-        inverseScaleY: 1.0,
-        inverseTranslateX: 0,
-        inverseTranslateY: 0
+        inverseScaleY: 1.0
       }),
       { duration, layout }
     ];
@@ -547,16 +543,6 @@ class RCTLayoutAnimationManager {
         Rematrix.translate(translateX, translateY),
         Rematrix.scale(scaleX, scaleY)
       ].reduce(Rematrix.multiply);
-
-      // let transformString = "";
-
-      // transformString += `scale(${inverseScaleX}, ${inverseScaleY}) `;
-      // transformString += `translate(${translateX}px, ${translateY}px) `;
-      // transformString += `scale(${scaleX}, ${scaleY}) `;
-
-      // return {
-      //   transform: transformString
-      // };
 
       return {
         transform: `matrix3d(${transformMatrix.join(", ")})`
