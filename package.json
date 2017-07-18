@@ -28,7 +28,6 @@
   "scripts": {
     "flow": "flow",
     "start": "react-native start --reset-cache",
-    "start:layout": "cd Examples/LayoutAnimations && npm run start",
     "test": "jest"
   },
   "jest": {
