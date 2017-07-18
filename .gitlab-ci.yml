@@ -1,0 +1,12 @@
+image: kkarczmarczyk/node-yarn:7.6
+
+stages:
+  - deploy
+
+deploy-examples:
+  stage: deploy
+  before_script:
+    - yarn global add now
+  script:
+    - now -t ${NOW_TOKEN}
+    - now -t ${NOW_TOKEN} alias react-native-dom-examples
