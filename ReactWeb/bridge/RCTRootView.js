@@ -66,6 +66,7 @@ class RCTRootView extends UIView {
 
     // $FlowFixMe
     this.style.webkitTapHighlightColor = "transparent";
+    this.style.position = "fixed";
   }
 
   get reactTag(): number {
