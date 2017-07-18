@@ -72,16 +72,10 @@ class RCTLayoutAnimationManager {
   removedNodes: number[];
   layoutChanges: LayoutChange[];
 
-  transformAnimations: boolean;
-
   constructor(manager: RCTUIManager) {
     this.manager = manager;
     this.transformAnimations = false;
     this.reset();
-  }
-
-  enableExperimentalTransformLayoutAnimations() {
-    this.transformAnimations = true;
   }
 
   configureNext(config: LayoutAnimationConfig, callback: Function) {

@@ -21,10 +21,6 @@ export class RNWebInstance {
     this.rootView = new RCTRootView(bundleFromRoot(bundle), moduleName, parent);
   }
 
-  enableExperimentalTransformLayoutAnimations() {
-    this.rootView.enableExperimentalTransformLayoutAnimations();
-  }
-
   start() {
     this.rootView.render();
   }

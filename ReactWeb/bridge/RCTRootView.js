@@ -64,17 +64,8 @@ class RCTRootView extends UIView {
     this.touchHandler = new RCTTouchHandler(this.bridge);
     this.touchHandler.attachToView(this);
 
+    // $FlowFixMe
     this.style.webkitTapHighlightColor = "transparent";
-  }
-
-  set width(value: number) {
-    this._width = value;
-    this.style.width = `${value}px`;
-  }
-
-  set height(value: number) {
-    this._height = value;
-    this.style.height = `${value}px`;
   }
 
   get reactTag(): number {
@@ -83,10 +74,6 @@ class RCTRootView extends UIView {
       this.uiManager.registerRootView(this);
     }
     return this._reactTag;
-  }
-
-  enableExperimentalTransformLayoutAnimations() {
-    this.uiManager.layoutAnimationManager.enableExperimentalTransformLayoutAnimations();
   }
 
   bundleFinishedLoading() {
