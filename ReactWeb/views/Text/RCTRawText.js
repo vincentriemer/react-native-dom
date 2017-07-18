@@ -13,7 +13,8 @@ class RCTRawText extends RCTView {
 
     Object.assign(this.style, {
       position: "static",
-      display: "inline"
+      display: "inline",
+      contain: "content"
     });
 
     this.hasBeenFramed = true;

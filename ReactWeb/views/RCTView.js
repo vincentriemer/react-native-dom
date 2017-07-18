@@ -9,6 +9,8 @@ import CustomElement from "CustomElement";
 class RCTView extends UIView {
   constructor() {
     super(FrameZero);
+
+    this.style.contain = "strict";
   }
 }
 

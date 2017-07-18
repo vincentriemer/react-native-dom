@@ -5,6 +5,7 @@
 
 import type RCTTouchHandler from "RCTTouchHandler";
 import type { RCTComponent } from "RCTComponent";
+import UIBorderView from "UIBorderView";
 import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 
@@ -59,11 +60,16 @@ class UIView extends HTMLElement implements RCTComponent {
   _right: number;
   _width: number;
   _height: number;
-  _borderRadius: number;
-  _borderColor: number;
-  _borderWidth: number;
   _touchable: boolean;
   _opacity: number;
+
+  // property shorthands
+  _borderColor: ?number;
+  _borderRadius: ?number;
+  _borderWidth: ?number;
+  _borderStyle: ?string;
+
+  childBorderView: ?UIBorderView;
 
   reactTag: number;
   reactSubviews: Array<UIView>;
@@ -83,7 +89,6 @@ class UIView extends HTMLElement implements RCTComponent {
     this.style.overflow = "hidden";
     this.style.boxSizing = "border-box";
     this.style.transformOrigin = "top left";
-    this.borderRadius = 0;
   }
 
   get frame(): Frame {
@@ -207,36 +212,38 @@ class UIView extends HTMLElement implements RCTComponent {
   //   this.style.transform = `matrix3d(${value.join(",")})`;
   // }
 
-  get borderRadius(): number {
-    return this._borderRadius;
+  get borderChild(): UIBorderView {
+    if (!this.childBorderView) {
+      const childBorderView = new UIBorderView();
+
+      this.appendChild(childBorderView);
+      this.childBorderView = childBorderView;
+      return childBorderView;
+    }
+
+    return this.childBorderView;
   }
 
   set borderRadius(value: number) {
     this._borderRadius = value;
     this.style.borderRadius = `${value}px`;
-  }
 
-  get borderColor(): number {
-    return this._borderColor;
+    this.borderChild.borderRadius = value;
   }
 
   set borderColor(value: number) {
-    if (typeof value === "number") {
-      const [a, r, g, b] = ColorArrayFromHexARGB(value);
-      const stringValue = `rgba(${r},${g},${b},${a})`;
-      this.style.borderColor = stringValue;
-    } else {
-      this.style.borderColor = value;
-    }
-  }
-
-  get borderWidth(): number {
-    return this._borderWidth;
+    this._borderColor = value;
+    this.borderChild.borderColor = value;
   }
 
   set borderWidth(value: number) {
     this._borderWidth = value;
-    this.style.borderWidth = `${value}px`;
+    this.borderChild.borderWidth = value;
+  }
+
+  set borderStyle(value: string) {
+    this._borderStyle = value;
+    this.borderChild.borderStyle = value;
   }
 
   get touchable(): boolean {
@@ -250,7 +257,11 @@ class UIView extends HTMLElement implements RCTComponent {
 
   insertReactSubviewAtIndex(subview: UIView, index: number) {
     if (index === this.reactSubviews.length) {
-      this.appendChild(subview);
+      if (this.childBorderView) {
+        this.insertBefore(subview, this.childBorderView);
+      } else {
+        this.appendChild(subview);
+      }
     } else {
       const beforeElement = this.reactSubviews[index];
       this.insertBefore(subview, beforeElement);

@@ -170,7 +170,7 @@ class RCTViewManager {
 
   @RCT_EXPORT_VIEW_PROP("borderStyle", "string")
   setBorderStyle(view: RCTView, value: string) {
-    view.style.borderStyle = value;
+    view.borderStyle = value;
   }
 
   @RCT_EXPORT_DIRECT_SHADOW_PROPS
