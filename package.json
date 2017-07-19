@@ -27,7 +27,7 @@
   },
   "scripts": {
     "flow": "flow",
-    "start": "react-native start --reset-cache",
+    "start": "react-native start",
     "test": "jest"
   },
   "jest": {
