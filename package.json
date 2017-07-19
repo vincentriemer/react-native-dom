@@ -18,7 +18,7 @@
     "normalize-css-color": "^1.0.2",
     "proxy-polyfill": "^0.1.7",
     "react": "16.0.0-alpha.12",
-    "react-native": "facebook/react-native",
+    "react-native": "vincentriemer/react-native",
     "rebound": "^0.0.15",
     "rematrix": "^0.1.1",
     "wolfy87-eventemitter": "^5.1.0",
@@ -27,14 +27,18 @@
   },
   "scripts": {
     "flow": "flow",
-    "start": "react-native start",
+    "start": "react-native start --disable-index-page",
     "test": "jest"
   },
   "jest": {
     "haste": {
       "defaultPlatform": "web",
-      "providesModuleNodeModules": ["react-native-dom"],
-      "platforms": ["web"]
+      "providesModuleNodeModules": [
+        "react-native-dom"
+      ],
+      "platforms": [
+        "web"
+      ]
     }
   },
   "devDependencies": {
@@ -79,7 +83,6 @@
     "inject-loader": "^3.0.0",
     "jest": "^20.0.4",
     "json-loader": "^0.5.4",
-    "metro-bundler": "^0.8.1",
     "prettier": "^1.5.2",
     "progress-bar-webpack-plugin": "^1.9.3",
     "rollup": "^0.41.6",

@@ -53,9 +53,7 @@ class RCTTiming {
         timer.jsSchedulingTime += timer.duration;
         this.timers[String(callbackId)] = timer;
       }
-      this.bridge.enqueueJSCall("JSTimersExecution", "callTimers", [
-        [callbackId]
-      ]);
+      this.bridge.enqueueJSCall("JSTimers", "callTimers", [[callbackId]]);
     } else {
       this.timers[String(callbackId)] = timer;
     }
@@ -86,7 +84,7 @@ class RCTTiming {
     // timer information is distributed in a single message with mulitiple params
     // which minimizes the bridge traffic when many timers are used
     if (timers.length) {
-      this.bridge.enqueueJSCall("JSTimersExecution", "callTimers", [timers]);
+      this.bridge.enqueueJSCall("JSTimers", "callTimers", [timers]);
     }
 
     for (const timer of toRemove) {
