@@ -497,7 +497,7 @@ class RCTLayoutAnimationManager {
       const config = {
         duration: deleteKeyConfig.duration,
         delay: deleteKeyConfig.delay,
-        fill: "backwards"
+        fill: "forwards"
       };
 
       view.style.willChange = "opacity";
