@@ -1,7 +1,7 @@
 "use strict";
 
 var path = require("path");
-const blacklist = require("metro-bundler/build/blacklist");
+const blacklist = require("metro-bundler/src/blacklist");
 
 var config = {
   extraNodeModules: {

@@ -15,6 +15,7 @@
     "fs": "^0.0.1-security",
     "glob": "^7.1.2",
     "invariant": "^2.2.2",
+    "metro-bundler": "^0.9.2",
     "normalize-css-color": "^1.0.2",
     "proxy-polyfill": "^0.1.7",
     "react": "16.0.0-alpha.12",
@@ -28,6 +29,8 @@
   "scripts": {
     "flow": "flow",
     "start": "react-native start --disable-index-page",
+    "build:client": "react-native bundle --dev false --config ../../../../rn-config.js --entry-file ./Examples/LayoutAnimations/web/client.js --bundle-output client.js --platform web --reset-cache",
+    "build:bundle": "react-native bundle --dev false --config ../../../../rn-config.js --entry-file ./Examples/LayoutAnimations/index.web.js --bundle-output index.bundle.js --platform web --reset-cache",
     "test": "jest"
   },
   "jest": {
