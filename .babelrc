@@ -1,11 +1,7 @@
 {
   "sourceMaps": "inline",
-  "ignore": [
-    "node_modules/yoga-layout/build/Release/nbind.js"
-  ],
-  "presets": [
-    "env"
-  ],
+  "ignore": ["node_modules/yoga-layout/build/Release/nbind.js"],
+  "presets": [],
   "plugins": [
     "syntax-flow",
     "transform-flow-strip-types",
