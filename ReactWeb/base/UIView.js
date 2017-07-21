@@ -89,7 +89,6 @@ class UIView extends HTMLElement implements RCTComponent {
     this.backgroundColor = "transparent";
     this.style.overflow = "hidden";
     this.style.boxSizing = "border-box";
-    this.style.transformOrigin = "top left";
   }
 
   get frame(): Frame {

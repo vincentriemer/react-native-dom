@@ -57,7 +57,7 @@ type TransformKeyframeConfig = {
 
 type TransformAnimationConfig = [
   TransformKeyframeConfig[],
-  { duration: number, layout: Frame }
+  { duration: number, layout: Frame, origin: Position }
 ];
 
 type TransformAnimationConfigRegistry = {
@@ -74,7 +74,6 @@ class RCTLayoutAnimationManager {
 
   constructor(manager: RCTUIManager) {
     this.manager = manager;
-    this.transformAnimations = false;
     this.reset();
   }
 
@@ -190,7 +189,14 @@ class RCTLayoutAnimationManager {
         inverseScaleX: 1.0,
         inverseScaleY: 1.0
       }),
-      { duration, layout }
+      {
+        duration,
+        layout,
+        origin: {
+          x: -1 * layout.width / 2,
+          y: -1 * layout.height / 2
+        }
+      }
     ];
   }
 
@@ -420,12 +426,17 @@ class RCTLayoutAnimationManager {
     Object.keys(registry).forEach(tag => {
       const reactTag = parseInt(tag, 10);
 
-      const [keyframeConfigs, { duration, layout }] = registry[reactTag];
+      const [keyframeConfigs, { duration, layout, origin }] = registry[
+        reactTag
+      ];
 
       const view = this.manager.viewRegistry.get(reactTag);
       invariant(view, "view does not exist");
 
-      const keyframes = this.constructTransformKeyframes(keyframeConfigs);
+      const keyframes = this.constructTransformKeyframes(
+        keyframeConfigs,
+        origin
+      );
 
       const layoutStyle = {
         width: `${layout.width}px`,
@@ -521,7 +532,10 @@ class RCTLayoutAnimationManager {
     return animations;
   }
 
-  constructTransformKeyframes(keyframeConfigs: TransformKeyframeConfig[]) {
+  constructTransformKeyframes(
+    keyframeConfigs: TransformKeyframeConfig[],
+    origin: Position
+  ) {
     return keyframeConfigs.map(config => {
       const {
         inverseScaleX,
@@ -533,9 +547,11 @@ class RCTLayoutAnimationManager {
       } = config;
 
       let transformMatrix = [
+        Rematrix.translate(origin.x, origin.y), // shift transformation origin
         Rematrix.scale(inverseScaleX, inverseScaleY),
         Rematrix.translate(translateX, translateY),
-        Rematrix.scale(scaleX, scaleY)
+        Rematrix.scale(scaleX, scaleY),
+        Rematrix.translate(-origin.x, -origin.y) // revert transformation origin
       ].reduce(Rematrix.multiply);
 
       return {
