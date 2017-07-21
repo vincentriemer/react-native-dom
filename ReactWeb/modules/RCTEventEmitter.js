@@ -10,13 +10,15 @@ import NotificationCenter from "NotificationCenter";
 class RCTEventEmitter {
   bridge: RCTBridge;
   listenerCount: number = 0;
+  _supportedMethods: ?Array<string>;
 
-  constructor(bridge: RCTBridge) {
+  constructor(bridge: RCTBridge, supportedMethods: ?Array<string>) {
     this.bridge = bridge;
+    this._supportedMethods = supportedMethods;
   }
 
   supportedMethods(): ?Array<string> {
-    return undefined;
+    return this._supportedMethods;
   }
 
   sendEventWithName(eventName: string, body: any) {

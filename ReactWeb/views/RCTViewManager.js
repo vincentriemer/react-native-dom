@@ -103,11 +103,17 @@ class RCTViewManager {
   static __isViewManager = true;
   static __props = [];
 
+  bridge: RCTBridge;
+
   __props: Array<PropDef>;
   __shadowProps: Array<PropDef>;
 
+  constructor(bridge: RCTBridge) {
+    this.bridge = bridge;
+  }
+
   view(): UIView {
-    return new RCTView();
+    return new RCTView(this.bridge);
   }
 
   shadowView(): RCTShadowView {
@@ -143,10 +149,10 @@ class RCTViewManager {
     view.opacity = value;
   }
 
-  // @RCT_EXPORT_MIRRORED_PROP("transform", "array")
-  // setTransform(view: RCTView, value: Array<number>) {
-  //   view.transform = value;
-  // }
+  @RCT_EXPORT_VIEW_PROP("transform", "array")
+  setTransform(view: RCTView, value: Array<number>) {
+    view.transform = value;
+  }
 
   @RCT_EXPORT_VIEW_PROP("borderRadius", "number")
   setBorderRadius(view: RCTView, value: number) {
@@ -171,6 +177,11 @@ class RCTViewManager {
   @RCT_EXPORT_VIEW_PROP("borderStyle", "string")
   setBorderStyle(view: RCTView, value: string) {
     view.borderStyle = value;
+  }
+
+  @RCT_EXPORT_VIEW_PROP("onLayout", "RCTDirectEventBlock")
+  setOnLayout(view: RCTView, value: boolean) {
+    view.onLayout = value;
   }
 
   @RCT_EXPORT_DIRECT_SHADOW_PROPS

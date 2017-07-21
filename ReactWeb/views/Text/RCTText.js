@@ -4,6 +4,7 @@
  */
 
 import type { Frame } from "UIView";
+import type RCTBridge from "RCTBridge";
 
 import RCTView from "RCTView";
 import CustomElement from "CustomElement";
@@ -14,8 +15,8 @@ class RCTText extends RCTView {
   _selectable: boolean;
   _color: number;
 
-  constructor() {
-    super();
+  constructor(bridge: RCTBridge) {
+    super(bridge);
 
     Object.assign(this.style, {
       position: "static",
@@ -72,6 +73,14 @@ class RCTText extends RCTView {
 
   get selectable(): boolean {
     return this._selectable;
+  }
+
+  get textAlign(): string {
+    return this.style.textAlign;
+  }
+
+  set textAlign(value: string) {
+    this.style.textAlign = value;
   }
 
   set selectable(value: boolean) {

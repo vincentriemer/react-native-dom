@@ -43,6 +43,11 @@ class RCTTextManager extends RCTViewManager {
   setColor(view: RCTText, value: number) {
     view.color = value;
   }
+
+  @RCT_EXPORT_MIRRORED_PROP("textAlign", "string")
+  setTextAlign(view: RCTText, value: string) {
+    view.textAlign = value;
+  }
 }
 
 export default RCTTextManager;

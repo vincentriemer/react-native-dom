@@ -2,14 +2,14 @@
  * @providesModule RCTRawText
  * @flow
  */
-
+import type RCTBridge from "RCTBridge";
 import RCTView from "RCTView";
 import CustomElement from "CustomElement";
 
 @CustomElement("rct-raw-text")
 class RCTRawText extends RCTView {
-  constructor() {
-    super();
+  constructor(bridge: RCTBridge) {
+    super(bridge);
 
     Object.assign(this.style, {
       position: "static",

@@ -196,13 +196,10 @@ class RCTUIManager {
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  measure(reactTag: number, callbackId: number) {
-    const cb = this.bridge.callbackFromId(callbackId);
-
+  measure(reactTag: number, callbackId: ?number) {
     let shadowView = this.shadowViewRegistry.get(reactTag);
 
     if (!shadowView || !shadowView.measurement) {
-      cb();
       return;
     }
 
@@ -211,7 +208,25 @@ class RCTUIManager {
     invariant(shadowView.previousLayout, "Shadow view has no previous layout");
     let { left, top } = shadowView.previousLayout;
 
-    cb(left, top, width, height, globalX, globalY);
+    if (callbackId != null) {
+      this.bridge.callbackFromId(callbackId)(
+        left,
+        top,
+        width,
+        height,
+        globalX,
+        globalY
+      );
+    }
+
+    return {
+      left,
+      top,
+      width,
+      height,
+      globalX,
+      globalY
+    };
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
@@ -341,6 +356,36 @@ class RCTUIManager {
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+  replaceExistingNonRootView(reactTag: number, newReactTag: number) {
+    const shadowView = this.shadowViewRegistry.get(reactTag);
+    invariant(shadowView, `shadowView (for ID ${reactTag}) not found`);
+
+    const superShadowView = shadowView.reactSuperview;
+    if (!superShadowView) {
+      invariant(false, `shadowView super (of ID ${reactTag}) not found`);
+      return;
+    }
+
+    const indexOfView = superShadowView.reactSubviews.indexOf(shadowView);
+    invariant(
+      indexOfView !== -1,
+      "View's superview does't claim it as subview"
+    );
+
+    const removeAtIndices = [indexOfView];
+    const addTags = [newReactTag];
+
+    this.manageChildren(
+      superShadowView.reactTag,
+      null,
+      null,
+      addTags,
+      removeAtIndices,
+      removeAtIndices
+    );
+  }
+
+  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
   manageChildren(
     tag: number,
     moveFrom: ?Array<number>,
@@ -456,6 +501,7 @@ class RCTUIManager {
   constantsToExport() {
     const constants = {};
     const bubblingEvents = {};
+    const directEvents = {};
 
     for (const [name, componentData] of this.componentDataByName) {
       const moduleConstants = {};
@@ -468,7 +514,14 @@ class RCTUIManager {
       const viewConfig = componentData.viewConfig;
       moduleConstants.NativeProps = viewConfig.propTypes;
 
-      // TODO: Add direct events
+      // Add direct events
+      for (let eventName of viewConfig.directEvents) {
+        if (!directEvents[eventName]) {
+          directEvents[eventName] = {
+            registrationName: `on${eventName.substring(3)}`
+          };
+        }
+      }
 
       // Add bubbling events
       for (let eventName of viewConfig.bubblingEvents) {
@@ -487,7 +540,7 @@ class RCTUIManager {
     }
 
     constants["customBubblingEventTypes"] = bubblingEvents;
-    constants["customDirectEventTypes"] = {}; // TODO: direct events
+    constants["customDirectEventTypes"] = directEvents;
 
     return constants;
   }

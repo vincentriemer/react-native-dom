@@ -34,8 +34,8 @@ type ReactTouch = {
 };
 
 const TOUCH_LISTENER_OPTIONS = detectIt.passiveEvents
-  ? { passive: true }
-  : false;
+  ? { passive: true, capture: true }
+  : true;
 
 class RCTTouchHandler {
   eventDispatcher: RCTEventDispatcher;
@@ -61,7 +61,7 @@ class RCTTouchHandler {
     rawEvent: TouchEvent | MouseEvent
   ): ?Array<UITouch> {
     if (rawEvent instanceof MouseEvent) {
-      rawEvent.preventDefault();
+      // rawEvent.preventDefault();
       const target = rawEvent.target;
 
       invariant(
@@ -103,7 +103,7 @@ class RCTTouchHandler {
 
         resultingTouchList.push({
           view: target,
-          identifier: rawTouch.identifier,
+          identifier: rawTouch.identifier % 20,
           pageX: rawTouch.pageX,
           pageY: rawTouch.pageY,
           locationX: rawTouch.clientX,

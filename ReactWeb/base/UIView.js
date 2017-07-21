@@ -62,6 +62,7 @@ class UIView extends HTMLElement implements RCTComponent {
   _height: number;
   _touchable: boolean;
   _opacity: number;
+  _transform: string;
 
   // property shorthands
   _borderColor: ?number;
@@ -121,8 +122,10 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   set top(value: number) {
-    this._top = value;
-    this.updatePosition();
+    if (value !== this._top) {
+      this._top = value;
+      this.updateTransform();
+    }
     // this.style.top = `${value}px`;
   }
 
@@ -131,8 +134,10 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   set left(value: number) {
-    this._left = value;
-    this.updatePosition();
+    if (value !== this._left) {
+      this._left = value;
+      this.updateTransform();
+    }
     // this.style.left = `${value}px`;
   }
 
@@ -154,11 +159,15 @@ class UIView extends HTMLElement implements RCTComponent {
     this.style.right = `${value}px`;
   }
 
-  updatePosition() {
+  updateTransform() {
     let transformString = "";
 
-    if (this._left) transformString += `translateX(${this._left}px)`;
-    if (this._top) transformString += `translateY(${this._top}px)`;
+    if (this._left != null) transformString += `translateX(${this._left}px) `;
+    if (this._top != null) transformString += `translateY(${this._top}px) `;
+
+    if (this._transform) {
+      transformString += `${this._transform} `;
+    }
 
     this.style.transform = transformString;
   }
@@ -168,8 +177,10 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   set width(value: number) {
-    this._width = value;
-    this.style.width = `${value}px`;
+    if (value !== this._width) {
+      this._width = value;
+      this.style.width = `${value}px`;
+    }
   }
 
   get height(): number {
@@ -177,8 +188,10 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   set height(value: number) {
-    this._height = value;
-    this.style.height = `${value}px`;
+    if (value !== this._height) {
+      this._height = value;
+      this.style.height = `${value}px`;
+    }
   }
 
   get backgroundColor(): string {
@@ -204,13 +217,17 @@ class UIView extends HTMLElement implements RCTComponent {
     this.style.opacity = `${value}`;
   }
 
-  // get transform(): string {
-  //   return this.style.transform;
-  // }
+  get transform(): string {
+    return this._transform;
+  }
 
-  // set transform(value: Array<number>) {
-  //   this.style.transform = `matrix3d(${value.join(",")})`;
-  // }
+  set transform(value: Array<number>) {
+    const newTransform = `matrix3d(${value.join(",")})`;
+    if (newTransform !== this._transform) {
+      this._transform = newTransform;
+      this.updateTransform();
+    }
+  }
 
   get borderChild(): UIBorderView {
     if (!this.childBorderView) {

@@ -1,6 +1,6 @@
 ErrorUtils = {
   setGlobalHandler: () => {},
-  reportFatalError: console.error,
+  reportFatalError: console.error
 };
 
 function sendMessage(topic, payload) {
@@ -11,7 +11,7 @@ var Status = undefined;
 
 onmessage = ({ data }) => {
   const { topic, payload } = JSON.parse(data);
-  //console.log("Recieved message from main thread:", topic, payload);
+  // console.log("Recieved message from main thread:", topic, payload);
 
   switch (topic) {
     case "loadBridgeConfig": {
@@ -37,7 +37,7 @@ onmessage = ({ data }) => {
       sendMessage("flushedQueue", flushedQueue);
       break;
     }
-    case "flush":{
+    case "flush": {
       const flushedQueue = __fbBatchedBridge.flushedQueue.apply(null);
       sendMessage("flushedQueue", flushedQueue);
       break;

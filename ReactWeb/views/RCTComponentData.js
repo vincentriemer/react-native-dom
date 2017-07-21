@@ -66,6 +66,7 @@ class RCTComponentData {
     const count = 0;
     const propTypes = {};
     const bubblingEvents = [];
+    const directEvents = [];
 
     if (this.manager.customBubblingEventTypes) {
       const events = this.manager.customBubblingEventTypes();
@@ -79,6 +80,9 @@ class RCTComponentData {
         if (type === "RCTBubblingEventBlock") {
           bubblingEvents.push(normalizeInputEventName(name));
           propTypes[name] = "BOOL";
+        } else if (type === "RCTDirectEventBlock") {
+          directEvents.push(normalizeInputEventName(name));
+          propTypes[name] = "BOOL";
         } else {
           propTypes[name] = type;
         }
@@ -88,6 +92,7 @@ class RCTComponentData {
     return {
       propTypes,
       bubblingEvents,
+      directEvents,
       uiClassViewName: bridgeModuleNameForClass(this.manager.constructor)
     };
   }
@@ -142,6 +147,7 @@ class RCTComponentData {
   }
 
   setPropsForView(props: Props, view: typeof RCTComponent) {
+    console.log({ tag: view.reactTag, props });
     if (props) {
       Object.keys(props).forEach(propName => {
         if (this.propConfig.hasOwnProperty(propName)) {

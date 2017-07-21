@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   LayoutAnimation,
   Button,
-  ScrollView
+  ScrollView,
+  FlatList
 } from "react-native";
 
 class ScrollViewExample extends Component {
@@ -25,12 +26,32 @@ class ScrollViewExample extends Component {
     return scrollViewElements;
   };
 
+  getData() {
+    const data = [];
+
+    for (let i = 0; i < 30; i++) {
+      data.push({ key: `Element ${i}` });
+    }
+
+    return data;
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollView}>
-          {this.renderScrollViewContents()}
-        </ScrollView>
+        <FlatList
+          data={this.getData()}
+          removeClippedSubviews
+          renderItem={({ item }) =>
+            <TouchableOpacity
+              onPress={() => console.log(item.key)}
+              style={styles.item}
+            >
+              <Text>
+                {item.key}
+              </Text>
+            </TouchableOpacity>}
+        />
       </View>
     );
   }
@@ -42,9 +63,15 @@ const styles = StyleSheet.create({
     backgroundColor: "lightblue"
   },
   scrollView: {
-    flex: 1,
     flexDirection: "column",
     alignItems: "stretch"
+  },
+  item: {
+    padding: 20,
+    // fontSize: 18,
+    height: 44,
+    backgroundColor: "pink",
+    margin: 20
   },
   element: {
     height: 100,

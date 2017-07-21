@@ -11,6 +11,8 @@ import {
   RCTFunctionType
 } from "RCTBridgeMethod";
 
+import type RCTUIManager from "RCTUIManager";
+
 export {
   RCTFunctionTypeNormal,
   RCTFunctionTypePromise,
@@ -139,6 +141,8 @@ export default class RCTBridge {
   moduleName: string;
   bundleLocation: string;
 
+  _uiManager: ?RCTUIManager;
+
   constructor(moduleName: string, bundle: string) {
     this.moduleName = moduleName;
     this.bundleLocation = bundle;
@@ -188,6 +192,8 @@ export default class RCTBridge {
       nativeModule[functionName],
       `No such method ${functionName} on module ${name}`
     );
+
+    // console.log(name, functionName, params);
 
     nativeModule[functionName].apply(nativeModule, params);
   }
@@ -312,6 +318,14 @@ export default class RCTBridge {
     return (...args: Array<any>) => {
       this.enqueueJSCallback(id, args);
     };
+  }
+
+  get uiManager(): RCTUIManager {
+    if (!this._uiManager) {
+      const uiManager: any = this.modulesByName["UIManager"];
+      this._uiManager = uiManager;
+    }
+    return this._uiManager;
   }
 
   frame() {
