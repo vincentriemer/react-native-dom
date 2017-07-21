@@ -41,9 +41,17 @@ class ScrollViewExample extends Component {
   }
 
   render() {
+    const barHeight = 60;
+
     const headerOffset = this.state.scrollY.interpolate({
       inputRange: [0, HEADER_SCROLL_DISTANCE],
       outputRange: [0, -HEADER_SCROLL_DISTANCE],
+      extrapolate: "clamp"
+    });
+
+    const headerScale = this.state.scrollY.interpolate({
+      inputRange: [0, HEADER_SCROLL_DISTANCE],
+      outputRange: [1, 1 / 2],
       extrapolate: "clamp"
     });
 
@@ -51,7 +59,7 @@ class ScrollViewExample extends Component {
       <View style={styles.fill}>
         <ScrollView
           style={styles.fill}
-          scrollEventThrottle={8}
+          scrollEventThrottle={1}
           onScroll={Animated.event([
             { nativeEvent: { contentOffset: { y: this.state.scrollY } } }
           ])}
@@ -66,9 +74,20 @@ class ScrollViewExample extends Component {
             }
           ]}
         >
-          <View style={styles.bar}>
-            <Text style={styles.title}>Title</Text>
-          </View>
+          <Animated.View
+            style={[
+              styles.bar,
+              {
+                transform: [
+                  { translateY: 30 },
+                  { scale: headerScale },
+                  { translateY: -30 }
+                ]
+              }
+            ]}
+          >
+            <Text style={styles.title}>Suck it DOM</Text>
+          </Animated.View>
         </Animated.View>
       </View>
     );
@@ -98,14 +117,14 @@ const styles = StyleSheet.create({
   },
   bar: {
     marginBottom: 12,
-    height: 32,
+    height: 60,
     alignItems: "center",
     justifyContent: "center"
   },
   title: {
     backgroundColor: "transparent",
     color: "white",
-    fontSize: 18
+    fontSize: 60
   },
   scrollViewContent: {
     marginTop: HEADER_MAX_HEIGHT
