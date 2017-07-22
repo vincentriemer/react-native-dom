@@ -2,7 +2,6 @@
   "name": "react-native-dom",
   "version": "1.0.0",
   "main": "ReactWeb/index.js",
-  "license": "MIT",
   "dependencies": {
     "babel-polyfill": "^6.23.0",
     "bezier-easing": "^2.0.3",
