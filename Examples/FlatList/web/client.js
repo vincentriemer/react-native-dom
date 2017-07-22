@@ -1,7 +1,7 @@
 import { RNWebInstance } from "react-native-dom";
 
 function init(bundle, parent, options) {
-  const web = new RNWebInstance(bundle, "scrollview", parent, {
+  const web = new RNWebInstance(bundle, "flatlist", parent, {
     ...options
   });
 

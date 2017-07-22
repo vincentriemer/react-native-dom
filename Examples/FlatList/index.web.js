@@ -10,22 +10,7 @@ import {
   ScrollView,
   FlatList
 } from "react-native";
-
-class ScrollViewExample extends Component {
-  renderScrollElement = index => {
-    return <View key={`${index}`} style={styles.element} />;
-  };
-
-  renderScrollViewContents = () => {
-    const scrollViewElements = [];
-
-    for (let i = 0; i < 20; i++) {
-      scrollViewElements.push(this.renderScrollElement(i));
-    }
-
-    return scrollViewElements;
-  };
-
+class FlatListExample extends Component {
   getData() {
     const data = [];
 
@@ -69,16 +54,9 @@ const styles = StyleSheet.create({
   item: {
     padding: 20,
     // fontSize: 18,
-    height: 44,
     backgroundColor: "pink",
     margin: 20
-  },
-  element: {
-    height: 100,
-    marginTop: 10,
-    marginBottom: 10,
-    backgroundColor: "red"
   }
 });
 
-AppRegistry.registerComponent("scrollview", () => ScrollViewExample);
+AppRegistry.registerComponent("flatlist", () => FlatListExample);

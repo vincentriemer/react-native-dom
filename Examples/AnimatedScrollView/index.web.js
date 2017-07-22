@@ -86,7 +86,7 @@ class ScrollViewExample extends Component {
               }
             ]}
           >
-            <Text style={styles.title}>Suck it DOM</Text>
+            <Text style={styles.title}>Title</Text>
           </Animated.View>
         </Animated.View>
       </View>
