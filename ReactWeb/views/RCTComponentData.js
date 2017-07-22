@@ -147,7 +147,6 @@ class RCTComponentData {
   }
 
   setPropsForView(props: Props, view: typeof RCTComponent) {
-    console.log({ tag: view.reactTag, props });
     if (props) {
       Object.keys(props).forEach(propName => {
         if (this.propConfig.hasOwnProperty(propName)) {

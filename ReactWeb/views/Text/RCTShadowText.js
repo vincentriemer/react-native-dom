@@ -83,7 +83,8 @@ class RCTShadowText extends RCTShadowView {
         visibility: "hidden",
         maxHeight: "auto",
         maxWidth: "auto",
-        whiteSpace: "nowrap"
+        whiteSpace: "nowrap",
+        display: "inline-block"
       });
       document.body && document.body.appendChild(domElement);
       this._testDOMElement = domElement;

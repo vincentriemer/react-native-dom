@@ -18,7 +18,8 @@ class UIBorderView extends HTMLElement {
       bottom: "0",
       right: "0",
       boxSizing: "border-box",
-      transformOrigin: "top left"
+      transformOrigin: "top left",
+      pointerEvents: "none"
     });
   }
 

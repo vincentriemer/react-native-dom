@@ -109,9 +109,12 @@ export class RCTScrollContentView extends RCTView {
     const superView = this.reactSuperview;
     const subView = this.reactSubviews[0];
 
-    console.log(subView.reactTag);
-
-    if (subView && superView && superView instanceof RCTScrollView) {
+    if (
+      subView &&
+      subView instanceof RCTView &&
+      superView &&
+      superView instanceof RCTScrollView
+    ) {
       superView.boundsDidChange(subView);
     }
   }
@@ -196,8 +199,6 @@ class RCTScrollView extends RCTView {
   }
 
   boundsDidChange(contentView: RCTView) {
-    console.log(contentView);
-
     const childFrames = this.calculateChildFramesData();
 
     const contentOffset: Position = {

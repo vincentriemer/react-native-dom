@@ -14,7 +14,7 @@ import RCTShadowText from "RCTShadowText";
 @RCT_EXPORT_MODULE
 class RCTTextManager extends RCTViewManager {
   view(): RCTText {
-    return new RCTText();
+    return new RCTText(this.bridge);
   }
 
   shadowView(): RCTShadowText {
@@ -47,6 +47,11 @@ class RCTTextManager extends RCTViewManager {
   @RCT_EXPORT_MIRRORED_PROP("textAlign", "string")
   setTextAlign(view: RCTText, value: string) {
     view.textAlign = value;
+  }
+
+  @RCT_EXPORT_VIEW_PROP("padding", "number")
+  setPadding(view: RCTText, value: number) {
+    view.style.padding = `${value}px`;
   }
 }
 

@@ -97,7 +97,7 @@ class Button extends React.Component {
     const buttonStyles = [styles.button];
     const textStyles = [styles.text];
     if (color) {
-      if (Platform.OS === "ios" || Platform.OS === "web") {
+      if (Platform.OS === "ios") {
         textStyles.push({ color: color });
       } else {
         buttonStyles.push({ backgroundColor: color });
@@ -139,14 +139,13 @@ class Button extends React.Component {
 const styles = StyleSheet.create({
   button: Platform.select({
     ios: {},
-    web: {
-      padding: "10px 14px",
-      backgroundColor: "#337ab7",
-      borderRadius: 4
-    },
     android: {
       elevation: 4,
       // Material design blue from https://material.google.com/style/color.html#color-color-palette
+      backgroundColor: "#2196F3",
+      borderRadius: 2
+    },
+    web: {
       backgroundColor: "#2196F3",
       borderRadius: 2
     }
@@ -160,23 +159,25 @@ const styles = StyleSheet.create({
       fontSize: 18,
       fontWeight: 400
     },
-    web: {
-      color: "white",
-      textAlign: "center",
-      fontSize: 14
-    },
     android: {
       color: "white",
       textAlign: "center",
       padding: 8,
       fontWeight: "500"
+    },
+    web: {
+      color: "white",
+      textAlign: "center",
+      padding: 8
     }
   }),
   buttonDisabled: Platform.select({
     ios: {},
-    web: {},
     android: {
       elevation: 0,
+      backgroundColor: "#dfdfdf"
+    },
+    web: {
       backgroundColor: "#dfdfdf"
     }
   }),
@@ -184,10 +185,10 @@ const styles = StyleSheet.create({
     ios: {
       color: "#cdcdcd"
     },
-    web: {
-      color: "#cdcdcd"
-    },
     android: {
+      color: "#a1a1a1"
+    },
+    web: {
       color: "#a1a1a1"
     }
   })
