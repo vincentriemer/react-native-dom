@@ -46,26 +46,29 @@ class ScrollViewExample extends Component {
     const headerOffset = this.state.scrollY.interpolate({
       inputRange: [0, HEADER_SCROLL_DISTANCE],
       outputRange: [0, -HEADER_SCROLL_DISTANCE],
-      extrapolate: "clamp"
+      extrapolateLeft: "extend",
+      extrapolateRight: "clamp"
     });
 
     const headerScale = this.state.scrollY.interpolate({
       inputRange: [0, HEADER_SCROLL_DISTANCE],
       outputRange: [1, 1 / 2],
-      extrapolate: "clamp"
+      extrapolateLeft: "extend",
+      extrapolateRight: "clamp"
     });
 
     return (
       <View style={styles.fill}>
-        <ScrollView
+        <Animated.ScrollView
           style={styles.fill}
           scrollEventThrottle={1}
-          onScroll={Animated.event([
-            { nativeEvent: { contentOffset: { y: this.state.scrollY } } }
-          ])}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
+            { useNativeDriver: true }
+          )}
         >
           {this._renderScrollViewContent()}
-        </ScrollView>
+        </Animated.ScrollView>
         <Animated.View
           style={[
             styles.header,
@@ -107,10 +110,10 @@ const styles = StyleSheet.create({
   },
   header: {
     position: "absolute",
-    top: 0,
+    top: -500,
     left: 0,
     right: 0,
-    height: HEADER_MAX_HEIGHT,
+    height: HEADER_MAX_HEIGHT + 500,
     backgroundColor: "#03A9F4",
     overflow: "hidden",
     justifyContent: "flex-end"

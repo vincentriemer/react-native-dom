@@ -63,6 +63,7 @@ class UIView extends HTMLElement implements RCTComponent {
   _touchable: boolean;
   _opacity: number;
   _transform: string;
+  _animatedTransform: string;
 
   // property shorthands
   _borderColor: ?number;
@@ -164,7 +165,9 @@ class UIView extends HTMLElement implements RCTComponent {
     if (this._left != null) transformString += `translateX(${this._left}px) `;
     if (this._top != null) transformString += `translateY(${this._top}px) `;
 
-    if (this._transform) {
+    if (this._animatedTransform) {
+      transformString += `${this._animatedTransform} `;
+    } else if (this._transform) {
       transformString += `${this._transform} `;
     }
 
@@ -226,6 +229,26 @@ class UIView extends HTMLElement implements RCTComponent {
       this._transform = newTransform;
       this.updateTransform();
     }
+  }
+
+  get animatedTransform(): string {
+    return this._animatedTransform;
+  }
+
+  set animatedTransform(value: Array<Object>) {
+    let transformString = "";
+    value.forEach(transformObject => {
+      Object.keys(transformObject).forEach(property => {
+        const value = transformObject[property];
+        if (["translateX", "translateY", "translateZ"].includes(property)) {
+          transformString += `${property}(${value}px)`;
+        } else {
+          transformString += `${property}(${value})`;
+        }
+      });
+    });
+    this._animatedTransform = transformString;
+    this.updateTransform();
   }
 
   get borderChild(): UIBorderView {

@@ -2,6 +2,7 @@
  * @providesModule RCTUIManager
  * @flow
  */
+
 import invariant from "Invariant";
 import RCTBridge, {
   RCT_EXPORT_MODULE,
@@ -17,6 +18,7 @@ import RCTRootView from "RCTRootView";
 import RCTDeviceInfo from "RCTDeviceInfo";
 import RCTRootShadowView from "RCTRootShadowView";
 import RCTLayoutAnimationManager from "RCTLayoutAnimationManager";
+import RCTUIManagerObserverCoordinator from "RCTUIManagerObserverCoordinator";
 
 import type RCTShadowView, { LayoutChange } from "RCTShadowView";
 import type { LayoutAnimationConfig } from "RCTLayoutAnimationManager";
@@ -36,6 +38,7 @@ class RCTUIManager {
   componentDataByName: Map<string, RCTComponentData>;
   jsResponder: ?UIView;
   layoutAnimationManager: RCTLayoutAnimationManager;
+  observerCoordinator: RCTUIManagerObserverCoordinator;
 
   pendingUIBlocks: Array<Function> = [];
 
@@ -58,6 +61,7 @@ class RCTUIManager {
     });
 
     this.layoutAnimationManager = new RCTLayoutAnimationManager(this);
+    this.observerCoordinator = new RCTUIManagerObserverCoordinator();
 
     invariant(this.bridge, "Bridge must be set");
     const deviceInfoModule: RCTDeviceInfo = (this.bridge.modulesByName[
@@ -134,6 +138,12 @@ class RCTUIManager {
    */
   rootViewForReactTag(reactTag: number, completion: Function) {}
 
+  viewNameForReactTag(reactTag: number): string {
+    const shadowView = this.shadowViewRegistry.get(reactTag);
+    invariant(shadowView, `No such shadowView with id ${reactTag}`);
+    return shadowView.viewName;
+  }
+
   purgeView(reactTag: number) {
     if (this.layoutAnimationManager.isPending()) {
       this.layoutAnimationManager.queueRemovedNode(reactTag);
@@ -153,14 +163,7 @@ class RCTUIManager {
   }
 
   frame() {
-    if (this.pendingUIBlocks.length > 0) {
-      const uiBlocks = [...this.pendingUIBlocks];
-      this.pendingUIBlocks = [];
-
-      uiBlocks.forEach(block => {
-        block.call(null, this, this.viewRegistry);
-      });
-    }
+    this.observerCoordinator.uiManagerWillPerformLayout(this);
 
     this.rootViewTags.forEach(rootTag => {
       const rootShadowView = this.shadowViewRegistry.get(rootTag);
@@ -169,8 +172,8 @@ class RCTUIManager {
           rootShadowView instanceof RCTRootShadowView,
           "attempting to recalculate from shadowView that isn't root"
         );
-        const layoutChanges = rootShadowView.recalculateLayout();
 
+        const layoutChanges = rootShadowView.recalculateLayout();
         if (this.layoutAnimationManager.isPending()) {
           this.layoutAnimationManager.addLayoutChanges(layoutChanges);
         } else {
@@ -181,8 +184,21 @@ class RCTUIManager {
       }
     });
 
+    this.observerCoordinator.uiManagerDidPerformLayout(this);
+
     if (this.layoutAnimationManager.isPending()) {
       this.layoutAnimationManager.applyLayoutChanges();
+    }
+
+    this.observerCoordinator.uiManagerWillFlushBlocks(this);
+
+    if (this.pendingUIBlocks.length > 0) {
+      const uiBlocks = [...this.pendingUIBlocks];
+      this.pendingUIBlocks = [];
+
+      uiBlocks.forEach(block => {
+        block.call(null, this, this.viewRegistry);
+      });
     }
   }
 
@@ -264,6 +280,13 @@ class RCTUIManager {
     this.pendingUIBlocks.push(block);
   }
 
+  prependUIBlock(block: ?Function) {
+    if (!block) {
+      return;
+    }
+    this.pendingUIBlocks.unshift(block);
+  }
+
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
   setChildren(containerTag: number, reactTags: Array<number>) {
     RCTUIManager.RCTSetChildren(
@@ -310,6 +333,7 @@ class RCTUIManager {
     // register shadow view
     const shadowView = componentData.createShadowView(reactTag);
     if (shadowView != null) {
+      shadowView.viewName = viewName;
       componentData.setPropsForShadowView(props, shadowView);
       this.shadowViewRegistry.set(reactTag, shadowView);
     }
@@ -348,10 +372,24 @@ class RCTUIManager {
       componentData.setPropsForShadowView(updatedProps, shadowView);
     }
 
-    // TODO determine if should be added to UI Queue or not
+    this.addUIBlock(() => {
+      const view = this.viewRegistry.get(reactTag);
+      if (view) {
+        componentData.setPropsForView(updatedProps, view);
+      }
+    });
+  }
+
+  synchronouslyUpdateView(reactTag: number, viewName: string, props: Object) {
+    const componentData = this.componentDataByName.get(viewName);
+    invariant(
+      componentData,
+      `No component found for view with name ${viewName}`
+    );
+
     const view = this.viewRegistry.get(reactTag);
     if (view) {
-      componentData.setPropsForView(updatedProps, view);
+      componentData.setPropsForView(props, view);
     }
   }
 

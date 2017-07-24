@@ -142,6 +142,7 @@ export default class RCTBridge {
   bundleLocation: string;
 
   _uiManager: ?RCTUIManager;
+  _eventDispatcher: ?RCTEventDispatcher;
 
   constructor(moduleName: string, bundle: string) {
     this.moduleName = moduleName;
@@ -326,6 +327,14 @@ export default class RCTBridge {
       this._uiManager = uiManager;
     }
     return this._uiManager;
+  }
+
+  get eventDispatcher(): RCTEventDispatcher {
+    if (!this._eventDispatcher) {
+      const eventDispatcher: any = this.modulesByName["EventDispatcher"];
+      this._eventDispatcher = eventDispatcher;
+    }
+    return this._eventDispatcher;
   }
 
   frame() {

@@ -154,6 +154,11 @@ class RCTViewManager {
     view.transform = value;
   }
 
+  @RCT_EXPORT_VIEW_PROP("animatedTransform", "array", false)
+  setAnimatedTransform(view: RCTView, value: Array<Object>) {
+    view.animatedTransform = value;
+  }
+
   @RCT_EXPORT_VIEW_PROP("borderRadius", "number")
   setBorderRadius(view: RCTView, value: number) {
     view.borderRadius = value;

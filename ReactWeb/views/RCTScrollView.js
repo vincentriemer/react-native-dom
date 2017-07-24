@@ -135,7 +135,6 @@ type ChildFrame = {
 @CustomElement("rct-scroll-view")
 class RCTScrollView extends RCTView {
   bridge: RCTBridge;
-  eventDispatcher: RCTEventDispatcher;
   manager: RCTUIManager;
 
   isScrolling: boolean;
@@ -147,8 +146,6 @@ class RCTScrollView extends RCTView {
   constructor(bridge: RCTBridge) {
     super(bridge);
 
-    const eventDispatcher: any = bridge.modulesByName["EventDispatcher"];
-    this.eventDispatcher = eventDispatcher;
     const manager: any = bridge.modulesByName["UIManager"];
     this.manager = manager;
 
@@ -229,8 +226,8 @@ class RCTScrollView extends RCTView {
       1
     ];
 
-    this.eventDispatcher.sendEvent(
-      new RCTScrollEvent("scroll", ...args, {
+    this.bridge.eventDispatcher.sendEvent(
+      new RCTScrollEvent("onScroll", ...args, {
         updatedChildFrames: childFrames
       })
     );
@@ -281,14 +278,14 @@ class RCTScrollView extends RCTView {
     this.isScrolling = true;
     this._scrollLastTick = Date.now();
 
-    const scrollEvent = new RCTScrollEvent("scrollBeginDrag", ...eventArgs);
-    this.eventDispatcher.sendEvent(scrollEvent);
+    const scrollEvent = new RCTScrollEvent("onScrollBeginDrag", ...eventArgs);
+    this.bridge.eventDispatcher.sendEvent(scrollEvent);
   }
 
   handleScrollEnd(...eventArgs) {
-    const scrollEvent = new RCTScrollEvent("scrollEndDrag", ...eventArgs);
+    const scrollEvent = new RCTScrollEvent("onScrollEndDrag", ...eventArgs);
     this.isScrolling = false;
-    this.eventDispatcher.sendEvent(scrollEvent);
+    this.bridge.eventDispatcher.sendEvent(scrollEvent);
   }
 
   handleScrollTick(...eventArgs) {
@@ -299,8 +296,8 @@ class RCTScrollView extends RCTView {
 
     if (shouldEmitScrollEvent) {
       this._scrollLastTick = Date.now();
-      const scrollEvent = new RCTScrollEvent("scroll", ...eventArgs);
-      this.eventDispatcher.sendEvent(scrollEvent);
+      const scrollEvent = new RCTScrollEvent("onScroll", ...eventArgs);
+      this.bridge.eventDispatcher.sendEvent(scrollEvent);
     }
   }
 

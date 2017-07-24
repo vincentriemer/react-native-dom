@@ -31,6 +31,10 @@ export interface RCTEvent {
   arguments(): Array<any>
 }
 
+export interface RCTEventDispatcherObserver {
+  eventDispatcherWillDispatchEvent(event: RCTEvent): void
+}
+
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -64,7 +68,7 @@ class RCTEventDispatcher {
   eventQueue: Array<number>;
   // queueLock ??
   eventsDispatchScheduled: boolean;
-  // observers ??
+  observers: Set<RCTEventDispatcherObserver>;
   // observersLock ??
 
   static RCTGetEventID(event: RCTEvent): number {
@@ -80,6 +84,7 @@ class RCTEventDispatcher {
     this.events = {};
     this.eventQueue = [];
     this.eventsDispatchScheduled = false;
+    this.observers = new Set();
   }
 
   sendInputEvent(name: string, body: Object) {
@@ -133,6 +138,10 @@ class RCTEventDispatcher {
    * If an event can be coalesced and there is another compatible event waiting, the coalescing will happen immediately.
    */
   sendEvent(event: RCTEvent) {
+    for (let observer of this.observers) {
+      observer.eventDispatcherWillDispatchEvent(event);
+    }
+
     const eventID = RCTEventDispatcher.RCTGetEventID(event);
 
     const previousEvent = this.events[eventID];
@@ -178,6 +187,14 @@ class RCTEventDispatcher {
     eventQueue.forEach(eventId => {
       this.dispatchEvent(events[eventId]);
     });
+  }
+
+  addDispatchObserver(observer: RCTEventDispatcherObserver) {
+    this.observers.add(observer);
+  }
+
+  removeDispatchObserver(observer: RCTEventDispatcherObserver) {
+    this.observers.delete(observer);
   }
 }
 
