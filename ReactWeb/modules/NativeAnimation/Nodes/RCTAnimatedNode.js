@@ -30,7 +30,7 @@ class RCTAnimatedNode {
     }
   }
 
-  removeChild(child: ?RCTAnimatedNode) {
+  removeChild(child: RCTAnimatedNode) {
     if (!this.childNodes) {
       return;
     }
@@ -40,7 +40,7 @@ class RCTAnimatedNode {
     }
   }
 
-  onAttachedToNode(parent: ?RCTAnimatedNode) {
+  onAttachedToNode(parent: RCTAnimatedNode) {
     if (!this.parentNodes) {
       this.parentNodes = {};
     }
@@ -49,7 +49,7 @@ class RCTAnimatedNode {
     }
   }
 
-  onDetachedFromNode(parent: ?RCTAnimatedNode) {
+  onDetachedFromNode(parent: RCTAnimatedNode) {
     if (!this.parentNodes) {
       return;
     }
