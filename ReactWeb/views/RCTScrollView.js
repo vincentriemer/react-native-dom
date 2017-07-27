@@ -87,7 +87,12 @@ class RCTScrollEvent implements RCTEvent {
     return "RCTEventEmitter.receiveEvent";
   }
   arguments(): Array<any> {
-    return [this.viewTag, normalizeInputEventName(this.eventName), this.body];
+    const args = [
+      this.viewTag,
+      normalizeInputEventName(this.eventName),
+      this.body
+    ];
+    return args;
   }
 }
 
@@ -283,9 +288,16 @@ class RCTScrollView extends RCTView {
   }
 
   handleScrollEnd(...eventArgs) {
-    const scrollEvent = new RCTScrollEvent("onScrollEndDrag", ...eventArgs);
     this.isScrolling = false;
+
+    const scrollEvent = new RCTScrollEvent("onScrollEndDrag", ...eventArgs);
     this.bridge.eventDispatcher.sendEvent(scrollEvent);
+
+    const momentumScrollEvent = new RCTScrollEvent(
+      "onMomentumScrollEnd",
+      ...eventArgs
+    );
+    this.bridge.eventDispatcher.sendEvent(momentumScrollEvent);
   }
 
   handleScrollTick(...eventArgs) {

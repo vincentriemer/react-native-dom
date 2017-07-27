@@ -10,7 +10,6 @@ import CustomElement from "CustomElement";
 @CustomElement("rct-view")
 class RCTView extends UIView {
   bridge: RCTBridge;
-  emitter: RCTEventEmitter;
 
   onLayout: boolean = false;
 

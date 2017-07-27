@@ -10,11 +10,12 @@ import {
   ScrollView,
   FlatList
 } from "react-native";
+
 class FlatListExample extends Component {
   getData() {
     const data = [];
 
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 100; i++) {
       data.push({ key: `Element ${i}` });
     }
 
@@ -26,7 +27,7 @@ class FlatListExample extends Component {
       <View style={styles.container}>
         <FlatList
           data={this.getData()}
-          removeClippedSubviews
+          debug={true}
           renderItem={({ item }) =>
             <TouchableOpacity
               onPress={() => console.log(item.key)}
@@ -52,8 +53,7 @@ const styles = StyleSheet.create({
     alignItems: "stretch"
   },
   item: {
-    padding: 20,
-    // fontSize: 18,
+    padding: 50,
     backgroundColor: "pink",
     margin: 20
   }
