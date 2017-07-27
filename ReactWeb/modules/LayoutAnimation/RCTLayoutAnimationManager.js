@@ -136,7 +136,7 @@ class RCTLayoutAnimationManager {
           newValue = 0;
         }
 
-        // hack to fix some weirdness on retina displays
+        // protect against divide by zero errors
         newValue += 0.0001;
       } else {
         newValue = from + (to - from) * keyframes[index];
