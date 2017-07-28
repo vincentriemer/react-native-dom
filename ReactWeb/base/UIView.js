@@ -85,7 +85,7 @@ class UIView extends HTMLElement implements RCTComponent {
     this.reactSubviews = [];
     this.hasBeenFramed = false;
     this.opacity = 1;
-    this.style.opacity = 0;
+    this.style.opacity = "0";
 
     this.position = "absolute";
     this.backgroundColor = "transparent";
@@ -243,6 +243,10 @@ class UIView extends HTMLElement implements RCTComponent {
         const value = transformObject[property];
         if (["translateX", "translateY", "translateZ"].includes(property)) {
           transformString += `${property}(${value}px)`;
+        } else if (
+          ["rotate", "rotateX", "rotateY", "rotateZ"].includes(property)
+        ) {
+          transformString += `${property}(${value}rad)`;
         } else {
           transformString += `${property}(${value})`;
         }

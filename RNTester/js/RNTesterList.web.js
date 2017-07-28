@@ -172,10 +172,10 @@ const APIExamples: Array<RNTesterExample> = [
     key: "AnimatedExample",
     module: require("./AnimatedExample")
   },
-  // {
-  //   key: "AnExApp",
-  //   module: require("./AnimatedGratuitousApp/AnExApp")
-  // },
+  {
+    key: "AnExApp",
+    module: require("./AnimatedGratuitousApp/AnExApp")
+  },
   // {
   //   key: "AppStateExample",
   //   module: require("./AppStateExample")

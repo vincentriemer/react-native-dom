@@ -20,6 +20,7 @@ import RCTPropsAnimatedNode from "RCTPropsAnimatedNode";
 import RCTStyleAnimatedNode from "RCTStyleAnimatedNode";
 import RCTInterpolationAnimatedNode from "RCTInterpolationAnimatedNode";
 import RCTTransformAnimatedNode from "RCTTransformAnimatedNode";
+import RCTMultiplicationAnimatedNode from "RCTMultiplicationAnimatedNode";
 
 // Drivers
 import RCTEventAnimation from "RCTEventAnimation";
@@ -30,7 +31,8 @@ const NODE_TYPE_MAP: { [typeName: string]: Class<RCTAnimatedNode> } = {
   value: RCTValueAnimatedNode,
   props: RCTPropsAnimatedNode,
   interpolation: RCTInterpolationAnimatedNode,
-  transform: RCTTransformAnimatedNode
+  transform: RCTTransformAnimatedNode,
+  multiplication: RCTMultiplicationAnimatedNode
 };
 
 const DRIVER_TYPE_MAP: { [typeName: string]: Class<RCTAnimationDriver> } = {
