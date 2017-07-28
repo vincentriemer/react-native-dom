@@ -180,7 +180,6 @@ class RCTShadowView implements RCTComponent {
       view = view.reactSuperview;
       view.isDirty = true;
     }
-    // view.makeDirtyRecursive();
   }
 
   makeDirtyRecursive(): void {
@@ -205,7 +204,8 @@ class RCTShadowView implements RCTComponent {
   }
 
   purge() {
-    this.yogaNode.freeRecursive();
+    this.reactSubviews.forEach(subView => subView.purge());
+    this.yogaNode.free();
   }
 
   // TODO: Implement ===========================================

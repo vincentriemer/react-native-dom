@@ -36,6 +36,11 @@ function escapeHtml(string) {
   });
 }
 
+const textMeasurementContainer = document.createElement("div");
+textMeasurementContainer.id = "text-measurement";
+// Object.assign(textMeasurementContainer, { contain: "strict" });
+document.body && document.body.appendChild(textMeasurementContainer);
+
 class RCTShadowText extends RCTShadowView {
   previousWidth: number;
   previousHeight: number;
@@ -104,7 +109,7 @@ class RCTShadowText extends RCTShadowView {
         whiteSpace: "nowrap",
         display: "inline-block"
       });
-      document.body && document.body.appendChild(domElement);
+      textMeasurementContainer.appendChild(domElement);
       this._testDOMElement = domElement;
     }
     return this._testDOMElement;
@@ -205,19 +210,19 @@ class RCTShadowText extends RCTShadowView {
   ) {
     subview.reactSuperview = this;
     this.textChildren.splice(index, 0, subview);
-    this.makeDirty();
+    this.markTextDirty();
   }
 
   removeReactSubview(subview: RCTShadowText | RCTShadowRawText) {
     subview.reactSuperview = undefined;
     this.textChildren = this.textChildren.filter(s => s !== subview);
-    this.makeDirty();
+    this.markTextDirty();
   }
 
   purge() {
     super.purge();
     if (this._testDOMElement) {
-      document.body.remove(this._testDOMElement);
+      this._testDOMElement.parentNode.removeChild(this._testDOMElement);
     }
   }
 }

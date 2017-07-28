@@ -237,7 +237,13 @@ class UIView extends HTMLElement implements RCTComponent {
     return this._animatedTransform;
   }
 
-  set animatedTransform(value: Array<Object>) {
+  set animatedTransform(value: ?Array<Object>) {
+    if (!value) {
+      this._animatedTransform = "";
+      this.updateTransform();
+      return;
+    }
+
     let transformString = "";
     value.forEach(transformObject => {
       Object.keys(transformObject).forEach(property => {
