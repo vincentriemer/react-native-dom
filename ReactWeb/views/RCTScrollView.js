@@ -109,7 +109,8 @@ export class RCTScrollContentView extends RCTView {
     Object.assign(this.style, {
       position: "relative",
       display: "block",
-      opacity: "1"
+      opacity: "1",
+      willChange: "transform" // vastly improves scrolling performance (especially on sfarai)
     });
   }
 
