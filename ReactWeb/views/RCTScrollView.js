@@ -110,7 +110,9 @@ export class RCTScrollContentView extends RCTView {
       position: "relative",
       display: "block",
       opacity: "1",
-      willChange: "transform" // vastly improves scrolling performance (especially on sfarai)
+
+      // vastly improves scrolling performance (especially on sfarai)
+      willChange: "transform"
     });
   }
 

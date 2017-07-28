@@ -24,3 +24,5 @@ export interface RCTAnimationDriver {
   stepAnimationWithTime(currentTime: number): void,
   stopAnimation(): void
 }
+
+export const RCTSingleFrameInterval = 16.667;

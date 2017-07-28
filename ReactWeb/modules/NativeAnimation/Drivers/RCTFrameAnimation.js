@@ -7,9 +7,8 @@ import type { Config } from "RCTNativeAnimatedModule";
 import type { RCTAnimationDriver } from "RCTAnimationDriver";
 import type RCTValueAnimatedNode from "RCTValueAnimatedNode";
 
+import { RCTSingleFrameInterval } from "RCTAnimationDriver";
 import { RCTInterpolateValue } from "RCTAnimationUtils";
-
-const RCTSingleFrameInterval = 16.667;
 
 class RCTFrameAnimation implements RCTAnimationDriver {
   animationId: number;

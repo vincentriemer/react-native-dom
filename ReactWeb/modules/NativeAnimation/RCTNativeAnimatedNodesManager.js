@@ -27,6 +27,7 @@ import RCTModuloAnimatedNode from "RCTModuloAnimatedNode";
 // Drivers
 import RCTEventAnimation from "RCTEventAnimation";
 import RCTFrameAnimation from "RCTFrameAnimation";
+import RCTDecayAnimation from "RCTDecayAnimation";
 
 const NODE_TYPE_MAP: { [typeName: string]: Class<RCTAnimatedNode> } = {
   style: RCTStyleAnimatedNode,
@@ -40,7 +41,8 @@ const NODE_TYPE_MAP: { [typeName: string]: Class<RCTAnimatedNode> } = {
 };
 
 const DRIVER_TYPE_MAP: { [typeName: string]: Class<RCTAnimationDriver> } = {
-  frames: RCTFrameAnimation
+  frames: RCTFrameAnimation,
+  decay: RCTDecayAnimation
 };
 
 class RCTNativeAnimatedNodesManager {
