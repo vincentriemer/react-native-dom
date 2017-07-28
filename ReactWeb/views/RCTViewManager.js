@@ -189,6 +189,16 @@ class RCTViewManager {
     view.onLayout = value;
   }
 
+  @RCT_EXPORT_VIEW_PROP("zIndex", "number")
+  setZIndex(view: RCTView, value: number) {
+    view.zIndex = value;
+  }
+
+  @RCT_EXPORT_VIEW_PROP("overflow", "string")
+  setOverflow(view: RCTView, value: string) {
+    view.overflow = value;
+  }
+
   @RCT_EXPORT_DIRECT_SHADOW_PROPS
   getDirectShadowViewProps() {
     return [

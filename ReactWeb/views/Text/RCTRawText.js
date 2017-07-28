@@ -8,24 +8,28 @@ import CustomElement from "CustomElement";
 
 @CustomElement("rct-raw-text")
 class RCTRawText extends RCTView {
+  _text: string;
+
   constructor(bridge: RCTBridge) {
     super(bridge);
 
     Object.assign(this.style, {
       position: "static",
       display: "inline",
-      contain: "content"
+      contain: "style"
     });
 
+    this._text = "";
     this.hasBeenFramed = true;
     this.opacity = 1;
   }
 
   get text(): string {
-    return this.innerText;
+    return this._text;
   }
 
   set text(value: string) {
+    this._text = value;
     this.innerText = value;
   }
 }

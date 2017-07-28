@@ -15,7 +15,7 @@ import RCTShadowRawText from "RCTShadowRawText";
 @RCT_EXPORT_MODULE
 class RCTRawTextManager extends RCTViewManager {
   view(): RCTRawText {
-    return new RCTRawText();
+    return new RCTRawText(this.bridge);
   }
 
   shadowView(): RCTShadowRawText {

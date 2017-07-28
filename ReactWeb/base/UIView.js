@@ -89,7 +89,8 @@ class UIView extends HTMLElement implements RCTComponent {
 
     this.position = "absolute";
     this.backgroundColor = "transparent";
-    this.style.overflow = "hidden";
+
+    this.style.contain = "size layout style";
     this.style.boxSizing = "border-box";
   }
 
@@ -297,6 +298,14 @@ class UIView extends HTMLElement implements RCTComponent {
   set touchable(value: boolean) {
     this._touchable = value;
     this.style.cursor = value ? "pointer" : "auto";
+  }
+
+  set zIndex(value: number) {
+    this.style.zIndex = `${value}`;
+  }
+
+  set overflow(value: string) {
+    this.style.overflow = value;
   }
 
   insertReactSubviewAtIndex(subview: UIView, index: number) {

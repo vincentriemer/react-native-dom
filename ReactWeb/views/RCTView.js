@@ -15,9 +15,7 @@ class RCTView extends UIView {
 
   constructor(bridge: RCTBridge) {
     super();
-
     this.bridge = bridge;
-    this.style.contain = "strict";
   }
 
   get frame(): Frame {

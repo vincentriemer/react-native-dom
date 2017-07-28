@@ -168,8 +168,8 @@ class RCTShadowText extends RCTShadowView {
     this.testDOMElement.appendChild(this.getTestTree());
 
     return {
-      width: this.testDOMElement.clientWidth + 1,
-      height: this.testDOMElement.clientHeight + 1
+      width: Math.ceil(this.testDOMElement.clientWidth + 1),
+      height: Math.ceil(this.testDOMElement.clientHeight + 1)
     };
   }
 

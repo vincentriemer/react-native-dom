@@ -160,6 +160,7 @@ class RCTScrollView extends RCTView {
     this.manager = manager;
 
     this.style.webkitOverflowScrolling = "touch";
+    this.style.contain = "strict";
 
     this.isScrolling = false;
     this.scrollEventThrottle = 0;

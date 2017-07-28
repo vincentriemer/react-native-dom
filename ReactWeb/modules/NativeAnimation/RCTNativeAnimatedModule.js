@@ -147,6 +147,7 @@ class RCTNativeAnimatedModule extends RCTEventEmitter {
   startListeningToAnimatedNodeValue(tag: number) {
     const valueObserver = this;
     this.addOperationBlock(nodesManager => {
+      this.addListener("onAnimatedValueUpdate");
       nodesManager.startListeningToAnimatedNodeValue(tag, valueObserver);
     });
   }
@@ -154,6 +155,7 @@ class RCTNativeAnimatedModule extends RCTEventEmitter {
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
   stopListeningToAnimatedNodeValue(tag: number) {
     this.addOperationBlock(nodesManager => {
+      this.removeListener("onAnimatedValueUpdate");
       nodesManager.stopListeningToAnimatedNodeValue(tag);
     });
   }
