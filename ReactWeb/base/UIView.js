@@ -5,7 +5,7 @@
 
 import type RCTTouchHandler from "RCTTouchHandler";
 import type { RCTComponent } from "RCTComponent";
-import UIBorderView from "UIBorderView";
+import UIBorderView, { ALL_BORDER_PROPS } from "UIBorderView";
 import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 
@@ -65,12 +65,6 @@ class UIView extends HTMLElement implements RCTComponent {
   _transform: string;
   _animatedTransform: string;
 
-  // property shorthands
-  _borderColor: ?number;
-  _borderRadius: ?number;
-  _borderWidth: ?number;
-  _borderStyle: ?string;
-
   childBorderView: ?UIBorderView;
 
   reactTag: number;
@@ -89,9 +83,23 @@ class UIView extends HTMLElement implements RCTComponent {
 
     this.position = "absolute";
     this.backgroundColor = "transparent";
+    this.overflow = "hidden";
 
     this.style.contain = "size layout style";
     this.style.boxSizing = "border-box";
+
+    ALL_BORDER_PROPS.forEach(propName => {
+      Object.defineProperty(this, propName, {
+        configurable: true,
+        set: value => {
+          if (propName.startsWith("border") && propName.endsWith("Radius")) {
+            this.style[propName] = `${value}px`;
+          }
+          // $FlowFixMe
+          this.borderChild[propName] = value;
+        }
+      });
+    });
   }
 
   get frame(): Frame {
@@ -128,7 +136,6 @@ class UIView extends HTMLElement implements RCTComponent {
       this._top = value;
       this.updateTransform();
     }
-    // this.style.top = `${value}px`;
   }
 
   get left(): number {
@@ -140,7 +147,6 @@ class UIView extends HTMLElement implements RCTComponent {
       this._left = value;
       this.updateTransform();
     }
-    // this.style.left = `${value}px`;
   }
 
   get bottom(): number {
@@ -273,28 +279,6 @@ class UIView extends HTMLElement implements RCTComponent {
     }
 
     return this.childBorderView;
-  }
-
-  set borderRadius(value: number) {
-    this._borderRadius = value;
-    this.style.borderRadius = `${value}px`;
-
-    this.borderChild.borderRadius = value;
-  }
-
-  set borderColor(value: number) {
-    this._borderColor = value;
-    this.borderChild.borderColor = value;
-  }
-
-  set borderWidth(value: number) {
-    this._borderWidth = value;
-    this.borderChild.borderWidth = value;
-  }
-
-  set borderStyle(value: string) {
-    this._borderStyle = value;
-    this.borderChild.borderStyle = value;
   }
 
   get touchable(): boolean {

@@ -6,6 +6,45 @@
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 import CustomElement from "CustomElement";
 
+const BORDER_STYLE_PROPS = [
+  "borderStyle",
+  "borderTopStyle",
+  "borderBottomStyle",
+  "borderLeftStyle",
+  "borderRightStyle"
+];
+
+const BORDER_WIDTH_PROPS = [
+  "borderWidth",
+  "borderTopWidth",
+  "borderBottomWidth",
+  "borderLeftWidth",
+  "borderRightWidth"
+];
+
+const BORDER_COLOR_PROPS = [
+  "borderColor",
+  "borderTopColor",
+  "borderBottomColor",
+  "borderLeftColor",
+  "borderRightColor"
+];
+
+const BORDER_RADIUS_PROPS = [
+  "borderRadius",
+  "borderTopLeftRadius",
+  "borderTopRightRadius",
+  "borderBottomLeftRadius",
+  "borderBottomRightRadius"
+];
+
+export const ALL_BORDER_PROPS = [].concat(
+  BORDER_STYLE_PROPS,
+  BORDER_WIDTH_PROPS,
+  BORDER_COLOR_PROPS,
+  BORDER_RADIUS_PROPS
+);
+
 @CustomElement("ui-border-view")
 class UIBorderView extends HTMLElement {
   constructor() {
@@ -21,7 +60,41 @@ class UIBorderView extends HTMLElement {
       transformOrigin: "top left",
       pointerEvents: "none",
       borderStyle: "solid",
-      borderWidth: "0"
+      borderWidth: "0",
+      overflow: "hidden"
+    });
+
+    BORDER_STYLE_PROPS.forEach(propName => {
+      Object.defineProperty(this, propName, {
+        configurable: true,
+        set: value => {
+          if (value == null) {
+            this.style[propName] = "solid";
+          } else {
+            this.style[propName] = value;
+          }
+        }
+      });
+    });
+
+    BORDER_COLOR_PROPS.forEach(propName => {
+      Object.defineProperty(this, propName, {
+        configurable: true,
+        set: value => {
+          const [a, r, g, b] = ColorArrayFromHexARGB(value);
+          const stringValue = `rgba(${r},${g},${b},${a})`;
+          this.style[propName] = stringValue;
+        }
+      });
+    });
+
+    [].concat(BORDER_WIDTH_PROPS, BORDER_RADIUS_PROPS).forEach(propName => {
+      Object.defineProperty(this, propName, {
+        configurable: true,
+        set: value => {
+          this.style[propName] = `${value}px`;
+        }
+      });
     });
   }
 

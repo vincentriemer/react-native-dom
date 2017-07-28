@@ -5,6 +5,7 @@
 
 import RCTBridge, { RCT_EXPORT_MODULE, RCT_EXPORT_METHOD } from "RCTBridge";
 import UIView from "UIView";
+import { ALL_BORDER_PROPS } from "UIBorderView";
 import RCTShadowView from "RCTShadowView";
 import RCTView from "RCTView";
 
@@ -97,6 +98,28 @@ export function RCT_EXPORT_DIRECT_SHADOW_PROPS(
   return descriptor;
 }
 
+export function RCT_EXPORT_DIRECT_VIEW_PROPS(
+  target: RCTViewManager,
+  key: any,
+  descriptor: any
+) {
+  if (typeof descriptor.value === "function") {
+    if (target.__props == null) {
+      target.__props = [];
+    }
+
+    const directPropConfigs = descriptor.value().map(([name, type]) => ({
+      name,
+      type,
+      exported: false
+    }));
+
+    target.__props = target.__props.concat(directPropConfigs);
+  }
+
+  return descriptor;
+}
+
 @RCT_EXPORT_MODULE
 class RCTViewManager {
   static __moduleName: string;
@@ -159,30 +182,30 @@ class RCTViewManager {
     view.animatedTransform = value;
   }
 
-  @RCT_EXPORT_VIEW_PROP("borderRadius", "number")
-  setBorderRadius(view: RCTView, value: number) {
-    view.borderRadius = value;
-  }
+  // @RCT_EXPORT_VIEW_PROP("borderRadius", "number")
+  // setBorderRadius(view: RCTView, value: number) {
+  //   view.borderRadius = value;
+  // }
 
   @RCT_EXPORT_VIEW_PROP("onStartShouldSetResponder", "bool")
   setOnStartShouldSetResponder(view: RCTView, value: boolean) {
     view.touchable = value;
   }
 
-  @RCT_EXPORT_VIEW_PROP("borderWidth", "number")
-  setBorderWidth(view: RCTView, value: number) {
-    view.borderWidth = value;
-  }
+  // @RCT_EXPORT_VIEW_PROP("borderWidth", "number")
+  // setBorderWidth(view: RCTView, value: number) {
+  //   view.borderWidth = value;
+  // }
 
-  @RCT_EXPORT_VIEW_PROP("borderColor", "number")
-  setBorderColor(view: RCTView, value: number) {
-    view.borderColor = value;
-  }
+  // @RCT_EXPORT_VIEW_PROP("borderColor", "number")
+  // setBorderColor(view: RCTView, value: number) {
+  //   view.borderColor = value;
+  // }
 
-  @RCT_EXPORT_VIEW_PROP("borderStyle", "string")
-  setBorderStyle(view: RCTView, value: string) {
-    view.borderStyle = value;
-  }
+  // @RCT_EXPORT_VIEW_PROP("borderStyle", "string")
+  // setBorderStyle(view: RCTView, value: string) {
+  //   view.borderStyle = value;
+  // }
 
   @RCT_EXPORT_VIEW_PROP("onLayout", "RCTDirectEventBlock")
   setOnLayout(view: RCTView, value: boolean) {
@@ -197,6 +220,15 @@ class RCTViewManager {
   @RCT_EXPORT_VIEW_PROP("overflow", "string")
   setOverflow(view: RCTView, value: string) {
     view.overflow = value;
+  }
+
+  @RCT_EXPORT_DIRECT_VIEW_PROPS
+  getDirectViewProps() {
+    const borderPropConfig = ALL_BORDER_PROPS.map(propName => [
+      propName,
+      "string"
+    ]);
+    return [...borderPropConfig];
   }
 
   @RCT_EXPORT_DIRECT_SHADOW_PROPS

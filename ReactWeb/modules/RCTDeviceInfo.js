@@ -57,8 +57,8 @@ class RCTDeviceInfo extends RCTEventEmitter {
     } else if (window.devicePixelRatio !== undefined) {
       ratio = window.devicePixelRatio;
     }
-    // return ratio;
-    return 1;
+
+    return ratio;
   }
 
   didUpdateDimensions() {
