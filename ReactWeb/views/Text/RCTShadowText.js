@@ -7,6 +7,7 @@ import guid from "Guid";
 import invariant from "Invariant";
 import RCTShadowView from "RCTShadowView";
 import RCTShadowRawText from "RCTShadowRawText";
+import { defaultFontStack } from "RCTSharedTextValues";
 
 import { MEASURE_MODE_EXACTLY, MEASURE_MODE_UNDEFINED } from "yoga-js";
 
@@ -84,7 +85,7 @@ class RCTShadowText extends RCTShadowView {
       });
     });
 
-    this.fontFamily = "sans-serif";
+    this.fontFamily = defaultFontStack;
   }
 
   get numberOfLines(): number {

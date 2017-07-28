@@ -53,6 +53,11 @@ class RCTTextManager extends RCTViewManager {
   setPadding(view: RCTText, value: number) {
     view.style.padding = `${value}px`;
   }
+
+  @RCT_EXPORT_MIRRORED_PROP("fontWeight", "string")
+  setFontWeight(view: RCTText, value: string) {
+    view.fontWeight = value;
+  }
 }
 
 export default RCTTextManager;

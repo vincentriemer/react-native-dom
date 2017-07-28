@@ -7,6 +7,7 @@ import type { Frame } from "UIView";
 import type RCTBridge from "RCTBridge";
 
 import RCTView from "RCTView";
+import { defaultFontStack } from "RCTSharedTextValues";
 import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 
@@ -20,11 +21,12 @@ class RCTText extends RCTView {
 
     Object.assign(this.style, {
       position: "static",
-      display: "inline"
+      display: "inline",
+      contain: "none"
     });
 
     this.selectable = false;
-    this.fontFamily = "sans-serif";
+    this.fontFamily = defaultFontStack;
   }
 
   get color(): number {
@@ -92,6 +94,10 @@ class RCTText extends RCTView {
       MozUserSelect: valueResult,
       userSelect: valueResult
     });
+  }
+
+  set fontWeight(value: string) {
+    this.style.fontWeight = value;
   }
 }
 

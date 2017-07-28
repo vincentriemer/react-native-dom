@@ -41,7 +41,11 @@ class UIBorderView extends HTMLElement {
   }
 
   set borderStyle(value: string) {
-    this.style.borderStyle = value;
+    if (value == null) {
+      this.style.borderStyle = "solid";
+    } else {
+      this.style.borderStyle = value;
+    }
   }
 }
 
