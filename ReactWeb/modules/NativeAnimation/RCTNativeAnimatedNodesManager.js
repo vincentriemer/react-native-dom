@@ -22,6 +22,7 @@ import RCTInterpolationAnimatedNode from "RCTInterpolationAnimatedNode";
 import RCTTransformAnimatedNode from "RCTTransformAnimatedNode";
 import RCTMultiplicationAnimatedNode from "RCTMultiplicationAnimatedNode";
 import RCTAdditionAnimatedNode from "RCTAdditionAnimatedNode";
+import RCTModuloAnimatedNode from "RCTModuloAnimatedNode";
 
 // Drivers
 import RCTEventAnimation from "RCTEventAnimation";
