@@ -35,8 +35,8 @@
     "start": "react-native start --reset-cache",
     "prebuild": "rimraf dist && mkdir -p dist",
     "build": "yarn run build:client && yarn run build:bundle && cp ./RNTester/js/index.html ./dist/index.html",
-    "build:client": "react-native bundle --dev false --entry-file ./RNTester/js/client.js --bundle-output ./dist/client.bundle --platform web --reset-cache",
-    "build:bundle": "react-native bundle --dev false --entry-file ./RNTester/js/RNTesterApp.web.js --bundle-output ./dist/index.bundle --platform web --reset-cache",
+    "build:client": "react-native bundle --config $(pwd)/rn-cli.config.js --dev true --entry-file ./RNTester/js/client.js --bundle-output ./dist/client.bundle --platform web --reset-cache",
+    "build:bundle": "react-native bundle --config $(pwd)/rn-cli.config.js --dev true --entry-file ./RNTester/js/RNTesterApp.web.js --bundle-output ./dist/RNTesterApp.web.bundle --platform web --reset-cache",
     "test": "jest"
   },
   "jest": {
