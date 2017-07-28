@@ -1,11 +1,11 @@
 /**
- * @providesModule RCTMultiplicationAnimatedNode
+ * @providesModule RCTAdditionAnimatedNode
  * @flow
  */
 
 import RCTValueAnimatedNode from "RCTValueAnimatedNode";
 
-class RCTMultiplicationAnimatedNode extends RCTValueAnimatedNode {
+class RCTAdditionAnimatedNode extends RCTValueAnimatedNode {
   performUpdate() {
     super.performUpdate();
 
@@ -22,10 +22,10 @@ class RCTMultiplicationAnimatedNode extends RCTValueAnimatedNode {
         parent1 instanceof RCTValueAnimatedNode &&
         parent2 instanceof RCTValueAnimatedNode
       ) {
-        this.value = parent1.value * parent2.value;
+        this.value = parent1.value + parent2.value;
       }
     }
   }
 }
 
-export default RCTMultiplicationAnimatedNode;
+export default RCTAdditionAnimatedNode;
