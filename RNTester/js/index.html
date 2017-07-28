@@ -1,0 +1,47 @@
+<html>
+
+<head>
+  <title>RNTester</title>
+  <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css" />
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width">
+</head>
+
+<body>
+  <!-- Web Components ES5 Class Compatibility Layer -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/1.0.4/custom-elements-es5-adapter.js"></script>
+  <!-- Web Components Polyfill -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/1.0.1/webcomponents-loader.js"></script>
+  <!-- Web Animations API Polyfill -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/web-animations/2.2.5/web-animations.min.js"></script>
+  <!-- Bundle Paths -->
+  <script>
+    var clientBundlePath = "./client.bundle?platform=web";
+    var rnBundlePath = "./RNTesterApp.web.bundle?platform=web&dev=true";
+  </script>
+
+  <!-- Helper Functions -->
+  <script>
+    function addScript(src, callback) {
+      var s = document.createElement('script');
+      s.setAttribute('src', src);
+      s.onload = callback;
+      document.body.appendChild(s);
+    }
+  </script>
+
+  <!-- App Initialization -->
+  <script>
+    window.addEventListener('WebComponentsReady', function () {
+      addScript(clientBundlePath, function () {
+        // Initialize the React Native application
+        ReactWeb.init(
+          rnBundlePath,
+          // Attach it to the body tag
+          document.body
+        );
+      });
+    });
+  </script>
+</body>
+
+</html>

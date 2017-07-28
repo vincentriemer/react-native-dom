@@ -476,10 +476,13 @@ class RCTUIManager {
     if (removeFrom) {
       for (let i = 0; i < removeFrom.length; i++) {
         const indexToRemove = removeFrom[i];
-        const tagToRemove = viewToManage.reactSubviews[indexToRemove].reactTag;
-        indicesToRemove[numToMove + i] = indexToRemove;
-        tagsToRemove[numToMove + i] = tagToRemove;
-        tagsToDelete[i] = tagToRemove;
+        if (viewToManage.reactSubviews[indexToRemove]) {
+          const tagToRemove =
+            viewToManage.reactSubviews[indexToRemove].reactTag;
+          indicesToRemove[numToMove + i] = indexToRemove;
+          tagsToRemove[numToMove + i] = tagToRemove;
+          tagsToDelete[i] = tagToRemove;
+        }
       }
     }
 

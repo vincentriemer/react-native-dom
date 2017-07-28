@@ -18,6 +18,24 @@ const TEXT_SHADOW_STYLE_PROPS = [
   "lineHeight"
 ];
 
+var entityMap = {
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&quot;",
+  "'": "&#39;",
+  "/": "&#x2F;",
+  "`": "&#x60;",
+  "=": "&#x3D;"
+};
+
+// from https://stackoverflow.com/a/12034334
+function escapeHtml(string) {
+  return String(string).replace(/[&<>"'`=\/]/g, function(s) {
+    return entityMap[s];
+  });
+}
+
 class RCTShadowText extends RCTShadowView {
   previousWidth: number;
   previousHeight: number;
@@ -169,7 +187,7 @@ class RCTShadowText extends RCTShadowView {
 
     this.textChildren.forEach(child => {
       if (child instanceof RCTShadowRawText && child.text.length) {
-        spanWrapper.insertAdjacentHTML("beforeend", child.text);
+        spanWrapper.insertAdjacentHTML("beforeend", escapeHtml(child.text));
       } else if (child instanceof RCTShadowText) {
         spanWrapper.insertAdjacentElement("beforeend", child.getTestTree());
       }

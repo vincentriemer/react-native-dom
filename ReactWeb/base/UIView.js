@@ -84,7 +84,8 @@ class UIView extends HTMLElement implements RCTComponent {
 
     this.reactSubviews = [];
     this.hasBeenFramed = false;
-    this.opacity = 0;
+    this.opacity = 1;
+    this.style.opacity = 0;
 
     this.position = "absolute";
     this.backgroundColor = "transparent";
@@ -105,7 +106,7 @@ class UIView extends HTMLElement implements RCTComponent {
     Object.assign(this, value);
     if (!this.hasBeenFramed) {
       this.hasBeenFramed = true;
-      this.opacity = 1;
+      this.opacity = this._opacity;
     }
   }
 

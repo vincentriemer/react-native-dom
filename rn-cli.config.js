@@ -21,6 +21,9 @@ var config = {
   },
   getProvidesModuleNodeModules() {
     return ["react-native"];
+  },
+  getPolyfillModuleNames() {
+    return [require.resolve("./Libraries/polyfills/setBabelHelper.js")];
   }
 };
 function getRoots() {

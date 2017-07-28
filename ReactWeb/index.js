@@ -14,6 +14,9 @@ import "RCTTextManager";
 import "RCTRawTextManager";
 import "RCTScrollViewManager";
 import "RCTNativeAnimatedModule";
+import "RCTAsyncLocalStorage";
+import "RCTImageViewManager";
+import "RCTLinkingManager";
 
 // React Native Web Entrypoint instance
 export class RNWebInstance {

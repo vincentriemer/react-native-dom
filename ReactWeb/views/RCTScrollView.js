@@ -9,12 +9,17 @@ import type RCTUIManager from "RCTUIManager";
 import CustomElement from "CustomElement";
 import mixin from "mixin";
 import type { RCTEvent } from "RCTEventDispatcher";
+import detectIt from "detect-it";
 
 import invariant from "Invariant";
 import debounce from "debounce";
 import RCTEventDispatcher, {
   normalizeInputEventName
 } from "RCTEventDispatcher";
+
+const SCROLL_LISTENER_OPTIONS = detectIt.passiveEvents
+  ? { passive: true }
+  : false;
 
 class RCTScrollEvent implements RCTEvent {
   // interface properties
@@ -160,7 +165,8 @@ class RCTScrollView extends RCTView {
     this.scrollEventThrottle = 0;
 
     this.cachedChildFrames = [];
-    this.onscroll = this.handleScroll;
+
+    this.addEventListener("scroll", this.handleScroll, SCROLL_LISTENER_OPTIONS);
   }
 
   calculateChildFramesData() {

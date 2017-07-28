@@ -2,6 +2,7 @@
  * @providesModule RCTDeviceInfo
  * @flow
  */
+
 import RCTBridge, { RCT_EXPORT_MODULE, RCT_EXPORT_METHOD } from "RCTBridge";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 
@@ -56,7 +57,8 @@ class RCTDeviceInfo extends RCTEventEmitter {
     } else if (window.devicePixelRatio !== undefined) {
       ratio = window.devicePixelRatio;
     }
-    return ratio;
+    // return ratio;
+    return 1;
   }
 
   didUpdateDimensions() {

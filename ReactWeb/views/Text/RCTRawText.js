@@ -22,11 +22,11 @@ class RCTRawText extends RCTView {
   }
 
   get text(): string {
-    return this.innerHTML;
+    return this.innerText;
   }
 
   set text(value: string) {
-    this.innerHTML = value;
+    this.innerText = value;
   }
 }
 
