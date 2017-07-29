@@ -87,10 +87,6 @@ class UIView extends HTMLElement implements RCTComponent {
     this.style.contain = "size layout style";
     this.style.boxSizing = "border-box";
 
-    this.style.backfaceVisibility = "hidden";
-    // $FlowFixMe
-    this.style.webkitBackfaceVisibility = "hidden";
-
     ALL_BORDER_PROPS.forEach(propName => {
       Object.defineProperty(this, propName, {
         configurable: true,
@@ -234,10 +230,15 @@ class UIView extends HTMLElement implements RCTComponent {
     return this._transform;
   }
 
-  set transform(value: Array<number>) {
-    const newTransform = `matrix3d(${value.join(",")})`;
-    if (newTransform !== this._transform) {
-      this._transform = newTransform;
+  set transform(value: ?Array<number>) {
+    if (value) {
+      const newTransform = `matrix3d(${value.join(",")})`;
+      if (newTransform !== this._transform) {
+        this._transform = newTransform;
+        this.updateTransform();
+      }
+    } else if (this._transform !== "") {
+      this._transform = "";
       this.updateTransform();
     }
   }
@@ -299,6 +300,12 @@ class UIView extends HTMLElement implements RCTComponent {
 
   set overflow(value: string) {
     this.style.overflow = value;
+  }
+
+  set backfaceVisibility(value: string) {
+    // $FlowFixMe
+    this.style.webkitBackfaceVisibility = value;
+    this.style.backfaceVisibility = value;
   }
 
   insertReactSubviewAtIndex(subview: UIView, index: number) {

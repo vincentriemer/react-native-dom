@@ -182,44 +182,14 @@ class RCTViewManager {
     view.animatedTransform = value;
   }
 
-  // @RCT_EXPORT_VIEW_PROP("borderRadius", "number")
-  // setBorderRadius(view: RCTView, value: number) {
-  //   view.borderRadius = value;
-  // }
-
   @RCT_EXPORT_VIEW_PROP("onStartShouldSetResponder", "bool")
   setOnStartShouldSetResponder(view: RCTView, value: boolean) {
     view.touchable = value;
   }
 
-  // @RCT_EXPORT_VIEW_PROP("borderWidth", "number")
-  // setBorderWidth(view: RCTView, value: number) {
-  //   view.borderWidth = value;
-  // }
-
-  // @RCT_EXPORT_VIEW_PROP("borderColor", "number")
-  // setBorderColor(view: RCTView, value: number) {
-  //   view.borderColor = value;
-  // }
-
-  // @RCT_EXPORT_VIEW_PROP("borderStyle", "string")
-  // setBorderStyle(view: RCTView, value: string) {
-  //   view.borderStyle = value;
-  // }
-
   @RCT_EXPORT_VIEW_PROP("onLayout", "RCTDirectEventBlock")
   setOnLayout(view: RCTView, value: boolean) {
     view.onLayout = value;
-  }
-
-  @RCT_EXPORT_VIEW_PROP("zIndex", "number")
-  setZIndex(view: RCTView, value: number) {
-    view.zIndex = value;
-  }
-
-  @RCT_EXPORT_VIEW_PROP("overflow", "string")
-  setOverflow(view: RCTView, value: string) {
-    view.overflow = value;
   }
 
   @RCT_EXPORT_DIRECT_VIEW_PROPS
@@ -228,7 +198,13 @@ class RCTViewManager {
       propName,
       "string"
     ]);
-    return [...borderPropConfig];
+
+    return [
+      ...borderPropConfig,
+      ["backfaceVisibility", "string"],
+      ["overflow", "string"],
+      ["zIndex", "number"]
+    ];
   }
 
   @RCT_EXPORT_DIRECT_SHADOW_PROPS

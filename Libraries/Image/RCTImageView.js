@@ -4,7 +4,13 @@
  */
 
 import UIView from "UIView";
+import CustomElement from "CustomElement";
 
-class RCTImageView extends UIView {}
+@CustomElement("rct-image-view")
+class RCTImageView extends UIView {
+  constructor() {
+    super();
+  }
+}
 
 export default RCTImageView;

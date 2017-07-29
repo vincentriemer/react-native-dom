@@ -18,6 +18,7 @@ require("RCTNativeAnimatedModule");
 require("RCTAsyncLocalStorage");
 require("RCTImageViewManager");
 require("RCTLinkingManager");
+require("RCTSourceCode");
 
 // React Native Web Entrypoint instance
 export class RNWebInstance {

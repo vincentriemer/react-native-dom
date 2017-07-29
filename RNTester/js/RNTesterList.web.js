@@ -125,10 +125,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   //   key: "TabBarIOSExample",
   //   module: require("./TabBarIOSExample")
   // },
-  // {
-  //   key: "TextExample",
-  //   module: require("./TextExample.ios")
-  // },
+  {
+    key: "TextExample",
+    module: require("./TextExample.ios")
+  },
   // {
   //   key: "TextInputExample",
   //   module: require("./TextInputExample.ios")
@@ -223,7 +223,7 @@ const APIExamples: Array<RNTesterExample> = [
   {
     key: "NativeAnimationsExample",
     module: require("./NativeAnimationsExample")
-  }
+  },
   // {
   //   key: "NetInfoExample",
   //   module: require("./NetInfoExample")
@@ -264,10 +264,10 @@ const APIExamples: Array<RNTesterExample> = [
   //   key: "TimerExample",
   //   module: require("./TimerExample")
   // },
-  // {
-  //   key: "TransformExample",
-  //   module: require("./TransformExample")
-  // }
+  {
+    key: "TransformExample",
+    module: require("./TransformExample")
+  }
   // {
   //   key: "VibrationExample",
   //   module: require("./VibrationExample")

@@ -42,6 +42,7 @@ class RCTScrollEvent implements RCTEvent {
     contentSize: Size,
     scrollFrame: Frame,
     zoomScale: number,
+    coalescingKey: number,
     userData: ?Object
   ) {
     this.eventName = eventName;
@@ -52,6 +53,7 @@ class RCTScrollEvent implements RCTEvent {
     this.scrollViewFrame = scrollFrame;
     this.scrollViewZoomScale = zoomScale;
     this.userData = userData;
+    this.coalescingKey = coalescingKey;
   }
 
   get body() {
@@ -81,11 +83,27 @@ class RCTScrollEvent implements RCTEvent {
   }
 
   canCoalesce(): boolean {
-    return false;
+    return true;
   }
 
-  coalesceWithEvent(event: RCTEvent): RCTEvent {
-    return this;
+  coalesceWithEvent(newEvent: RCTScrollEvent): RCTScrollEvent {
+    let updatedChildFrames = [];
+    if (this.userData && this.userData.updatedChildFrames)
+      updatedChildFrames = updatedChildFrames.concat(
+        this.userData.updatedChildFrames
+      );
+    if (newEvent.userData && newEvent.userData.updatedChildFrames)
+      updatedChildFrames = updatedChildFrames.concat(
+        newEvent.userData.updatedChildFrames
+      );
+
+    if (updatedChildFrames.length !== 0) {
+      newEvent.userData = {
+        updatedChildFrames
+      };
+    }
+
+    return newEvent;
   }
 
   moduleDotMethod(): string {
@@ -110,7 +128,6 @@ export class RCTScrollContentView extends RCTView {
       position: "relative",
       display: "block",
       opacity: "1",
-
       // vastly improves scrolling performance (especially on sfarai)
       willChange: "transform"
     });
@@ -154,6 +171,7 @@ class RCTScrollView extends RCTView {
   scrollEventThrottle: number;
   _scrollLastTick: number;
 
+  coalescingKey: number;
   cachedChildFrames: Array<Frame>;
 
   constructor(bridge: RCTBridge) {
@@ -164,10 +182,12 @@ class RCTScrollView extends RCTView {
 
     this.style.webkitOverflowScrolling = "touch";
     this.style.contain = "strict";
+    this.style.willChange = "scroll-position";
 
     this.isScrolling = false;
     this.scrollEventThrottle = 0;
 
+    this.coalescingKey = 0;
     this.cachedChildFrames = [];
 
     this.addEventListener("scroll", this.handleScroll, SCROLL_LISTENER_OPTIONS);
@@ -211,6 +231,7 @@ class RCTScrollView extends RCTView {
   }
 
   boundsDidChange(contentView: RCTView) {
+    this.coalescingKey++;
     const childFrames = this.calculateChildFramesData();
 
     const contentOffset: Position = {
@@ -238,7 +259,8 @@ class RCTScrollView extends RCTView {
       contentInset,
       contentSize,
       contentFrame,
-      1
+      1,
+      this.coalescingKey
     ];
 
     this.bridge.eventDispatcher.sendEvent(
@@ -249,6 +271,8 @@ class RCTScrollView extends RCTView {
   }
 
   handleScroll = (e: Event, userData: ?Object) => {
+    this.coalescingKey++;
+
     const contentOffset: Position = {
       x: this.scrollLeft,
       y: this.scrollTop
@@ -275,6 +299,7 @@ class RCTScrollView extends RCTView {
       contentSize,
       contentFrame,
       1,
+      this.coalescingKey,
       userData
     ];
 
