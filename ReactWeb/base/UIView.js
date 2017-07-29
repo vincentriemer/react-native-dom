@@ -87,6 +87,10 @@ class UIView extends HTMLElement implements RCTComponent {
     this.style.contain = "size layout style";
     this.style.boxSizing = "border-box";
 
+    this.style.backfaceVisibility = "hidden";
+    // $FlowFixMe
+    this.style.webkitBackfaceVisibility = "hidden";
+
     ALL_BORDER_PROPS.forEach(propName => {
       Object.defineProperty(this, propName, {
         configurable: true,

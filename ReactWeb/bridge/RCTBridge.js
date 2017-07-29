@@ -221,7 +221,7 @@ export default class RCTBridge {
         break;
       }
       default: {
-        console.log(`Unknown topic: ${topic}`);
+        console.warn(`Unknown topic: ${topic}`);
       }
     }
   }
@@ -336,7 +336,7 @@ export default class RCTBridge {
   }
 
   frame() {
-    this.sendMessage("flush");
+    // this.sendMessage("flush");
 
     const messages = [...this.messages];
     this.messages = [];
@@ -350,15 +350,10 @@ export default class RCTBridge {
 export function RCT_EXPORT_METHOD(type: RCTFunctionType) {
   return (target: any, key: any, descriptor: any) => {
     if (typeof descriptor.value === "function") {
-      Object.defineProperty(
-        target,
-        // `__rct_export__${key}__${getNextModuleCounterValue()}`,
-        `__rct_export__${key}`,
-        {
-          ...descriptor,
-          value: () => [key, type]
-        }
-      );
+      Object.defineProperty(target, `__rct_export__${key}`, {
+        ...descriptor,
+        value: () => [key, type]
+      });
     }
 
     return descriptor;
