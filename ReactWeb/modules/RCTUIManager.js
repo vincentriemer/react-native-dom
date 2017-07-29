@@ -19,6 +19,7 @@ import RCTDeviceInfo from "RCTDeviceInfo";
 import RCTRootShadowView from "RCTRootShadowView";
 import RCTLayoutAnimationManager from "RCTLayoutAnimationManager";
 import RCTUIManagerObserverCoordinator from "RCTUIManagerObserverCoordinator";
+import { GlobalConfig } from "yoga-js";
 
 import type RCTShadowView, { LayoutChange } from "RCTShadowView";
 import type { LayoutAnimationConfig } from "RCTLayoutAnimationManager";
@@ -73,7 +74,9 @@ class RCTUIManager {
     );
   }
 
-  didUpdateDimensions = ({ window: { width, height } }: any) => {
+  didUpdateDimensions = ({ window: { width, height, scale } }: any) => {
+    GlobalConfig.setPointScaleFactor(scale);
+
     for (let rootViewTag of this.rootViewTags) {
       const rootView = this.viewRegistry.get(rootViewTag);
 

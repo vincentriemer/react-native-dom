@@ -27,8 +27,7 @@
     "rebound": "^0.0.15",
     "rematrix": "^0.1.1",
     "wolfy87-eventemitter": "^5.1.0",
-    "yoga-js": "1.4.2",
-    "yoga-layout": "^1.6.0"
+    "@vincentriemer/yoga-layout": "^1.6.1"
   },
   "scripts": {
     "flow": "flow",

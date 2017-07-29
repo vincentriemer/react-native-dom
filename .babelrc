@@ -1,7 +1,7 @@
 {
   "sourceMaps": "inline",
   "ignore": [
-    "node_modules/yoga-layout/build/Release/nbind.js",
+    "node_modules/@vincentriemer/yoga-layout/build/Release/nbind.js",
     "node_modules/localforage"
   ],
   "presets": ["react-native"],

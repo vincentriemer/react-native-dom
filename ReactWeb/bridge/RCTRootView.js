@@ -10,6 +10,7 @@ import RCTDeviceInfo from "RCTDeviceInfo";
 import RCTTiming from "RCTTiming";
 import RCTTouchHandler from "RCTTouchHandler";
 import CustomElement from "CustomElement";
+import { GlobalConfig } from "yoga-js";
 
 type Size = { width: number, height: number };
 
@@ -57,6 +58,9 @@ class RCTRootView extends UIView {
 
     this.width = this.availableSize.width;
     this.height = this.availableSize.height;
+
+    const pixelRatio = deviceInfoModule.getDevicePixelRatio();
+    GlobalConfig.setPointScaleFactor(pixelRatio);
 
     this.uiManager = (this.bridge.modulesByName["UIManager"]: any);
     this.timing = (this.bridge.modulesByName["Timing"]: any);

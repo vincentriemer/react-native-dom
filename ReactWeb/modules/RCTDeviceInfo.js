@@ -44,7 +44,7 @@ class RCTDeviceInfo extends RCTEventEmitter {
     };
   }
 
-  getDevicePixelRatio() {
+  getDevicePixelRatio(): number {
     let ratio = 1;
     // To account for zoom, change to use deviceXDPI instead of systemXDPI
     if (
