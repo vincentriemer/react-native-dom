@@ -190,7 +190,17 @@ class RCTScrollView extends RCTView {
     this.coalescingKey = 0;
     this.cachedChildFrames = [];
 
-    this.addEventListener("scroll", this.handleScroll, SCROLL_LISTENER_OPTIONS);
+    this.addEventListener(
+      "scroll",
+      e => {
+        if (detectIt.passiveEvents) {
+          this.handleScroll(e);
+        } else {
+          setTimeout(() => this.handleScroll(e), 0);
+        }
+      },
+      SCROLL_LISTENER_OPTIONS
+    );
   }
 
   calculateChildFramesData() {
