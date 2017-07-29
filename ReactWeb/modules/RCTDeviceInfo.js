@@ -58,7 +58,9 @@ class RCTDeviceInfo extends RCTEventEmitter {
       ratio = window.devicePixelRatio;
     }
 
-    return ratio;
+    // iOS displays with 3x ratio don't properly display hairlines
+    // so set max ratio to 2
+    return Math.min(ratio, 2);
   }
 
   didUpdateDimensions() {
