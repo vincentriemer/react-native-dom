@@ -15,7 +15,7 @@ import RCTViewManager, {
 } from "RCTViewManager";
 import RCTImageView from "RCTImageView";
 
-@RCT_EXPORT_MODULE
+@RCT_EXPORT_MODULE("RCTImageViewManager")
 class RCTImageViewManager extends RCTViewManager {
   view(): UIView {
     return new RCTImageView();

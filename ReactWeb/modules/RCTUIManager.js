@@ -29,7 +29,7 @@ type Size = { width: number, height: number };
 
 let rootTagCounter = 0;
 
-@RCT_EXPORT_MODULE
+@RCT_EXPORT_MODULE("RCTUIManager")
 class RCTUIManager {
   bridge: RCTBridge;
   rootViewTags: Set<number>;

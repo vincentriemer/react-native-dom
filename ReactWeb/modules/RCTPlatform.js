@@ -6,11 +6,11 @@ import { RCT_EXPORT_MODULE } from "RCTBridge";
 
 const supportsTouchForceChange = "ontouchforcechange" in window.document;
 
-@RCT_EXPORT_MODULE
+@RCT_EXPORT_MODULE("RCTPlatformConstants")
 class RCTPlatformConstants {
   constantsToExport() {
     return {
-      forceTouchAvailable: supportsTouchForceChange,
+      forceTouchAvailable: supportsTouchForceChange
     };
   }
 }

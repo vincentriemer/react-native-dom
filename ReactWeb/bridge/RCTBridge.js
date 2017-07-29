@@ -3,22 +3,20 @@
  * @flow
  */
 import invariant from "Invariant";
-import { moduleConfigFactory, ModuleConfig } from "RCTModuleConfig";
+import { moduleConfigFactory } from "RCTModuleConfig";
 import {
   RCTFunctionTypeNormal,
   RCTFunctionTypePromise,
-  RCTFunctionTypeSync,
-  RCTFunctionType
+  RCTFunctionTypeSync
 } from "RCTBridgeMethod";
+import type { ModuleConfig } from "RCTModuleConfig";
+import type { RCTFunctionType } from "RCTBridgeMethod";
+import type RCTEventDispatcher from "RCTEventDispatcher";
 
 import type RCTUIManager from "RCTUIManager";
 
-export {
-  RCTFunctionTypeNormal,
-  RCTFunctionTypePromise,
-  RCTFunctionTypeSync,
-  RCTFunctionType
-};
+export { RCTFunctionTypeNormal, RCTFunctionTypePromise, RCTFunctionTypeSync };
+export type { RCTFunctionType };
 
 type MessagePayload = {
   data: {
@@ -367,7 +365,9 @@ export function RCT_EXPORT_METHOD(type: RCTFunctionType) {
   };
 }
 
-export const RCT_EXPORT_MODULE = (target: Class<ModuleClass>) => {
-  target.__moduleName = target.prototype.constructor.name;
+export const RCT_EXPORT_MODULE = (name: string) => (
+  target: Class<ModuleClass>
+) => {
+  target.__moduleName = name;
   RCTBridge.RCTRegisterModule(target);
 };

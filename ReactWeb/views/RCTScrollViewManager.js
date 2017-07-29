@@ -15,14 +15,14 @@ import RCTViewManager, {
 import RCTScrollView, { RCTScrollContentView } from "RCTScrollView";
 import type UIView from "UIView";
 
-@RCT_EXPORT_MODULE
+@RCT_EXPORT_MODULE("RCTScrollContentViewManager")
 class RCTScrollContentViewManager extends RCTViewManager {
   view(): UIView {
     return new RCTScrollContentView(this.bridge);
   }
 }
 
-@RCT_EXPORT_MODULE
+@RCT_EXPORT_MODULE("RCTScrollViewManager")
 class RCTScrollViewManager extends RCTViewManager {
   view(): UIView {
     return new RCTScrollView(this.bridge);

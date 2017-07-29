@@ -120,7 +120,7 @@ export function RCT_EXPORT_DIRECT_VIEW_PROPS(
   return descriptor;
 }
 
-@RCT_EXPORT_MODULE
+@RCT_EXPORT_MODULE("RCTViewManager")
 class RCTViewManager {
   static __moduleName: string;
   static __isViewManager = true;

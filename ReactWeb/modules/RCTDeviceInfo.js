@@ -6,7 +6,7 @@
 import RCTBridge, { RCT_EXPORT_MODULE, RCT_EXPORT_METHOD } from "RCTBridge";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 
-@RCT_EXPORT_MODULE
+@RCT_EXPORT_MODULE("RCTDeviceInfo")
 class RCTDeviceInfo extends RCTEventEmitter {
   constructor(bridge: RCTBridge) {
     super(bridge);

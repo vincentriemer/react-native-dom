@@ -20,7 +20,7 @@ import RCTEventEmitter from "RCTNativeEventEmitter";
 export type Config = Object;
 type AnimatedOperation = (nodesManager: RCTNativeAnimatedNodesManager) => void;
 
-@RCT_EXPORT_MODULE
+@RCT_EXPORT_MODULE("RCTNativeAnimatedModule")
 class RCTNativeAnimatedModule extends RCTEventEmitter {
   bridge: RCTBridge;
 

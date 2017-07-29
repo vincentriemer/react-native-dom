@@ -12,7 +12,7 @@ import RCTViewManager, {
 import RCTRawText from "RCTRawText";
 import RCTShadowRawText from "RCTShadowRawText";
 
-@RCT_EXPORT_MODULE
+@RCT_EXPORT_MODULE("RCTRawTextManager")
 class RCTRawTextManager extends RCTViewManager {
   view(): RCTRawText {
     return new RCTRawText(this.bridge);

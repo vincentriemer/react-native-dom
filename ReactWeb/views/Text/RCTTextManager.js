@@ -11,7 +11,7 @@ import RCTViewManager, {
 import RCTText from "RCTText";
 import RCTShadowText from "RCTShadowText";
 
-@RCT_EXPORT_MODULE
+@RCT_EXPORT_MODULE("RCTTextManager")
 class RCTTextManager extends RCTViewManager {
   view(): RCTText {
     return new RCTText(this.bridge);

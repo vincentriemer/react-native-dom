@@ -11,7 +11,7 @@ import RCTBridge, {
 
 const initialURL = location.href;
 
-@RCT_EXPORT_MODULE
+@RCT_EXPORT_MODULE("RCTLinkingManager")
 class RCTLinkingManager {
   bridge: RCTBridge;
 

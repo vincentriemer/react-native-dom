@@ -77,6 +77,8 @@ class RCTRootView extends UIView {
     return this._reactTag;
   }
 
+  set reactTag(value: number) {}
+
   bundleFinishedLoading() {
     this.runApplication();
   }

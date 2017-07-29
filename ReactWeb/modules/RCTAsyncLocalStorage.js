@@ -11,7 +11,7 @@ import RCTBridge, {
 import localforage from "localforage";
 import deepmerge from "deepmerge";
 
-@RCT_EXPORT_MODULE
+@RCT_EXPORT_MODULE("RCTAsyncLocalStorage")
 class RCTAsyncLocalStorage {
   bridge: RCTBridge;
 

@@ -61,7 +61,7 @@ function stringToHash(input: string): number {
   return hash;
 }
 
-@RCT_EXPORT_MODULE
+@RCT_EXPORT_MODULE("RCTEventDispatcher")
 class RCTEventDispatcher {
   bridge: RCTBridge;
   events: { [number]: RCTEvent };
