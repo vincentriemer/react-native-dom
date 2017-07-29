@@ -67,8 +67,10 @@ class RCTEventEmitter {
     }
   }
 
-  removeListener(eventName: string, callback: Function) {
-    NotificationCenter.removeListener(eventName, callback);
+  removeListener(eventName: string, callback: ?Function) {
+    if (callback != null) {
+      NotificationCenter.removeListener(eventName, callback);
+    }
     this.removeListeners(1);
   }
 
