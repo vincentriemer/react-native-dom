@@ -23,6 +23,8 @@ class RCTFrameAnimation implements RCTAnimationDriver {
   toValue: number;
   fromValue: number;
   callback: Function;
+  iterations: number;
+  currentLoop: number;
 
   constructor(
     animationId: number,
@@ -36,8 +38,10 @@ class RCTFrameAnimation implements RCTAnimationDriver {
     this.valueNode = valueNode;
     this.frames = [...config.frames];
     this.callback = callback;
+    this.iterations = config.iterations != null ? config.iterations : 1;
+    this.currentLoop = 1;
     this.animationHasBegun = false;
-    this.animationHasBegun = false;
+    this.animationHasFinished = this.iterations === 0;
   }
 
   startAnimation() {
@@ -77,11 +81,19 @@ class RCTFrameAnimation implements RCTAnimationDriver {
     const nextIndex = startIndex + 1;
 
     if (nextIndex >= this.frames.length) {
-      // We are at the end of the animation
-      // Update value and flag animation has ended.
-      const finalValue = this.frames[this.frames.length - 1];
-      this.updateOutputWithFrameOutput(finalValue);
-      this.animationHasFinished = true;
+      if (this.iterations == -1 || this.currentLoop < this.iterations) {
+        // Looping, reset to the first frame value.
+        this.animationStartTime = currentTime;
+        this.currentLoop++;
+        const firstValue = this.frames[0];
+        this.updateOutputWithFrameOutput(firstValue);
+      } else {
+        this.animationHasFinished = true;
+        // We are at the end of the animation
+        // Update value and flag animation has ended.
+        const finalValue = this.frames[this.frames.length - 1];
+        this.updateOutputWithFrameOutput(finalValue);
+      }
       return;
     }
 
