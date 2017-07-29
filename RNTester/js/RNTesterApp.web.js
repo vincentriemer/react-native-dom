@@ -140,7 +140,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: "#96969A",
     backgroundColor: "#F5F5F6",
-    flexDirection: "row"
+    flexDirection: "row",
+    padding: "20px 10px"
   },
   headerLeft: {},
   headerCenter: {
