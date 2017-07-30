@@ -22,6 +22,8 @@ const SCROLL_LISTENER_OPTIONS = detectIt.passiveEvents
   ? { passive: true }
   : false;
 
+const SHOULD_CORRECT_SCROLL = !!navigator.platform.match(/iPhone|iPod|iPad/g);
+
 class RCTScrollEvent implements RCTEvent {
   // interface properties
   viewTag: number;
@@ -429,25 +431,27 @@ class RCTScrollView extends RCTView {
   correctScrollPosition() {
     const scrollNudge = 1;
 
-    if (!this._horizontal) {
-      const endTopPosition = this.scrollTop + this.contentSize.height;
-      if (this.scrollTop <= 0 && this.scrollTop >= 0.1) {
-        this.scrollTop = scrollNudge;
-      } else if (
-        endTopPosition >= this.scrollHeight &&
-        endTopPosition <= this.scrollHeight + 0.1
-      ) {
-        this.scrollTop = this.scrollTop - scrollNudge;
-      }
-    } else {
-      const endLeftPosition = this.scrollLeft + this.contentSize.width;
-      if (this.scrollLeft <= 0 && this.scrollLeft >= 0.1) {
-        this.scrollLeft = scrollNudge;
-      } else if (
-        endLeftPosition >= this.scrollWidth &&
-        endLeftPosition <= this.scrollWidth
-      ) {
-        this.scrollLeft = this.scrollLeft - scrollNudge;
+    if (SHOULD_CORRECT_SCROLL) {
+      if (!this._horizontal) {
+        const endTopPosition = this.scrollTop + this.contentSize.height;
+        if (this.scrollTop <= 0 && this.scrollTop >= -0.1) {
+          this.scrollTop = scrollNudge;
+        } else if (
+          endTopPosition >= this.scrollHeight &&
+          endTopPosition <= this.scrollHeight + 0.1
+        ) {
+          this.scrollTop = this.scrollTop - scrollNudge;
+        }
+      } else {
+        const endLeftPosition = this.scrollLeft + this.contentSize.width;
+        if (this.scrollLeft <= 0 && this.scrollLeft >= -0.1) {
+          this.scrollLeft = scrollNudge;
+        } else if (
+          endLeftPosition >= this.scrollWidth &&
+          endLeftPosition <= this.scrollWidth
+        ) {
+          this.scrollLeft = this.scrollLeft - scrollNudge;
+        }
       }
     }
   }
