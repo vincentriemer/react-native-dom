@@ -8,7 +8,6 @@ import UIView from "UIView";
 import type RCTBridge from "RCTBridge";
 import type RCTUIManager from "RCTUIManager";
 import CustomElement from "CustomElement";
-import mixin from "mixin";
 import type { RCTEvent } from "RCTEventDispatcher";
 import detectIt from "detect-it";
 

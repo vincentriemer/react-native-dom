@@ -339,7 +339,7 @@ class UIView extends HTMLElement implements RCTComponent {
     touchListenerOptions: Object | boolean
   ) {
     if (deviceType !== "touchOnly") {
-      this.addEventListener("mousedown", handler.mouseClickBegan);
+      this.addEventListener("mousedown", handler.mouseClickBegan, false);
     }
 
     if (deviceType !== "mouseOnly") {
