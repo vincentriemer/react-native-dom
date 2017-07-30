@@ -310,8 +310,13 @@ class RCTScrollView extends RCTView {
   }
 
   connectedCallback() {
-    this.scrollTop = 1;
-    this.scrollLeft = 1;
+    if (SHOULD_CORRECT_SCROLL) {
+      if (this._horizontal) {
+        this.scrollLeft = 1;
+      } else {
+        this.scrollTop = 1;
+      }
+    }
   }
 
   boundsDidChange(contentView: RCTView) {
