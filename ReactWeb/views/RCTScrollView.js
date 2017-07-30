@@ -171,6 +171,10 @@ class RCTScrollView extends RCTView {
   scrollEventThrottle: number;
   _scrollLastTick: number;
 
+  _horizontal: boolean;
+  _overflow: string;
+  _scrollEnabled: boolean;
+
   coalescingKey: number;
   cachedChildFrames: Array<Frame>;
 
@@ -180,15 +184,17 @@ class RCTScrollView extends RCTView {
     const manager: any = bridge.modulesByName["UIManager"];
     this.manager = manager;
 
-    this.style.webkitOverflowScrolling = "touch";
     this.style.contain = "strict";
-    this.style.willChange = "scroll-position";
 
     this.isScrolling = false;
     this.scrollEventThrottle = 0;
 
     this.coalescingKey = 0;
     this.cachedChildFrames = [];
+
+    this._horizontal = false;
+    this._overflow = "scroll";
+    this._scrollEnabled = true;
 
     this.addEventListener(
       "scroll",
@@ -201,6 +207,46 @@ class RCTScrollView extends RCTView {
       },
       SCROLL_LISTENER_OPTIONS
     );
+  }
+
+  set scrollEnabled(value: ?boolean) {
+    this._scrollEnabled = !!value;
+    this.updateScrollBehavior();
+  }
+
+  set horizontal(value: ?boolean) {
+    this._horizontal = !!value;
+    this.updateScrollBehavior();
+  }
+
+  set overflow(value: ?string) {
+    if (value != null) {
+      this._overflow = value;
+    } else {
+      this._overflow = "hidden";
+    }
+    this.updateScrollBehavior();
+  }
+
+  updateScrollBehavior() {
+    if (this._overflow === "scroll" && this._scrollEnabled) {
+      this.style.webkitOverflowScrolling = "touch";
+      this.style.willChange = "scroll-position";
+
+      if (this._horizontal) {
+        this.style.overflowX = "scroll";
+        this.style.overflowY = "hidden";
+      } else {
+        this.style.overflowX = "hidden";
+        this.style.overflowY = "scroll";
+      }
+    } else {
+      this.style.webkitOverflowScrolling = "";
+      this.style.willChange = "";
+
+      this.style.overflowX = "hidden";
+      this.style.overflowY = "hidden";
+    }
   }
 
   calculateChildFramesData() {
@@ -361,10 +407,6 @@ class RCTScrollView extends RCTView {
   shouldEmitScrollEvent(lastTick: number, eventThrottle: number): boolean {
     const timeSinceLastTick = Date.now() - lastTick;
     return eventThrottle > 0 && timeSinceLastTick >= eventThrottle;
-  }
-
-  set overflow(value: string) {
-    this.style.overflow = value;
   }
 
   get touchable(): boolean {

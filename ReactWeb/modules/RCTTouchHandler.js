@@ -35,7 +35,7 @@ type ReactTouch = {
 
 const TOUCH_LISTENER_OPTIONS = detectIt.passiveEvents
   ? { passive: true }
-  : true;
+  : false;
 
 class RCTTouchHandler {
   eventDispatcher: RCTEventDispatcher;

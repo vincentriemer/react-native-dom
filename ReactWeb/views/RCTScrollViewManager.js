@@ -66,6 +66,16 @@ class RCTScrollViewManager extends RCTViewManager {
     });
   }
 
+  @RCT_EXPORT_VIEW_PROP("horizontal", "boolean")
+  setHorizontal(view: RCTScrollView, value: ?boolean) {
+    view.horizontal = value;
+  }
+
+  @RCT_EXPORT_VIEW_PROP("scrollEnabled", "boolean")
+  setScrollEnabled(view: RCTScrollView, value: ?boolean) {
+    view.scrollEnabled = value;
+  }
+
   // @RCT_EXPORT_VIEW_PROP("onMomentumScrollBegin", "RCTDirectEventBlock")
   // setonMomentumScrollBegin(view: RCTScrollView, value: boolean) {
   //   view.onMomentumScrollBegin = value;
