@@ -4,6 +4,7 @@
  */
 
 import RCTView from "RCTView";
+import UIView from "UIView";
 import type RCTBridge from "RCTBridge";
 import type RCTUIManager from "RCTUIManager";
 import CustomElement from "CustomElement";
@@ -119,6 +120,20 @@ class RCTScrollEvent implements RCTEvent {
   }
 }
 
+@CustomElement("rct-scroll-overflow-view")
+class RCTScrollOverflowView extends UIView {
+  constructor() {
+    super();
+    Object.assign(this.style, {
+      position: "absolute",
+      top: "0",
+      left: "0",
+      width: "calc(100% + 2px)",
+      height: "calc(100% + 2px)"
+    });
+  }
+}
+
 @CustomElement("rct-scroll-content-view")
 export class RCTScrollContentView extends RCTView {
   constructor(bridge: RCTBridge) {
@@ -179,6 +194,7 @@ class RCTScrollView extends RCTView {
   cachedChildFrames: Array<Frame>;
 
   contentSize: Size = { width: 0, height: 0 };
+  overflowView: RCTScrollOverflowView;
 
   constructor(bridge: RCTBridge) {
     super(bridge);
@@ -197,6 +213,9 @@ class RCTScrollView extends RCTView {
     this._horizontal = false;
     this._overflow = "scroll";
     this._scrollEnabled = true;
+
+    this.overflowView = new RCTScrollOverflowView();
+    this.appendChild(this.overflowView);
 
     this.addEventListener(
       "scroll",
@@ -382,7 +401,7 @@ class RCTScrollView extends RCTView {
     }
   };
 
-  debouncedOnScrollEnd = debounce(this.handleScrollEnd, 150);
+  debouncedOnScrollEnd = debounce(this.handleScrollEnd, 100);
 
   handleScrollStart(...eventArgs) {
     this.isScrolling = true;
@@ -409,16 +428,27 @@ class RCTScrollView extends RCTView {
 
   correctScrollPosition() {
     const scrollNudge = 1;
-    if (this.scrollTop <= 0) {
-      this.scrollTop = scrollNudge;
-    } else if (this.scrollTop + this.contentSize.height >= this.scrollHeight) {
-      this.scrollTop = this.scrollTop - scrollNudge;
-    }
 
-    if (this.scrollLeft <= 0) {
-      this.scrollLeft = scrollNudge;
-    } else if (this.scrollLeft + this.contentSize.width >= this.scrollWidth) {
-      this.scrollLeft = this.scrollLeft - scrollNudge;
+    if (!this._horizontal) {
+      const endTopPosition = this.scrollTop + this.contentSize.height;
+      if (this.scrollTop <= 0 && this.scrollTop >= 0.1) {
+        this.scrollTop = scrollNudge;
+      } else if (
+        endTopPosition >= this.scrollHeight &&
+        endTopPosition <= this.scrollHeight + 0.1
+      ) {
+        this.scrollTop = this.scrollTop - scrollNudge;
+      }
+    } else {
+      const endLeftPosition = this.scrollLeft + this.contentSize.width;
+      if (this.scrollLeft <= 0 && this.scrollLeft >= 0.1) {
+        this.scrollLeft = scrollNudge;
+      } else if (
+        endLeftPosition >= this.scrollWidth &&
+        endLeftPosition <= this.scrollWidth
+      ) {
+        this.scrollLeft = this.scrollLeft - scrollNudge;
+      }
     }
   }
 
