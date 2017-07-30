@@ -34,7 +34,7 @@ type ReactTouch = {
 };
 
 const TOUCH_LISTENER_OPTIONS = detectIt.passiveEvents
-  ? { passive: true }
+  ? { passive: true, capture: false }
   : false;
 
 class RCTTouchHandler {
@@ -87,8 +87,6 @@ class RCTTouchHandler {
         }
       ];
     } else if (rawEvent.changedTouches) {
-      rawEvent.preventDefault();
-
       const rawTouches = rawEvent.changedTouches;
       const resultingTouchList = [];
 
@@ -198,7 +196,7 @@ class RCTTouchHandler {
       timestamp: nativeTouch.timestamp
     };
 
-    // TODO force touch
+    // TODO: force touch
 
     this.reactTouches[touchIndex] = updatedReactTouch;
   }

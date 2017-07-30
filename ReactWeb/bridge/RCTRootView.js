@@ -71,7 +71,8 @@ class RCTRootView extends UIView {
 
     // $FlowFixMe
     this.style.webkitTapHighlightColor = "transparent";
-    this.style.position = "fixed";
+
+    // this.style.position = "fixed";
 
     this.ticking = false;
     this.requestTick();

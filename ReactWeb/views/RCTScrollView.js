@@ -178,6 +178,8 @@ class RCTScrollView extends RCTView {
   coalescingKey: number;
   cachedChildFrames: Array<Frame>;
 
+  contentSize: Size = { width: 0, height: 0 };
+
   constructor(bridge: RCTBridge) {
     super(bridge);
 
@@ -286,6 +288,11 @@ class RCTScrollView extends RCTView {
     return updatedChildFrames;
   }
 
+  connectedCallback() {
+    this.scrollTop = 1;
+    this.scrollLeft = 1;
+  }
+
   boundsDidChange(contentView: RCTView) {
     this.coalescingKey++;
     const childFrames = this.calculateChildFramesData();
@@ -308,6 +315,13 @@ class RCTScrollView extends RCTView {
     };
 
     const contentFrame = this.manager.measure(this.reactTag);
+
+    this.contentSize = {
+      width: contentFrame.width,
+      height: contentFrame.height
+    };
+
+    this.correctScrollPosition();
 
     const args = [
       this.reactTag,
@@ -368,7 +382,7 @@ class RCTScrollView extends RCTView {
     }
   };
 
-  debouncedOnScrollEnd = debounce(this.handleScrollEnd, 100);
+  debouncedOnScrollEnd = debounce(this.handleScrollEnd, 150);
 
   handleScrollStart(...eventArgs) {
     this.isScrolling = true;
@@ -389,6 +403,23 @@ class RCTScrollView extends RCTView {
       ...eventArgs
     );
     this.bridge.eventDispatcher.sendEvent(momentumScrollEvent);
+
+    this.correctScrollPosition();
+  }
+
+  correctScrollPosition() {
+    const scrollNudge = 1;
+    if (this.scrollTop <= 0) {
+      this.scrollTop = scrollNudge;
+    } else if (this.scrollTop + this.contentSize.height >= this.scrollHeight) {
+      this.scrollTop = this.scrollTop - scrollNudge;
+    }
+
+    if (this.scrollLeft <= 0) {
+      this.scrollLeft = scrollNudge;
+    } else if (this.scrollLeft + this.contentSize.width >= this.scrollWidth) {
+      this.scrollLeft = this.scrollLeft - scrollNudge;
+    }
   }
 
   handleScrollTick(...eventArgs) {

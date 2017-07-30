@@ -86,6 +86,8 @@ class RCTUIManager {
         this.setAvailableSize({ width, height }, rootView);
       });
     }
+
+    this.requestTick();
   };
 
   get allocateRootTag(): number {
