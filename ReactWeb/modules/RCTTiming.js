@@ -91,6 +91,10 @@ class RCTTiming {
       delete this.timers[timer];
     }
   }
+
+  shouldContinue(): boolean {
+    return Object.keys(this.timers).length !== 0;
+  }
 }
 
 export default RCTTiming;

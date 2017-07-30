@@ -224,6 +224,10 @@ export default class RCTBridge {
         console.warn(`Unknown topic: ${topic}`);
       }
     }
+
+    if (this.shouldContinue()) {
+      this.uiManager.requestTick();
+    }
   }
 
   initializeModules = () => {
@@ -336,7 +340,7 @@ export default class RCTBridge {
   }
 
   frame() {
-    // this.sendMessage("flush");
+    this.sendMessage("flush");
 
     const messages = [...this.messages];
     this.messages = [];
@@ -344,6 +348,10 @@ export default class RCTBridge {
     messages.forEach(({ moduleId, methodId, args }) => {
       this.callNativeModule(moduleId, methodId, args);
     });
+  }
+
+  shouldContinue(): boolean {
+    return this.messages.length !== 0;
   }
 }
 

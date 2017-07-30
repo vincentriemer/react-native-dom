@@ -32,6 +32,7 @@ class RCTRootView extends UIView {
   parent: Element;
   uiManager: RCTUIManager;
   timing: RCTTiming;
+  ticking: boolean;
 
   touchHandler: RCTTouchHandler;
 
@@ -71,6 +72,9 @@ class RCTRootView extends UIView {
     // $FlowFixMe
     this.style.webkitTapHighlightColor = "transparent";
     this.style.position = "fixed";
+
+    this.ticking = false;
+    this.requestTick();
   }
 
   get reactTag(): number {
@@ -99,18 +103,38 @@ class RCTRootView extends UIView {
     ]);
   }
 
+  requestTick() {
+    if (!this.ticking) {
+      window.requestAnimationFrame(this.renderLoop.bind(this));
+    }
+    this.ticking = true;
+  }
+
   renderLoop() {
+    this.ticking = false;
+
     this.timing.frame();
     this.bridge.frame();
     this.uiManager.frame();
 
-    window.requestAnimationFrame(this.renderLoop.bind(this));
+    if (
+      this.timing.shouldContinue() ||
+      this.bridge.shouldContinue() ||
+      this.uiManager.shouldContinue()
+    ) {
+      console.log({
+        timing: this.timing.shouldContinue(),
+        bridge: this.bridge.shouldContinue(),
+        uiManager: this.uiManager.shouldContinue()
+      });
+      this.requestTick();
+    }
   }
 
   render() {
     this.parent.appendChild(this);
     this.bridge.loadBridgeConfig();
-    this.renderLoop();
+    this.requestTick();
   }
 }
 

@@ -205,6 +205,21 @@ class RCTUIManager {
     }
   }
 
+  shouldContinue(): boolean {
+    return this.pendingUIBlocks.length !== 0;
+  }
+
+  requestTick() {
+    this.rootViewTags.forEach(rootViewTag => {
+      const rootView = this.viewRegistry.get(rootViewTag);
+      invariant(
+        rootView && rootView instanceof RCTRootView,
+        `RootView (with ID ${rootViewTag}) does not exist`
+      );
+      rootView.requestTick();
+    });
+  }
+
   applyLayoutChanges(layoutChanges: LayoutChange[]) {
     layoutChanges.forEach(layoutChange => {
       const { reactTag, layout } = layoutChange;

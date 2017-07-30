@@ -9,7 +9,7 @@ import type { Config } from "RCTNativeAnimatedModule";
 
 export interface RCTAnimationDriver {
   animationId: number,
-  valueNode: ?RCTValueAnimatedNode,
+  valueNode: RCTValueAnimatedNode,
   animationHasBegun: boolean,
   animationHasFinished: boolean,
 

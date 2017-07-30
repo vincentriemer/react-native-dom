@@ -11,7 +11,7 @@ import { RCTSingleFrameInterval } from "RCTAnimationDriver";
 
 class RCTDecayAnimation implements RCTAnimationDriver {
   animationId: number;
-  valueNode: ?RCTValueAnimatedNode;
+  valueNode: RCTValueAnimatedNode;
   animationHasBegun: boolean;
   animationHasFinished: boolean;
 
@@ -48,7 +48,7 @@ class RCTDecayAnimation implements RCTAnimationDriver {
   }
 
   stopAnimation() {
-    this.valueNode = null;
+    // this.valueNode = null;
     if (this.callback) {
       this.callback({
         finished: this.animationHasFinished

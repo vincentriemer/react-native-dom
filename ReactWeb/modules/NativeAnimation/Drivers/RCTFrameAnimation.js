@@ -12,7 +12,7 @@ import { RCTInterpolateValue } from "RCTAnimationUtils";
 
 class RCTFrameAnimation implements RCTAnimationDriver {
   animationId: number;
-  valueNode: ?RCTValueAnimatedNode;
+  valueNode: RCTValueAnimatedNode;
   animationHasBegun: boolean;
   animationHasFinished: boolean;
 
