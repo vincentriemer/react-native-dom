@@ -122,11 +122,6 @@ class RCTRootView extends UIView {
       this.bridge.shouldContinue() ||
       this.uiManager.shouldContinue()
     ) {
-      console.log({
-        timing: this.timing.shouldContinue(),
-        bridge: this.bridge.shouldContinue(),
-        uiManager: this.uiManager.shouldContinue()
-      });
       this.requestTick();
     }
   }
