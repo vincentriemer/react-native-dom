@@ -448,7 +448,7 @@ class RCTScrollView extends RCTView {
           this.scrollLeft = scrollNudge;
         } else if (
           endLeftPosition >= this.scrollWidth &&
-          endLeftPosition <= this.scrollWidth
+          endLeftPosition <= this.scrollWidth + 0.1
         ) {
           this.scrollLeft = this.scrollLeft - scrollNudge;
         }
