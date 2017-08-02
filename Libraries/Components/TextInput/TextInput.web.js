@@ -40,9 +40,15 @@ const onlyMultiline = {
 
 if (Platform.OS === "android") {
   var AndroidTextInput = requireNativeComponent("AndroidTextInput", null);
-} else if (Platform.OS === "ios" || Platform.OS === "web") {
+} else if (Platform.OS === "ios") {
   var RCTTextView = requireNativeComponent("RCTTextView", null);
   var RCTTextField = requireNativeComponent("RCTTextField", null);
+} else if (Platform.OS === "web") {
+  var RCTTextInput = requireNativeComponent("RCTTextInput", null);
+  var RCTMultilineTextInput = requireNativeComponent(
+    "RCTMultilineTextInput",
+    null
+  );
 }
 
 type Event = Object;
@@ -779,7 +785,76 @@ const TextInput = createReactClass({
   },
 
   _renderWeb: function() {
-    return <RCTTextView />;
+    var textContainer;
+
+    var props = Object.assign({}, this.props);
+    props.style = [this.props.style];
+
+    if (props.selection && props.selection.end == null) {
+      props.selection = {
+        start: props.selection.start,
+        end: props.selection.start
+      };
+    }
+
+    if (!props.multiline) {
+      if (__DEV__) {
+        for (var propKey in onlyMultiline) {
+          if (props[propKey]) {
+            const error = new Error(
+              "TextInput prop `" +
+                propKey +
+                "` is only supported with multiline."
+            );
+            warning(false, "%s", error.stack);
+          }
+        }
+      }
+      textContainer = (
+        <RCTTextInput
+          ref={this._setNativeRef}
+          {...props}
+          onFocus={this._onFocus}
+          onBlur={this._onBlur}
+          onChange={this._onChange}
+          onSelectionChange={this._onSelectionChange}
+          onSelectionChangeShouldSetResponder={emptyFunction.thatReturnsTrue}
+          text={this._getText()}
+        />
+      );
+    } else {
+      textContainer = (
+        <RCTMultilineTextInput
+          ref={this._setNativeRef}
+          {...props}
+          onFocus={this._onFocus}
+          onBlur={this._onBlur}
+          onChange={this._onChange}
+          onContentSizeChange={this.props.onContentSizeChange}
+          onSelectionChange={this._onSelectionChange}
+          onTextInput={this._onTextInput}
+          onSelectionChangeShouldSetResponder={emptyFunction.thatReturnsTrue}
+          text={this._getText()}
+          dataDetectorTypes={this.props.dataDetectorTypes}
+          onScroll={this._onScroll}
+        />
+      );
+    }
+
+    return (
+      <TouchableWithoutFeedback
+        onLayout={props.onLayout}
+        onPress={this._onPress}
+        rejectResponderTermination={true}
+        accessible={props.accessible}
+        accessibilityLabel={props.accessibilityLabel}
+        accessibilityTraits={props.accessibilityTraits}
+        nativeID={this.props.nativeID}
+        testID={props.testID}
+      >
+        {textContainer}
+      </TouchableWithoutFeedback>
+    );
   },
 
   _onFocus: function(event: Event) {

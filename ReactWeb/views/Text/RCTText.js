@@ -7,7 +7,7 @@ import type { Frame } from "UIView";
 import type RCTBridge from "RCTBridge";
 
 import RCTView from "RCTView";
-import { defaultFontStack } from "RCTSharedTextValues";
+import { defaultFontStack, defaultFontSize } from "RCTSharedTextValues";
 import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 
@@ -27,6 +27,7 @@ class RCTText extends RCTView {
 
     this.selectable = false;
     this.fontFamily = defaultFontStack;
+    this.fontSize = defaultFontSize;
   }
 
   get color(): number {

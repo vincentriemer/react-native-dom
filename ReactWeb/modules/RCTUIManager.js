@@ -559,6 +559,12 @@ class RCTUIManager {
     }
   }
 
+  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+  focus(reactTag: number) {}
+
+  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+  blur(reactTag: number) {}
+
   constantsToExport() {
     const constants = {};
     const bubblingEvents = {};

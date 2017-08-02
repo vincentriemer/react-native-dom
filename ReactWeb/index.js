@@ -19,6 +19,7 @@ require("RCTAsyncLocalStorage");
 require("RCTImageViewManager");
 require("RCTLinkingManager");
 require("RCTSourceCode");
+require("RCTTextInputManager");
 
 // React Native Web Entrypoint instance
 export class RNWebInstance {

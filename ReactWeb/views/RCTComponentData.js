@@ -14,6 +14,8 @@ import RCTComponent from "RCTComponent";
 import UIView from "UIView";
 import { normalizeInputEventName } from "RCTEventDispatcher";
 
+import RCTTextInput from "RCTTextInput";
+
 type Props = { [string]: any };
 
 type ViewConfig = {
