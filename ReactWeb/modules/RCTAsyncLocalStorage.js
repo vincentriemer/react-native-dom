@@ -29,13 +29,7 @@ class RCTAsyncLocalStorage {
       })
     )
       .then(result => {
-        callback(
-          null,
-          result.reduce((prev, currentValue, index) => ({
-            ...prev,
-            [keys[index]]: currentValue
-          }))
-        );
+        callback(null, result.map((value, index) => [keys[index], value]));
       })
       .catch(err => {
         callback(err);

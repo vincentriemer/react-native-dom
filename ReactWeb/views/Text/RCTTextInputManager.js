@@ -26,7 +26,8 @@ class RCTTextInputManager extends RCTViewManager {
       ["paddingTop", "number"],
       ["paddingBottom", "number"],
       ["paddingVertical", "number"],
-      ["paddingHorizontal", "number"]
+      ["paddingHorizontal", "number"],
+      ["fontSize", "number"]
     ];
   }
 }
