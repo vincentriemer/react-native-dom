@@ -16,7 +16,7 @@
     "normalize-css-color": "^1.0.2",
     "proxy-polyfill": "^0.1.7",
     "react": "16.0.0-alpha.12",
-    "react-native": "0.47.0-rc.5",
+    "react-native": "0.48.0-rc.0",
     "rebound": "^0.0.15",
     "rematrix": "^0.1.1",
     "wolfy87-eventemitter": "^5.1.0",
