@@ -40,6 +40,10 @@ class RCTView extends UIView {
       ]);
     }
   }
+
+  set accessible(value: boolean) {
+    this.tabIndex = 0;
+  }
 }
 
 export default RCTView;

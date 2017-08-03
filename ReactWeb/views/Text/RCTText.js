@@ -58,6 +58,10 @@ class RCTText extends RCTView {
     });
   }
 
+  set accessible(value: boolean) {
+    // no-op
+  }
+
   get fontFamily(): string {
     return this.style.fontFamily;
   }

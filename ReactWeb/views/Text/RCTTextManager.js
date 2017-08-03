@@ -31,9 +31,6 @@ class RCTTextManager extends RCTViewManager {
     view.fontSize = value;
   }
 
-  @RCT_EXPORT_VIEW_PROP("accessible", "bool")
-  setAccessible(view: RCTText, value: boolean) {}
-
   @RCT_EXPORT_VIEW_PROP("selectable", "bool")
   setSelectable(view: RCTText, value: boolean) {
     view.selectable = value;

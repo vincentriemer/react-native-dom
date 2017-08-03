@@ -17,6 +17,40 @@
       overflow: hidden;
       position: fixed;
     }
+
+     :focus {
+      outline: 0
+    }
+
+     :focus::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 9999;
+      outline-width: 2px;
+      outline-style: solid;
+      outline-color: Highlight;
+      outline-offset: -2px;
+    }
+
+    @media (-webkit-min-device-pixel-ratio:0) {
+       :focus::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 9999;
+        outline-color: -webkit-focus-ring-color;
+        outline-style: auto;
+        outline-width: 5px;
+        outline-offset: -5px;
+      }
+    }
   </style>
 </head>
 
