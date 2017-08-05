@@ -6,21 +6,16 @@ import {
   View,
   TouchableOpacity,
   LayoutAnimation,
-  Button
+  Button,
+  Animated
 } from "react-native";
 
 var CustomLayoutAnimation = {
-  duration: 400,
-  create: {
-    type: LayoutAnimation.Types.easeIn,
-    property: LayoutAnimation.Properties.opacity
-  },
-  update: {
-    type: LayoutAnimation.Types.easeOut
-  },
+  ...LayoutAnimation.Presets.spring,
   delete: {
     type: LayoutAnimation.Types.easeOut,
-    property: LayoutAnimation.Properties.opacity
+    property: LayoutAnimation.Properties.opacity,
+    duration: 1
   }
 };
 
@@ -29,18 +24,29 @@ class AnimationExample extends Component {
     super();
 
     this.state = {
-      index: 0
+      index: 0,
+      borderRadius: new Animated.Value(0)
     };
   }
 
   onPress(index) {
-    // Uncomment to animate the next state change.
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+    if (index === this.state.index) return;
 
-    // Or use a Custom Layout Animation
-    // LayoutAnimation.configureNext(CustomLayoutAnimation);
+    LayoutAnimation.configureNext(CustomLayoutAnimation);
 
-    this.setState({ index: index });
+    if (index === 1) {
+      Animated.timing(this.state.borderRadius, {
+        toValue: -1,
+        duration: 0
+      }).start();
+    }
+
+    Animated.timing(this.state.borderRadius, {
+      toValue: index === 0 ? 0 : 1,
+      duration: 300
+    }).start();
+
+    this.setState({ index });
   }
 
   renderButton(index) {
@@ -67,7 +73,7 @@ class AnimationExample extends Component {
           height: size,
           borderRadius: size / 2.0,
           backgroundColor: "sandybrown",
-          margin: 20
+          margin: 150
         }}
       />
     );
@@ -80,8 +86,9 @@ class AnimationExample extends Component {
 
     var whiteHeight = this.state.index * 80;
 
+    var numCircles = this.state.index === 0 ? 1 : 4;
     var circles = [];
-    for (var i = 0; i < 5 + this.state.index; i++) {
+    for (var i = 0; i < numCircles; i++) {
       circles.push(this.renderCircle(i));
     }
 
@@ -90,39 +97,27 @@ class AnimationExample extends Component {
         <View style={styles.topButtons}>
           {this.renderButton(0)}
           {this.renderButton(1)}
-          {this.renderButton(2)}
         </View>
         <View style={styles.content}>
-          <View style={{ flexDirection: "row", height: 100 }}>
-            <View style={[leftStyle, { backgroundColor: "firebrick" }]} />
-            <View style={[middleStyle, { backgroundColor: "seagreen" }]} />
-            <View
-              style={[
-                rightStyle,
-                {
-                  backgroundColor: "steelblue",
-                  justifyContent: "center",
-                  alignItems: "center"
-                }
-              ]}
-            />
-          </View>
-          <View
+          <Animated.View
             style={{
-              height: whiteHeight,
+              width: this.state.index === 0 ? 300 : "100%",
+              height: this.state.index === 0 ? 300 : "100%",
+              backgroundColor: "#70398E",
+              borderRadius: this.state.borderRadius.interpolate({
+                inputRange: [-1, 0, 1],
+                outputRange: [400, 150, 0]
+              }),
+              flexDirection: "row",
               justifyContent: "center",
               alignItems: "center",
+              alignContent: "center",
+              flexWrap: "wrap",
               overflow: "hidden"
             }}
-            removeClippedSubviews={true}
           >
-            <View>
-              <Text>Stuff Goes Here</Text>
-            </View>
-          </View>
-          <View style={styles.circleContainer}>
             {circles}
-          </View>
+          </Animated.View>
         </View>
       </View>
     );
@@ -154,7 +149,9 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    alignSelf: "stretch"
+    alignSelf: "stretch",
+    alignItems: "center",
+    justifyContent: "center"
   },
   circleContainer: {
     flexDirection: "row",
