@@ -101,13 +101,15 @@ class RCTTouchHandler {
           "Cannot normalize interaction event on object which does not inherit from UIView"
         );
 
+        const rect = target.getBoundingClientRect();
+
         resultingTouchList.push({
           view: target,
           identifier: rawTouch.identifier % 20,
-          pageX: rawTouch.pageX,
-          pageY: rawTouch.pageY,
-          locationX: rawTouch.clientX,
-          locationY: rawTouch.clientY,
+          pageX: rawTouch.clientX,
+          pageY: rawTouch.clientY,
+          locationX: rawTouch.pageX - rect.left,
+          locationY: rawTouch.pageY - rect.top,
           timestamp: performance.now()
         });
       }
@@ -335,18 +337,15 @@ class RCTTouchHandler {
   };
 
   touchesBegan(touches: Array<UITouch>) {
-    // console.log("touch began");
     this.recordNewTouches(touches);
     this.updateAndDispatchTouches(touches, "touchStart");
   }
 
   touchesMoved(touches: Array<UITouch>) {
-    // console.log("touch moved");
     this.updateAndDispatchTouches(touches, "touchMove");
   }
 
   touchesEnded(touches: Array<UITouch>) {
-    // console.log("touch ended");
     this.updateAndDispatchTouches(touches, "touchEnd");
     this.recordRemovedTouches(touches);
   }
