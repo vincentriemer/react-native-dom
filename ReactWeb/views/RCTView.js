@@ -41,9 +41,10 @@ class RCTView extends UIView {
     }
   }
 
-  set accessible(value: boolean) {
-    this.tabIndex = 0;
-  }
+  // TODO: Renable when I have a plan for focus styling
+  // set accessible(value: boolean) {
+  //   this.tabIndex = 0;
+  // }
 }
 
 export default RCTView;
