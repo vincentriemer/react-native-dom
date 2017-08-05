@@ -232,10 +232,10 @@ const APIExamples: Array<RNTesterExample> = [
   //   key: "OrientationChangeExample",
   //   module: require("./OrientationChangeExample")
   // },
-  // {
-  //   key: "PanResponderExample",
-  //   module: require("./PanResponderExample")
-  // },
+  {
+    key: "PanResponderExample",
+    module: require("./PanResponderExample")
+  },
   // {
   //   key: "PointerEventsExample",
   //   module: require("./PointerEventsExample")

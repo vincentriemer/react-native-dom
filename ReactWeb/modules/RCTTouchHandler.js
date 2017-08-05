@@ -33,6 +33,8 @@ type ReactTouch = {
   timestamp?: number
 };
 
+let mouseTouchCounter = 1;
+
 const TOUCH_LISTENER_OPTIONS = detectIt.passiveEvents
   ? { passive: true, capture: false }
   : false;
@@ -78,12 +80,12 @@ class RCTTouchHandler {
       return [
         {
           view: target,
-          identifier: 0,
+          identifier: 1,
           pageX: rawEvent.pageX,
           pageY: rawEvent.pageY,
           locationX: rawEvent.offsetX,
           locationY: rawEvent.offsetY,
-          timestamp: rawEvent.timeStamp
+          timestamp: performance.now()
         }
       ];
     } else if (rawEvent.changedTouches) {
@@ -106,7 +108,7 @@ class RCTTouchHandler {
           pageY: rawTouch.pageY,
           locationX: rawTouch.clientX,
           locationY: rawTouch.clientY,
-          timestamp: rawEvent.timeStamp
+          timestamp: performance.now()
         });
       }
 
@@ -184,16 +186,16 @@ class RCTTouchHandler {
     }
   }
 
-  updateReactTouch(touchIndex: number) {
-    const nativeTouch = this.nativeTouches[touchIndex];
+  updateReactTouch(touchIndex: number, newTouch: UITouch) {
+    const reactTouch = this.reactTouches[touchIndex];
 
     const updatedReactTouch = {
-      ...this.reactTouches[touchIndex],
-      pageX: nativeTouch.pageX,
-      pageY: nativeTouch.pageY,
-      locationX: nativeTouch.locationX,
-      locationY: nativeTouch.locationY,
-      timestamp: nativeTouch.timestamp
+      ...reactTouch,
+      pageX: newTouch.pageX,
+      pageY: newTouch.pageY,
+      locationX: newTouch.locationX,
+      locationY: newTouch.locationY,
+      timestamp: newTouch.timestamp
     };
 
     // TODO: force touch
@@ -214,7 +216,7 @@ class RCTTouchHandler {
 
       if (index === -1) continue;
 
-      this.updateReactTouch(index);
+      this.updateReactTouch(index, touch);
       changedIndexes.push(index);
     }
 
