@@ -146,8 +146,8 @@ const styles = StyleSheet.create({
       borderRadius: 2
     },
     web: {
-      backgroundColor: "#2196F3",
-      borderRadius: 2
+      backgroundColor: "#007bff",
+      borderRadius: 4
     }
   }),
   text: Platform.select({
@@ -168,7 +168,8 @@ const styles = StyleSheet.create({
     web: {
       color: "white",
       textAlign: "center",
-      padding: 8
+      paddingVertical: 8,
+      paddingHorizontal: 12
     }
   }),
   buttonDisabled: Platform.select({
@@ -178,7 +179,7 @@ const styles = StyleSheet.create({
       backgroundColor: "#dfdfdf"
     },
     web: {
-      backgroundColor: "#dfdfdf"
+      opacity: 0.65
     }
   }),
   textDisabled: Platform.select({
@@ -188,9 +189,7 @@ const styles = StyleSheet.create({
     android: {
       color: "#a1a1a1"
     },
-    web: {
-      color: "#a1a1a1"
-    }
+    web: {}
   })
 });
 
