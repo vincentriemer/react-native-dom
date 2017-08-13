@@ -41,10 +41,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   //   key: "KeyboardAvoidingViewExample",
   //   module: require("./KeyboardAvoidingViewExample")
   // },
-  // {
-  //   key: "LayoutEventsExample",
-  //   module: require("./LayoutEventsExample")
-  // },
+  {
+    key: "LayoutEventsExample",
+    module: require("./LayoutEventsExample")
+  },
   // {
   //   key: "ListViewExample",
   //   module: require("./ListViewExample")

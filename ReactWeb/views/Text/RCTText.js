@@ -22,7 +22,8 @@ class RCTText extends RCTView {
     Object.assign(this.style, {
       position: "static",
       display: "inline",
-      contain: "none"
+      contain: "none",
+      opacity: "1.0"
     });
 
     this.selectable = false;
