@@ -12,6 +12,8 @@ import {
 import type { ModuleConfig } from "RCTModuleConfig";
 import type { RCTFunctionType } from "RCTBridgeMethod";
 import type RCTEventDispatcher from "RCTEventDispatcher";
+import type RCTImageLoader from "RCTImageLoader";
+import type RCTDeviceInfo from "RCTDeviceInfo";
 
 import type RCTUIManager from "RCTUIManager";
 
@@ -141,6 +143,8 @@ export default class RCTBridge {
 
   _uiManager: ?RCTUIManager;
   _eventDispatcher: ?RCTEventDispatcher;
+  _imageLoader: ?RCTImageLoader;
+  _deviceInfo: ?RCTDeviceInfo;
 
   constructor(moduleName: string, bundle: string) {
     this.moduleName = moduleName;
@@ -337,6 +341,22 @@ export default class RCTBridge {
       this._eventDispatcher = eventDispatcher;
     }
     return this._eventDispatcher;
+  }
+
+  get imageLoader(): RCTImageLoader {
+    if (!this._imageLoader) {
+      const imageLoader: any = this.modulesByName["ImageLoader"];
+      this._imageLoader = imageLoader;
+    }
+    return this._imageLoader;
+  }
+
+  get deviceInfo(): RCTDeviceInfo {
+    if (!this._deviceInfo) {
+      const deviceInfo: any = this.modulesByName["DeviceInfo"];
+      this._deviceInfo = deviceInfo;
+    }
+    return this._deviceInfo;
   }
 
   frame() {

@@ -20,6 +20,7 @@ require("RCTImageViewManager");
 require("RCTLinkingManager");
 require("RCTSourceCode");
 require("RCTTextInputManager");
+require("RCTImageLoader");
 
 // React Native Web Entrypoint instance
 export class RNWebInstance {
