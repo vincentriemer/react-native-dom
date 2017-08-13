@@ -93,10 +93,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   //   key: "RefreshControlExample",
   //   module: require("./RefreshControlExample")
   // },
-  // {
-  //   key: "ScrollViewExample",
-  //   module: require("./ScrollViewExample")
-  // },
+  {
+    key: "ScrollViewExample",
+    module: require("./ScrollViewExample")
+  },
   // {
   //   key: "SectionListExample",
   //   module: require("./SectionListExample")
@@ -133,10 +133,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   //   key: "TextInputExample",
   //   module: require("./TextInputExample.ios")
   // },
-  // {
-  //   key: "TouchableExample",
-  //   module: require("./TouchableExample")
-  // },
+  {
+    key: "TouchableExample",
+    module: require("./TouchableExample")
+  },
   // {
   //   key: "TransparentHitTestExample",
   //   module: require("./TransparentHitTestExample")
