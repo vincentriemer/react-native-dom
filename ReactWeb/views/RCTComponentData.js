@@ -152,9 +152,6 @@ class RCTComponentData {
 
   setPropsForView(props: Props, view: typeof RCTComponent) {
     if (props) {
-      if (view instanceof RCTText || view instanceof RCTRawText) {
-        console.log(view, props);
-      }
       Object.keys(props).forEach(propName => {
         if (this.propConfig.hasOwnProperty(propName)) {
           const propConfig = this.propConfig[propName];

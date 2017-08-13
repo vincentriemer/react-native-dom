@@ -86,6 +86,8 @@ class RCTImageLoader {
       } else {
         reject();
       }
+
+      delete this.callbackMap[callbackId];
     }
   };
 
