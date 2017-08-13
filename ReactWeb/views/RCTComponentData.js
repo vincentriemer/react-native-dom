@@ -13,6 +13,8 @@ import RCTShadowView, { SHADOW_PROPS } from "RCTShadowView";
 import RCTComponent from "RCTComponent";
 import UIView from "UIView";
 import { normalizeInputEventName } from "RCTEventDispatcher";
+import RCTText from "RCTText";
+import RCTRawText from "RCTRawText";
 
 import RCTTextInput from "RCTTextInput";
 
@@ -150,6 +152,9 @@ class RCTComponentData {
 
   setPropsForView(props: Props, view: typeof RCTComponent) {
     if (props) {
+      if (view instanceof RCTText || view instanceof RCTRawText) {
+        console.log(view, props);
+      }
       Object.keys(props).forEach(propName => {
         if (this.propConfig.hasOwnProperty(propName)) {
           const propConfig = this.propConfig[propName];

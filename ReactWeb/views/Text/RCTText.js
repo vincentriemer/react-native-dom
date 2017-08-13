@@ -23,7 +23,8 @@ class RCTText extends RCTView {
       position: "static",
       display: "inline",
       contain: "none",
-      opacity: "1.0"
+      opacity: "1.0",
+      whiteSpace: "pre-wrap"
     });
 
     this.selectable = false;

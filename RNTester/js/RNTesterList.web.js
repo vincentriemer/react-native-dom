@@ -125,10 +125,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   //   key: "TabBarIOSExample",
   //   module: require("./TabBarIOSExample")
   // },
-  // {
-  //   key: "TextExample",
-  //   module: require("./TextExample.ios")
-  // },
+  {
+    key: "TextExample",
+    module: require("./TextExample.ios")
+  },
   // {
   //   key: "TextInputExample",
   //   module: require("./TextInputExample.ios")

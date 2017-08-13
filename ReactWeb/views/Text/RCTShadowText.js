@@ -129,7 +129,7 @@ class RCTShadowText extends RCTShadowView {
   ): { width: number, height: number } {
     this.clearTestDomElement();
 
-    const whiteSpace = this.numberOfLines === 1 ? "nowrap" : "normal";
+    const whiteSpace = this.numberOfLines === 1 ? "nowrap" : "pre-wrap";
 
     if (
       widthMeasureMode !== MEASURE_MODE_EXACTLY ||
