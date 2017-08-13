@@ -204,6 +204,7 @@ class RCTUIManager {
       uiBlocks.forEach(block => {
         block.call(null, this, this.viewRegistry);
       });
+      this.requestTick();
     }
   }
 

@@ -19,24 +19,6 @@ const TEXT_SHADOW_STYLE_PROPS = [
   "lineHeight"
 ];
 
-var entityMap = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#39;",
-  "/": "&#x2F;",
-  "`": "&#x60;",
-  "=": "&#x3D;"
-};
-
-// from https://stackoverflow.com/a/12034334
-function escapeHtml(string) {
-  return String(string).replace(/[&<>"'`=\/]/g, function(s) {
-    return entityMap[s];
-  });
-}
-
 const textMeasurementContainer = document.createElement("div");
 textMeasurementContainer.id = "text-measurement";
 // Object.assign(textMeasurementContainer, { contain: "strict" });
@@ -119,6 +101,7 @@ class RCTShadowText extends RCTShadowView {
 
   markTextDirty() {
     this.makeDirty();
+    this.yogaNode.markDirty();
     this.textDirty = true;
   }
 
@@ -194,7 +177,19 @@ class RCTShadowText extends RCTShadowView {
 
     this.textChildren.forEach(child => {
       if (child instanceof RCTShadowRawText && child.text.length) {
-        spanWrapper.insertAdjacentHTML("beforeend", escapeHtml(child.text));
+        // Split text by newline and insert breaks manually as insertAdjacentText does not respect newlines
+        const textLines = child.text.split(/\r?\n/);
+        for (let i = 0; i < textLines.length; i++) {
+          const currentLine = textLines[i];
+          spanWrapper.insertAdjacentText("beforeend", currentLine);
+
+          if (i < textLines.length - 1) {
+            spanWrapper.insertAdjacentElement(
+              "beforeend",
+              document.createElement("br")
+            );
+          }
+        }
       } else if (child instanceof RCTShadowText) {
         spanWrapper.insertAdjacentElement("beforeend", child.getTestTree());
       }
