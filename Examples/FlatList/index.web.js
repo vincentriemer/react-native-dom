@@ -15,7 +15,7 @@ class FlatListExample extends Component {
   getData() {
     const data = [];
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 500; i++) {
       data.push({ key: `Element ${i}` });
     }
 

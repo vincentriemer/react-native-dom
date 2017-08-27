@@ -101,5 +101,8 @@
     "webpack": "^1.15.0",
     "webpack-dev-server": "^1.16.5",
     "worker-loader": "^0.8.0"
+  },
+  "quokka": {
+    "babel": true
   }
 }

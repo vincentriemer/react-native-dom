@@ -253,7 +253,8 @@ class RCTScrollView extends RCTView {
   updateScrollBehavior() {
     if (this._overflow === "scroll" && this._scrollEnabled) {
       this.style.webkitOverflowScrolling = "touch";
-      this.style.willChange = "scroll-position";
+      // TODO: Make this conditional based on screen DPI
+      this.style.willChange = "transform, scroll-position";
 
       if (this._horizontal) {
         this.style.overflowX = "scroll";
