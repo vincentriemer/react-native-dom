@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "ReactWeb/index.js",
   "dependencies": {
+    "@vincentriemer/yoga-layout": "^1.6.1",
     "bezier-easing": "^2.0.3",
     "debounce": "^1.0.2",
     "deepmerge": "^1.5.0",
@@ -11,6 +12,7 @@
     "fbjs": "^0.8.12",
     "flow-bin": "^0.47.0",
     "glob": "^7.1.2",
+    "gpu.js": "^0.0.0",
     "invariant": "^2.2.2",
     "localforage": "^1.5.0",
     "normalize-css-color": "^1.0.2",
@@ -19,8 +21,7 @@
     "react-native": "0.48.0-rc.0",
     "rebound": "^0.0.15",
     "rematrix": "^0.1.1",
-    "wolfy87-eventemitter": "^5.1.0",
-    "@vincentriemer/yoga-layout": "^1.6.1"
+    "wolfy87-eventemitter": "^5.1.0"
   },
   "scripts": {
     "flow": "flow",
@@ -36,14 +37,15 @@
   "jest": {
     "haste": {
       "defaultPlatform": "web",
-      "providesModuleNodeModules": ["react-native-dom"],
-      "platforms": ["web"]
+      "providesModuleNodeModules": [
+        "react-native-dom"
+      ],
+      "platforms": [
+        "web"
+      ]
     }
   },
   "devDependencies": {
-    "babel-polyfill": "^6.23.0",
-    "babel-preset-es2015-loose": "^8.0.0",
-    "metro-bundler": "^0.9.2",
     "babel-cli": "^6.24.1",
     "babel-core": "^6.24.1",
     "babel-helpers": "^6.24.1",
@@ -73,8 +75,10 @@
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.23.0",
     "babel-preset-babili": "^0.1.4",
     "babel-preset-env": "^1.5.1",
+    "babel-preset-es2015-loose": "^8.0.0",
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.24.1",
     "babel-runtime": "^6.23.0",
@@ -86,6 +90,7 @@
     "inject-loader": "^3.0.0",
     "jest": "^20.0.4",
     "json-loader": "^0.5.4",
+    "metro-bundler": "^0.9.2",
     "prettier": "^1.5.2",
     "progress-bar-webpack-plugin": "^1.9.3",
     "rimraf": "^2.6.1",

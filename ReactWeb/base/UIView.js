@@ -8,6 +8,9 @@ import type { RCTComponent } from "RCTComponent";
 import UIBorderView, { ALL_BORDER_PROPS } from "UIBorderView";
 import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
+import * as MatrixMath from "MatrixMath";
+
+console.log(MatrixMath);
 
 export type Frame = {
   top: number,
@@ -54,15 +57,15 @@ const baseDimension = 1000;
 
 @CustomElement("ui-view")
 class UIView extends HTMLElement implements RCTComponent {
-  _top: number;
-  _left: number;
-  _bottom: number;
-  _right: number;
-  _width: number;
-  _height: number;
+  _top: number = 0;
+  _left: number = 0;
+  _bottom: number = 0;
+  _right: number = 0;
+  _width: number = 0;
+  _height: number = 0;
   _touchable: boolean;
   _opacity: number;
-  _transform: string;
+  _transform: number[];
   _animatedTransform: string;
 
   childBorderView: ?UIBorderView;
@@ -167,16 +170,22 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   updateTransform() {
-    let transformString = "";
+    let transform = MatrixMath.createTranslate2d(this._left, this._top);
 
-    if (this._left != null) transformString += `translateX(${this._left}px) `;
-    if (this._top != null) transformString += `translateY(${this._top}px) `;
+    // if (this._animatedTransform) {
+    //   transformString += `${this._animatedTransform} `;
+    // } else if (this._transform) {
+    //   transformString += `${this._transform} `;
+    // }
 
-    if (this._animatedTransform) {
-      transformString += `${this._animatedTransform} `;
-    } else if (this._transform) {
-      transformString += `${this._transform} `;
+    if (this._transform) {
+      MatrixMath.multiplyInto(transform, transform, this._transform);
     }
+
+    const transformString = `matrix3d(${transform.join(", ")}) ${this
+      ._animatedTransform
+      ? this._animatedTransform
+      : ""}`;
 
     this.style.transform = transformString;
   }
@@ -226,21 +235,17 @@ class UIView extends HTMLElement implements RCTComponent {
     this.style.opacity = `${value}`;
   }
 
-  get transform(): string {
+  get transform(): number[] {
     return this._transform;
   }
 
   set transform(value: ?Array<number>) {
     if (value) {
-      const newTransform = `matrix3d(${value.join(",")})`;
-      if (newTransform !== this._transform) {
-        this._transform = newTransform;
-        this.updateTransform();
-      }
-    } else if (this._transform !== "") {
-      this._transform = "";
-      this.updateTransform();
+      this._transform = value;
+    } else {
+      this._transform = MatrixMath.createIdentityMatrix();
     }
+    this.updateTransform();
   }
 
   get animatedTransform(): string {

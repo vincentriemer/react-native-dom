@@ -50,7 +50,6 @@ class UIBorderView extends HTMLElement {
   constructor() {
     super();
 
-    // $FlowFixMe
     Object.assign(this.style, {
       position: "absolute",
       top: "0",
@@ -63,9 +62,7 @@ class UIBorderView extends HTMLElement {
       borderStyle: "solid",
       borderWidth: "0",
       overflow: "hidden",
-      contain: "content",
-      webkitBackfaceVisibility: "hidden",
-      backfaceVisibility: "hidden"
+      contain: "content"
     });
 
     BORDER_STYLE_PROPS.forEach(propName => {

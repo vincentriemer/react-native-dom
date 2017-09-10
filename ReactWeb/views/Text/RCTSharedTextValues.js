@@ -3,7 +3,7 @@
  * @flow
  */
 
-export const defaultFontStack = `-apple-system, BlinkMacSystemFont, 
+export const defaultFontStack = `-apple-system, system-ui, BlinkMacSystemFont, 
     "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", 
     "Fira Sans", "Droid Sans", "Helvetica Neue", 
     sans-serif`;
