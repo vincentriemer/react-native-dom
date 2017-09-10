@@ -10,8 +10,6 @@ import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 import * as MatrixMath from "MatrixMath";
 
-console.log(MatrixMath);
-
 export type Frame = {
   top: number,
   left: number,
@@ -171,12 +169,6 @@ class UIView extends HTMLElement implements RCTComponent {
 
   updateTransform() {
     let transform = MatrixMath.createTranslate2d(this._left, this._top);
-
-    // if (this._animatedTransform) {
-    //   transformString += `${this._animatedTransform} `;
-    // } else if (this._transform) {
-    //   transformString += `${this._transform} `;
-    // }
 
     if (this._transform) {
       MatrixMath.multiplyInto(transform, transform, this._transform);
