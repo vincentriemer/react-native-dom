@@ -2,6 +2,7 @@
 
 var path = require("path");
 const blacklist = require("metro-bundler/src/blacklist");
+const defaultPolyfills = require("react-native/rn-get-polyfills");
 
 var config = {
   extraNodeModules: {
@@ -22,9 +23,10 @@ var config = {
   getProvidesModuleNodeModules() {
     return ["react-native"];
   },
-  getPolyfillModuleNames() {
-    return [require.resolve("./Libraries/polyfills/setBabelHelper.js")];
-  }
+  getPolyfills: () =>
+    [].concat(defaultPolyfills(), [
+      require.resolve("./Libraries/polyfills/setBabelHelper.js")
+    ])
 };
 function getRoots() {
   var root = process.env.REACT_NATIVE_APP_ROOT;

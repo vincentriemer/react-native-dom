@@ -21,7 +21,15 @@ const SCROLL_LISTENER_OPTIONS = detectIt.passiveEvents
   ? { passive: true }
   : false;
 
+var isSafari =
+  navigator.vendor &&
+  navigator.vendor.indexOf("Apple") > -1 &&
+  navigator.userAgent &&
+  !navigator.userAgent.match("CriOS");
+
 const SHOULD_CORRECT_SCROLL = !!navigator.platform.match(/iPhone|iPod|iPad/g);
+const SHOULD_ADD_SCROLL_OVERFLOW =
+  !!navigator.platform.match(/iPhone|iPod|iPad/g) || isSafari;
 
 class RCTScrollEvent implements RCTEvent {
   // interface properties
@@ -215,8 +223,10 @@ class RCTScrollView extends RCTView {
     this._overflow = "scroll";
     this._scrollEnabled = true;
 
-    this.overflowView = new RCTScrollOverflowView();
-    this.appendChild(this.overflowView);
+    if (SHOULD_ADD_SCROLL_OVERFLOW) {
+      this.overflowView = new RCTScrollOverflowView();
+      this.appendChild(this.overflowView);
+    }
 
     this.addEventListener(
       "scroll",
