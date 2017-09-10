@@ -9,7 +9,7 @@ import type { KeyframeResult } from "RCTKeyframeGenerator";
 
 import invariant from "Invariant";
 import RCTKeyframeGenerator from "RCTKeyframeGenerator";
-import * as Rematrix from "rematrix";
+import * as MatrixMath from "MatrixMath";
 
 const PropertiesEnum = {
   opacity: true,
@@ -546,13 +546,41 @@ class RCTLayoutAnimationManager {
         scaleY
       } = config;
 
-      let transformMatrix = [
-        Rematrix.translate(origin.x, origin.y), // shift transformation origin
-        Rematrix.scale(inverseScaleX, inverseScaleY),
-        Rematrix.translate(translateX, translateY),
-        Rematrix.scale(scaleX, scaleY),
-        Rematrix.translate(-origin.x, -origin.y) // revert transformation origin
-      ].reduce(Rematrix.multiply);
+      // shift transformation origin
+      let transformMatrix = MatrixMath.createTranslate2d(origin.x, origin.y);
+
+      // appply inverse scaling from parent transforms
+      const inverseScaleMatrix = MatrixMath.createIdentityMatrix();
+      MatrixMath.reuseScale3dCommand(
+        inverseScaleMatrix,
+        inverseScaleX,
+        inverseScaleY,
+        1.0
+      );
+      MatrixMath.multiplyInto(
+        transformMatrix,
+        transformMatrix,
+        inverseScaleMatrix
+      );
+
+      // apply translation
+      MatrixMath.multiplyInto(
+        transformMatrix,
+        transformMatrix,
+        MatrixMath.createTranslate2d(translateX, translateY)
+      );
+
+      // apply scaling
+      const scaleMatrix = MatrixMath.createIdentityMatrix();
+      MatrixMath.reuseScale3dCommand(scaleMatrix, scaleX, scaleY, 1.0);
+      MatrixMath.multiplyInto(transformMatrix, transformMatrix, scaleMatrix);
+
+      // revert transformation origin
+      MatrixMath.multiplyInto(
+        transformMatrix,
+        transformMatrix,
+        MatrixMath.createTranslate2d(-origin.x, -origin.y)
+      );
 
       return {
         transform: `matrix3d(${transformMatrix.join(", ")})`
