@@ -12,7 +12,6 @@
     "fbjs": "^0.8.12",
     "flow-bin": "^0.47.0",
     "glob": "^7.1.2",
-    "gpu.js": "^0.0.0",
     "invariant": "^2.2.2",
     "localforage": "^1.5.0",
     "normalize-css-color": "^1.0.2",
@@ -37,12 +36,8 @@
   "jest": {
     "haste": {
       "defaultPlatform": "web",
-      "providesModuleNodeModules": [
-        "react-native-dom"
-      ],
-      "platforms": [
-        "web"
-      ]
+      "providesModuleNodeModules": ["react-native-dom"],
+      "platforms": ["web"]
     }
   },
   "devDependencies": {
