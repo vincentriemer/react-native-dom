@@ -113,10 +113,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   //   key: "StatusBarExample",
   //   module: require("./StatusBarExample")
   // },
-  // {
-  //   key: "SwipeableListViewExample",
-  //   module: require("./SwipeableListViewExample")
-  // },
+  {
+    key: "SwipeableListViewExample",
+    module: require("./SwipeableListViewExample")
+  },
   // {
   //   key: "SwitchExample",
   //   module: require("./SwitchExample")

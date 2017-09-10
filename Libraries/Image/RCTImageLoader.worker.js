@@ -1,35 +1,12 @@
-var ticking = false;
-var fetchQueue = [];
-
-function createQueueElement(url, callbackId) {
-  return {
-    url: url,
-    callbackId: callbackId
-  };
-}
-
-function requestTick() {
-  if (!ticking && fetchQueue.length > 0) {
-    ticking = true;
-    loadNextImage();
-  }
-}
-
 function constructCallback(callbackId) {
   return function(returnCode) {
     return function() {
-      ticking = false;
       self.postMessage(JSON.stringify([callbackId, returnCode]));
-      requestTick();
     };
   };
 }
 
-function loadNextImage() {
-  var imageData = fetchQueue.shift();
-  var url = imageData.url;
-  var callbackId = imageData.callbackId;
-
+function loadImage(url, callbackId) {
   var cb = constructCallback(callbackId);
 
   var onload = cb(0);
@@ -49,6 +26,7 @@ self.onmessage = function(e) {
   var url = data.url;
   var callbackId = data.callbackId;
 
-  fetchQueue.push(createQueueElement(url, callbackId));
-  requestTick();
+  setTimeout(function() {
+    loadImage(url, callbackId);
+  }, 0);
 };
