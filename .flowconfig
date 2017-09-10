@@ -1,7 +1,6 @@
 [ignore]
 .*/node_modules/fbjs/.*
 .*/node_modules/metro-bundler/.*
-.*/node_modules/react-native/.*
 .*/node_modules/haul-cli/.*
 [include]
 

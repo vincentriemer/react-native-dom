@@ -7,7 +7,11 @@ import type { Frame } from "UIView";
 import type RCTBridge from "RCTBridge";
 
 import RCTView from "RCTView";
-import { defaultFontStack, defaultFontSize } from "RCTSharedTextValues";
+import {
+  defaultFontStack,
+  defaultFontSize,
+  defaults as TextDefaults
+} from "RCTSharedTextValues";
 import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 
@@ -30,6 +34,7 @@ class RCTText extends RCTView {
     this.selectable = false;
     this.fontFamily = defaultFontStack;
     this.fontSize = defaultFontSize;
+    this.lineHeight = null;
   }
 
   get color(): number {
@@ -68,16 +73,16 @@ class RCTText extends RCTView {
     return this.style.fontFamily;
   }
 
-  set fontFamily(value: string) {
-    this.style.fontFamily = value;
+  set fontFamily(value: ?string) {
+    this.style.fontFamily = value ? value : TextDefaults.fontFamily;
   }
 
   get fontSize(): string {
     return this.style.fontFamily;
   }
 
-  set fontSize(value: any) {
-    this.style.fontSize = value;
+  set fontSize(value: ?number) {
+    this.style.fontSize = value ? `${value}px` : TextDefaults.fontSize;
   }
 
   get selectable(): boolean {
@@ -94,17 +99,71 @@ class RCTText extends RCTView {
 
   set selectable(value: boolean) {
     this._selectable = value;
-    const valueResult = value ? "text" : "none";
+
+    const pointerValue = value ? "auto" : "none";
+    const userSelectValue = value ? "text" : "none";
+
     // $FlowFixMe
     Object.assign(this.style, {
-      webkitUserSelect: valueResult,
-      MozUserSelect: valueResult,
-      userSelect: valueResult
+      webkitUserSelect: userSelectValue,
+      MozUserSelect: userSelectValue,
+      userSelect: userSelectValue,
+      pointerEvents: pointerValue
     });
   }
 
-  set fontWeight(value: string) {
-    this.style.fontWeight = value;
+  set fontWeight(value: ?string) {
+    this.style.fontWeight = value ? value : TextDefaults.fontWeight;
+  }
+
+  set fontStyle(value: ?string) {
+    this.style.fontStyle = value ? value : TextDefaults.fontStyle;
+  }
+
+  set letterSpacing(value: ?number) {
+    this.style.letterSpacing = value
+      ? `${value}px`
+      : TextDefaults.letterSpacing;
+  }
+
+  set textDecorationLine(value: ?string) {
+    if (value != null) {
+      this.style.webkitTextDecorationLine = value;
+      this.style.textDecorationLine = value;
+    } else {
+      this.style.webkitTextDecorationLine = "none";
+      this.style.textDecorationLine = "none";
+    }
+  }
+
+  set textDecorationStyle(value: ?string) {
+    if (value != null) {
+      this.style.webkitTextDecorationStyle = value;
+      this.style.textDecorationStyle = value;
+    } else {
+      this.style.webkitTextDecorationStyle = "solid";
+      this.style.textDecorationStyle = "solid";
+    }
+  }
+
+  set textDecorationColor(value: ?number) {
+    if (value != null) {
+      const [a, r, g, b] = ColorArrayFromHexARGB(value);
+      const stringValue = `rgba(${r},${g},${b},${a})`;
+      this.style.webkitTextDecorationColor = stringValue;
+      this.style.textDecorationColor = stringValue;
+    } else {
+      this.style.webkitTextDecorationColor = "currentcolor";
+      this.style.textDecorationColor = "currentcolor";
+    }
+  }
+
+  set lineHeight(value: ?number) {
+    if (value != null) {
+      this.style.lineHeight = `${value}px`;
+    } else {
+      this.style.lineHeight = TextDefaults.lineHeight;
+    }
   }
 }
 

@@ -70,6 +70,36 @@ class RCTTextManager extends RCTViewManager {
   setFontWeight(view: RCTText, value: string) {
     view.fontWeight = value;
   }
+
+  @RCT_EXPORT_MIRRORED_PROP("fontStyle", "string")
+  setFontStyle(view: RCTText, value: string) {
+    view.fontStyle = value;
+  }
+
+  @RCT_EXPORT_MIRRORED_PROP("letterSpacing", "number")
+  setLetterSpacing(view: RCTText, value: number) {
+    view.letterSpacing = value;
+  }
+
+  @RCT_EXPORT_VIEW_PROP("textDecorationLine", "string")
+  setTextDecorationLine(view: RCTText, value: string) {
+    view.textDecorationLine = value;
+  }
+
+  @RCT_EXPORT_VIEW_PROP("textDecorationStyle", "string")
+  setTextDecorationStyle(view: RCTText, value: string) {
+    view.textDecorationStyle = value;
+  }
+
+  @RCT_EXPORT_VIEW_PROP("textDecorationColor", "color")
+  setTextDecorationColor(view: RCTText, value: number) {
+    view.textDecorationColor = value;
+  }
+
+  @RCT_EXPORT_MIRRORED_PROP("lineHeight", "number")
+  setTextDecorationStyle(view: RCTText, value: number) {
+    view.lineHeight = value;
+  }
 }
 
 export default RCTTextManager;

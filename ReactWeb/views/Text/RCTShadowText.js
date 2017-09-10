@@ -7,7 +7,11 @@ import guid from "Guid";
 import invariant from "Invariant";
 import RCTShadowView from "RCTShadowView";
 import RCTShadowRawText from "RCTShadowRawText";
-import { defaultFontStack, defaultFontSize } from "RCTSharedTextValues";
+import {
+  defaultFontStack,
+  defaultFontSize,
+  defaults as TextDefaults
+} from "RCTSharedTextValues";
 
 import { MEASURE_MODE_EXACTLY, MEASURE_MODE_UNDEFINED } from "yoga-js";
 
@@ -16,8 +20,11 @@ const TEXT_SHADOW_STYLE_PROPS = [
   "fontSize",
   "fontStyle",
   "fontWeight",
-  "lineHeight"
+  "lineHeight",
+  "letterSpacing"
 ];
+
+const TEXT_PX_PROPS = ["lineHeight"];
 
 const textMeasurementContainer = document.createElement("div");
 textMeasurementContainer.id = "text-measurement";
@@ -31,11 +38,11 @@ class RCTShadowText extends RCTShadowView {
   textDirty: boolean;
   props: { [string]: any };
 
-  fontFamily: string;
-  fontSize: string;
-  fontStyle: string;
-  fontWeight: string;
-  lineHeight: string;
+  fontFamily: ?string;
+  fontSize: ?string;
+  fontStyle: ?string;
+  fontWeight: ?string;
+  lineHeight: ?string;
 
   _testTree: ?HTMLElement;
   _testDOMElement: ?HTMLElement;
@@ -60,15 +67,20 @@ class RCTShadowText extends RCTShadowView {
         configurable: true,
         get: () => this.props[shadowPropName],
         set: value => {
-          this.props[shadowPropName] = value;
+          if (value != null) {
+            this.props[shadowPropName] = TEXT_PX_PROPS.includes(shadowPropName)
+              ? `${value}px`
+              : value;
+          } else {
+            this.props[shadowPropName] = TextDefaults[shadowPropName];
+          }
           this.markTextDirty();
           return true;
         }
       });
+      // $FlowFixMe
+      this[shadowPropName] = null;
     });
-
-    this.fontFamily = defaultFontStack;
-    this.fontSize = `${defaultFontSize}px`;
   }
 
   get numberOfLines(): number {

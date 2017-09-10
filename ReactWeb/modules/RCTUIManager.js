@@ -10,7 +10,6 @@ import RCTBridge, {
   bridgeModuleNameForClass,
   RCTFunctionTypeNormal
 } from "RCTBridge";
-import type { RCTComponent } from "RCTComponent";
 import RCTComponentData from "RCTComponentData";
 import RCTViewManager from "RCTViewManager";
 import UIView from "UIView";
@@ -20,7 +19,9 @@ import RCTRootShadowView from "RCTRootShadowView";
 import RCTLayoutAnimationManager from "RCTLayoutAnimationManager";
 import RCTUIManagerObserverCoordinator from "RCTUIManagerObserverCoordinator";
 import { GlobalConfig } from "yoga-js";
+import CanUse from "CanUse";
 
+import type { RCTComponent } from "RCTComponent";
 import type RCTShadowView, { LayoutChange } from "RCTShadowView";
 import type { LayoutAnimationConfig } from "RCTLayoutAnimationManager";
 import type { Frame } from "UIView";
@@ -288,10 +289,15 @@ class RCTUIManager {
     config: LayoutAnimationConfig,
     onAnimationDidEnd: number
   ) {
-    this.layoutAnimationManager.configureNext(
-      config,
-      this.bridge.callbackFromId(onAnimationDidEnd)
-    );
+    if (
+      !CanUse.matchMedia ||
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      this.layoutAnimationManager.configureNext(
+        config,
+        this.bridge.callbackFromId(onAnimationDidEnd)
+      );
+    }
   }
 
   addUIBlock(block: ?Function) {

@@ -10,18 +10,6 @@ import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 import * as MatrixMath from "MatrixMath";
 
-export type Frame = {
-  top: number,
-  left: number,
-  width: number,
-  height: number
-};
-
-export type Size = {
-  width: number,
-  height: number
-};
-
 (function() {
   var typesToPatch = ["DocumentType", "Element", "CharacterData"],
     remove = function() {

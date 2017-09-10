@@ -9,3 +9,15 @@ export const defaultFontStack = `-apple-system, system-ui, BlinkMacSystemFont,
     sans-serif`;
 
 export const defaultFontSize = 17;
+
+export const defaults = {
+  fontFamily: `-apple-system, system-ui, BlinkMacSystemFont, 
+    "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", 
+    "Fira Sans", "Droid Sans", "Helvetica Neue", 
+    sans-serif`,
+  fontSize: "17px",
+  lineHeight: "1.1",
+  fontStyle: "normal",
+  fontWeight: "normal",
+  letterSpacing: "0px"
+};
