@@ -2,7 +2,6 @@
  * @providesModule RCTLayoutAnimationManager
  * @flow
  */
-import type { Frame } from "UIView";
 import type RCTShadowView, { LayoutChange } from "RCTShadowView";
 import type RCTUIManager from "RCTUIManager";
 import type { KeyframeResult } from "RCTKeyframeGenerator";

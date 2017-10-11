@@ -12,11 +12,12 @@ import {
 
 var CustomLayoutAnimation = {
   ...LayoutAnimation.Presets.spring,
-  delete: {
-    type: LayoutAnimation.Types.easeOut,
-    property: LayoutAnimation.Properties.opacity,
-    duration: 1
-  }
+  // delete: {
+  //   type: LayoutAnimation.Types.easeOut,
+  //   property: LayoutAnimation.Properties.opacity,
+  //   duration: 1
+  // }
+  delete: null
 };
 
 class AnimationExample extends Component {

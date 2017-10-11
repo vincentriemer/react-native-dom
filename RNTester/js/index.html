@@ -2,9 +2,10 @@
 
 <head>
   <title>RNTester</title>
-  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width">
+  <meta name="viewport" content="initial-scale=1.0,viewport-fit=contain">
   <meta name="apple-mobile-web-app-title" content="RNTester">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
   <link rel="preload" href="./client.bundle?platform=web" as="script" />
   <link rel="preload" href="./RNTesterApp.web.bundle?platform=web&dev=true" as="fetch" />
@@ -12,6 +13,7 @@
     html,
     body {
       margin: 0;
+      padding: 0;
       height: 100%;
       width: 100%;
       overflow: hidden;
