@@ -19,6 +19,7 @@
     "react": "16.0.0-beta.5",
     "react-native": "0.49.0-rc.2",
     "rebound": "^0.0.15",
+    "tinycolor2": "^1.4.1",
     "wolfy87-eventemitter": "^5.1.0"
   },
   "scripts": {
@@ -35,8 +36,12 @@
   "jest": {
     "haste": {
       "defaultPlatform": "web",
-      "providesModuleNodeModules": ["react-native-dom"],
-      "platforms": ["web"]
+      "providesModuleNodeModules": [
+        "react-native-dom"
+      ],
+      "platforms": [
+        "web"
+      ]
     }
   },
   "devDependencies": {

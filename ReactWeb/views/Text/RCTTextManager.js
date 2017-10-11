@@ -100,6 +100,16 @@ class RCTTextManager extends RCTViewManager {
   setTextDecorationStyle(view: RCTText, value: number) {
     view.lineHeight = value;
   }
+
+  @RCT_EXPORT_VIEW_PROP("disabled", "boolean")
+  setDisabled(view: RCTText, value: boolean) {
+    view.disabled = value;
+  }
+
+  @RCT_EXPORT_VIEW_PROP("isHighlighted", "boolean")
+  setIsHighlighted(view: RCTText, value: ?boolean) {
+    view.isHighlighted = value;
+  }
 }
 
 export default RCTTextManager;

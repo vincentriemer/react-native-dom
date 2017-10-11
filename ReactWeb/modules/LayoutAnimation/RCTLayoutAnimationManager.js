@@ -512,20 +512,24 @@ class RCTLayoutAnimationManager {
 
       view.style.willChange = "opacity";
 
-      animations.push(() => {
-        // $FlowFixMe
-        const animation = view.animate(keyframes, config);
+      animations.push(
+        (thisView => {
+          return () => {
+            // $FlowFixMe
+            const animation = thisView.animate(keyframes, config);
 
-        animation.onfinish = () => {
-          if (view.reactSuperview) {
-            view.reactSuperview.removeReactSubview(view);
-          }
-          this.manager.viewRegistry.delete(reactTag);
-          view.purge();
-        };
+            animation.onfinish = () => {
+              if (thisView.reactSuperview) {
+                thisView.reactSuperview.removeReactSubview(view);
+              }
+              this.manager.viewRegistry.delete(reactTag);
+              thisView.purge();
+            };
 
-        return animation.finished;
-      });
+            return animation.finished;
+          };
+        })(view)
+      );
     });
 
     return animations;

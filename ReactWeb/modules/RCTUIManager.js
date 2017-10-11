@@ -152,6 +152,10 @@ class RCTUIManager {
 
   purgeView(reactTag: number) {
     if (this.layoutAnimationManager.isPending()) {
+      const view = this.viewRegistry.get(reactTag);
+      if (view && view.reactSuperview) {
+        view.reactSuperview.removeReactSubview(view);
+      }
       this.layoutAnimationManager.queueRemovedNode(reactTag);
     } else {
       const shadowView = this.shadowViewRegistry.get(reactTag);

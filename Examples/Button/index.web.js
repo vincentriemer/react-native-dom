@@ -51,6 +51,7 @@ class ButtonExample extends Component {
         <SpacedButton {...defaultProps} title="Purple Button" color="#7350BD" />
         <SpacedButton {...defaultProps} title="Pink Button" color="#CF3A60" />
         <SpacedButton {...defaultProps} title="Disabled Button" disabled />
+        <Text onPress={() => console.log("boosh")}>Example Text</Text>
       </View>
     );
   }

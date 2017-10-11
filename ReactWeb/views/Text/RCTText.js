@@ -14,11 +14,14 @@ import {
 } from "RCTSharedTextValues";
 import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
+import tinycolor from "tinycolor2";
 
 @CustomElement("rct-text")
 class RCTText extends RCTView {
   _selectable: boolean;
-  _color: number;
+  _disabled: boolean;
+  _isHighlighted: ?boolean;
+  _highlightedBackgroundColor: ?string;
 
   constructor(bridge: RCTBridge) {
     super(bridge);
@@ -28,17 +31,27 @@ class RCTText extends RCTView {
       display: "inline",
       contain: "none",
       opacity: "1.0",
-      whiteSpace: "pre-wrap"
+      whiteSpace: "pre-wrap",
+      boxDecorationBreak: "clone"
     });
 
+    this.isHighlighted = null;
+    this.disabled = true;
     this.selectable = false;
     this.fontFamily = defaultFontStack;
     this.fontSize = defaultFontSize;
     this.lineHeight = null;
   }
 
-  get color(): number {
-    return this._color;
+  set backgroundColor(value: number | string) {
+    super.backgroundColor = value;
+
+    const color = tinycolor(value);
+    if (color.getAlpha() < 0.3) {
+      color.setAlpha(0.3);
+    }
+    color.darken();
+    this._highlightedBackgroundColor = color.toRgbString();
   }
 
   set color(value: number) {
@@ -69,16 +82,8 @@ class RCTText extends RCTView {
     // no-op
   }
 
-  get fontFamily(): string {
-    return this.style.fontFamily;
-  }
-
   set fontFamily(value: ?string) {
     this.style.fontFamily = value ? value : TextDefaults.fontFamily;
-  }
-
-  get fontSize(): string {
-    return this.style.fontFamily;
   }
 
   set fontSize(value: ?number) {
@@ -89,27 +94,51 @@ class RCTText extends RCTView {
     return this._selectable;
   }
 
-  get textAlign(): string {
-    return this.style.textAlign;
-  }
-
   set textAlign(value: string) {
     this.style.textAlign = value;
+  }
+
+  updatePointerEvents() {
+    this.style.pointerEvents =
+      (this._selectable || this._touchable) && !this._disabled
+        ? "auto"
+        : "none";
+  }
+
+  set disabled(value: boolean) {
+    this._disabled = value;
+    this.updatePointerEvents();
+  }
+
+  set isHighlighted(value: ?boolean) {
+    this._isHighlighted = value;
+    if (value != null) {
+      this.touchable = true;
+      if (value) {
+        this.style.backgroundImage =
+          "linear-gradient(-100deg, rgba(0,0,0,0.2), rgba(0,0,0,0.2))";
+      } else {
+        this.style.backgroundImage = "";
+      }
+    } else {
+      this.touchable = false;
+    }
+    this.updatePointerEvents();
   }
 
   set selectable(value: boolean) {
     this._selectable = value;
 
-    const pointerValue = value ? "auto" : "none";
     const userSelectValue = value ? "text" : "none";
 
     // $FlowFixMe
     Object.assign(this.style, {
       webkitUserSelect: userSelectValue,
       MozUserSelect: userSelectValue,
-      userSelect: userSelectValue,
-      pointerEvents: pointerValue
+      userSelect: userSelectValue
     });
+
+    this.updatePointerEvents();
   }
 
   set fontWeight(value: ?string) {

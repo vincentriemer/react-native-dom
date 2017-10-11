@@ -49,14 +49,15 @@ class UIView extends HTMLElement implements RCTComponent {
   _right: number = 0;
   _width: number = 0;
   _height: number = 0;
-  _touchable: boolean;
+  _touchable: boolean = false;
   _opacity: number;
   _transform: number[];
   _animatedTransform: string;
+  _backgroundColor: string;
 
   childBorderView: ?UIBorderView;
 
-  reactTag: number;
+  _reactTag: number;
   reactSubviews: Array<UIView>;
   reactSuperview: ?UIView;
 
@@ -68,13 +69,16 @@ class UIView extends HTMLElement implements RCTComponent {
     this.reactSubviews = [];
     this.hasBeenFramed = false;
     this.opacity = 1;
-    this.style.opacity = "0";
 
     this.position = "absolute";
-    this.backgroundColor = "transparent";
+    this.backgroundColor = "rgba(0,0,0,0)";
 
-    this.style.contain = "size layout style";
-    this.style.boxSizing = "border-box";
+    Object.assign(this.style, {
+      contain: "size layout style",
+      boxSizing: "border-box",
+      opacity: "0",
+      touchAction: "manipulation"
+    });
 
     ALL_BORDER_PROPS.forEach(propName => {
       Object.defineProperty(this, propName, {
@@ -88,6 +92,15 @@ class UIView extends HTMLElement implements RCTComponent {
         }
       });
     });
+  }
+
+  get reactTag(): number {
+    return this._reactTag;
+  }
+
+  set reactTag(value: number) {
+    this._reactTag = value;
+    this.id = `${value}`;
   }
 
   get frame(): Frame {
@@ -105,10 +118,6 @@ class UIView extends HTMLElement implements RCTComponent {
       this.hasBeenFramed = true;
       this.opacity = this._opacity;
     }
-  }
-
-  get position(): string {
-    return this.style.position;
   }
 
   set position(value: string) {
@@ -137,17 +146,9 @@ class UIView extends HTMLElement implements RCTComponent {
     }
   }
 
-  get bottom(): number {
-    return this._bottom;
-  }
-
   set bottom(value: number) {
     this._bottom = value;
     this.style.bottom = `${value}px`;
-  }
-
-  get right(): number {
-    return this._right;
   }
 
   set right(value: number) {
@@ -192,16 +193,14 @@ class UIView extends HTMLElement implements RCTComponent {
     }
   }
 
-  get backgroundColor(): string {
-    return this.style.backgroundColor;
-  }
-
   set backgroundColor(value: string | number) {
     if (typeof value === "number") {
       const [a, r, g, b] = ColorArrayFromHexARGB(value);
       const stringValue = `rgba(${r},${g},${b},${a})`;
+      this._backgroundColor = stringValue;
       this.style.backgroundColor = stringValue;
     } else {
+      this._backgroundColor = value;
       this.style.backgroundColor = value;
     }
   }
@@ -315,6 +314,9 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   purge() {
+    if (this.reactSuperview) {
+      this.reactSuperview.removeReactSubview(this);
+    }
     this.remove();
   }
 
