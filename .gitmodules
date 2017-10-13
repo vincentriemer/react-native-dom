@@ -1,0 +1,4 @@
+[submodule "RNTester"]
+	path = RNTester
+	url = git@gitlab.com:vincentriemer/react-native-dom.git
+	branch = rntester
