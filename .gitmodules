@@ -2,3 +2,7 @@
 	path = RNTester
 	url = git@gitlab.com:vincentriemer/react-native-dom.git
 	branch = rntester
+[submodule "Libraries"]
+	path = Libraries
+	url = git@gitlab.com:vincentriemer/react-native-dom.git
+	branch = rnlibraries
