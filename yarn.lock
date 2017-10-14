@@ -5434,9 +5434,9 @@ react-devtools-core@^2.5.0:
     shell-quote "^1.6.1"
     ws "^2.0.3"
 
-react-native@0.49.0-rc.2:
-  version "0.49.0-rc.2"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.49.0-rc.2.tgz#93b7e6ba9d784ffbfcbd14bdd83ba0f0c1bfd597"
+react-native@0.49.4:
+  version "0.49.3"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.49.3.tgz#0ca459ee49f9c59e8326b2ced9e34c59333a2f26"
   dependencies:
     absolute-path "^0.0.0"
     art "^0.10.0"

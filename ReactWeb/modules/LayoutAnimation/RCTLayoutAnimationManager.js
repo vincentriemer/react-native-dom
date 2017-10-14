@@ -215,25 +215,23 @@ class RCTLayoutAnimationManager {
         const subShadowView = this.manager.shadowViewRegistry.get(subReactTag);
         invariant(subShadowView, "Shadow View does not exist");
 
-        if (!registry.hasOwnProperty(subReactTag)) {
-          invariant(
-            subShadowView.previousLayout,
-            "shadowView has no previous layout"
-          );
-          registry[subReactTag] = this.transformAnimationConfigFactory(
-            updateKeyConfig.keyframes.length,
-            updateKeyConfig.duration,
-            subShadowView.previousLayout
+        if (subShadowView.previousLayout != null) {
+          if (!registry.hasOwnProperty(subReactTag)) {
+            registry[subReactTag] = this.transformAnimationConfigFactory(
+              updateKeyConfig.keyframes.length,
+              updateKeyConfig.duration,
+              subShadowView.previousLayout
+            );
+          }
+
+          registry[
+            subReactTag
+          ][0] = this.createInverseTransformAnimationKeyframes(
+            propName,
+            registry[subReactTag][0],
+            newFrames
           );
         }
-
-        registry[
-          subReactTag
-        ][0] = this.createInverseTransformAnimationKeyframes(
-          propName,
-          registry[subReactTag][0],
-          newFrames
-        );
       });
     }
   }

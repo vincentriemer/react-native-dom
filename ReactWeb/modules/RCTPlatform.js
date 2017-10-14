@@ -10,7 +10,12 @@ const supportsTouchForceChange = "ontouchforcechange" in window.document;
 class RCTPlatformConstants {
   constantsToExport() {
     return {
-      forceTouchAvailable: supportsTouchForceChange
+      forceTouchAvailable: supportsTouchForceChange,
+      reactNativeVersion: {
+        major: 0,
+        minor: 49,
+        patch: 3
+      }
     };
   }
 }
