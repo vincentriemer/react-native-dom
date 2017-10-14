@@ -97,7 +97,7 @@ class RCTTouchHandler {
         const target = rawTouch.target;
 
         invariant(
-          target instanceof UIView,
+          target instanceof UIView || target instanceof UIChildContainerView,
           "Cannot normalize interaction event on object which does not inherit from UIView"
         );
 
