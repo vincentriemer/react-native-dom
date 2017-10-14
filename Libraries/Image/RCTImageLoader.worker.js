@@ -14,7 +14,7 @@ function loadImage(url, callbackId) {
 
   const config = {
     method: "GET",
-    mode: "cors",
+    mode: "no-cors",
     cache: "default"
   };
   fetch(url, config).then(onload).catch(onerror);

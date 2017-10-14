@@ -82,6 +82,7 @@ class RCTImageLoader {
       if (returnCode === 0) {
         const image = new Image();
         image.onload = () => resolve(image);
+        image.onerror = () => reject();
         image.src = url;
       } else {
         reject();
