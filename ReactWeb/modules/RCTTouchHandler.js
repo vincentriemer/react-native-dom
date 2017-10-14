@@ -8,7 +8,7 @@ import type RCTBridge from "RCTBridge";
 import detectIt from "detect-it";
 
 import invariant from "Invariant";
-import UIView from "UIView";
+import UIView, { UIChildContainerView } from "UIView";
 import RCTEventDispatcher from "RCTEventDispatcher";
 import RCTTouchEvent from "RCTTouchEvent";
 import guid from "Guid";
@@ -67,7 +67,7 @@ class RCTTouchHandler {
       const target = rawEvent.target;
 
       invariant(
-        target instanceof UIView,
+        target instanceof UIView || target instanceof UIChildContainerView,
         "Cannot normalize interaction event on object which does not inherit from UIView"
       );
 

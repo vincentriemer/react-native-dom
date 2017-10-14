@@ -35,10 +35,10 @@ class RCTImageView extends RCTView {
 
     this._imageSources = [];
 
-    const shadowRoot = this.attachShadow({ mode: "open" });
+    this.childShadowRoot = this.childContainer.attachShadow({ mode: "open" });
     this.imageElement = document.createElement("img");
-    shadowRoot.appendChild(this.imageElement);
-    shadowRoot.appendChild(document.createElement("slot"));
+    this.childShadowRoot.appendChild(this.imageElement);
+    this.childShadowRoot.appendChild(document.createElement("slot"));
   }
 
   set imageSources(value: RCTImageSource[]) {

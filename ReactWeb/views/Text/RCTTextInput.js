@@ -16,8 +16,6 @@ class RCTTextInput extends RCTView {
   constructor(bridge: RCTBridge) {
     super(bridge);
 
-    const shadowRoot = this.attachShadow({ mode: "open" });
-
     this.inputElement = document.createElement("input");
     this.inputElement.type = "text";
 
@@ -28,8 +26,9 @@ class RCTTextInput extends RCTView {
       border: "0px solid"
     });
 
-    shadowRoot.appendChild(this.inputElement);
-    shadowRoot.appendChild(document.createElement("slot"));
+    this.shadowRoot = this.attachShadow({ mode: "open" });
+    this.shadowRoot.appendChild(this.inputElement);
+    this.shadowRoot.appendChild(document.createElement("slot"));
   }
 
   set borderRadius(value: number) {

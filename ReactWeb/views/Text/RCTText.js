@@ -35,6 +35,11 @@ class RCTText extends RCTView {
       boxDecorationBreak: "clone"
     });
 
+    Object.assign(this.childContainer.style, {
+      display: "inline",
+      position: "static"
+    });
+
     this.isHighlighted = null;
     this.disabled = true;
     this.selectable = false;

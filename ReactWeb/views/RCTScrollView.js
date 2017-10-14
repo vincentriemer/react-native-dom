@@ -225,7 +225,7 @@ class RCTScrollView extends RCTView {
 
     if (SHOULD_ADD_SCROLL_OVERFLOW) {
       this.overflowView = new RCTScrollOverflowView();
-      this.appendChild(this.overflowView);
+      this.insertBefore(this.overflowView, this.childContainer);
     }
 
     this.addEventListener(

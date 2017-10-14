@@ -41,6 +41,20 @@ export const FrameZero: Frame = {
 
 const baseDimension = 1000;
 
+@CustomElement("ui-child-container-view")
+export class UIChildContainerView extends HTMLElement {
+  constructor() {
+    super();
+    Object.assign(this.style, {
+      position: "absolute",
+      top: "0",
+      left: "0",
+      right: "0",
+      bottom: "0"
+    });
+  }
+}
+
 @CustomElement("ui-view")
 class UIView extends HTMLElement implements RCTComponent {
   _top: number = 0;
@@ -55,16 +69,19 @@ class UIView extends HTMLElement implements RCTComponent {
   _animatedTransform: string;
   _backgroundColor: string;
 
-  childBorderView: ?UIBorderView;
+  childContainer: UIChildContainerView;
+  borderView: ?UIBorderView;
 
   _reactTag: number;
   reactSubviews: Array<UIView>;
   reactSuperview: ?UIView;
-
   hasBeenFramed: boolean;
 
   constructor() {
     super();
+
+    this.childContainer = new UIChildContainerView();
+    this.appendChild(this.childContainer);
 
     this.reactSubviews = [];
     this.hasBeenFramed = false;
@@ -258,15 +275,15 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   get borderChild(): UIBorderView {
-    if (!this.childBorderView) {
-      const childBorderView = new UIBorderView();
+    if (!this.borderView) {
+      const borderView = new UIBorderView();
 
-      this.appendChild(childBorderView);
-      this.childBorderView = childBorderView;
-      return childBorderView;
+      this.appendChild(borderView);
+      this.borderView = borderView;
+      return borderView;
     }
 
-    return this.childBorderView;
+    return this.borderView;
   }
 
   get touchable(): boolean {
@@ -294,14 +311,10 @@ class UIView extends HTMLElement implements RCTComponent {
 
   insertReactSubviewAtIndex(subview: UIView, index: number) {
     if (index === this.reactSubviews.length) {
-      if (this.childBorderView) {
-        this.insertBefore(subview, this.childBorderView);
-      } else {
-        this.appendChild(subview);
-      }
+      this.childContainer.appendChild(subview);
     } else {
       const beforeElement = this.reactSubviews[index];
-      this.insertBefore(subview, beforeElement);
+      this.childContainer.insertBefore(subview, beforeElement);
     }
 
     this.reactSubviews.splice(index, 0, subview);

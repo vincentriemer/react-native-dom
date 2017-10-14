@@ -24,7 +24,7 @@ class RCTActivityIndicatorView extends RCTView {
     super(bridge);
 
     this.animationContainer = this.constructAnimationContainer();
-    this.appendChild(this.animationContainer);
+    this.childContainer.appendChild(this.animationContainer);
 
     this.animation = this.constructAnimation();
     this.color = "rgb(25, 118, 210)";
