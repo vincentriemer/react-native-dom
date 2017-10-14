@@ -6,6 +6,7 @@ import RCTView from "RCTView";
 import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 
+// adapted from https://github.com/necolas/react-native-web/blob/master/src/components/ActivityIndicator/index.js
 const INDICATOR_SVG = `
 <svg height="100%" viewBox="0 0 32 32" width="100%">
   <circle cx="16" cy="16" fill="none" r="14" stroke-width="4" style="stroke: currentColor; opacity: 0.2;"></circle>
