@@ -21,6 +21,7 @@ require("RCTLinkingManager");
 require("RCTSourceCode");
 require("RCTTextInputManager");
 require("RCTImageLoader");
+require("RCTActivityIndicatorViewManager");
 
 // React Native Web Entrypoint instance
 export class RNWebInstance {

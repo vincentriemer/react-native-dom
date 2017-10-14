@@ -24,7 +24,7 @@
   },
   "scripts": {
     "flow": "flow",
-    "start": "react-native start --reset-cache",
+    "start": "react-native start",
     "prebuild:rntester": "rimraf dist && mkdir -p dist",
     "build:rntester": "yarn run build:rntester:client && yarn run build:rntester:bundle && cp ./RNTester/js/index.html ./dist/index.html && cp now.json ./dist/now.json",
     "build:rntester:client": "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/client.js --bundle-output ./dist/client.bundle --platform web --reset-cache",
