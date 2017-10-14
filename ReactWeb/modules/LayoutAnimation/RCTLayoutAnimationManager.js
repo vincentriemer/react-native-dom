@@ -49,10 +49,15 @@ type TransformKeyframeConfig = {
   translateX: number,
   translateY: number,
   scaleX: number,
-  scaleY: number,
-  inverseScaleX: number,
-  inverseScaleY: number
+  scaleY: number
 };
+
+type ChildContainerKeyframeConfig = {
+  scaleX: number,
+  scaleY: number
+};
+
+type ChildContainerAnimationConfig = ChildContainerKeyframeConfig[];
 
 type TransformAnimationConfig = [
   TransformKeyframeConfig[],
@@ -131,12 +136,9 @@ class RCTLayoutAnimationManager {
       if (["scaleX", "scaleY"].includes(propName)) {
         newValue = from + (to - from) * keyframes[index];
 
-        if (newValue < 0) {
-          newValue = 0;
+        if (newValue <= 0) {
+          newValue = 0.0001;
         }
-
-        // protect against divide by zero errors
-        newValue += 0.0001;
       } else {
         newValue = from + (to - from) * keyframes[index];
       }
@@ -164,12 +166,9 @@ class RCTLayoutAnimationManager {
         newValue = -1 * parentValue;
       }
 
-      const newPropName = `inverse${propName.charAt(0).toUpperCase() +
-        propName.slice(1)}`;
-
       return {
         ...prevKeyframe,
-        [newPropName]: newValue
+        [propName]: newValue
       };
     });
   }
@@ -181,15 +180,15 @@ class RCTLayoutAnimationManager {
   ): TransformAnimationConfig {
     return [
       new Array(keyLength).fill({
-        translateX: layout.left,
-        translateY: layout.top,
+        translateX: 0,
+        translateY: 0,
         scaleX: 1.0,
         scaleY: 1.0,
         inverseScaleX: 1.0,
         inverseScaleY: 1.0
       }),
       {
-        duration,
+        duration: duration,
         layout,
         origin: {
           x: -1 * layout.width / 2,
@@ -197,6 +196,13 @@ class RCTLayoutAnimationManager {
         }
       }
     ];
+  }
+
+  childContainerAnimationConfigFactory(keyLength: number, duration: number) {
+    return new Array(keyLength).fill({
+      scaleX: 1.0,
+      scaleY: 1.0
+    });
   }
 
   applyInverseTransformOnChildren(
@@ -343,8 +349,8 @@ class RCTLayoutAnimationManager {
         } = layout;
 
         if (prevTop !== nextTop) {
-          const nextTranslateY = nextTop;
-          const prevTranslateY = prevTop;
+          const prevTranslateY = prevTop - nextTop;
+          const nextTranslateY = 0;
 
           const newFrames = this.createTransformAnimationKeyframes(
             prevTranslateY,
@@ -358,8 +364,8 @@ class RCTLayoutAnimationManager {
         }
 
         if (prevLeft !== nextLeft) {
-          const nextTranslateX = nextLeft;
-          const prevTranslateX = prevLeft;
+          const prevTranslateX = prevLeft - nextLeft;
+          const nextTranslateX = 0;
 
           const newFrames = this.createTransformAnimationKeyframes(
             prevTranslateX,
@@ -372,9 +378,14 @@ class RCTLayoutAnimationManager {
           registry[reactTag][0] = newFrames;
         }
 
+        let childContainerTransform = this.childContainerAnimationConfigFactory(
+          updateKeyConfig.keyframes.length
+        );
+        let shouldTransformChildren = false;
+
         if (prevWidth !== nextWidth) {
-          const nextScaleX = 1.0;
           const prevScaleX = prevWidth / nextWidth;
+          const nextScaleX = 1.0;
 
           const newFrames = this.createTransformAnimationKeyframes(
             prevScaleX,
@@ -386,13 +397,14 @@ class RCTLayoutAnimationManager {
 
           registry[reactTag][0] = newFrames;
 
-          this.applyInverseTransformOnChildren(
-            shadowView,
-            registry,
-            updateKeyConfig,
-            newFrames,
-            "scaleX"
-          );
+          if (view.childContainer) {
+            shouldTransformChildren = true;
+            childContainerTransform = this.createInverseTransformAnimationKeyframes(
+              "scaleX",
+              childContainerTransform,
+              newFrames
+            );
+          }
         }
 
         if (prevHeight !== nextHeight) {
@@ -409,13 +421,39 @@ class RCTLayoutAnimationManager {
 
           registry[reactTag][0] = newFrames;
 
-          this.applyInverseTransformOnChildren(
-            shadowView,
-            registry,
-            updateKeyConfig,
-            newFrames,
-            "scaleY"
-          );
+          if (view.childContainer) {
+            shouldTransformChildren = true;
+            childContainerTransform = this.createInverseTransformAnimationKeyframes(
+              "scaleY",
+              childContainerTransform,
+              newFrames
+            );
+          }
+        }
+
+        if (shouldTransformChildren) {
+          const childContainer = view.childContainer;
+          if (childContainer) {
+            const keyframes = childContainerTransform.map(
+              ({ scaleX, scaleY }) => ({
+                transform: `scale(${scaleX},${scaleY})`
+              })
+            );
+            const config = { duration: updateKeyConfig.duration, fill: "none" };
+
+            childContainer.style.willChange = "transform";
+
+            animations.push(() => {
+              // $FlowFixMe
+              const animation = childContainer.animate(keyframes, config);
+
+              animation.onfinish = () => {
+                childContainer.style.willChange = "";
+              };
+
+              return animation.finished;
+            });
+          }
         }
       }
     });
@@ -452,20 +490,22 @@ class RCTLayoutAnimationManager {
 
       const config = { duration, fill: "none" };
 
+      const prevWillChange = view.style.willChange;
       view.style.willChange = "transform";
 
-      animations.push(() => {
-        // $FlowFixMe
-        const animation = view.animate(keyframes, config);
+      (prevWillChange =>
+        animations.push(() => {
+          // $FlowFixMe
+          const animation = view.animate(keyframes, config);
 
-        view.frame = layout;
+          view.frame = layout;
 
-        animation.onfinish = () => {
-          view.style.willChange = "";
-        };
+          animation.onfinish = () => {
+            view.style.willChange = prevWillChange;
+          };
 
-        return animation.finished;
-      });
+          return animation.finished;
+        }))(prevWillChange);
     });
 
     // Animate view removal
@@ -538,31 +578,10 @@ class RCTLayoutAnimationManager {
     origin: Position
   ) {
     return keyframeConfigs.map(config => {
-      const {
-        inverseScaleX,
-        inverseScaleY,
-        translateX,
-        translateY,
-        scaleX,
-        scaleY
-      } = config;
+      const { translateX, translateY, scaleX, scaleY } = config;
 
       // shift transformation origin
       let transformMatrix = MatrixMath.createTranslate2d(origin.x, origin.y);
-
-      // appply inverse scaling from parent transforms
-      const inverseScaleMatrix = MatrixMath.createIdentityMatrix();
-      MatrixMath.reuseScale3dCommand(
-        inverseScaleMatrix,
-        inverseScaleX,
-        inverseScaleY,
-        1.0
-      );
-      MatrixMath.multiplyInto(
-        transformMatrix,
-        transformMatrix,
-        inverseScaleMatrix
-      );
 
       // apply translation
       MatrixMath.multiplyInto(

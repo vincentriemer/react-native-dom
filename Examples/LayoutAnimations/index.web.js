@@ -11,13 +11,12 @@ import {
 } from "react-native";
 
 var CustomLayoutAnimation = {
-  ...LayoutAnimation.Presets.spring,
+  ...LayoutAnimation.Presets.spring
   // delete: {
   //   type: LayoutAnimation.Types.easeOut,
   //   property: LayoutAnimation.Properties.opacity,
   //   duration: 1
   // }
-  delete: null
 };
 
 class AnimationExample extends Component {

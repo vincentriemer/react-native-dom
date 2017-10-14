@@ -11,7 +11,7 @@ import invariant from "Invariant";
 
 import type { LayoutAnim } from "RCTLayoutAnimationManager";
 
-const timestepCoefficient = 2;
+const timestepCoefficient = 1;
 
 const staticEasingFunctions = {
   linear: x => x,

@@ -53,7 +53,8 @@ export class UIChildContainerView extends HTMLElement {
       bottom: "0",
       MozUserSelect: "inherit",
       WebkitUserSelect: "inherit",
-      userSelect: "inherit"
+      userSelect: "inherit",
+      transformOrigin: "top left"
     });
   }
 }
@@ -154,7 +155,7 @@ class UIView extends HTMLElement implements RCTComponent {
   set top(value: number) {
     if (value !== this._top) {
       this._top = value;
-      this.updateTransform();
+      this.style.top = `${value}px`;
     }
   }
 
@@ -165,22 +166,12 @@ class UIView extends HTMLElement implements RCTComponent {
   set left(value: number) {
     if (value !== this._left) {
       this._left = value;
-      this.updateTransform();
+      this.style.left = `${value}px`;
     }
   }
 
-  set bottom(value: number) {
-    this._bottom = value;
-    this.style.bottom = `${value}px`;
-  }
-
-  set right(value: number) {
-    this._right = value;
-    this.style.right = `${value}px`;
-  }
-
   updateTransform() {
-    let transform = MatrixMath.createTranslate2d(this._left, this._top);
+    let transform = MatrixMath.createIdentityMatrix();
 
     if (this._transform) {
       MatrixMath.multiplyInto(transform, transform, this._transform);
