@@ -50,7 +50,10 @@ export class UIChildContainerView extends HTMLElement {
       top: "0",
       left: "0",
       right: "0",
-      bottom: "0"
+      bottom: "0",
+      MozUserSelect: "inherit",
+      WebkitUserSelect: "inherit",
+      userSelect: "inherit"
     });
   }
 }
@@ -94,7 +97,10 @@ class UIView extends HTMLElement implements RCTComponent {
       contain: "size layout style",
       boxSizing: "border-box",
       opacity: "0",
-      touchAction: "manipulation"
+      touchAction: "manipulation",
+      MozUserSelect: "inherit",
+      WebkitUserSelect: "inherit",
+      userSelect: "inherit"
     });
 
     ALL_BORDER_PROPS.forEach(propName => {

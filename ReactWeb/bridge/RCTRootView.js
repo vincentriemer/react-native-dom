@@ -70,7 +70,12 @@ class RCTRootView extends UIView {
     this.touchHandler.attachToView(this);
 
     // $FlowFixMe
-    this.style.webkitTapHighlightColor = "transparent";
+    Object.assign(this.style, {
+      WebkitTapHighlightColor: "transparent",
+      WebkitUserSelect: "none",
+      MozUserSelect: "none",
+      userSelect: "none"
+    });
 
     // this.style.position = "fixed";
 
