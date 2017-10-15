@@ -16,7 +16,7 @@ export const defaults = {
     "Fira Sans", "Droid Sans", "Helvetica Neue", 
     sans-serif`,
   fontSize: "17px",
-  lineHeight: "1.1",
+  lineHeight: "1.2",
   fontStyle: "normal",
   fontWeight: "normal",
   letterSpacing: "0px"
