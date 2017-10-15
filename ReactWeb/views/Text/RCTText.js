@@ -18,7 +18,7 @@ import tinycolor from "tinycolor2";
 
 @CustomElement("rct-text")
 class RCTText extends RCTView {
-  _selectable: ?boolean;
+  _selectable: boolean;
   _disabled: boolean;
   _isHighlighted: ?boolean;
   _highlightedBackgroundColor: ?string;

@@ -1,6 +1,6 @@
 {
-  "name": "react-native-dom",
-  "version": "1.0.0",
+  "name": "@vincentriemer/react-native-dom",
+  "version": "0.0.0",
   "main": "ReactWeb/index.js",
   "dependencies": {
     "@vincentriemer/yoga-layout": "^1.6.1",
