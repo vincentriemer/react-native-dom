@@ -220,6 +220,10 @@ class UIView extends HTMLElement implements RCTComponent {
     }
   }
 
+  set pointerEvents(value: string) {
+    this.style.pointerEvents = value;
+  }
+
   get opacity(): number {
     return this._opacity;
   }

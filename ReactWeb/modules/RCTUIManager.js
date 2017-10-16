@@ -240,12 +240,18 @@ class RCTUIManager {
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
   measure(reactTag: number, callbackId: ?number) {
     let shadowView = this.shadowViewRegistry.get(reactTag);
+    let view = this.viewRegistry.get(reactTag);
 
     if (!shadowView || !shadowView.measurement) {
       return;
     }
 
-    let { left: globalX, top: globalY, width, height } = shadowView.measurement;
+    let {
+      /*left: globalX, top: globalY, */ width,
+      height
+    } = shadowView.measurement;
+
+    const { left: globalX, top: globalY } = view.getBoundingClientRect();
 
     invariant(shadowView.previousLayout, "Shadow view has no previous layout");
     let { left, top } = shadowView.previousLayout;

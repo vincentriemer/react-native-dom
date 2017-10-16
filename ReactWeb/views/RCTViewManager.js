@@ -208,7 +208,8 @@ class RCTViewManager {
       ...borderPropConfig,
       ["backfaceVisibility", "string"],
       ["overflow", "string"],
-      ["zIndex", "number"]
+      ["zIndex", "number"],
+      ["pointerEvents", "string"]
     ];
   }
 

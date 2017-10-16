@@ -12,7 +12,7 @@ import RCTBridge, {
 
 import guid from "Guid";
 
-const MAX_WORKERS = 4;
+const MAX_WORKERS = 1;
 
 // $FlowFixMe
 let WORKER_SRC = preval`

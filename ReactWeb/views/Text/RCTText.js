@@ -3,7 +3,6 @@
  * @flow
  */
 
-import type { Frame } from "UIView";
 import type RCTBridge from "RCTBridge";
 
 import RCTView from "RCTView";
