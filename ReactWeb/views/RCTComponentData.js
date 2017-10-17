@@ -10,7 +10,7 @@ import RCTBridge, {
 import RCTUIManager from "RCTUIManager";
 import RCTViewManager from "RCTViewManager";
 import RCTShadowView, { SHADOW_PROPS } from "RCTShadowView";
-import RCTComponent from "RCTComponent";
+import type { RCTComponent } from "RCTComponent";
 import UIView from "UIView";
 import { normalizeInputEventName } from "RCTEventDispatcher";
 import RCTText from "RCTText";

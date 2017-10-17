@@ -10,12 +10,11 @@ import type { RCTEvent } from "RCTEventDispatcher";
 import invariant from "Invariant";
 
 import type { RCTAnimationDriver } from "RCTAnimationDriver";
+import type { RCTValueAnimatedNodeObserver } from "RCTValueAnimatedNode";
 
 // Nodes
 import RCTAnimatedNode from "RCTAnimatedNode";
-import RCTValueAnimatedNode, {
-  RCTValueAnimatedNodeObserver
-} from "RCTValueAnimatedNode";
+import RCTValueAnimatedNode from "RCTValueAnimatedNode";
 import RCTPropsAnimatedNode from "RCTPropsAnimatedNode";
 import RCTStyleAnimatedNode from "RCTStyleAnimatedNode";
 import RCTInterpolationAnimatedNode from "RCTInterpolationAnimatedNode";

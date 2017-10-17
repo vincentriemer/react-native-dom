@@ -1,27 +1,30 @@
-// @flow
+/**
+ * @providesModule ReactWeb
+ * @flow
+ */
 import "proxy-polyfill";
 
 import RCTRootView from "RCTRootView";
 import bundleFromRoot from "BundleFromRoot";
 
 // Register Built-in Native Modules
-require("RCTEventDispatcher");
-require("RCTDeviceInfo");
-require("RCTPlatform");
-require("RCTTiming");
-require("RCTUIManager");
-require("RCTViewManager");
-require("RCTTextManager");
-require("RCTRawTextManager");
-require("RCTScrollViewManager");
-require("RCTNativeAnimatedModule");
-require("RCTAsyncLocalStorage");
-require("RCTImageViewManager");
-require("RCTLinkingManager");
-require("RCTSourceCode");
-require("RCTTextInputManager");
-require("RCTImageLoader");
-require("RCTActivityIndicatorViewManager");
+import "RCTEventDispatcher";
+import "RCTDeviceInfo";
+import "RCTPlatform";
+import "RCTTiming";
+import "RCTUIManager";
+import "RCTViewManager";
+import "RCTTextManager";
+import "RCTRawTextManager";
+import "RCTScrollViewManager";
+import "RCTNativeAnimatedModule";
+import "RCTAsyncLocalStorage";
+import "RCTImageViewManager";
+import "RCTLinkingManager";
+import "RCTSourceCode";
+import "RCTTextInputManager";
+import "RCTImageLoader";
+import "RCTActivityIndicatorViewManager";
 
 // React Native Web Entrypoint instance
 export class RNWebInstance {
