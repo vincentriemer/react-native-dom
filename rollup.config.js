@@ -4,6 +4,7 @@ import babel from "rollup-plugin-babel";
 import commonjs from "rollup-plugin-commonjs";
 import nodeResolve from "rollup-plugin-node-resolve";
 import replace from "rollup-plugin-replace";
+import Visualizer from "rollup-plugin-visualizer";
 
 function findVersion(file, extensions) {
   for (let e of extensions) {
@@ -166,6 +167,7 @@ export default {
           walk([k]);
         }
       }
-    }
+    },
+    Visualizer()
   ]
 };

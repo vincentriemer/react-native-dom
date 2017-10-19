@@ -9,8 +9,6 @@ import { ALL_BORDER_PROPS } from "UIBorderView";
 import RCTShadowView from "RCTShadowView";
 import RCTView from "RCTView";
 
-import type { Frame } from "UIView";
-
 type PropDef = {
   name: string,
   type: string,
