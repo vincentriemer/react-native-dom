@@ -2,3 +2,4 @@ dist
 node_modules
 lib
 stats.html
+yarn-error.log

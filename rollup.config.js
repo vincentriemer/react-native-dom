@@ -5,6 +5,7 @@ import commonjs from "rollup-plugin-commonjs";
 import nodeResolve from "rollup-plugin-node-resolve";
 import replace from "rollup-plugin-replace";
 import Visualizer from "rollup-plugin-visualizer";
+import globals from "rollup-plugin-node-globals";
 
 function findVersion(file, extensions) {
   for (let e of extensions) {
@@ -91,19 +92,26 @@ export default {
     format: "es",
     file: "lib/ReactNativeDOM.js"
   },
-  external: ["MatrixMath"],
   plugins: [
     nodeResolve({
       browser: true
     }),
     hasteResolve({
-      include: ["ReactWeb", "Libraries"],
+      include: [
+        "ReactWeb",
+        "Libraries",
+        "node_modules/react-native/Libraries/Utilities/MatrixMath.js"
+      ],
       extensions: [".web.js", ".js"]
     }),
     babel({
       //exclude: 'node_modules/**',
       sourceMaps: "inline",
-      exclude: ["node_modules/**"],
+      include: [
+        "ReactWeb/**",
+        "Libraries/**",
+        "node_modules/react-native/Libraries/**"
+      ],
       babelrc: false,
       presets: ["flow"],
       plugins: [
@@ -122,7 +130,7 @@ export default {
     }),
     commonjs({
       namedExports: {
-        "Libraries/Utilities/MatrixMath.web.js": [
+        "node_modules/react-native/Libraries/Utilities/MatrixMath.js": [
           "createIdentityMatrix",
           "multiplyInto",
           "createTranslate2d",
@@ -168,6 +176,7 @@ export default {
         }
       }
     },
+    globals(),
     Visualizer()
   ]
 };

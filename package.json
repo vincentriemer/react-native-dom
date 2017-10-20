@@ -1,5 +1,5 @@
 {
-  "name": "@vincentriemer/react-native-dom",
+  "name": "react-native-dom",
   "version": "0.0.5",
   "main": "lib/ReactNativeDOM.js",
   "dependencies": {
@@ -39,12 +39,8 @@
   "jest": {
     "haste": {
       "defaultPlatform": "web",
-      "providesModuleNodeModules": [
-        "@vincentriemer/react-native-dom"
-      ],
-      "platforms": [
-        "web"
-      ]
+      "providesModuleNodeModules": ["react-native-dom"],
+      "platforms": ["web"]
     }
   },
   "devDependencies": {

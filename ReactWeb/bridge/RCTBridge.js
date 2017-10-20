@@ -4,6 +4,7 @@
  */
 import invariant from "Invariant";
 import { moduleConfigFactory } from "RCTModuleConfig";
+import NotificationCenter from "NotificationCenter";
 import {
   RCTFunctionTypeNormal,
   RCTFunctionTypePromise,
@@ -14,6 +15,7 @@ import type { RCTFunctionType } from "RCTBridgeMethod";
 import type RCTEventDispatcher from "RCTEventDispatcher";
 import type RCTImageLoader from "RCTImageLoader";
 import type RCTDeviceInfo from "RCTDeviceInfo";
+import type RCTDevLoadingView from "RCTDevLoadingView";
 
 import type RCTUIManager from "RCTUIManager";
 
@@ -140,13 +142,16 @@ export default class RCTBridge {
   messages: Array<NativeCall> = [];
   moduleName: string;
   bundleLocation: string;
+  loading: boolean;
 
   _uiManager: ?RCTUIManager;
   _eventDispatcher: ?RCTEventDispatcher;
   _imageLoader: ?RCTImageLoader;
   _deviceInfo: ?RCTDeviceInfo;
+  _devLoadingView: ?RCTDevLoadingView;
 
   constructor(moduleName: string, bundle: string) {
+    this.loading = true;
     this.moduleName = moduleName;
     this.bundleLocation = bundle;
 
@@ -206,6 +211,8 @@ export default class RCTBridge {
 
     switch (topic) {
       case "bundleFinishedLoading": {
+        this.loading = false;
+        NotificationCenter.emitEvent("RCTJavaScriptDidLoadNotification");
         if (this.bundleFinishedLoading) {
           this.bundleFinishedLoading();
         }
@@ -222,6 +229,10 @@ export default class RCTBridge {
             });
           }
         }
+        break;
+      }
+      case "updateProgress": {
+        this.devLoadingView.updateProgress(payload);
         break;
       }
       default: {
@@ -333,6 +344,14 @@ export default class RCTBridge {
       this._uiManager = uiManager;
     }
     return this._uiManager;
+  }
+
+  get devLoadingView(): RCTDevLoadingView {
+    if (!this._devLoadingView) {
+      const devLoadingView: any = this.modulesByName["DevLoadingView"];
+      this._devLoadingView = devLoadingView;
+    }
+    return this._devLoadingView;
   }
 
   get eventDispatcher(): RCTEventDispatcher {

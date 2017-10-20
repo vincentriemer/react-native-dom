@@ -4,6 +4,12 @@
  */
 import "proxy-polyfill";
 
+global.process = global.process || {};
+global.process.env = global.process.env || {};
+if (!global.process.env.NODE_ENV) {
+  global.process.env.NODE_ENV = __DEV__ ? "development" : "production";
+}
+
 import RCTRootView from "RCTRootView";
 import bundleFromRoot from "BundleFromRoot";
 
@@ -25,13 +31,26 @@ import "RCTSourceCode";
 import "RCTTextInputManager";
 import "RCTImageLoader";
 import "RCTActivityIndicatorViewManager";
+import "RCTWebSocketModule";
+import "RCTAppState";
+import "RCTDevLoadingView";
 
 // React Native Web Entrypoint instance
 export class RNWebInstance {
   rootView: RCTRootView;
 
-  constructor(bundle: string, moduleName: string, parent: Element) {
-    this.rootView = new RCTRootView(bundleFromRoot(bundle), moduleName, parent);
+  constructor(
+    bundle: string,
+    moduleName: string,
+    parent: Element,
+    enableHotReload?: boolean
+  ) {
+    this.rootView = new RCTRootView(
+      bundleFromRoot(bundle),
+      moduleName,
+      parent,
+      enableHotReload
+    );
   }
 
   start() {

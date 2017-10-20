@@ -33,14 +33,27 @@ class RCTRootView extends UIView {
   uiManager: RCTUIManager;
   timing: RCTTiming;
   ticking: boolean;
+  bundleLocation: string;
+  enableHotReload: boolean;
 
   touchHandler: RCTTouchHandler;
 
-  constructor(bundle: string, moduleName: string, parent: Element) {
+  constructor(
+    bundle: string,
+    moduleName: string,
+    parent: Element,
+    enableHotReload: boolean = false
+  ) {
     super();
 
+    this.bundleLocation = bundle;
+    this.enableHotReload = enableHotReload;
     this.moduleName = moduleName;
     this.parent = parent;
+
+    if (this.enableHotReload) {
+      bundle += "&hot=true";
+    }
 
     // initialize bridge
     this.bridge = new RCTBridge(moduleName, bundle);
@@ -107,6 +120,17 @@ class RCTRootView extends UIView {
       this.moduleName,
       appParameters
     ]);
+
+    if (this.enableHotReload) {
+      const bundleURL = new URL(this.bundleLocation);
+      console.warn("HotReload on " + this.bundleLocation);
+      this.bridge.enqueueJSCall("HMRClient", "enable", [
+        "web",
+        bundleURL.pathname.toString().substr(1),
+        bundleURL.hostname,
+        bundleURL.port
+      ]);
+    }
   }
 
   requestTick() {

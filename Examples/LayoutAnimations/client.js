@@ -1,9 +1,12 @@
-import { RNWebInstance } from "react-native-dom";
+import { RNWebInstance } from "../../ReactWeb/index";
 
-function init(bundle, parent, options) {
-  const web = new RNWebInstance(bundle, "layoutanimations", parent, {
-    ...options
-  });
+function init(bundle, parent, enableHotReload) {
+  const web = new RNWebInstance(
+    bundle,
+    "layoutanimations",
+    parent,
+    enableHotReload
+  );
 
   web.start();
   return web;
