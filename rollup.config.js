@@ -102,7 +102,7 @@ export default {
         "Libraries",
         "node_modules/react-native/Libraries/Utilities/MatrixMath.js"
       ],
-      extensions: [".web.js", ".js"]
+      extensions: [".dom.js", ".js"]
     }),
     babel({
       //exclude: 'node_modules/**',

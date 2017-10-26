@@ -20,13 +20,13 @@ var config = {
     return getRoots();
   },
   getBlacklistRE() {
-    return blacklist([]);
+    return blacklist([/Examples\/.*/]);
   },
   getAssetExts() {
     return [];
   },
   getPlatforms() {
-    return ["web"];
+    return ["dom"];
   },
   getProvidesModuleNodeModules() {
     return ["react-native"];

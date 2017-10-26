@@ -22,7 +22,7 @@
   },
   "peerDependencies": {
     "react": "16.0.0",
-    "react-native": "~0.49.0"
+    "react-native": "^0.49.5"
   },
   "scripts": {
     "flow": "flow",
@@ -38,9 +38,9 @@
   },
   "jest": {
     "haste": {
-      "defaultPlatform": "web",
+      "defaultPlatform": "dom",
       "providesModuleNodeModules": ["react-native-dom"],
-      "platforms": ["web"]
+      "platforms": ["dom"]
     }
   },
   "devDependencies": {

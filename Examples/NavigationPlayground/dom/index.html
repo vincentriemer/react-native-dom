@@ -1,7 +1,7 @@
 <html>
 
 <head>
-  <title>FlatList Example</title>
+  <title>NavigationPlayground</title>
   <style>
     html,
     body,
@@ -136,49 +136,6 @@
     }
   </style>
   <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width">
-  <style>
-    html,
-    body {
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-      position: absolute;
-    }
-
-    :focus {
-      outline: 0
-    }
-
-    :focus::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      z-index: 9999;
-      outline-width: 2px;
-      outline-style: solid;
-      outline-color: Highlight;
-      outline-offset: -2px;
-    }
-
-    @media (-webkit-min-device-pixel-ratio:0) {
-      :focus::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        z-index: 9999;
-        outline-color: -webkit-focus-ring-color;
-        outline-style: auto;
-        outline-width: 5px;
-        outline-offset: -5px;
-      }
-    }
-  </style>
 </head>
 
 <body>
@@ -188,8 +145,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/web-animations/2.2.5/web-animations.min.js"></script>
   <!--Bundle Paths-->
   <script>
-    var clientBundlePath = "./client.bundle?platform=dom";
-    var rnBundlePath = "../index.dom.bundle?platform=dom&dev=true";
+    var clientBundlePath = "./client.bundle?platform=dom&dev=true";
+    var rnBundlePath = "../App.bundle?platform=dom&dev=true";
   </script>
 
   <!--Helper Functions-->
@@ -204,16 +161,17 @@
 
   <!--App Initialization-->
   <script>
-    window.addEventListener('WebComponentsReady', function () {
-      addScript(clientBundlePath, function () {
-        // Initialize the React Native application
-        ReactWeb.init(
-          rnBundlePath,
-          // Attach it to the body tag
-          document.body
-        );
+      window.addEventListener('WebComponentsReady', function () {
+        addScript(clientBundlePath, function () {
+          // Initialize the React Native application
+          ReactWeb.init(
+            rnBundlePath,
+            // Attach it to the body tag
+            document.body,
+            true
+          );
+        });
       });
-    });
   </script>
 </body>
 

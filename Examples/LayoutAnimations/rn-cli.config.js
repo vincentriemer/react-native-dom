@@ -46,7 +46,7 @@ const config = {
   },
 
   getPlatforms() {
-    return ["web"];
+    return ["dom"];
   },
 
   getProvidesModuleNodeModules() {
