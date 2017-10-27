@@ -1,0 +1,4 @@
+[submodule "yoga"]
+	path = yoga
+	url = git@gitlab.com:vincentriemer/yoga-dom.git
+	branch = fbyoga
