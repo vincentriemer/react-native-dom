@@ -134,7 +134,8 @@ export default {
           "createIdentityMatrix",
           "multiplyInto",
           "createTranslate2d",
-          "reuseScale3dCommand"
+          "reuseScale3dCommand",
+          "reuseTranslate2dCommand"
         ]
       }
     }),

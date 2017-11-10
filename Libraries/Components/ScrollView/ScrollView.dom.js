@@ -640,7 +640,7 @@ const ScrollView = createReactClass({
         ScrollViewClass = AndroidScrollView;
       }
       ScrollContentContainerViewClass = View;
-    } else if (Platform.OS === "web") {
+    } else if (Platform.OS === "dom") {
       ScrollViewClass = RCTScrollView;
       ScrollContentContainerViewClass = RCTScrollContentView;
     }
@@ -882,7 +882,7 @@ if (Platform.OS === "android") {
   );
   // $FlowFixMe (bvaughn) Update ComponentInterface in ViewPropTypes to include a string type (for Fiber host components) in a follow-up.
   RCTScrollContentView = requireNativeComponent("RCTScrollContentView", View);
-} else if (Platform.OS === "web") {
+} else if (Platform.OS === "dom") {
   RCTScrollView = requireNativeComponent("RCTScrollView", ScrollView);
   RCTScrollContentView = requireNativeComponent("RCTScrollContentView", View);
 }

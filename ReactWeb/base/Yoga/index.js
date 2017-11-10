@@ -154,7 +154,7 @@ const flexDirectionEnumMapping: EnumMapping = {
 };
 
 const flexWrapEnumMapping: EnumMapping = {
-  "no-wrap": Yoga.WRAP_NO_WRAP,
+  nowrap: Yoga.WRAP_NO_WRAP,
   wrap: Yoga.WRAP_WRAP,
   "wrap-reverse": Yoga.WRAP_WRAP_REVERSE
 };

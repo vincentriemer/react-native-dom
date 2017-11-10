@@ -24,7 +24,6 @@ import CanUse from "CanUse";
 import type { RCTComponent } from "RCTComponent";
 import type RCTShadowView, { LayoutChange } from "RCTShadowView";
 import type { LayoutAnimationConfig } from "RCTLayoutAnimationManager";
-import type { Frame } from "UIView";
 
 type ShadowView = any;
 type Size = { width: number, height: number };
@@ -187,9 +186,7 @@ class RCTUIManager {
         if (this.layoutAnimationManager.isPending()) {
           this.layoutAnimationManager.addLayoutChanges(layoutChanges);
         } else {
-          this.addUIBlock(() => {
-            this.applyLayoutChanges(layoutChanges);
-          });
+          this.applyLayoutChanges(layoutChanges);
         }
       }
     });
@@ -314,7 +311,8 @@ class RCTUIManager {
     if (block == null || this.viewRegistry == null) {
       return;
     }
-    this.pendingUIBlocks.push(block);
+    block.call(null, this, this.viewRegistry);
+    // this.pendingUIBlocks.push(block);
   }
 
   prependUIBlock(block: ?Function) {
@@ -409,12 +407,10 @@ class RCTUIManager {
       componentData.setPropsForShadowView(updatedProps, shadowView);
     }
 
-    this.addUIBlock(() => {
-      const view = this.viewRegistry.get(reactTag);
-      if (view) {
-        componentData.setPropsForView(updatedProps, view);
-      }
-    });
+    const view = this.viewRegistry.get(reactTag);
+    if (view) {
+      componentData.setPropsForView(updatedProps, view);
+    }
   }
 
   synchronouslyUpdateView(reactTag: number, viewName: string, props: Object) {

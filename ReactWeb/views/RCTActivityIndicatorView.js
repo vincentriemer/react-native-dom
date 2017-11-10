@@ -3,6 +3,7 @@
  * @flow
  */
 import RCTView from "RCTView";
+import type RCTBridge from "RCTBridge";
 import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 
@@ -16,8 +17,9 @@ const INDICATOR_SVG = `
 
 @CustomElement("rct-activity-indicator-view")
 class RCTActivityIndicatorView extends RCTView {
-  animationContainer: HTMLElement;
+  // $FlowFixMe - WAAPI not included in FlowType Defs
   animation: Animation;
+  animationContainer: HTMLElement;
   _animating: boolean;
   _hidesWhenStopped: boolean;
 

@@ -156,7 +156,8 @@ class UIView extends HTMLElement implements RCTComponent {
   set top(value: number) {
     if (value !== this._top) {
       this._top = value;
-      this.style.top = `${value}px`;
+      // this.style.top = `${value}px`;
+      this.updateTransform();
     }
   }
 
@@ -167,12 +168,15 @@ class UIView extends HTMLElement implements RCTComponent {
   set left(value: number) {
     if (value !== this._left) {
       this._left = value;
-      this.style.left = `${value}px`;
+      // this.style.left = `${value}px`;
+      this.updateTransform();
     }
   }
 
   updateTransform() {
     let transform = MatrixMath.createIdentityMatrix();
+
+    MatrixMath.reuseTranslate2dCommand(transform, this._left, this._top);
 
     if (this._transform) {
       MatrixMath.multiplyInto(transform, transform, this._transform);

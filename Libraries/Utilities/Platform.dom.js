@@ -15,12 +15,12 @@
 const NativeModules = require("NativeModules");
 
 const Platform = {
-  OS: "web",
+  OS: "dom",
   get ForceTouchAvailable() {
     const constants = NativeModules.PlatformConstants;
     return constants ? !!constants.forceTouchAvailable : false;
   },
-  select: (obj: Object) => ("web" in obj ? obj.web : obj.default)
+  select: (obj: Object) => ("dom" in obj ? obj.dom : obj.default)
 };
 
 module.exports = Platform;

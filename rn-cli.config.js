@@ -13,9 +13,6 @@ function getRoots() {
 }
 
 var config = {
-  extraNodeModules: {
-    "react-native-dom": path.resolve(__dirname, "ReactWeb", "index")
-  },
   getProjectRoots() {
     return getRoots();
   },

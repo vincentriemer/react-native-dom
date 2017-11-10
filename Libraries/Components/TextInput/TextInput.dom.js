@@ -43,7 +43,7 @@ if (Platform.OS === "android") {
 } else if (Platform.OS === "ios") {
   var RCTTextView = requireNativeComponent("RCTTextView", null);
   var RCTTextField = requireNativeComponent("RCTTextField", null);
-} else if (Platform.OS === "web") {
+} else if (Platform.OS === "dom") {
   var RCTTextInput = requireNativeComponent("RCTTextInput", null);
   var RCTMultilineTextInput = requireNativeComponent(
     "RCTMultilineTextInput",
@@ -613,8 +613,8 @@ const TextInput = createReactClass({
       return this._renderIOS();
     } else if (Platform.OS === "android") {
       return this._renderAndroid();
-    } else if (Platform.OS === "web") {
-      return this._renderWeb();
+    } else if (Platform.OS === "dom") {
+      return this._renderDom();
     }
   },
 
@@ -784,7 +784,7 @@ const TextInput = createReactClass({
     );
   },
 
-  _renderWeb: function() {
+  _renderDom: function() {
     var textContainer;
 
     var props = Object.assign({}, this.props);

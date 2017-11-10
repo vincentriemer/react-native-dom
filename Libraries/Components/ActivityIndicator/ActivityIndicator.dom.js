@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   }
 });
 
-if (Platform.OS === "ios" || Platform.OS === "web") {
+if (Platform.OS === "ios" || Platform.OS === "dom") {
   var RCTActivityIndicator = requireNativeComponent(
     "RCTActivityIndicatorView",
     ActivityIndicator,

@@ -2,6 +2,7 @@
  * @providesModule RCTActivityIndicatorViewManager
  * @flow
  */
+
 import type UIView from "UIView";
 import RCTBridge, {
   RCT_EXPORT_MODULE,

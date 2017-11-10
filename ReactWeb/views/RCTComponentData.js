@@ -2,6 +2,7 @@
  * @providesModule RCTComponentData
  * @flow
  */
+
 import invariant from "Invariant";
 import RCTBridge, {
   getPropertyNames,

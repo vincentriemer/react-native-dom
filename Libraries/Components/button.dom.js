@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
       backgroundColor: "#2196F3",
       borderRadius: 2
     },
-    web: {
+    dom: {
       backgroundColor: "#007bff",
       borderRadius: 4
     }
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
       padding: 8,
       fontWeight: "500"
     },
-    web: {
+    dom: {
       color: "white",
       textAlign: "center",
       paddingVertical: 8,
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
       elevation: 0,
       backgroundColor: "#dfdfdf"
     },
-    web: {
+    dom: {
       opacity: 0.65
     }
   }),
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     android: {
       color: "#a1a1a1"
     },
-    web: {}
+    dom: {}
   })
 });
 

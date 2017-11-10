@@ -180,8 +180,8 @@ class RCTLayoutAnimationManager {
   ): TransformAnimationConfig {
     return [
       new Array(keyLength).fill({
-        translateX: 0,
-        translateY: 0,
+        translateX: layout.left,
+        translateY: layout.top,
         scaleX: 1.0,
         scaleY: 1.0,
         inverseScaleX: 1.0,
@@ -349,8 +349,8 @@ class RCTLayoutAnimationManager {
         } = layout;
 
         if (prevTop !== nextTop) {
-          const prevTranslateY = prevTop - nextTop;
-          const nextTranslateY = 0;
+          const prevTranslateY = prevTop;
+          const nextTranslateY = nextTop;
 
           const newFrames = this.createTransformAnimationKeyframes(
             prevTranslateY,
@@ -364,8 +364,8 @@ class RCTLayoutAnimationManager {
         }
 
         if (prevLeft !== nextLeft) {
-          const prevTranslateX = prevLeft - nextLeft;
-          const nextTranslateX = 0;
+          const prevTranslateX = prevLeft;
+          const nextTranslateX = nextLeft;
 
           const newFrames = this.createTransformAnimationKeyframes(
             prevTranslateX,

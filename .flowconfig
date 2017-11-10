@@ -2,6 +2,10 @@
 .*/node_modules/fbjs/.*
 .*/node_modules/metro-bundler/.*
 .*/node_modules/haul-cli/.*
+.*/Examples/.*
+.*/lib/.*
+.*/dist/.*
+
 [include]
 
 [libs]
