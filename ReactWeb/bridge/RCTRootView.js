@@ -93,7 +93,6 @@ class RCTRootView extends UIView {
     // this.style.position = "fixed";
 
     this.ticking = false;
-    this.requestTick();
   }
 
   get reactTag(): number {
@@ -131,6 +130,8 @@ class RCTRootView extends UIView {
         bundleURL.port
       ]);
     }
+
+    this.requestTick();
   }
 
   requestTick() {

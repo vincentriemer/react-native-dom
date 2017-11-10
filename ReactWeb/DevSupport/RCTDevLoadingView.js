@@ -51,7 +51,8 @@ class RCTDevLoadingView {
       top: "0",
       left: "0",
       transition: "transform 0.1s",
-      transform: "translateY(-22px)"
+      transform: "translateY(-22px)",
+      overflow: "hidden"
     });
     if (document.body) {
       document.body.appendChild(this.view);

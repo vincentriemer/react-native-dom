@@ -30,6 +30,20 @@ type ViewConfig = {
 type RCTPropBlock = (view: typeof RCTComponent, { [string]: any }) => void;
 type RCTPropBlockDictionary = { [string]: RCTPropBlock };
 
+function moduleNameForClass(cls) {
+  let name = cls.__moduleName;
+  if (name != null) {
+    if (name.startsWith("RK")) {
+      name = `RCT${name.substring(2)}`;
+    }
+    if (name.endsWith("Manager")) {
+      name = name.substring(0, name.length - "Manager".length);
+    }
+    return name;
+  }
+  return "";
+}
+
 class RCTComponentData {
   managerClass: Class<RCTViewManager>;
   name: string;
@@ -47,16 +61,7 @@ class RCTComponentData {
     this.managerClass = managerClass;
     this.viewPropBlocks = {};
     this.shadowPropBlocks = {};
-
-    this.name = (() => {
-      const moduleName = managerClass.__moduleName;
-
-      if (moduleName.endsWith("Manager")) {
-        return moduleName.substring(0, moduleName.length - "Manager".length);
-      }
-
-      return moduleName;
-    })();
+    this.name = moduleNameForClass(managerClass);
   }
 
   get manager(): RCTViewManager {
@@ -98,7 +103,7 @@ class RCTComponentData {
       propTypes,
       bubblingEvents,
       directEvents,
-      uiClassViewName: bridgeModuleNameForClass(this.manager.constructor)
+      baseModuleName: null
     };
   }
 

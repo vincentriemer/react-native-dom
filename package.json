@@ -16,18 +16,19 @@
     "localforage": "^1.5.0",
     "normalize-css-color": "^1.0.2",
     "proxy-polyfill": "^0.1.7",
+    "resize-observer-polyfill": "^1.4.2",
     "rebound": "^0.0.15",
     "tinycolor2": "^1.4.1",
     "wolfy87-eventemitter": "^5.1.0"
   },
   "peerDependencies": {
     "react": "16.0.0",
-    "react-native": "^0.49.5"
+    "react-native": "^0.50.3"
   },
   "scripts": {
     "flow": "flow",
     "compile": "rollup --config rollup.config.js",
-    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "start": "node node_modules/react-native/local-cli/cli.js start --reset-cache",
     "prebuild:rntester": "rimraf dist && mkdir -p dist",
     "build:rntester": "yarn run build:rntester:client && yarn run build:rntester:bundle && cp ./RNTester/js/index.html ./dist/index.html && cp now.json ./dist/now.json",
     "build:rntester:client": "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/client.js --bundle-output ./dist/client.bundle --platform web --reset-cache",
@@ -96,8 +97,8 @@
     "json-loader": "^0.5.4",
     "prettier": "^1.5.2",
     "progress-bar-webpack-plugin": "^1.9.3",
-    "react": "16.0.0-beta.5",
-    "react-native": "~0.48.0",
+    "react": "16.0.0",
+    "react-native": "~0.50.3",
     "rimraf": "^2.6.1",
     "rollup": "^0.50.0",
     "rollup-plugin-babel": "^3.0.2",

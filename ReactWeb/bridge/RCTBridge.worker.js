@@ -95,39 +95,39 @@ onmessage = ({ data }) => {
       break;
     }
     case "callFunctionReturnFlushedQueue": {
-      const flushedQueue = __fbBatchedBridge.callFunctionReturnFlushedQueue(
-        ...payload
-      );
       try {
+        const flushedQueue = __fbBatchedBridge.callFunctionReturnFlushedQueue(
+          ...payload
+        );
         sendMessage("flushedQueue", flushedQueue);
       } catch (e) {
         console.warn(e);
-        console.warn(msg);
-        console.warn(JSON.stringify(results));
+        console.warn("topic", topic);
+        console.warn("payload", payload);
       }
       break;
     }
     case "invokeCallbackAndReturnFlushedQueue": {
-      const flushedQueue = __fbBatchedBridge.invokeCallbackAndReturnFlushedQueue(
-        ...payload
-      );
       try {
+        const flushedQueue = __fbBatchedBridge.invokeCallbackAndReturnFlushedQueue(
+          ...payload
+        );
         sendMessage("flushedQueue", flushedQueue);
       } catch (e) {
         console.warn(e);
-        console.warn(msg);
-        console.warn(JSON.stringify(results));
+        console.warn("topic", topic);
+        console.warn("payload", payload);
       }
       break;
     }
     case "flush": {
-      const flushedQueue = __fbBatchedBridge.flushedQueue.apply(null);
       try {
+        const flushedQueue = __fbBatchedBridge.flushedQueue.apply(null);
         sendMessage("flushedQueue", flushedQueue);
       } catch (e) {
         console.warn(e);
-        console.warn(msg);
-        console.warn(JSON.stringify(results));
+        console.warn("topic", topic);
+        console.warn("payload", payload);
       }
       break;
     }

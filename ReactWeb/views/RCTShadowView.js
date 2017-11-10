@@ -32,13 +32,6 @@ export const SHADOW_PROPS = [
   "marginVertical",
   "marginHorizontal",
   "margin",
-  "paddingTop",
-  "paddingRight",
-  "paddingBottom",
-  "paddingLeft",
-  "paddingVertical",
-  "paddingHorizontal",
-  "padding",
   "flex",
   "flexGrow",
   "flexShrink",
@@ -99,6 +92,43 @@ class RCTShadowView implements RCTComponent {
 
     this.previousLayout = undefined;
     this.measurement = undefined;
+  }
+
+  set localData(value: any) {}
+
+  set paddingTop(value: number) {
+    this.yogaNode.style.paddingTop = value;
+    this.makeDirty();
+  }
+
+  set paddingRight(value: number) {
+    this.yogaNode.style.paddingRight = value;
+    this.makeDirty();
+  }
+
+  set paddingLeft(value: number) {
+    this.yogaNode.style.paddingLeft = value;
+    this.makeDirty();
+  }
+
+  set paddingBottom(value: number) {
+    this.yogaNode.style.paddingBottom = value;
+    this.makeDirty();
+  }
+
+  set paddingVertical(value: number) {
+    this.yogaNode.style.paddingVertical = value;
+    this.makeDirty();
+  }
+
+  set paddingHorizontal(value: number) {
+    this.yogaNode.style.paddingHorizontal = value;
+    this.makeDirty();
+  }
+
+  set padding(value: number) {
+    this.yogaNode.style.padding = value;
+    this.makeDirty();
   }
 
   get backgroundColor(): string {

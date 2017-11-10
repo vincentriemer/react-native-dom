@@ -38,6 +38,18 @@ class RCTScrollViewManager extends RCTViewManager {
     view.onScroll = value;
   }
 
+  @RCT_EXPORT_VIEW_PROP("onScrollBeginDrag", "RCTDirectEventBlock")
+  setOnScrollBeginDrag() {}
+
+  @RCT_EXPORT_VIEW_PROP("onScrollEndDrag", "RCTDirectEventBlock")
+  setOnScrollEndDrag() {}
+
+  @RCT_EXPORT_VIEW_PROP("onMomentumScrollBegin", "RCTDirectEventBlock")
+  setOnMomentumScrollBegin() {}
+
+  @RCT_EXPORT_VIEW_PROP("onMomentumScrollEnd", "RCTDirectEventBlock")
+  setOnMomentumScrollEnd() {}
+
   @RCT_EXPORT_VIEW_PROP("scrollEventThrottle", "number")
   setScrollEventThrottle(view: RCTScrollView, value: number) {
     view.scrollEventThrottle = value;

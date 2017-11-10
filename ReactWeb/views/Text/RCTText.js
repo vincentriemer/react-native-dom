@@ -103,9 +103,7 @@ class RCTText extends RCTView {
 
   updatePointerEvents() {
     this.style.pointerEvents =
-      (this._selectable || this._touchable) && !this._disabled
-        ? "auto"
-        : "none";
+      this._selectable || this.touchable ? "auto" : "none";
   }
 
   set disabled(value: boolean) {
@@ -115,7 +113,7 @@ class RCTText extends RCTView {
 
   set isHighlighted(value: ?boolean) {
     this._isHighlighted = value;
-    if (value != null) {
+    if (value !== null) {
       this.touchable = true;
       if (value) {
         this.style.backgroundImage =

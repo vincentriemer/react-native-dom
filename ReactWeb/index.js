@@ -34,6 +34,7 @@ import "RCTActivityIndicatorViewManager";
 import "RCTWebSocketModule";
 import "RCTAppState";
 import "RCTDevLoadingView";
+import "RCTSafeAreaViewManager";
 
 // React Native Web Entrypoint instance
 export class RNWebInstance {

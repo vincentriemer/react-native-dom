@@ -133,6 +133,19 @@ class RCTUIManager {
     });
   }
 
+  setLocalDataForView(localData: any, view: UIView) {
+    const tag = view.reactTag;
+    const shadowView = this.shadowViewRegistry.get(tag);
+    if (shadowView == null) {
+      console.warn(
+        `Could not locate shadow view with tag ${tag}, this is probably caused by a temporary inconsistency between native views and shadow views.`
+      );
+      return;
+    }
+    shadowView.localData = localData;
+    this.requestTick();
+  }
+
   /**
    * Given a reactTag from a component, find its root view, if possible.
    * Otherwise, this will give back nil.
@@ -586,6 +599,12 @@ class RCTUIManager {
     for (const [name, componentData] of this.componentDataByName) {
       const moduleConstants = {};
 
+      // Register which event-types this view dispatches.
+      // React needs this for the event plugin.
+      const bubblingEventTypes = {};
+      const directEventTypes = {};
+
+      // Add manager class
       moduleConstants.Manager = bridgeModuleNameForClass(
         componentData.managerClass
       );
@@ -593,6 +612,7 @@ class RCTUIManager {
       // Add native props
       const viewConfig = componentData.viewConfig;
       moduleConstants.NativeProps = viewConfig.propTypes;
+      moduleConstants.baseModuleName = viewConfig.baseModuleName;
 
       // Add direct events
       for (let eventName of viewConfig.directEvents) {
@@ -601,7 +621,9 @@ class RCTUIManager {
             registrationName: `on${eventName.substring(3)}`
           };
         }
+        directEventTypes[eventName] = directEvents[eventName];
       }
+      moduleConstants.directEventTypes = directEventTypes;
 
       // Add bubbling events
       for (let eventName of viewConfig.bubblingEvents) {
@@ -614,13 +636,12 @@ class RCTUIManager {
             }
           };
         }
+        bubblingEventTypes[eventName] = bubblingEvents[eventName];
       }
+      moduleConstants.bubblingEventTypes = bubblingEventTypes;
 
       constants[name] = moduleConstants;
     }
-
-    constants["customBubblingEventTypes"] = bubblingEvents;
-    constants["customDirectEventTypes"] = directEvents;
 
     return constants;
   }
