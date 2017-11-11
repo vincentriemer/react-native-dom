@@ -11,32 +11,37 @@ var Status = undefined;
 
 function loadBundle(bundle) {
   return new Promise(function(resolve, reject) {
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", bundle, true);
-    xmlHttp.setRequestHeader("Accept", "multipart/mixed");
-    xmlHttp.onload = function() {
+    if (__DEV__) {
+      var xmlHttp = new XMLHttpRequest();
+      xmlHttp.open("GET", bundle, true);
+      xmlHttp.setRequestHeader("Accept", "multipart/mixed");
+      xmlHttp.onload = function() {
+        importScripts(bundle);
+        resolve();
+      };
+      xmlHttp.onerror = function(evt) {
+        reject(evt);
+      };
+      xmlHttp.onabort = function(evt) {
+        reject(evt);
+      };
+      xmlHttp.onprogress = function(evt) {
+        const progressEvents = xmlHttp.response.match(/\{[\S]*\}/g);
+        if (progressEvents) {
+          const { done, total } = JSON.parse(
+            progressEvents[progressEvents.length - 1]
+          );
+
+          if (done && total) {
+            sendMessage("updateProgress", { done, total });
+          }
+        }
+      };
+      xmlHttp.send();
+    } else {
       importScripts(bundle);
       resolve();
-    };
-    xmlHttp.onerror = function(evt) {
-      reject(evt);
-    };
-    xmlHttp.onabort = function(evt) {
-      reject(evt);
-    };
-    xmlHttp.onprogress = function(evt) {
-      const progressEvents = xmlHttp.response.match(/\{[\S]*\}/g);
-      if (progressEvents) {
-        const { done, total } = JSON.parse(
-          progressEvents[progressEvents.length - 1]
-        );
-
-        if (done && total) {
-          sendMessage("updateProgress", { done, total });
-        }
-      }
-    };
-    xmlHttp.send();
+    }
   });
 }
 

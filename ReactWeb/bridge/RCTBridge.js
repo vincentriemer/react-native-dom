@@ -54,8 +54,9 @@ let WORKER_SRC = preval`
 `;
 
 if (__DEV__) {
+  WORKER_SRC = "__DEV__ = true;\n" + WORKER_SRC;
   if (DEVTOOLS_FLAG.test(location.search)) {
-    WORKER_SRC += "__DEVTOOLS__ = true;\n";
+    WORKER_SRC = "__DEVTOOLS__ = true;\n" + WORKER_SRC;
     if (window.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
       console.log(
         "We detected that you have the React Devtools extension installed. " +
@@ -64,13 +65,15 @@ if (__DEV__) {
       );
     }
   }
+} else {
+  WORKER_SRC = "__DEV__ = false;\n" + WORKER_SRC;
 }
 
 export interface ModuleClass {
-  static __moduleName: ?string,
-  setBridge?: RCTBridge => void,
-  constantsToExport?: () => { [string]: any },
-  [string]: ?Function
+  static __moduleName: ?string;
+  setBridge?: RCTBridge => void;
+  constantsToExport?: () => { [string]: any };
+  [string]: ?Function;
 }
 
 export function getPropertyNames(obj: ?Object): Array<string> {
@@ -98,9 +101,9 @@ export function bridgeModuleNameForClass(cls: Class<ModuleClass>): string {
 }
 
 function generateModuleConfig(name: string, bridgeModule: ModuleClass) {
-  const methodNames = [
-    ...new Set(getPropertyNames(bridgeModule))
-  ].filter(methodName => methodName.startsWith("__rct_export__"));
+  const methodNames = [...new Set(getPropertyNames(bridgeModule))].filter(
+    methodName => methodName.startsWith("__rct_export__")
+  );
 
   const constants = bridgeModule.constantsToExport
     ? bridgeModule.constantsToExport()
@@ -255,9 +258,9 @@ export default class RCTBridge {
   };
 
   generateModuleConfig(name: string, bridgeModule: ModuleClass) {
-    const methodNames = [
-      ...new Set(getPropertyNames(bridgeModule))
-    ].filter(methodName => methodName.startsWith("__rct_export__"));
+    const methodNames = [...new Set(getPropertyNames(bridgeModule))].filter(
+      methodName => methodName.startsWith("__rct_export__")
+    );
 
     const constants = bridgeModule.constantsToExport
       ? bridgeModule.constantsToExport()
@@ -304,12 +307,12 @@ export default class RCTBridge {
   }
 
   getInitialModuleConfig = () => {
-    const remoteModuleConfig = Object.keys(
-      this.modulesByName
-    ).map(moduleName => {
-      const bridgeModule = this.modulesByName[moduleName];
-      return this.generateModuleConfig(moduleName, bridgeModule);
-    });
+    const remoteModuleConfig = Object.keys(this.modulesByName).map(
+      moduleName => {
+        const bridgeModule = this.modulesByName[moduleName];
+        return this.generateModuleConfig(moduleName, bridgeModule);
+      }
+    );
     return { remoteModuleConfig };
   };
 

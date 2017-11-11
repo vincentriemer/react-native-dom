@@ -33,8 +33,12 @@ import "RCTImageLoader";
 import "RCTActivityIndicatorViewManager";
 import "RCTWebSocketModule";
 import "RCTAppState";
-import "RCTDevLoadingView";
 import "RCTSafeAreaViewManager";
+
+// Development Related Native Modules
+if (__DEV__) {
+  require("RCTDevLoadingView");
+}
 
 // React Native Web Entrypoint instance
 export class RNWebInstance {

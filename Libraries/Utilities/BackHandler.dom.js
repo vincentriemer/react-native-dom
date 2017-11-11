@@ -50,10 +50,10 @@ let BackHandler = {
   exitApp: emptyFunction,
   addEventListener() {
     return {
-      remove: emptyFunction,
+      remove: emptyFunction
     };
   },
-  removeEventListener: emptyFunction,
+  removeEventListener: emptyFunction
 };
 
 module.exports = BackHandler;

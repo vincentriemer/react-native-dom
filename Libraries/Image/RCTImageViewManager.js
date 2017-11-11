@@ -81,6 +81,10 @@ class RCTImageViewManager extends RCTViewManager {
     view.onLoadEnd = value;
   }
 
+  // TODO: set this to something meaningfull
+  @RCT_EXPORT_VIEW_PROP("onError", "RCTDirectEventBlock")
+  setOnError() {}
+
   @RCT_EXPORT_METHOD(RCTFunctionTypePromise)
   prefetchImage(url: string, resolveId: number, rejectId: number) {
     const resolve = this.bridge.callbackFromId(resolveId);

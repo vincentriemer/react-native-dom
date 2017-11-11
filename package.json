@@ -28,11 +28,15 @@
   "scripts": {
     "flow": "flow",
     "compile": "rollup --config rollup.config.js",
-    "start": "node node_modules/react-native/local-cli/cli.js start --reset-cache",
+    "start":
+      "node node_modules/react-native/local-cli/cli.js start --reset-cache",
     "prebuild:rntester": "rimraf dist && mkdir -p dist",
-    "build:rntester": "yarn run build:rntester:client && yarn run build:rntester:bundle && cp ./RNTester/js/index.html ./dist/index.html && cp now.json ./dist/now.json",
-    "build:rntester:client": "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/client.js --bundle-output ./dist/client.bundle --platform web --reset-cache",
-    "build:rntester:bundle": "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/RNTesterApp.web.js --bundle-output ./dist/RNTesterApp.web.bundle --platform web --reset-cache --assets-dest ./dist",
+    "build:rntester":
+      "yarn run build:rntester:client && yarn run build:rntester:bundle && cp ./RNTester/js/index.html ./dist/index.html && cp now.json ./dist/now.json",
+    "build:rntester:client":
+      "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/client.js --bundle-output ./dist/client.bundle --platform dom --reset-cache",
+    "build:rntester:bundle":
+      "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/RNTesterApp.dom.js --bundle-output ./dist/RNTesterApp.dom.bundle --platform dom --reset-cache --assets-dest ./dist",
     "deploy": "cd dist && now && now alias",
     "predeploy": "yarn run build:rntester",
     "test": "jest"

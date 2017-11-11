@@ -112,9 +112,9 @@ class RCTDevLoadingView {
   updateProgress({ done, total }: { done: number, total: number }) {
     const color = "white";
     const backgroundColor = "#005900";
-    const message = `Loading ${(done / total * 100).toFixed(
-      0
-    )}% (${done}/${total})`;
+    const message = `Loading ${(done / total * 100).toFixed(0)}% (${done}/${
+      total
+    })`;
     this.showMessage(message, color, backgroundColor);
   }
 
