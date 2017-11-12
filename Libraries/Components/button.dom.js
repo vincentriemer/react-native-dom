@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     },
     dom: {
       backgroundColor: "#007bff",
-      borderRadius: 4
+      borderRadius: 2
     }
   }),
   text: Platform.select({
