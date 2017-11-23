@@ -81,8 +81,10 @@ class RCTShadowView implements RCTComponent {
     SHADOW_PROPS.forEach(shadowPropName => {
       Object.defineProperty(this, shadowPropName, {
         configurable: true,
+        // $FlowFixMe
         get: () => this.yogaNode.style[shadowPropName],
         set: value => {
+          // $FlowFixMe
           this.yogaNode.style[shadowPropName] = value;
           this.makeDirty();
           return true;
