@@ -138,7 +138,9 @@ class RCTUIManager {
     const shadowView = this.shadowViewRegistry.get(tag);
     if (shadowView == null) {
       console.warn(
-        `Could not locate shadow view with tag ${tag}, this is probably caused by a temporary inconsistency between native views and shadow views.`
+        `Could not locate shadow view with tag ${
+          tag
+        }, this is probably caused by a temporary inconsistency between native views and shadow views.`
       );
       return;
     }

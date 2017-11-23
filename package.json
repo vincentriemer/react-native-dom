@@ -1,7 +1,7 @@
 {
   "name": "react-native-dom",
   "version": "0.0.5",
-  "main": "lib/ReactNativeDOM.js",
+  "main": "lib/index.js",
   "dependencies": {
     "@vincentriemer/yoga-layout": "^1.6.1",
     "bezier-easing": "^2.0.3",
@@ -16,7 +16,6 @@
     "localforage": "^1.5.0",
     "normalize-css-color": "^1.0.2",
     "proxy-polyfill": "^0.1.7",
-    "resize-observer-polyfill": "^1.4.2",
     "rebound": "^0.0.15",
     "tinycolor2": "^1.4.1",
     "wolfy87-eventemitter": "^5.1.0"
@@ -27,7 +26,8 @@
   },
   "scripts": {
     "flow": "flow",
-    "compile": "rollup --config rollup.config.js",
+    "compile": "babel ReactWeb --out-dir lib",
+    "precompile": "rimraf lib",
     "start":
       "node node_modules/react-native/local-cli/cli.js start --reset-cache",
     "prebuild:rntester": "rimraf dist && mkdir -p dist",
