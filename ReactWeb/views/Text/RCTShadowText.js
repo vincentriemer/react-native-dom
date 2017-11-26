@@ -112,9 +112,13 @@ class RCTShadowText extends RCTShadowView {
   }
 
   markTextDirty() {
-    this.makeDirty();
     this.yogaNode.markDirty();
     this.textDirty = true;
+    if (this.reactSuperview instanceof RCTShadowText) {
+      this.reactSuperview.markTextDirty();
+    } else if (this.reactSuperview instanceof RCTShadowView) {
+      this.reactSuperview.makeDirty();
+    }
   }
 
   clearTestDomElement() {
@@ -175,10 +179,8 @@ class RCTShadowText extends RCTShadowView {
     } = this.testDOMElement.getBoundingClientRect();
 
     return {
-      // width: Math.ceil(this.testDOMElement.clientWidth + 1),
-      // height: Math.ceil(this.testDOMElement.clientHeight + 1)
-      width: measuredWidth,
-      height: measuredHeight
+      width: Math.ceil(measuredWidth),
+      height: Math.ceil(measuredHeight)
     };
   }
 
