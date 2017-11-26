@@ -174,18 +174,17 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   updateTransform() {
-    let transform = MatrixMath.createIdentityMatrix();
-
-    MatrixMath.reuseTranslate2dCommand(transform, this._left, this._top);
+    const transforms = [`translate(${this._left}px, ${this._top}px)`];
 
     if (this._transform) {
-      MatrixMath.multiplyInto(transform, transform, this._transform);
+      transforms.push(`matrix3d(${this._transform.join(", ")})`);
     }
 
-    const transformString = `matrix3d(${transform.join(", ")}) ${this
-      ._animatedTransform
-      ? this._animatedTransform
-      : ""}`;
+    if (this._animatedTransform) {
+      transforms.push(this._animatedTransform);
+    }
+
+    const transformString = transforms.join(" ");
 
     this.style.transform = transformString;
   }

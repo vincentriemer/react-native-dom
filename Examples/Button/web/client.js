@@ -1,4 +1,4 @@
-import { RNWebInstance } from "react-native-dom";
+import { RNWebInstance } from "../../../ReactWeb";
 
 function init(bundle, parent, options) {
   const web = new RNWebInstance(bundle, "button", parent, {

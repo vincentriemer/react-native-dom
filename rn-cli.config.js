@@ -17,7 +17,7 @@ var config = {
     return getRoots();
   },
   getBlacklistRE() {
-    return blacklist([/Examples\/.*/]);
+    return blacklist([/Examples\/NavigationPlayground\/.*/]);
   },
   getAssetExts() {
     return [];
