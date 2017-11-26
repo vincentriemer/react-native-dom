@@ -38,6 +38,8 @@ import "RCTSafeAreaViewManager";
 // Development Related Native Modules
 if (__DEV__) {
   require("RCTDevLoadingView");
+  require("RCTDevSettings");
+  require("RCTDevMenu");
 }
 
 // React Native Web Entrypoint instance

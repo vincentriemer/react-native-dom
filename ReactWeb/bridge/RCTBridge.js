@@ -16,6 +16,7 @@ import type RCTEventDispatcher from "RCTEventDispatcher";
 import type RCTImageLoader from "RCTImageLoader";
 import type RCTDeviceInfo from "RCTDeviceInfo";
 import type RCTDevLoadingView from "RCTDevLoadingView";
+import type RCTDevSettings from "RCTDevSettings";
 
 import type RCTUIManager from "RCTUIManager";
 
@@ -152,6 +153,7 @@ export default class RCTBridge {
   _imageLoader: ?RCTImageLoader;
   _deviceInfo: ?RCTDeviceInfo;
   _devLoadingView: ?RCTDevLoadingView;
+  _devSettings: ?RCTDevSettings;
 
   constructor(moduleName: string, bundle: string) {
     this.loading = true;
@@ -379,6 +381,15 @@ export default class RCTBridge {
       this._deviceInfo = deviceInfo;
     }
     return this._deviceInfo;
+  }
+
+  get devSettings(): RCTDevSettings {
+    if (!this._devSettings) {
+      const devSettings: any = this.modulesByName["DevSettings"];
+      console.log(devSettings);
+      this._devSettings = devSettings;
+    }
+    return this._devSettings;
   }
 
   frame() {

@@ -225,7 +225,7 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   set pointerEvents(value: string) {
-    this.style.pointerEvents = value;
+    this.style.pointerEvents = value === "box-none" ? "none" : value;
   }
 
   get opacity(): number {

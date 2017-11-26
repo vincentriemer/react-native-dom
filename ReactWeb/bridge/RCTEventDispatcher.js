@@ -20,19 +20,19 @@ export const RCTTextEventType = {
 };
 
 export interface RCTEvent {
-  viewTag: number,
-  eventName: string,
-  coalescingKey: number,
+  viewTag: number;
+  eventName: string;
+  coalescingKey: number;
 
-  canCoalesce(): boolean,
-  coalesceWithEvent(event: RCTEvent): RCTEvent,
+  canCoalesce(): boolean;
+  coalesceWithEvent(event: RCTEvent): RCTEvent;
 
-  moduleDotMethod(): string,
-  arguments(): Array<any>
+  moduleDotMethod(): string;
+  arguments(): Array<any>;
 }
 
 export interface RCTEventDispatcherObserver {
-  eventDispatcherWillDispatchEvent(event: RCTEvent): void
+  eventDispatcherWillDispatchEvent(event: RCTEvent): void;
 }
 
 function capitalizeFirstLetter(string) {
@@ -85,6 +85,14 @@ class RCTEventDispatcher {
     this.eventQueue = [];
     this.eventsDispatchScheduled = false;
     this.observers = new Set();
+  }
+
+  sendDeviceEvent(name: string, body: ?Object) {
+    this.bridge.enqueueJSCall(
+      "RCTDeviceEventEmitter",
+      "emit",
+      body ? [name, body] : [name]
+    );
   }
 
   sendInputEvent(name: string, body: Object) {
@@ -148,7 +156,9 @@ class RCTEventDispatcher {
     if (previousEvent) {
       invariant(
         event.canCoalesce(),
-        `Got event which cannot be coalesced, but has the same eventID ${eventID} as the previous event`
+        `Got event which cannot be coalesced, but has the same eventID ${
+          eventID
+        } as the previous event`
       );
       event = previousEvent.coalesceWithEvent(previousEvent);
     } else {

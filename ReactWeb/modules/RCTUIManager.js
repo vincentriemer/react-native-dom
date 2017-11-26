@@ -13,6 +13,7 @@ import RCTBridge, {
 import RCTComponentData from "RCTComponentData";
 import RCTViewManager from "RCTViewManager";
 import UIView from "UIView";
+import RCTView from "RCTView";
 import RCTRootView from "RCTRootView";
 import RCTDeviceInfo from "RCTDeviceInfo";
 import RCTRootShadowView from "RCTRootShadowView";
@@ -29,6 +30,32 @@ type ShadowView = any;
 type Size = { width: number, height: number };
 
 let rootTagCounter = 0;
+
+function allElementsFromPoint(x: number, y: number) {
+  var element,
+    result,
+    elements = [];
+  var old_visibility = [];
+  while (true) {
+    element = document.elementFromPoint(x, y);
+    console.log(element);
+    if (
+      !element ||
+      element === document.documentElement ||
+      element instanceof RCTView
+    ) {
+      result = element;
+      break;
+    }
+    elements.push(element);
+    old_visibility.push(element.style.visibility);
+    element.style.visibility = "hidden"; // Temporarily hide the element (without changing the layout)
+  }
+  for (var k = 0; k < elements.length; k++) {
+    elements[k].style.visibility = old_visibility[k];
+  }
+  return result;
+}
 
 @RCT_EXPORT_MODULE("RCTUIManager")
 class RCTUIManager {
@@ -469,6 +496,18 @@ class RCTUIManager {
       removeAtIndices,
       removeAtIndices
     );
+  }
+
+  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+  findSubviewIn(
+    reactTag: number,
+    atPoint: [number, number],
+    callbackId: number
+  ) {
+    const [x, y] = atPoint;
+    const result = allElementsFromPoint(x, y);
+
+    console.log(result);
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
