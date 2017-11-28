@@ -115,7 +115,7 @@ jobs:
           command: "npm run deploy"
 
 workflows:
-  versions: 2
+  version: 2
   build-test:
     jobs:
       - checkout_repo
