@@ -46,6 +46,11 @@ aliases:
   install_gcc: &install_gcc
     run:
       name: Install GCC
+      command: sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test && sudo apt-get update && sudo apt-get install gcc-4.9 g++-4.9
+
+  update_alternatives: &update_alternatives
+    run:
+      name: Update Alternatives
       command: sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.7 60 && sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.7 60 && sudo update-alternatives --set gcc /usr/bin/gcc-4.7 && sudo update-alternatives --set g++ /usr/bin/g++-4.7
 
 version: 2
@@ -67,6 +72,7 @@ jobs:
       - *restore_repo
       - *restore_node_modules
       - *install_gcc
+      - *update_alternatives
       - run:
           name: Download Dependencies
           command: npm install --no-package-lock --no-spin --no-progress
