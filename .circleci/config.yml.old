@@ -1,0 +1,141 @@
+aliases:
+  container_config: &container_config
+    docker:
+      - image: circleci/node:8
+    working_directory: ~/react-native-dom
+  
+  restore_repo: &restore_repo
+    restore_cache:
+      keys:
+        - rn-dom-repo-{{ .Branch }}-{{ .Revision }}
+        - rn-dom-repo-{{ .Branch }}
+        - rn-dom-repo
+  
+  npm_cache_key: &npm_cache_key
+    v1-dependency-npm-{{ checksum "package.json" }}
+  npm_backup_cache_key: &npm_backup_cache_key
+    v1-dependency-npm
+
+  init_submodules: &init_submodules
+    run:
+      name: Initialize Submodules
+      command: git submodule update --init
+
+  restore_node_modules: &restore_node_modules
+    restore_cache:
+      keys:
+        - *npm_cache_key
+        - *npm_backup_cache_key
+  
+  lib_cache_key: &lib_cache_key
+    rn-dom-lib-{{ .Branch }}-{{ .Revision }}
+  
+  restore_lib: &restore_lib
+    restore_cache:
+      keys:
+        - *lib_cache_key
+
+  rntester_cache_key: &rntester_cache_key
+    rntester-{{ .Branch }}-{{ .Revision }}
+
+  restore_rntester: &restore_rntester
+    restore_cache:
+      keys:
+        - *rntester_cache_key
+
+version: 2
+jobs:
+  checkout_repo:
+    <<: *container_config
+    steps:
+      - *restore_repo
+      - checkout
+      - *init_submodules
+      - save_cache:
+          key: rn-dom-repo-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - .
+
+  node_dependencies:
+    <<: *container_config
+    steps:
+      - *restore_repo
+      - *restore_node_modules
+      - run:
+          name: Download Dependencies
+          command: npm install --no-package-lock --no-spin --no-progress
+      - save_cache:
+          key: *npm_cache_key
+          paths:
+            - ~/react-native-dom/node_modules
+  
+  unittest:
+    <<: *container_config
+    steps:
+      - *restore_repo
+      - *restore_node_modules
+      - run:
+          name: Run Unittests
+          command: npm run test
+  
+  build_lib:
+    <<: *container_config
+    steps:
+      - *restore_repo
+      - *restore_node_modules
+      - run:
+          name: Build Library
+          command: npm run compile
+      - save_cache:
+          key: *lib_cache_key
+          paths:
+            - ~/react-native-dom/lib
+  
+  build_rntester:
+    <<: *container_config
+    steps:
+      - *restore_repo
+      - *restore_node_modules
+      - run:
+          name: Build RNTester
+          command: "npm run build:rntester"
+      - save_cache:
+          key: *rntester_cache_key
+          paths:
+            - ~/react-native-dom/dist
+  
+  deploy_rntester:
+    <<: *container_config
+    steps:
+      - *restore_repo
+      - *restore_node_modules
+      - *restore_rntester
+      - run:
+          name: Deploy RNTester to now.sh
+          command: "npm run deploy"
+
+workflows:
+  versions: 2
+  build-test:
+    jobs:
+      - checkout_repo
+      - node_dependencies:
+          requires:
+            - checkout_repo
+      - unittest:
+          requires:
+            - node_dependencies
+      - build_lib:
+          requires:
+            - node_dependencies
+      - build_rntester:
+          requires:
+            - node_dependencies
+      
+
+  
+  
+
+  
+
+       
