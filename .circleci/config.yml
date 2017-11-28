@@ -43,6 +43,11 @@ aliases:
       keys:
         - *rntester_cache_key
 
+  install_gcc: &install_gcc
+    run:
+      name: Install GCC
+      command: sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.7 60 && sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.7 60 && sudo update-alternatives --set gcc /usr/bin/gcc-4.7 && sudo update-alternatives --set g++ /usr/bin/g++-4.7
+
 version: 2
 jobs:
   checkout_repo:
@@ -61,6 +66,7 @@ jobs:
     steps:
       - *restore_repo
       - *restore_node_modules
+      - *install_gcc
       - run:
           name: Download Dependencies
           command: npm install --no-package-lock --no-spin --no-progress
