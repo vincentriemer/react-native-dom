@@ -143,6 +143,7 @@ workflows:
       - build_rntester:
           requires:
             - build_lib
+            - unittest
       
 
   
