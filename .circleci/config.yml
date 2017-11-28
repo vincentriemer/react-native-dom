@@ -107,6 +107,7 @@ jobs:
     steps:
       - *restore_repo
       - *restore_node_modules
+      - *restore_lib
       - run:
           name: Build RNTester
           command: "npm run build:rntester"
@@ -141,7 +142,7 @@ workflows:
             - node_dependencies
       - build_rntester:
           requires:
-            - node_dependencies
+            - build_lib
       
 
   
