@@ -7,8 +7,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-  <link rel="preload" href="./client.bundle?platform=web" as="script" />
-  <link rel="preload" href="./RNTesterApp.web.bundle?platform=web&dev=true" as="fetch" />
+  <link rel="preload" href="./client.bundle?platform=dom" as="script" />
+  <link rel="preload" href="./RNTesterApp.web.bundle?platform=dom&dev=true" as="fetch" />
   <style>
     html,
     body {
@@ -20,11 +20,11 @@
       position: fixed;
     }
 
-     :focus {
+    :focus {
       outline: 0
     }
 
-     :focus::before {
+    :focus::before {
       content: '';
       position: absolute;
       top: 0;
@@ -39,7 +39,7 @@
     }
 
     @media (-webkit-min-device-pixel-ratio:0) {
-       :focus::before {
+      :focus::before {
         content: '';
         position: absolute;
         top: 0;
@@ -65,8 +65,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/web-animations/2.2.5/web-animations.min.js"></script>
   <!-- Bundle Paths -->
   <script>
-    var clientBundlePath = "./client.bundle?platform=web";
-    var rnBundlePath = "./RNTesterApp.web.bundle?platform=web&dev=true";
+    var clientBundlePath = "./client.bundle?platform=dom";
+    var rnBundlePath = "./RNTesterApp.web.bundle?platform=dom&dev=true";
   </script>
 
   <!-- Helper Functions -->
