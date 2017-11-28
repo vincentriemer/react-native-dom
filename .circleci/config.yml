@@ -115,20 +115,21 @@ jobs:
           command: "npm run deploy"
 workflows:
   versions: 2
-  build:
-    - checkout_repo
-    - node_dependencies:
-        requires:
-          - checkout_repo
-    - unittest:
-        requires:
-          - node_dependencies
-    - build_lib:
-        requires:
-          - node_dependencies
-    - build_rntester:
-        requires:
-          - node_dependencies
+  build-test:
+    jobs:
+      - checkout_repo
+      - node_dependencies:
+          requires:
+            - checkout_repo
+      - unittest:
+          requires:
+            - node_dependencies
+      - build_lib:
+          requires:
+            - node_dependencies
+      - build_rntester:
+          requires:
+            - node_dependencies
       
 
   
