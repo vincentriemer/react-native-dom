@@ -113,10 +113,9 @@ jobs:
       - run:
           name: Deploy RNTester to now.sh
           command: "npm run deploy"
-
 workflows:
   versions: 2
-  build_test:
+  build:
     - checkout_repo
     - node_dependencies:
         requires:
