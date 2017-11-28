@@ -29,13 +29,11 @@ class ScrollViewExample extends Component {
     const data = Array.from({ length: 30 });
     return (
       <View style={styles.scrollViewContent}>
-        {data.map((_, i) =>
+        {data.map((_, i) => (
           <View key={i} style={styles.row}>
-            <Text>
-              {i}
-            </Text>
+            <Text>{i}</Text>
           </View>
-        )}
+        ))}
       </View>
     );
   }
@@ -59,16 +57,6 @@ class ScrollViewExample extends Component {
 
     return (
       <View style={styles.fill}>
-        <Animated.ScrollView
-          style={styles.fill}
-          scrollEventThrottle={1}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
-            { useNativeDriver: true }
-          )}
-        >
-          {this._renderScrollViewContent()}
-        </Animated.ScrollView>
         <Animated.View
           style={[
             styles.header,
@@ -92,6 +80,16 @@ class ScrollViewExample extends Component {
             <Text style={styles.title}>Title</Text>
           </Animated.View>
         </Animated.View>
+        <Animated.ScrollView
+          style={styles.fill}
+          scrollEventThrottle={1}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
+            { useNativeDriver: true }
+          )}
+        >
+          {this._renderScrollViewContent()}
+        </Animated.ScrollView>
       </View>
     );
   }
@@ -99,7 +97,8 @@ class ScrollViewExample extends Component {
 
 const styles = StyleSheet.create({
   fill: {
-    flex: 1
+    flex: 1,
+    zIndex: 1
   },
   row: {
     height: 40,
@@ -116,7 +115,8 @@ const styles = StyleSheet.create({
     height: HEADER_MAX_HEIGHT + 500,
     backgroundColor: "#03A9F4",
     overflow: "hidden",
-    justifyContent: "flex-end"
+    justifyContent: "flex-end",
+    zIndex: 2
   },
   bar: {
     marginBottom: 12,

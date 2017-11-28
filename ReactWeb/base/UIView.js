@@ -46,6 +46,7 @@ export class UIChildContainerView extends HTMLElement {
   constructor() {
     super();
     Object.assign(this.style, {
+      contain: "layout style",
       position: "absolute",
       top: "0",
       left: "0",
@@ -102,8 +103,8 @@ class UIView extends HTMLElement implements RCTComponent {
       MozUserSelect: "inherit",
       WebkitUserSelect: "inherit",
       userSelect: "inherit",
-      isolation: "isolate",
-      overflow: "hidden"
+      isolation: "isolate"
+      // overflow: "hidden"
     });
 
     ALL_BORDER_PROPS.forEach(propName => {

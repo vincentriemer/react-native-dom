@@ -31,20 +31,25 @@ type Size = { width: number, height: number };
 
 let rootTagCounter = 0;
 
-function allElementsFromPoint(x: number, y: number) {
+function byPosition(a, b) {
+  if (a === b) return 0;
+  if (!a.compareDocumentPosition) {
+    return b.sourceIndex - a.sourceIndex;
+  }
+  if (a.compareDocumentPosition(b) & 2) {
+    return -1;
+  }
+  return 1;
+}
+
+// Doesn't get more hacky than this folks
+function reactViewFromPoint(topView: RCTView, x: number, y: number) {
   var element,
-    result,
     elements = [];
   var old_visibility = [];
   while (true) {
     element = document.elementFromPoint(x, y);
-    console.log(element);
-    if (
-      !element ||
-      element === document.documentElement ||
-      element instanceof RCTView
-    ) {
-      result = element;
+    if (!element || element === document.documentElement) {
       break;
     }
     elements.push(element);
@@ -54,7 +59,11 @@ function allElementsFromPoint(x: number, y: number) {
   for (var k = 0; k < elements.length; k++) {
     elements[k].style.visibility = old_visibility[k];
   }
-  return result;
+
+  elements = elements.filter(elem => topView.contains(elem) && elem.reactTag);
+  elements.sort(byPosition);
+
+  return elements[0];
 }
 
 @RCT_EXPORT_MODULE("RCTUIManager")
@@ -505,9 +514,19 @@ class RCTUIManager {
     callbackId: number
   ) {
     const [x, y] = atPoint;
-    const result = allElementsFromPoint(x, y);
+    const view = this.viewRegistry.get(reactTag);
 
-    console.log(result);
+    const target = reactViewFromPoint(view, x, y);
+
+    const { globalX, globalY, width, height } = this.measure(target.reactTag);
+
+    this.bridge.callbackFromId(callbackId)(
+      target.reactTag,
+      globalX,
+      globalY,
+      width,
+      height
+    );
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)

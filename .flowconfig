@@ -10,7 +10,6 @@
 
 [libs]
 node_modules/yoga-js/flow-typed
-node_modules/fbjs/lib
 defs
 
 [options]
