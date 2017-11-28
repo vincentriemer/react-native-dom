@@ -19,7 +19,7 @@ const ReactNative = require("react-native");
 const RNTesterActions = require("./RNTesterActions");
 const RNTesterExampleContainer = require("./RNTesterExampleContainer");
 const RNTesterExampleList = require("./RNTesterExampleList");
-const RNTesterList = require("./RNTesterList.web");
+const RNTesterList = require("./RNTesterList");
 const RNTesterNavigationReducer = require("./RNTesterNavigationReducer");
 const URIActionMap = require("./URIActionMap");
 
@@ -42,18 +42,18 @@ type Props = {
 
 const APP_STATE_KEY = "RNTesterAppState.v2";
 
-const Header = ({ onBack, title }: { onBack?: () => mixed, title: string }) =>
+const Header = ({ onBack, title }: { onBack?: () => mixed, title: string }) => (
   <View style={styles.header}>
     <View style={styles.headerCenter}>
-      <Text style={styles.title}>
-        {title}
-      </Text>
+      <Text style={styles.title}>{title}</Text>
     </View>
-    {onBack &&
+    {onBack && (
       <View style={styles.headerLeft}>
         <Button title="Back" onPress={onBack} />
-      </View>}
-  </View>;
+      </View>
+    )}
+  </View>
+);
 
 class RNTesterApp extends React.Component {
   props: Props;
@@ -170,9 +170,8 @@ AppRegistry.registerComponent("RootViewSizeFlexibilityExampleApp", () =>
 AppRegistry.registerComponent("RNTesterApp", () => RNTesterApp);
 
 // Register suitable examples for snapshot tests
-RNTesterList.ComponentExamples
-  .concat(RNTesterList.APIExamples)
-  .forEach((Example: RNTesterExample) => {
+RNTesterList.ComponentExamples.concat(RNTesterList.APIExamples).forEach(
+  (Example: RNTesterExample) => {
     const ExampleModule = Example.module;
     if (ExampleModule.displayName) {
       class Snapshotter extends React.Component {
@@ -190,6 +189,7 @@ RNTesterList.ComponentExamples
         () => Snapshotter
       );
     }
-  });
+  }
+);
 
 module.exports = RNTesterApp;
