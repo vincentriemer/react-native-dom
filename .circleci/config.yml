@@ -46,7 +46,7 @@ aliases:
   install_gcc: &install_gcc
     run:
       name: Install GCC
-      command: sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test && sudo apt-get update && sudo apt-get install gcc-4.9 g++-4.9
+      command: sudo apt-get update && sudo apt-get install software-properties-common && sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test && sudo apt-get update && sudo apt-get install gcc-4.9 g++-4.9
 
   update_alternatives: &update_alternatives
     run:
