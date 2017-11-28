@@ -1,7 +1,7 @@
 aliases:
   container_config: &container_config
     docker:
-      - image: circleci/node:8-browsers
+      - image: circleci/node:7-browsers
     working_directory: ~/react-native-dom
   
   restore_repo: &restore_repo
@@ -43,16 +43,6 @@ aliases:
       keys:
         - *rntester_cache_key
 
-  install_gcc: &install_gcc
-    run:
-      name: Install GCC
-      command: |
-        sudo apt-get -y update
-        sudo apt-get -y install software-properties-common
-        sudo add-apt-repository -y ppa:jonathonf/gcc-7.1
-        sudo apt-get -y update
-        sudo apt-get -y install gcc-7 g++-7
-
 version: 2
 jobs:
   checkout_repo:
@@ -71,7 +61,6 @@ jobs:
     steps:
       - *restore_repo
       - *restore_node_modules
-      - *install_gcc
       - run:
           name: Download Dependencies
           command: npm install --no-package-lock --no-spin --no-progress
