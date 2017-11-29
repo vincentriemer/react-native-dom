@@ -28,8 +28,9 @@
     "flow": "flow",
     "compile": "babel ReactWeb --out-dir lib",
     "precompile": "rimraf lib",
-    "start":
+    "start:packager":
       "node node_modules/react-native/local-cli/cli.js start --reset-cache",
+    "build": "yarn run build:rntester",
     "prebuild:rntester": "rimraf dist && mkdir -p dist",
     "build:rntester":
       "yarn run build:rntester:client && yarn run build:rntester:bundle && cp ./RNTester/js/index.html ./dist/index.html",
@@ -39,7 +40,8 @@
       "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/RNTesterApp.dom.js --bundle-output ./dist/RNTesterApp.dom.bundle --platform dom --reset-cache --assets-dest ./dist",
     "predeploy": "cp now.json ./dist/now.json",
     "deploy": "cd dist && now && now alias",
-    "test": "jest"
+    "test": "jest",
+    "start": "serve -s dist"
   },
   "jest": {
     "roots": ["<rootDir>/ReactWeb/"],
@@ -112,6 +114,7 @@
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-replace": "^2.0.0",
     "rollup-plugin-visualizer": "^0.3.1",
+    "serve": "^6.4.1",
     "umd-compat-loader": "^2.0.1",
     "wasm-loader": "^1.0.0",
     "webpack": "^1.15.0",

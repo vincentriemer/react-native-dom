@@ -74,7 +74,7 @@ jobs:
       - *update_gcc
       - run:
           name: Download Dependencies
-          command: npm install --no-package-lock --no-spin --no-progress
+          command: yarn install
       - save_cache:
           key: *npm_cache_key
           paths:
@@ -87,7 +87,7 @@ jobs:
       - *restore_node_modules
       - run:
           name: Run Unittests
-          command: npm run test
+          command: yarn test
   
   build_lib:
     <<: *container_config
@@ -96,7 +96,7 @@ jobs:
       - *restore_node_modules
       - run:
           name: Build Library
-          command: npm run compile
+          command: yarn compile
       - save_cache:
           key: *lib_cache_key
           paths:
@@ -110,7 +110,7 @@ jobs:
       - *restore_lib
       - run:
           name: Build RNTester
-          command: "npm run build:rntester"
+          command: "yarn build:rntester"
       - save_cache:
           key: *rntester_cache_key
           paths:
@@ -124,7 +124,7 @@ jobs:
       - *restore_rntester
       - run:
           name: Deploy RNTester to now.sh
-          command: "npm run deploy"
+          command: "yarn deploy"
 
 workflows:
   version: 2
