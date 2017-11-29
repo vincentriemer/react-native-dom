@@ -103,7 +103,8 @@ class UIView extends HTMLElement implements RCTComponent {
       MozUserSelect: "inherit",
       WebkitUserSelect: "inherit",
       userSelect: "inherit",
-      isolation: "isolate"
+      isolation: "isolate",
+      overflow: "hidden"
     });
 
     ALL_BORDER_PROPS.forEach(propName => {
