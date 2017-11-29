@@ -124,11 +124,11 @@ jobs:
       - *restore_rntester
       - run:
           name: Deploy RNTester to now.sh
-          command: "yarn deploy"
+          command: "cd dist && now -t ${NOW_TOKEN} && now -t ${NOW_TOKEN} alias rntester.now.sh"
 
 workflows:
   version: 2
-  build-test:
+  build:
     jobs:
       - checkout_repo
       - node_dependencies:
@@ -144,6 +144,13 @@ workflows:
           requires:
             - build_lib
             - unittest
+      - deploy_rntester:
+          requires:
+            - build_rntester
+          filters:
+            branches:
+              only:
+                - master
       
 
   

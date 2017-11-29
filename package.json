@@ -39,7 +39,6 @@
     "build:rntester:bundle":
       "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/RNTesterApp.dom.js --bundle-output ./dist/RNTesterApp.dom.bundle --platform dom --reset-cache --assets-dest ./dist",
     "predeploy": "cp now.json ./dist/now.json",
-    "deploy": "cd dist && now && now alias",
     "test": "jest",
     "start": "serve -s dist"
   },
