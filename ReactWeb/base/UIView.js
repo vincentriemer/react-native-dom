@@ -104,7 +104,7 @@ class UIView extends HTMLElement implements RCTComponent {
       WebkitUserSelect: "inherit",
       userSelect: "inherit",
       isolation: "isolate"
-      // overflow: "hidden"
+      overflow: "hidden"
     });
 
     ALL_BORDER_PROPS.forEach(propName => {
