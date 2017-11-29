@@ -123,6 +123,9 @@ jobs:
       - *restore_node_modules
       - *restore_rntester
       - run:
+          name: Install now CLI
+          command: yarn global add now
+      - run:
           name: Deploy RNTester to now.sh
           command: "cd dist && now -t ${NOW_TOKEN} && now -t ${NOW_TOKEN} alias rntester.now.sh"
 
