@@ -1,7 +1,7 @@
-import { RNWebInstance } from "react-native-dom";
+import { RNDomInstance } from "ReactDom";
 
 function init(bundle, parent, options) {
-  const web = new RNWebInstance(bundle, "RNTesterApp", parent, {
+  const web = new RNDomInstance(bundle, "RNTesterApp", parent, {
     ...options
   });
 
@@ -9,4 +9,4 @@ function init(bundle, parent, options) {
   return web;
 }
 
-window.ReactWeb = { init };
+window.ReactDom = { init };

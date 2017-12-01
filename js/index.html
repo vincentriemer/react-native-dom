@@ -84,7 +84,7 @@
     window.addEventListener('WebComponentsReady', function () {
       addScript(clientBundlePath, function () {
         // Initialize the React Native application
-        ReactWeb.init(
+        ReactDom.init(
           rnBundlePath,
           // Attach it to the body tag
           document.body
