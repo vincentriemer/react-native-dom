@@ -38,7 +38,7 @@ const config = {
       "node_modules",
       "react-native"
     ),
-    "react-native-dom": path.resolve(__dirname, "..", "..", "ReactWeb", "index")
+    "react-native-dom": path.resolve(__dirname, "..", "..", "ReactDom", "index")
   },
 
   getAssetExts() {

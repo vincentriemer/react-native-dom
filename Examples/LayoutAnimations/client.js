@@ -1,15 +1,12 @@
-import { RNWebInstance } from "../../ReactWeb/index";
+import { RNDomInstance } from "ReactDom";
 
-function init(bundle, parent, enableHotReload) {
-  const web = new RNWebInstance(
-    bundle,
-    "layoutanimations",
-    parent,
-    enableHotReload
-  );
+function init(bundle, parent, options) {
+  const web = new RNDomInstance(bundle, "layoutanimations", parent, {
+    ...options
+  });
 
   web.start();
   return web;
 }
 
-window.ReactWeb = { init };
+window.ReactDom = { init };

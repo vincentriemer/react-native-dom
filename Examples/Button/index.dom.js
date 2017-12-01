@@ -2,16 +2,16 @@ import React, { Component } from "react";
 import {
   AppRegistry,
   StyleSheet,
-  Text,
   View,
   Button,
   ScrollView
 } from "react-native";
 
-const SpacedButton = props =>
+const SpacedButton = props => (
   <View style={styles.buttonWrapper}>
     <Button {...props} />
-  </View>;
+  </View>
+);
 
 class ButtonExample extends Component {
   renderScrollElement = index => {
@@ -51,7 +51,6 @@ class ButtonExample extends Component {
         <SpacedButton {...defaultProps} title="Purple Button" color="#7350BD" />
         <SpacedButton {...defaultProps} title="Pink Button" color="#CF3A60" />
         <SpacedButton {...defaultProps} title="Disabled Button" disabled />
-        <Text onPress={() => console.log("boosh")}>Example Text</Text>
       </View>
     );
   }

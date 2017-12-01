@@ -1,5 +1,5 @@
 /**
- * @providesModule ReactWeb
+ * @providesModule ReactDom
  * @flow
  */
 import "proxy-polyfill";
@@ -42,16 +42,24 @@ if (__DEV__) {
   require("RCTDevMenu");
 }
 
+type RNDomInstanceOptions = {
+  enableHotReload?: boolean
+};
+
 // React Native Web Entrypoint instance
-export class RNWebInstance {
+export class RNDomInstance {
   rootView: RCTRootView;
 
   constructor(
     bundle: string,
     moduleName: string,
     parent: Element,
-    enableHotReload?: boolean
+    options: RNDomInstanceOptions = {}
   ) {
+    const enableHotReload = options.enableHotReload
+      ? options.enableHotReload
+      : false;
+
     this.rootView = new RCTRootView(
       bundleFromRoot(bundle),
       moduleName,

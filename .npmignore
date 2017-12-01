@@ -1,6 +1,6 @@
 .babelrc
 dist
-ReactWeb
+ReactDom
 RNTester
 node_modules
 stats.html

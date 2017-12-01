@@ -87,7 +87,7 @@ function hasteResolve(opts) {
 }
 
 export default {
-  input: "ReactWeb",
+  input: "ReactDom",
   output: {
     format: "es",
     file: "lib/ReactNativeDOM.js"
@@ -98,7 +98,7 @@ export default {
     }),
     hasteResolve({
       include: [
-        "ReactWeb",
+        "ReactDom",
         "Libraries",
         "node_modules/react-native/Libraries/Utilities/MatrixMath.js"
       ],
@@ -108,7 +108,7 @@ export default {
       //exclude: 'node_modules/**',
       sourceMaps: "inline",
       include: [
-        "ReactWeb/**",
+        "ReactDom/**",
         "Libraries/**",
         "node_modules/react-native/Libraries/**"
       ],
