@@ -7,6 +7,9 @@
 To run the examples in this run the following commands:
 
 ```sh
+# be sure to update submodules to pull the RNTester code
+git submodule update --init
+
 # install dependencies
 yarn
 
