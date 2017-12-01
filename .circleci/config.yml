@@ -96,7 +96,7 @@ jobs:
       - *restore_node_modules
       - run:
           name: Build Library
-          command: yarn compile
+          command: yarn build
       - save_cache:
           key: *lib_cache_key
           paths:
