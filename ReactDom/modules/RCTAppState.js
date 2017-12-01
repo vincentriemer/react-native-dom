@@ -36,6 +36,8 @@ class RCTAppState extends RCTEventEmitter {
       this.didUpdateVisibility.bind(this),
       false
     );
+
+    this.listenerCount = 1;
   }
 
   currentBackgroundState() {

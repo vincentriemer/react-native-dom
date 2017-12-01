@@ -17,6 +17,10 @@ class RCTDeviceInfo extends RCTEventEmitter {
       false
     );
 
+    window
+      .matchMedia("screen and (min-resolution: 2dppx)")
+      .addListener(this.didUpdateDimensions.bind(this));
+
     this.listenerCount = 1;
   }
 
