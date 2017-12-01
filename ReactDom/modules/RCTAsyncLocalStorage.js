@@ -8,7 +8,7 @@ import RCTBridge, {
   RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal
 } from "RCTBridge";
-import localforage from "localforage";
+import idbKeyval from "idb-keyval";
 import deepmerge from "deepmerge";
 
 @RCT_EXPORT_MODULE("RCTAsyncLocalStorage")
@@ -25,7 +25,7 @@ class RCTAsyncLocalStorage {
 
     Promise.all(
       keys.map(key => {
-        return localforage.getItem(key);
+        return idbKeyval.get(key);
       })
     )
       .then(result => {
@@ -42,11 +42,11 @@ class RCTAsyncLocalStorage {
 
     Promise.all(
       kvPairs.map(([key, prevValue]) => {
-        return localforage.getItem(key).then(nextValue => {
+        return idbKeyval.get(key).then(nextValue => {
           if (nextValue == null || typeof nextValue !== "object") {
-            return localforage.setItem(key, prevValue);
+            return idbKeyval.set(key, prevValue);
           } else {
-            return localforage.setItem(key, deepmerge(prevValue, nextValue));
+            return idbKeyval.set(key, deepmerge(prevValue, nextValue));
           }
         });
       })
@@ -61,7 +61,7 @@ class RCTAsyncLocalStorage {
 
     Promise.all(
       kvPairs.map(([key, value]) => {
-        return localforage.setItem(key, value);
+        return idbKeyval.set(key, value);
       })
     ).then(() => {
       callback();
