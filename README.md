@@ -1,5 +1,7 @@
 # react-native-dom
 
+[![CircleCI](https://circleci.com/gh/vincentriemer/react-native-dom.svg?style=svg&circle-token=96448c580730a065cb93c0a10af0f85f6c954166)](https://circleci.com/gh/vincentriemer/react-native-dom)
+
 ## Running Examples
 
 To run the examples in this run the following commands:
@@ -12,4 +14,5 @@ yarn
 yarn run start
 ```
 
-Then navigate to `localhost:8081/Examples` and choose which example you would like to see.
+Then navigate to `localhost:8081/Examples` and choose which example you would
+like to see.
