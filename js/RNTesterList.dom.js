@@ -200,6 +200,10 @@ const APIExamples: Array<RNTesterExample> = [
   //   key: "ClipboardExample",
   //   module: require("./ClipboardExample")
   // },
+  {
+    key: "Dimensions",
+    module: require("./DimensionsExample")
+  },
   // {
   //   key: "GeolocationExample",
   //   module: require("./GeolocationExample")
