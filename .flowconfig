@@ -15,5 +15,5 @@ defs
 [options]
 esproposal.decorators=ignore
 unsafe.enable_getters_and_setters=true
-module.name_mapper='^RCTBridge$' -> '<PROJECT_ROOT>/ReactWeb/bridge/RCTBridge'
+module.name_mapper='^RCTBridge$' -> '<PROJECT_ROOT>/ReactDom/bridge/RCTBridge'
 module.system=haste

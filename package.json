@@ -26,10 +26,9 @@
   },
   "scripts": {
     "flow": "flow",
-    "compile": "babel ReactWeb --out-dir lib",
-    "precompile": "rimraf lib",
-    "start":
-      "node node_modules/react-native/local-cli/cli.js start --reset-cache",
+    "build": "babel ReactDom --out-dir lib",
+    "prebuild": "rimraf lib",
+    "start": "react-native start",
     "prebuild:rntester": "rimraf dist && mkdir -p dist",
     "build:rntester":
       "yarn run build:rntester:client && yarn run build:rntester:bundle && cp ./RNTester/js/index.html ./dist/index.html",
@@ -40,7 +39,7 @@
     "test": "jest"
   },
   "jest": {
-    "roots": ["<rootDir>/ReactWeb/"],
+    "roots": ["<rootDir>/ReactDom/"],
     "haste": {
       "defaultPlatform": "dom",
       "providesModuleNodeModules": ["react-native-dom"],

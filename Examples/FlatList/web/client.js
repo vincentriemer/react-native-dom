@@ -1,7 +1,7 @@
-import { RNWebInstance } from "../../../ReactWeb";
+import { RNDomInstance } from "ReactDom";
 
 function init(bundle, parent, options) {
-  const web = new RNWebInstance(bundle, "flatlist", parent, {
+  const web = new RNDomInstance(bundle, "flatlist", parent, {
     ...options
   });
 
@@ -9,4 +9,4 @@ function init(bundle, parent, options) {
   return web;
 }
 
-window.ReactWeb = { init };
+window.ReactDom = { init };
