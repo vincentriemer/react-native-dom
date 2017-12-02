@@ -386,7 +386,6 @@ export default class RCTBridge {
   get devSettings(): RCTDevSettings {
     if (!this._devSettings) {
       const devSettings: any = this.modulesByName["DevSettings"];
-      console.log(devSettings);
       this._devSettings = devSettings;
     }
     return this._devSettings;
