@@ -29,10 +29,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: "ButtonExample",
     module: require("./ButtonExample")
   },
-  // {
-  //   key: "FlatListExample",
-  //   module: require("./FlatListExample")
-  // },
+  {
+    key: "FlatListExample",
+    module: require("./FlatListExample")
+  },
   {
     key: "ImageExample",
     module: require("./ImageExample")
@@ -45,18 +45,18 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: "LayoutEventsExample",
     module: require("./LayoutEventsExample")
   },
-  // {
-  //   key: "ListViewExample",
-  //   module: require("./ListViewExample")
-  // },
-  // {
-  //   key: "ListViewGridLayoutExample",
-  //   module: require("./ListViewGridLayoutExample")
-  // },
-  // {
-  //   key: "ListViewPagingExample",
-  //   module: require("./ListViewPagingExample")
-  // },
+  {
+    key: "ListViewExample",
+    module: require("./ListViewExample")
+  },
+  {
+    key: "ListViewGridLayoutExample",
+    module: require("./ListViewGridLayoutExample")
+  },
+  {
+    key: "ListViewPagingExample",
+    module: require("./ListViewPagingExample")
+  },
   // {
   //   key: "MaskedViewExample",
   //   module: require("./MaskedViewExample")
@@ -65,10 +65,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   //   key: "ModalExample",
   //   module: require("./ModalExample")
   // },
-  // {
-  //   key: "MultiColumnExample",
-  //   module: require("./MultiColumnExample")
-  // },
+  {
+    key: "MultiColumnExample",
+    module: require("./MultiColumnExample")
+  },
   // {
   //   key: "NavigatorIOSColorsExample",
   //   module: require("./NavigatorIOSColorsExample")
@@ -97,10 +97,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: "ScrollViewExample",
     module: require("./ScrollViewExample")
   },
-  // {
-  //   key: "SectionListExample",
-  //   module: require("./SectionListExample")
-  // },
+  {
+    key: "SectionListExample",
+    module: require("./SectionListExample")
+  },
   // {
   //   key: "SegmentedControlIOSExample",
   //   module: require("./SegmentedControlIOSExample")
@@ -172,14 +172,14 @@ const APIExamples: Array<RNTesterExample> = [
     key: "AnimatedExample",
     module: require("./AnimatedExample")
   },
-  // {
-  //   key: "AnExApp",
-  //   module: require("./AnimatedGratuitousApp/AnExApp")
-  // },
-  // {
-  //   key: "AppStateExample",
-  //   module: require("./AppStateExample")
-  // },
+  {
+    key: "AnExApp",
+    module: require("./AnimatedGratuitousApp/AnExApp")
+  },
+  {
+    key: "AppStateExample",
+    module: require("./AppStateExample")
+  },
   // {
   //   key: "AsyncStorageExample",
   //   module: require("./AsyncStorageExample")
@@ -240,10 +240,10 @@ const APIExamples: Array<RNTesterExample> = [
     key: "PanResponderExample",
     module: require("./PanResponderExample")
   },
-  // {
-  //   key: "PointerEventsExample",
-  //   module: require("./PointerEventsExample")
-  // },
+  {
+    key: "PointerEventsExample",
+    module: require("./PointerEventsExample")
+  },
   // {
   //   key: "PushNotificationIOSExample",
   //   module: require("./PushNotificationIOSExample")
@@ -264,10 +264,10 @@ const APIExamples: Array<RNTesterExample> = [
   //   key: "SnapshotExample",
   //   module: require("./SnapshotExample")
   // },
-  // {
-  //   key: "TimerExample",
-  //   module: require("./TimerExample")
-  // },
+  {
+    key: "TimerExample",
+    module: require("./TimerExample")
+  },
   {
     key: "TransformExample",
     module: require("./TransformExample")
