@@ -16,6 +16,7 @@ import UIView from "UIView";
 import { normalizeInputEventName } from "RCTEventDispatcher";
 import RCTText from "RCTText";
 import RCTRawText from "RCTRawText";
+import type RCTView from "RCTView";
 
 import RCTTextInput from "RCTTextInput";
 
@@ -23,11 +24,11 @@ type Props = { [string]: any };
 
 type ViewConfig = {
   propTypes: Props,
-  bubblingEvents: Array<string>,
-  uiClassViewName: string
+  bubblingEvents: Array<string>
+  // uiClassViewName: string
 };
 
-type RCTPropBlock = (view: typeof RCTComponent, { [string]: any }) => void;
+type RCTPropBlock = (view: RCTComponent, { [string]: any }) => void;
 type RCTPropBlockDictionary = { [string]: RCTPropBlock };
 
 function moduleNameForClass(cls) {
@@ -156,7 +157,7 @@ class RCTComponentData {
     return shadowView;
   }
 
-  setPropsForView(props: Props, view: typeof RCTComponent) {
+  setPropsForView(props: Props, view: RCTComponent) {
     if (props) {
       Object.keys(props).forEach(propName => {
         if (this.propConfig.hasOwnProperty(propName)) {

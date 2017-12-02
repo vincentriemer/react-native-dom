@@ -16,6 +16,14 @@ type PropDef = {
   exported: boolean
 };
 
+function eventSetter(view: RCTView, propName: string) {
+  return (json: Object) => {
+    const mutableEvent = { ...json };
+    mutableEvent.target = view.reactTag;
+    view.bridge.eventDispatcher.sendInputEvent(propName, mutableEvent);
+  };
+}
+
 export function RCT_EXPORT_VIEW_PROP(
   name: string,
   type: string,
@@ -27,11 +35,21 @@ export function RCT_EXPORT_VIEW_PROP(
         target.__props = [];
       }
 
+      const isEvent = ["RCTBubblingEventBlock", "RCTDirectEventBlock"].includes(
+        type
+      );
+
+      const setter = !isEvent
+        ? descriptor.value
+        : (view: RCTView, value: boolean) => {
+            descriptor.value(view, value ? eventSetter(view, name) : null);
+          };
+
       target.__props = target.__props.concat([
         {
           name,
           type,
-          setter: descriptor.value,
+          setter,
           exported
         }
       ]);

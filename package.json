@@ -12,6 +12,7 @@
     "fbjs": "^0.8.12",
     "flow-bin": "^0.47.0",
     "glob": "^7.1.2",
+    "hyperhtml-element": "^1.2.1",
     "idb-keyval": "^2.3.0",
     "invariant": "^2.2.2",
     "normalize-css-color": "^1.0.2",
@@ -31,8 +32,8 @@
     "start": "react-native start",
     "prebuild:rntester": "rimraf dist && mkdir -p dist",
     "build:rntester": "yarn run build:rntester:client && yarn run build:rntester:bundle && cp ./RNTester/js/index.html ./dist/index.html",
-    "build:rntester:client": "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/client.js --bundle-output ./dist/client.bundle --platform dom",
-    "build:rntester:bundle": "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/RNTesterApp.dom.js --bundle-output ./dist/RNTesterApp.dom.bundle --platform dom --assets-dest ./dist",
+    "build:rntester:client": "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/client.js --bundle-output ./dist/client.bundle --platform dom --reset-cache",
+    "build:rntester:bundle": "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/RNTesterApp.dom.js --bundle-output ./dist/RNTesterApp.dom.bundle --platform dom --assets-dest ./dist --reset-cache",
     "test": "jest"
   },
   "jest": {

@@ -1,4 +1,5 @@
 declare var __DEV__: boolean;
+declare var ShadyCSS: ?Object;
 
 declare type Frame = {
   top: number,

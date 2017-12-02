@@ -3,7 +3,6 @@
  * @flow
  */
 
-import type { Frame } from "UIView";
 import type { RCTComponent } from "RCTComponent";
 
 import YogaNode from "yoga-js";
