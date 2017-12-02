@@ -16,14 +16,20 @@ type Timer = {
   repeats: boolean
 };
 
+const IDLE_CALLBACK_THRESHOLD = 3; // Minimum idle execution time of 1ms
+
 @RCT_EXPORT_MODULE("RCTTiming")
 class RCTTiming {
   bridge: RCTBridge;
   timers: { [callbackId: string]: Timer };
+  sendIdleEvents: boolean;
+  targetFrameDuration: number;
 
   constructor(bridge: RCTBridge) {
     this.bridge = bridge;
     this.timers = {};
+    this.sendIdleEvents = false;
+    this.targetFrameDuration = 1000.0 / 60.0; // 60fps
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
@@ -64,6 +70,11 @@ class RCTTiming {
     delete this.timers[String(callbackId)];
   }
 
+  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+  setSendIdleEvents(sendIdle: boolean) {
+    this.sendIdleEvents = sendIdle;
+  }
+
   frame() {
     const toRemove = [];
     const timers = [];
@@ -89,6 +100,19 @@ class RCTTiming {
 
     for (const timer of toRemove) {
       delete this.timers[timer];
+    }
+  }
+
+  idle(frameStart: number) {
+    if (!this.sendIdleEvents) {
+      return;
+    }
+    const now = window.performance ? performance.now() : Date.now();
+    const frameElapsed = now - frameStart;
+    if (this.targetFrameDuration - frameElapsed >= IDLE_CALLBACK_THRESHOLD) {
+      this.bridge.enqueueJSCall("JSTimers", "callIdleCallbacks", [
+        Date.now() - frameElapsed
+      ]);
     }
   }
 
