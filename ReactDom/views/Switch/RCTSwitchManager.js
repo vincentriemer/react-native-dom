@@ -27,7 +27,7 @@ class RCTSwitchManager extends RCTViewManager {
   }
 
   @RCT_EXPORT_VIEW_PROP("disabled", "boolean")
-  setDisabled(view: RCTSwitch, value: boolean) {
+  setDisabledSwitch(view: RCTSwitch, value: boolean) {
     view.disabled = value;
   }
 

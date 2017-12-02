@@ -48,6 +48,7 @@ class RCTSwitch extends RCTView {
   }
 
   set disabled(value: boolean = false) {
+    super.disabled = value;
     this.platformSwitch.disabled = value;
   }
 

@@ -83,6 +83,7 @@ class PlatformSwitch extends HyperHTMLElement {
           position: relative;
           z-index: 2;
           -webkit-tap-highlight-color: rgba(0,0,0,0);
+          touch-action: manipulation;
         }
         .background-on {
           position: absolute;
@@ -115,7 +116,6 @@ class PlatformSwitch extends HyperHTMLElement {
           width: this.state.width,
           height: this.state.height,
           opacity: this.state.disabled ? 0.5 : 1,
-          cursor: this.state.disabled ? "auto" : "pointer",
           pointerEvents: this.state.disabled ? "none" : "auto"
         }}
       >

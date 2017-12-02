@@ -73,6 +73,7 @@ class UIView extends HTMLElement implements RCTComponent {
   _transform: number[];
   _animatedTransform: string;
   _backgroundColor: string;
+  _disabled: boolean = false;
 
   childContainer: UIChildContainerView;
   borderView: ?UIBorderView;
@@ -297,9 +298,18 @@ class UIView extends HTMLElement implements RCTComponent {
     return this._touchable;
   }
 
+  updateCursor() {
+    this.style.cursor = this._touchable && !this._disabled ? "pointer" : "auto";
+  }
+
   set touchable(value: boolean) {
     this._touchable = value;
-    this.style.cursor = value ? "pointer" : "auto";
+    this.updateCursor();
+  }
+
+  set disabled(value: boolean) {
+    this._disabled = value;
+    this.updateCursor();
   }
 
   set zIndex(value: number) {

@@ -208,6 +208,11 @@ class RCTViewManager {
     view.onLayout = value;
   }
 
+  @RCT_EXPORT_VIEW_PROP("disabled", "boolean", false)
+  setDisabled(view: RCTView, value: boolean) {
+    view.disabled = value;
+  }
+
   // @RCT_EXPORT_VIEW_PROP("accessible", "bool")
   // setAccessible(view: RCTView, value: boolean) {
   //   view.accessible = value;
