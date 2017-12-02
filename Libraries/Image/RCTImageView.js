@@ -37,6 +37,9 @@ class RCTImageView extends RCTView {
 
     this.childShadowRoot = this.childContainer.attachShadow({ mode: "open" });
     this.imageElement = document.createElement("img");
+    Object.assign(this.imageElement.style, {
+      pointerEvents: "none"
+    });
     this.childShadowRoot.appendChild(this.imageElement);
     this.childShadowRoot.appendChild(document.createElement("slot"));
   }

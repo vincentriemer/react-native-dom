@@ -86,8 +86,13 @@ function generateSpringKeyframes(
 const generateKeyframes: (
   config: LayoutAnim,
   duration: number
-) => ?KeyframeResult = memoize((config: LayoutAnim, duration: number) => {
-  const { type, springDamping, initialVelocity, delay } = config;
+) => ?KeyframeResult = memoize((config: LayoutAnim = {}, duration: number) => {
+  const {
+    type = "easeInEaseOut",
+    springDamping,
+    initialVelocity,
+    delay
+  } = config;
 
   const resolvedDelay = delay != null ? delay : 0;
 
