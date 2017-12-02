@@ -19,6 +19,8 @@ class RCTSwitch extends RCTView {
   constructor(bridge: RCTBridge) {
     super(bridge);
 
+    this.style.contain = "strict";
+
     this.platformSwitch = new PlatformSwitch();
     this.platformSwitch.addEventListener(
       "onchange",
