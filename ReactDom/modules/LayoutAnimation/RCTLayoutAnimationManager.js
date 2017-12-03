@@ -198,7 +198,7 @@ class RCTLayoutAnimationManager {
     ];
   }
 
-  childContainerAnimationConfigFactory(keyLength: number, duration: number) {
+  childContainerAnimationConfigFactory(keyLength: number) {
     return new Array(keyLength).fill({
       scaleX: 1.0,
       scaleY: 1.0
@@ -334,14 +334,14 @@ class RCTLayoutAnimationManager {
           );
         }
 
-        const {
+        let {
           top: prevTop,
           left: prevLeft,
           width: prevWidth,
           height: prevHeight
         } = view.frame;
 
-        const {
+        let {
           top: nextTop,
           left: nextLeft,
           width: nextWidth,
@@ -383,7 +383,7 @@ class RCTLayoutAnimationManager {
         );
         let shouldTransformChildren = false;
 
-        if (prevWidth !== nextWidth) {
+        if (prevWidth !== nextWidth && nextWidth !== 0) {
           const prevScaleX = prevWidth / nextWidth;
           const nextScaleX = 1.0;
 
@@ -407,7 +407,7 @@ class RCTLayoutAnimationManager {
           }
         }
 
-        if (prevHeight !== nextHeight) {
+        if (prevHeight !== nextHeight && nextHeight !== 0) {
           const nextScaleY = 1.0;
           const prevScaleY = prevHeight / nextHeight;
 
@@ -511,8 +511,7 @@ class RCTLayoutAnimationManager {
     // Animate view removal
     this.removedNodes.forEach(reactTag => {
       const view = this.manager.viewRegistry.get(reactTag);
-      const shadowView = this.manager.shadowViewRegistry.get(reactTag);
-      invariant(view && shadowView, "view does not exist");
+      invariant(view, "view does not exist");
 
       const cleanUpRemovedNode = () => {};
 

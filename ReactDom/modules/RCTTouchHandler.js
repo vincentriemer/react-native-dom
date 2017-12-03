@@ -36,7 +36,7 @@ type ReactTouch = {
 let mouseTouchCounter = 1;
 
 const TOUCH_LISTENER_OPTIONS = detectIt.passiveEvents
-  ? { passive: true, capture: false }
+  ? { passive: false, capture: false }
   : false;
 
 class RCTTouchHandler {

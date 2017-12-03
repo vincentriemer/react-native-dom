@@ -34,6 +34,12 @@ class RCTShadowRawText extends RCTShadowView {
     this.textDirty = true;
     this.markTextDirty();
   }
+
+  purge() {
+    super.purge();
+    this.markTextDirty();
+    console.log(this);
+  }
 }
 
 export default RCTShadowRawText;

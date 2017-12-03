@@ -19,6 +19,7 @@ import RCTDeviceInfo from "RCTDeviceInfo";
 import RCTRootShadowView from "RCTRootShadowView";
 import RCTLayoutAnimationManager from "RCTLayoutAnimationManager";
 import RCTUIManagerObserverCoordinator from "RCTUIManagerObserverCoordinator";
+import RCTShadowText from "RCTShadowText";
 import { GlobalConfig } from "yoga-js";
 import CanUse from "CanUse";
 
@@ -201,6 +202,12 @@ class RCTUIManager {
   }
 
   purgeView(reactTag: number) {
+    const shadowView = this.shadowViewRegistry.get(reactTag);
+    if (shadowView) {
+      this.shadowViewRegistry.delete(reactTag);
+      shadowView.purge();
+    }
+
     if (this.layoutAnimationManager.isPending()) {
       const view = this.viewRegistry.get(reactTag);
       if (view && view.reactSuperview) {
@@ -208,12 +215,6 @@ class RCTUIManager {
       }
       this.layoutAnimationManager.queueRemovedNode(reactTag);
     } else {
-      const shadowView = this.shadowViewRegistry.get(reactTag);
-      if (shadowView) {
-        this.shadowViewRegistry.delete(reactTag);
-        shadowView.purge();
-      }
-
       this.addUIBlock((uiManager, viewRegistry) => {
         const view = viewRegistry.get(reactTag);
         viewRegistry.delete(reactTag);
@@ -613,7 +614,13 @@ class RCTUIManager {
     for (let i = indicesToRemove.length - 1; i >= 0; i--) {
       const childIndex = indicesToRemove[i];
 
-      const shadowSubView = shadowViewToManage.reactSubviews[childIndex];
+      let shadowSubView = undefined;
+      if (shadowViewToManage instanceof RCTShadowText) {
+        shadowSubView = shadowViewToManage.textChildren[childIndex];
+      } else {
+        shadowSubView = shadowViewToManage.reactSubviews[childIndex];
+      }
+
       if (shadowSubView) shadowViewToManage.removeReactSubview(shadowSubView);
 
       if (!this.layoutAnimationManager.isPending()) {
