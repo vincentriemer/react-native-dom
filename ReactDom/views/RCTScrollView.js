@@ -18,7 +18,7 @@ import RCTEventDispatcher, {
 } from "RCTEventDispatcher";
 
 const SCROLL_LISTENER_OPTIONS = detectIt.passiveEvents
-  ? { passive: true }
+  ? { passive: false }
   : false;
 
 var isSafari =
@@ -233,11 +233,12 @@ class RCTScrollView extends RCTView {
     this.addEventListener(
       "scroll",
       e => {
-        if (detectIt.passiveEvents) {
-          this.handleScroll(e);
-        } else {
-          setTimeout(() => this.handleScroll(e), 0);
-        }
+        // if (detectIt.passiveEvents) {
+        //   this.handleScroll(e);
+        // } else {
+        //   setTimeout(() => this.handleScroll(e), 0);
+        // }
+        this.handleScroll(e);
       },
       SCROLL_LISTENER_OPTIONS
     );
@@ -380,6 +381,14 @@ class RCTScrollView extends RCTView {
   }
 
   handleScroll = (e: Event, userData: ?Object) => {
+    if (
+      this.manager.jsResponder != null &&
+      !this.manager.jsResponder instanceof RCTScrollView
+    ) {
+      e.preventDefault();
+      return;
+    }
+
     this.coalescingKey++;
 
     const contentOffset: Position = {

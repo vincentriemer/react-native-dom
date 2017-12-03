@@ -55,7 +55,8 @@ export class UIChildContainerView extends HTMLElement {
       MozUserSelect: "inherit",
       WebkitUserSelect: "inherit",
       userSelect: "inherit",
-      transformOrigin: "top left"
+      transformOrigin: "top left",
+      touchAction: "manipulation"
     });
   }
 }
@@ -227,6 +228,7 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   set pointerEvents(value: string) {
+    console.log(pointerEvents);
     this.style.pointerEvents = value === "box-none" ? "none" : value;
   }
 
