@@ -10,6 +10,7 @@ import type RCTUIManager from "RCTUIManager";
 import CustomElement from "CustomElement";
 import type { RCTEvent } from "RCTEventDispatcher";
 import detectIt from "detect-it";
+import RCTScrollViewLocalData from "RCTScrollViewLocalData";
 
 import invariant from "Invariant";
 import debounce from "debounce";
@@ -230,18 +231,7 @@ class RCTScrollView extends RCTView {
       this.insertBefore(this.overflowView, this.childContainer);
     }
 
-    this.addEventListener(
-      "scroll",
-      e => {
-        // if (detectIt.passiveEvents) {
-        //   this.handleScroll(e);
-        // } else {
-        //   setTimeout(() => this.handleScroll(e), 0);
-        // }
-        this.handleScroll(e);
-      },
-      SCROLL_LISTENER_OPTIONS
-    );
+    this.addEventListener("scroll", this.handleScroll, SCROLL_LISTENER_OPTIONS);
   }
 
   set scrollEnabled(value: ?boolean) {
@@ -354,7 +344,14 @@ class RCTScrollView extends RCTView {
       height: this.scrollHeight
     };
 
-    const contentFrame = this.manager.measure(this.reactTag);
+    // const contentFrame = this.manager.measure(this.reactTag);
+    const shadowView = this.manager.shadowViewRegistry.get(this.reactTag);
+    invariant(shadowView, `No ShadowView for tag ${this.reactTag}`);
+    const contentFrame = shadowView.previousLayout;
+    invariant(
+      contentFrame,
+      `ShadowView with tag ${this.reactTag} has not been layed out`
+    );
 
     this.contentSize = {
       width: contentFrame.width,
@@ -380,6 +377,13 @@ class RCTScrollView extends RCTView {
     );
   }
 
+  scrollDidChange(x: number, y: number) {
+    setTimeout(() => {
+      const localData = new RCTScrollViewLocalData(x, y);
+      this.bridge.uiManager.setLocalDataForView(localData, this);
+    }, 0);
+  }
+
   handleScroll = (e: Event, userData: ?Object) => {
     if (
       this.manager.jsResponder != null &&
@@ -391,10 +395,15 @@ class RCTScrollView extends RCTView {
 
     this.coalescingKey++;
 
+    const scrollLeft = this.scrollLeft;
+    const scrollTop = this.scrollTop;
+
     const contentOffset: Position = {
-      x: this.scrollLeft,
-      y: this.scrollTop
+      x: scrollLeft,
+      y: scrollTop
     };
+
+    this.scrollDidChange(scrollLeft, scrollTop);
 
     const contentInset: Inset = {
       top: 0,

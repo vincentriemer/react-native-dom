@@ -295,15 +295,10 @@ class RCTUIManager {
       return;
     }
 
-    let {
-      /*left: globalX, top: globalY, */ width,
-      height
-    } = shadowView.measurement;
-
-    const { left: globalX, top: globalY } = view.getBoundingClientRect();
+    const { globalX, globalY } = shadowView.measureGlobal();
 
     invariant(shadowView.previousLayout, "Shadow view has no previous layout");
-    let { left, top } = shadowView.previousLayout;
+    let { left, top, width, height } = shadowView.previousLayout;
 
     if (callbackId != null) {
       this.bridge.callbackFromId(callbackId)(
