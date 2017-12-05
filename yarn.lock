@@ -465,6 +465,10 @@ babel-plugin-external-helpers@^6.18.0, babel-plugin-external-helpers@^6.22.0:
   dependencies:
     babel-runtime "^6.22.0"
 
+babel-plugin-haste-require@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-haste-require/-/babel-plugin-haste-require-0.1.0.tgz#7bb08066e21b75c2314b463006108ac780d2b7f9"
+
 babel-plugin-istanbul@^4.0.0:
   version "4.1.5"
   resolved "https://registry.yarnpkg.com/babel-plugin-istanbul/-/babel-plugin-istanbul-4.1.5.tgz#6760cdd977f411d3e175bb064f2bc327d99b2b6e"
@@ -3448,6 +3452,17 @@ node-gyp@^3.4.0:
     tar "^2.0.0"
     which "1"
 
+node-haste@^2.12.0:
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/node-haste/-/node-haste-2.12.0.tgz#8d4d1cb87f05adcc4207525b789d7dc717f3c1d7"
+  dependencies:
+    absolute-path "^0.0.0"
+    debug "^2.2.0"
+    denodeify "^1.2.1"
+    graceful-fs "^4.1.3"
+    json-stable-stringify "^1.0.1"
+    sane "^1.3.1"
+
 node-int64@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/node-int64/-/node-int64-0.4.0.tgz#87a9065cdb355d3182d8f94ce11188b825c68a3b"
@@ -4353,6 +4368,18 @@ safe-buffer@^5.0.1, safe-buffer@^5.1.1, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
 safe-buffer@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.0.1.tgz#d263ca54696cd8a306b5ca6551e92de57918fbe7"
+
+sane@^1.3.1:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/sane/-/sane-1.7.0.tgz#b3579bccb45c94cf20355cc81124990dfd346e30"
+  dependencies:
+    anymatch "^1.3.0"
+    exec-sh "^0.2.0"
+    fb-watchman "^2.0.0"
+    minimatch "^3.0.2"
+    minimist "^1.1.1"
+    walker "~1.0.5"
+    watch "~0.10.0"
 
 sane@^2.0.0:
   version "2.2.0"

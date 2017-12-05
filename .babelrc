@@ -11,6 +11,7 @@
     "transform-decorators-legacy",
     "transform-class-properties",
     "transform-inline-environment-variables",
-    "preval"
+    "preval",
+    "./scripts/babel-plugin-haste-require"
   ]
 }
