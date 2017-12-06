@@ -213,6 +213,11 @@ class RCTViewManager {
     view.disabled = value;
   }
 
+  @RCT_EXPORT_VIEW_PROP("pointerEvents", "RCTPointerEvents")
+  setPointerEvents(view: RCTView, value: string) {
+    view.pointerEvents = value;
+  }
+
   // @RCT_EXPORT_VIEW_PROP("accessible", "bool")
   // setAccessible(view: RCTView, value: boolean) {
   //   view.accessible = value;
@@ -229,8 +234,7 @@ class RCTViewManager {
       ...borderPropConfig,
       ["backfaceVisibility", "string"],
       ["overflow", "string"],
-      ["zIndex", "number"],
-      ["pointerEvents", "string"]
+      ["zIndex", "number"]
     ];
   }
 

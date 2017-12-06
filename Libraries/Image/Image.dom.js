@@ -191,8 +191,8 @@ const Image = createReactClass({
      */
     accessibilityLabel: PropTypes.node,
     /**
-    * blurRadius: the blur radius of the blur filter added to the image
-    */
+     * blurRadius: the blur radius of the blur filter added to the image
+     */
     blurRadius: PropTypes.number,
     /**
      * When the image is resized, the corners of the size specified
@@ -204,6 +204,7 @@ const Image = createReactClass({
      * @platform ios
      */
     capInsets: EdgeInsetsPropType,
+    pointerEvents: PropTypes.oneOf(["box-none", "none", "box-only", "auto"]),
     /**
      * The mechanism that should be used to resize the image when the image's dimensions
      * differ from the image view's dimensions. Defaults to `auto`.
