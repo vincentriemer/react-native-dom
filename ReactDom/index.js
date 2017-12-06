@@ -35,6 +35,7 @@ import "RCTWebSocketModule";
 import "RCTAppState";
 import "RCTSafeAreaViewManager";
 import "RCTSwitchManager";
+import "RCTStatusBarManager";
 
 // Development Related Native Modules
 if (__DEV__) {
