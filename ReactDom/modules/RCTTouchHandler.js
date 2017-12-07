@@ -14,7 +14,7 @@ import RCTTouchEvent from "RCTTouchEvent";
 import guid from "Guid";
 
 type UITouch = {
-  view: UIView,
+  view: UIView | UIChildContainerView,
   identifier: number,
   pageX: number,
   pageY: number,

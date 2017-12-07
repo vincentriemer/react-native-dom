@@ -19,7 +19,7 @@ import RCTEventDispatcher, {
 } from "RCTEventDispatcher";
 
 const SCROLL_LISTENER_OPTIONS = detectIt.passiveEvents
-  ? { passive: false }
+  ? { passive: true }
   : false;
 
 var isSafari =
@@ -385,14 +385,6 @@ class RCTScrollView extends RCTView {
   }
 
   handleScroll = (e: Event, userData: ?Object) => {
-    if (
-      this.manager.jsResponder != null &&
-      !this.manager.jsResponder instanceof RCTScrollView
-    ) {
-      e.preventDefault();
-      return;
-    }
-
     this.coalescingKey++;
 
     const scrollLeft = this.scrollLeft;
