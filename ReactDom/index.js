@@ -23,7 +23,7 @@ import "RCTViewManager";
 import "RCTTextManager";
 import "RCTRawTextManager";
 import "RCTScrollViewManager";
-// import "RCTNativeAnimatedModule";
+import "RCTNativeAnimatedModule";
 import "RCTAsyncLocalStorage";
 import "RCTImageViewManager";
 import "RCTLinkingManager";
