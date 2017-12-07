@@ -49,14 +49,14 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: "ListViewExample",
     module: require("./ListViewExample")
   },
-  {
-    key: "ListViewGridLayoutExample",
-    module: require("./ListViewGridLayoutExample")
-  },
-  {
-    key: "ListViewPagingExample",
-    module: require("./ListViewPagingExample")
-  },
+  // {
+  //   key: "ListViewGridLayoutExample",
+  //   module: require("./ListViewGridLayoutExample")
+  // },
+  // {
+  //   key: "ListViewPagingExample",
+  //   module: require("./ListViewPagingExample")
+  // },
   // {
   //   key: "MaskedViewExample",
   //   module: require("./MaskedViewExample")
@@ -65,10 +65,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   //   key: "ModalExample",
   //   module: require("./ModalExample")
   // },
-  {
-    key: "MultiColumnExample",
-    module: require("./MultiColumnExample")
-  },
+  // {
+  //   key: "MultiColumnExample",
+  //   module: require("./MultiColumnExample")
+  // },
   // {
   //   key: "NavigatorIOSColorsExample",
   //   module: require("./NavigatorIOSColorsExample")
@@ -97,10 +97,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: "ScrollViewExample",
     module: require("./ScrollViewExample")
   },
-  {
-    key: "SectionListExample",
-    module: require("./SectionListExample")
-  },
+  // {
+  //   key: "SectionListExample",
+  //   module: require("./SectionListExample")
+  // },
   // {
   //   key: "SegmentedControlIOSExample",
   //   module: require("./SegmentedControlIOSExample")
@@ -240,10 +240,10 @@ const APIExamples: Array<RNTesterExample> = [
     key: "PanResponderExample",
     module: require("./PanResponderExample")
   },
-  {
-    key: "PointerEventsExample",
-    module: require("./PointerEventsExample")
-  },
+  // {
+  //   key: "PointerEventsExample",
+  //   module: require("./PointerEventsExample")
+  // },
   // {
   //   key: "PushNotificationIOSExample",
   //   module: require("./PushNotificationIOSExample")
