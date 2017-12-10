@@ -360,7 +360,9 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   set backfaceVisibility(value: string) {
-    this.updateHostStyle("backfaceVisibility", value);
+    // $FlowFixMe
+    this.style.webkitBackfaceVisibility = value;
+    this.style.backfaceVisibility = value;
   }
 
   insertReactSubviewAtIndex(subview: UIView, index: number) {
