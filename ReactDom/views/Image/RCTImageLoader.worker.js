@@ -15,9 +15,11 @@ function loadImage(url, callbackId) {
   const config = {
     method: "GET",
     mode: "no-cors",
-    cache: "default"
+    cache: "force-cache"
   };
-  fetch(url, config).then(onload).catch(onerror);
+  fetch(url, config)
+    .then(onload)
+    .catch(onerror);
 }
 
 self.onmessage = function(e) {

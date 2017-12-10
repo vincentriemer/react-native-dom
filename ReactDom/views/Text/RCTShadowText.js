@@ -62,7 +62,7 @@ class RCTShadowText extends RCTShadowView {
     this.textDirty = true;
     this.numberOfLines = 0;
 
-    TEXT_SHADOW_STYLE_PROPS.forEach(shadowPropName => {
+    TEXT_SHADOW_STYLE_PROPS.forEach((shadowPropName: string) => {
       Object.defineProperty(this, shadowPropName, {
         configurable: true,
         get: () => this.props[shadowPropName],

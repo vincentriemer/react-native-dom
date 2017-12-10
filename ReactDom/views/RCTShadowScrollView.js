@@ -10,7 +10,15 @@ class RCTShadowScrollView extends RCTShadowView {
   scrollOffset: {
     top: number,
     left: number
-  } = { top: 0, left: 0 };
+  };
+
+  constructor() {
+    super();
+    this.scrollOffset = {
+      top: 0,
+      left: 0
+    };
+  }
 
   set localData(data: RCTScrollViewLocalData) {
     this.scrollOffset = {
@@ -19,3 +27,5 @@ class RCTShadowScrollView extends RCTShadowView {
     };
   }
 }
+
+export default RCTShadowScrollView;

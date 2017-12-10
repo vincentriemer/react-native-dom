@@ -9,6 +9,7 @@ import UIBorderView, { ALL_BORDER_PROPS } from "UIBorderView";
 import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 import * as MatrixMath from "MatrixMath";
+import prefixInlineStyles from "prefixInlineStyles";
 
 (function() {
   var typesToPatch = ["DocumentType", "Element", "CharacterData"],
@@ -45,19 +46,20 @@ const baseDimension = 1000;
 export class UIChildContainerView extends HTMLElement {
   constructor() {
     super();
-    Object.assign(this.style, {
-      contain: "layout style",
-      position: "absolute",
-      top: "0",
-      left: "0",
-      right: "0",
-      bottom: "0",
-      MozUserSelect: "inherit",
-      WebkitUserSelect: "inherit",
-      userSelect: "inherit",
-      transformOrigin: "top left",
-      touchAction: "manipulation"
-    });
+    Object.assign(
+      this.style,
+      prefixInlineStyles({
+        contain: "layout style",
+        position: "absolute",
+        top: "0",
+        left: "0",
+        right: "0",
+        bottom: "0",
+        userSelect: "inherit",
+        transformOrigin: "top left",
+        touchAction: "manipulation"
+      })
+    );
   }
 }
 
@@ -97,17 +99,18 @@ class UIView extends HTMLElement implements RCTComponent {
     this.position = "absolute";
     this.backgroundColor = "rgba(0,0,0,0)";
 
-    Object.assign(this.style, {
-      contain: "size layout style",
-      boxSizing: "border-box",
-      opacity: "0",
-      touchAction: "manipulation",
-      MozUserSelect: "inherit",
-      WebkitUserSelect: "inherit",
-      userSelect: "inherit",
-      isolation: "isolate"
-      // overflow: "hidden"
-    });
+    Object.assign(
+      this.style,
+      prefixInlineStyles({
+        contain: "size layout style",
+        boxSizing: "border-box",
+        opacity: "0",
+        touchAction: "manipulation",
+        userSelect: "inherit",
+        isolation: "isolate"
+        // overflow: "hidden"
+      })
+    );
 
     ALL_BORDER_PROPS.forEach(propName => {
       Object.defineProperty(this, propName, {
@@ -123,13 +126,33 @@ class UIView extends HTMLElement implements RCTComponent {
     });
   }
 
+  prefixStyle(propName: string | Object, propValue?: string) {
+    let styleObject = {};
+    if (typeof propName === "string") {
+      styleObject[propName] = propValue;
+    } else {
+      styleObject = propName;
+    }
+    return styleObject;
+  }
+
+  updateHostStyle(propName: string | Object, propValue?: string) {
+    Object.assign(this.style, this.prefixStyle(propName, propValue));
+  }
+
+  updateChildContainerStyle(propName: string | Object, propValue?: string) {
+    Object.assign(
+      this.childContainer.style,
+      this.prefixStyle(propName, propValue)
+    );
+  }
+
   get reactTag(): number {
     return this._reactTag;
   }
 
   set reactTag(value: number) {
     this._reactTag = value;
-    this.id = `${value}`;
   }
 
   get frame(): Frame {
@@ -145,12 +168,12 @@ class UIView extends HTMLElement implements RCTComponent {
     Object.assign(this, value);
     if (!this.hasBeenFramed) {
       this.hasBeenFramed = true;
-      this.opacity = this._opacity;
+      this.updateHostStyle("opacity", `${this._opacity}`);
     }
   }
 
   set position(value: string) {
-    this.style.position = value;
+    this.updateHostStyle("position", value);
   }
 
   get top(): number {
@@ -160,7 +183,6 @@ class UIView extends HTMLElement implements RCTComponent {
   set top(value: number) {
     if (value !== this._top) {
       this._top = value;
-      // this.style.top = `${value}px`;
       this.updateTransform();
     }
   }
@@ -172,7 +194,6 @@ class UIView extends HTMLElement implements RCTComponent {
   set left(value: number) {
     if (value !== this._left) {
       this._left = value;
-      // this.style.left = `${value}px`;
       this.updateTransform();
     }
   }
@@ -190,7 +211,7 @@ class UIView extends HTMLElement implements RCTComponent {
 
     const transformString = transforms.join(" ");
 
-    this.style.transform = transformString;
+    this.updateHostStyle("transform", transformString);
   }
 
   get width(): number {
@@ -200,7 +221,7 @@ class UIView extends HTMLElement implements RCTComponent {
   set width(value: number) {
     if (value !== this._width) {
       this._width = value;
-      this.style.width = `${value}px`;
+      this.updateHostStyle("width", `${value}px`);
     }
   }
 
@@ -211,36 +232,38 @@ class UIView extends HTMLElement implements RCTComponent {
   set height(value: number) {
     if (value !== this._height) {
       this._height = value;
-      this.style.height = `${value}px`;
+      this.updateHostStyle("height", `${value}px`);
     }
   }
 
   set backgroundColor(value: string | number) {
+    let resolvedValue = value;
     if (typeof value === "number") {
       const [a, r, g, b] = ColorArrayFromHexARGB(value);
       const stringValue = `rgba(${r},${g},${b},${a})`;
       this._backgroundColor = stringValue;
-      this.style.backgroundColor = stringValue;
+      this.updateHostStyle("backgroundColor", stringValue);
     } else {
       this._backgroundColor = value;
-      this.style.backgroundColor = value;
+      this.updateHostStyle("backgroundColor", value);
     }
   }
 
   set pointerEvents(value: string) {
     switch (value) {
       case "box-none": {
-        this.style.pointerEvents = "none";
-        this.childContainer.style.pointerEvents = "all";
+        this.updateHostStyle("pointerEvents", "none");
+        this.updateChildContainerStyle("pointerEvents", "all");
         break;
       }
       case "box-only": {
-        this.style.pointerEvents = "all";
-        this.childContainer.style.pointerEvents = "none";
+        this.updateHostStyle("pointerEvents", "all");
+        this.updateChildContainerStyle("pointerEvents", "none");
         break;
       }
       default: {
-        this.style.pointerEvents = value;
+        this.updateHostStyle("pointerEvents", value);
+        this.updateChildContainerStyle("pointerEvents", value);
       }
     }
   }
@@ -251,7 +274,7 @@ class UIView extends HTMLElement implements RCTComponent {
 
   set opacity(value: number) {
     this._opacity = value;
-    this.style.opacity = `${value}`;
+    this.updateHostStyle("opacity", `${value}`);
   }
 
   get transform(): number[] {
@@ -314,7 +337,8 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   updateCursor() {
-    this.style.cursor = this._touchable && !this._disabled ? "pointer" : "auto";
+    const cursorValue = this._touchable && !this._disabled ? "pointer" : "auto";
+    this.updateHostStyle("cursor", cursorValue);
   }
 
   set touchable(value: boolean) {
@@ -328,17 +352,15 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   set zIndex(value: number) {
-    this.style.zIndex = `${value}`;
+    this.updateHostStyle("zIndex", `${value}`);
   }
 
   set overflow(value: string) {
-    this.style.overflow = value;
+    this.updateHostStyle("overflow", value);
   }
 
   set backfaceVisibility(value: string) {
-    // $FlowFixMe
-    this.style.webkitBackfaceVisibility = value;
-    this.style.backfaceVisibility = value;
+    this.updateHostStyle("backfaceVisibility", value);
   }
 
   insertReactSubviewAtIndex(subview: UIView, index: number) {

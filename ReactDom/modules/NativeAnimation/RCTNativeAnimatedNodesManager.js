@@ -136,6 +136,8 @@ class RCTNativeAnimatedNodesManager {
       console.error("Not a value node.");
       return;
     }
+    this.stopAnimationsForNode(node);
+
     node.value = value;
     node.setNeedsUpdate();
   }
@@ -210,6 +212,20 @@ class RCTNativeAnimatedNodesManager {
     }
   }
 
+  stopAnimationsForNode(node: RCTAnimatedNode) {
+    const discarded: RCTAnimationDriver[] = [];
+    this.activeAnimations.forEach(driver => {
+      if (driver.valueNode === node) {
+        discarded.push(driver);
+      }
+    });
+
+    discarded.forEach(driver => {
+      driver.stopAnimation();
+      this.activeAnimations.delete(driver);
+    });
+  }
+
   // -- Events
 
   addAnimatedEventToView(
@@ -275,6 +291,7 @@ class RCTNativeAnimatedNodesManager {
 
     if (driversForKey) {
       for (let driver of driversForKey) {
+        this.stopAnimationsForNode(driver.valueNode);
         driver.updateWithEvent(event);
       }
 

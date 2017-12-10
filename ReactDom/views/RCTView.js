@@ -10,7 +10,7 @@ import CustomElement from "CustomElement";
 @CustomElement("rct-view")
 class RCTView extends UIView {
   bridge: RCTBridge;
-  onLayout: boolean = false;
+  onLayout: ?Function;
 
   constructor(bridge: RCTBridge) {
     super();
@@ -25,18 +25,14 @@ class RCTView extends UIView {
     super.frame = value;
 
     if (this.onLayout) {
-      this.bridge.enqueueJSCall("RCTEventEmitter", "receiveEvent", [
-        this.reactTag,
-        "topLayout",
-        {
-          layout: {
-            x: value.left,
-            y: value.top,
-            width: value.width,
-            height: value.height
-          }
+      this.onLayout({
+        layout: {
+          x: value.left,
+          y: value.top,
+          width: value.width,
+          height: value.height
         }
-      ]);
+      });
     }
   }
 

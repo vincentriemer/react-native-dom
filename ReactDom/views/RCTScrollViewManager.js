@@ -12,6 +12,7 @@ import RCTViewManager, {
   RCT_EXPORT_VIEW_PROP,
   RCT_EXPORT_MIRRORED_PROP
 } from "RCTViewManager";
+import invariant from "Invariant";
 import RCTScrollView, { RCTScrollContentView } from "RCTScrollView";
 import type UIView from "UIView";
 
@@ -34,9 +35,7 @@ class RCTScrollViewManager extends RCTViewManager {
   }
 
   @RCT_EXPORT_VIEW_PROP("onScroll", "RCTDirectEventBlock")
-  setOnScroll(view: RCTScrollView, value: boolean) {
-    view.onScroll = value;
-  }
+  setOnScroll() {}
 
   @RCT_EXPORT_VIEW_PROP("onScrollBeginDrag", "RCTDirectEventBlock")
   setOnScrollBeginDrag() {}
@@ -68,7 +67,9 @@ class RCTScrollViewManager extends RCTViewManager {
       const contentView = view.reactSubviews[0];
       invariant(
         contentView && contentView instanceof RCTScrollContentView,
-        `Cannot find coresponding RCTScrollContentView for RCTScrollView with tag ${reactTag}`
+        `Cannot find coresponding RCTScrollContentView for RCTScrollView with tag ${
+          reactTag
+        }`
       );
 
       cb({
@@ -87,16 +88,6 @@ class RCTScrollViewManager extends RCTViewManager {
   setScrollEnabled(view: RCTScrollView, value: ?boolean) {
     view.scrollEnabled = value;
   }
-
-  // @RCT_EXPORT_VIEW_PROP("onMomentumScrollBegin", "RCTDirectEventBlock")
-  // setonMomentumScrollBegin(view: RCTScrollView, value: boolean) {
-  //   view.onMomentumScrollBegin = value;
-  // }
-
-  // @RCT_EXPORT_VIEW_PROP("onMomentumScrollEnd", "RCTDirectEventBlock")
-  // setonMomentumScrollEnd(view: RCTScrollView, value: boolean) {
-  //   view.onMomentumScrollEnd = value;
-  // }
 }
 
 export default RCTScrollViewManager;

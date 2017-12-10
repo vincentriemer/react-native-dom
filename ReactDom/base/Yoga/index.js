@@ -6,10 +6,13 @@
 import Yoga from "@vincentriemer/yoga-layout";
 
 /**
- * Value that can generally be represented as either a number, a unit suffixed string (i.e. "10px"), 
- * or in some cases a keyword (i.e. "auto") 
+ * Value that can generally be represented as either a number, a unit suffixed string (i.e. "10px"),
+ * or in some cases a keyword (i.e. "auto")
  */
 declare type YGLiteralValue = string | number;
+declare type YGNode = Object;
+declare type YGEnum = { [string]: any };
+declare type YGMeasureFunc = Function;
 
 /**
  * Layout related style properties used to calculate layout.

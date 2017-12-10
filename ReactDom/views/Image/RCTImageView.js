@@ -21,6 +21,7 @@ const onLoadParamsForSource = (source: RCTImageSource) => ({
 class RCTImageView extends RCTView {
   _imageSources: RCTImageSource[];
   imageElement: HTMLImageElement;
+  childShadowRoot: ShadowRoot;
 
   onLoadStart: boolean = false;
   onLoad: boolean = false;

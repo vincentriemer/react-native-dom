@@ -72,9 +72,9 @@ if (__DEV__) {
 
 export interface ModuleClass {
   static __moduleName: ?string;
-  setBridge?: RCTBridge => void;
+  constructor(bridge: RCTBridge): ModuleClass;
   constantsToExport?: () => { [string]: any };
-  [string]: ?Function;
+  [propName: string]: any;
 }
 
 export function getPropertyNames(obj: ?Object): Array<string> {

@@ -3,7 +3,6 @@
  * @flow
  */
 
-import type { Size } from "UIView";
 import type { LayoutChange } from "RCTShadowView";
 import RCTShadowView from "RCTShadowView";
 

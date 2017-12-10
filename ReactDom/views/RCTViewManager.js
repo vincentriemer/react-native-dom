@@ -178,7 +178,7 @@ class RCTViewManager {
     ];
   }
 
-  @RCT_EXPORT_VIEW_PROP("backgroundColor", "Color")
+  @RCT_EXPORT_VIEW_PROP("backgroundColor", "color")
   setBackgroundColor(view: RCTView, value: number) {
     view.backgroundColor = value;
   }
@@ -204,7 +204,7 @@ class RCTViewManager {
   }
 
   @RCT_EXPORT_VIEW_PROP("onLayout", "RCTDirectEventBlock")
-  setOnLayout(view: RCTView, value: boolean) {
+  setOnLayout(view: RCTView, value: Function) {
     view.onLayout = value;
   }
 

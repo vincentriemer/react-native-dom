@@ -26,9 +26,9 @@ class RCTTextInput extends RCTView {
       border: "0px solid"
     });
 
-    this.shadowRoot = this.attachShadow({ mode: "open" });
-    this.shadowRoot.appendChild(this.inputElement);
-    this.shadowRoot.appendChild(document.createElement("slot"));
+    const shadowRoot = this.attachShadow({ mode: "open" });
+    shadowRoot.appendChild(this.inputElement);
+    shadowRoot.appendChild(document.createElement("slot"));
   }
 
   set borderRadius(value: number) {
@@ -73,7 +73,12 @@ class RCTTextInput extends RCTView {
 
   set frame(value: Frame) {
     super.frame = value;
-    Object.assign(this.inputElement.style, value);
+    Object.assign(this.inputElement.style, {
+      top: `${value.top}px`,
+      left: `${value.left}px`,
+      width: `${value.width}px`,
+      height: `${value.height}px`
+    });
   }
 
   set fontFamily(value: string) {

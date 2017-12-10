@@ -4,6 +4,7 @@
  */
 
 import RCTValueAnimatedNode from "RCTValueAnimatedNode";
+import invariant from "Invariant";
 
 class RCTModuloAnimatedNode extends RCTValueAnimatedNode {
   performUpdate() {
@@ -12,6 +13,10 @@ class RCTModuloAnimatedNode extends RCTValueAnimatedNode {
     const modulus = this.config.modulus;
     if (this.parentNodes) {
       const parent = this.parentNodes[inputNode];
+      invariant(
+        parent instanceof RCTValueAnimatedNode,
+        "Parent AnimatedNode must be an RCTValueAnimatedNode"
+      );
       this.value = parent.value % modulus;
     }
   }

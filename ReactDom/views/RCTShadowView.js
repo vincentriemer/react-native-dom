@@ -152,8 +152,8 @@ class RCTShadowView implements RCTComponent {
         globalY += layout.top;
 
         if (currentView.hasOwnProperty("scrollOffset")) {
-          globalX -= currentView.scrollOffset.left;
-          globalY -= currentView.scrollOffset.top;
+          globalX -= (currentView: any).scrollOffset.left;
+          globalY -= (currentView: any).scrollOffset.top;
         }
 
         currentView = currentView.reactSuperview;

@@ -1,19 +1,21 @@
 [ignore]
 .*/node_modules/fbjs/.*
 .*/node_modules/metro-bundler/.*
-.*/node_modules/haul-cli/.*
+.*/node_modules/react-native/.*
 .*/Examples/.*
 .*/lib/.*
 .*/dist/.*
+.*/Libraries/.*
+.*/RNTester/.*
 
 [include]
 
 [libs]
 node_modules/yoga-js/flow-typed
 defs
+flow-typed
 
 [options]
 esproposal.decorators=ignore
 unsafe.enable_getters_and_setters=true
-module.name_mapper='^RCTBridge$' -> '<PROJECT_ROOT>/ReactDom/bridge/RCTBridge'
 module.system=haste

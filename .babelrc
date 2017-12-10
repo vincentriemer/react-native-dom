@@ -13,5 +13,10 @@
     "transform-inline-environment-variables",
     "preval",
     "./scripts/babel-plugin-haste-require"
-  ]
+  ],
+  "env": {
+    "lib": {
+      "presets": ["flow"]
+    }
+  }
 }

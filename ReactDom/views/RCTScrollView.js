@@ -32,6 +32,17 @@ const SHOULD_CORRECT_SCROLL = !!navigator.platform.match(/iPhone|iPod|iPad/g);
 const SHOULD_ADD_SCROLL_OVERFLOW =
   !!navigator.platform.match(/iPhone|iPod|iPad/g) || isSafari;
 
+type ScrollEventArgs = [
+  number,
+  Position,
+  Inset,
+  Size,
+  Frame,
+  number,
+  number,
+  ?Object
+];
+
 class RCTScrollEvent implements RCTEvent {
   // interface properties
   viewTag: number;
@@ -209,8 +220,7 @@ class RCTScrollView extends RCTView {
   constructor(bridge: RCTBridge) {
     super(bridge);
 
-    const manager: any = bridge.modulesByName["UIManager"];
-    this.manager = manager;
+    this.manager = bridge.uiManager;
 
     this.style.contain = "strict";
 
@@ -433,7 +443,7 @@ class RCTScrollView extends RCTView {
 
   debouncedOnScrollEnd = debounce(this.handleScrollEnd, 100);
 
-  handleScrollStart(...eventArgs) {
+  handleScrollStart(...eventArgs: ScrollEventArgs) {
     this.isScrolling = true;
     this._scrollLastTick = Date.now();
 
@@ -441,7 +451,7 @@ class RCTScrollView extends RCTView {
     this.bridge.eventDispatcher.sendEvent(scrollEvent);
   }
 
-  handleScrollEnd(...eventArgs) {
+  handleScrollEnd(...eventArgs: ScrollEventArgs) {
     this.isScrolling = false;
 
     const scrollEvent = new RCTScrollEvent("onScrollEndDrag", ...eventArgs);
@@ -484,7 +494,7 @@ class RCTScrollView extends RCTView {
     }
   }
 
-  handleScrollTick(...eventArgs) {
+  handleScrollTick(...eventArgs: ScrollEventArgs) {
     const shouldEmitScrollEvent = this.shouldEmitScrollEvent(
       this._scrollLastTick,
       this.scrollEventThrottle

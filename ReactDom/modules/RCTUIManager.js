@@ -44,7 +44,7 @@ function byPosition(a, b) {
 }
 
 // Doesn't get more hacky than this folks
-function reactViewFromPoint(topView: RCTView, x: number, y: number) {
+function reactViewFromPoint(topView: UIView, x: number, y: number) {
   var element,
     elements = [];
   var old_visibility = [];
@@ -61,7 +61,9 @@ function reactViewFromPoint(topView: RCTView, x: number, y: number) {
     elements[k].style.visibility = old_visibility[k];
   }
 
-  elements = elements.filter(elem => topView.contains(elem) && elem.reactTag);
+  elements = elements.filter(
+    elem => topView.contains(elem) && elem instanceof UIView
+  );
   elements.sort(byPosition);
 
   return elements[0];
@@ -479,10 +481,10 @@ class RCTUIManager {
     invariant(shadowView, `shadowView (for ID ${reactTag}) not found`);
 
     const superShadowView = shadowView.reactSuperview;
-    if (!superShadowView) {
-      invariant(false, `shadowView super (of ID ${reactTag}) not found`);
-      return;
-    }
+    invariant(
+      superShadowView,
+      `shadowView super (of ID ${reactTag}) not found`
+    );
 
     const indexOfView = superShadowView.reactSubviews.indexOf(shadowView);
     invariant(
@@ -512,9 +514,18 @@ class RCTUIManager {
     const [x, y] = atPoint;
     const view = this.viewRegistry.get(reactTag);
 
+    invariant(view, `No such view with tag ${reactTag}`);
+
     const target = reactViewFromPoint(view, x, y);
 
-    const { globalX, globalY, width, height } = this.measure(target.reactTag);
+    if (!target || !(target instanceof UIView)) return;
+
+    const measurement = this.measure(target.reactTag);
+    invariant(
+      measurement,
+      `View with tag ${target.reactTag} has no measurement`
+    );
+    const { globalX, globalY, width, height } = measurement;
 
     this.bridge.callbackFromId(callbackId)(
       target.reactTag,

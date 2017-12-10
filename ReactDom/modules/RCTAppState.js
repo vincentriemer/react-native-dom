@@ -70,7 +70,7 @@ class RCTAppState extends RCTEventEmitter {
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
   getCurrentAppState(callbackId: number) {
     this.bridge.callbackFromId(callbackId)({
-      app_state: this.currentBackgroundState
+      app_state: this.currentBackgroundState()
     });
   }
 }

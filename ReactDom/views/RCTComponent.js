@@ -3,16 +3,16 @@
  * @flow
  */
 export interface RCTComponent {
-  reactTag: number,
+  reactTag: number;
 
-  reactSubviews: Array<$Subtype<RCTComponent>>,
-  reactSuperview: $Subtype<RCTComponent>,
+  reactSubviews: Array<$Subtype<RCTComponent>>;
+  reactSuperview: $Subtype<RCTComponent>;
 
   insertReactSubviewAtIndex(
     subview: $Subtype<RCTComponent>,
     index: number
-  ): void,
-  removeReactSubview(subview: $Subtype<RCTComponent>): void,
+  ): void;
+  removeReactSubview(subview: $Subtype<RCTComponent>): void;
 
-  purge(): void
+  purge(): void;
 }

@@ -25,7 +25,7 @@ class RCTText extends RCTView {
   constructor(bridge: RCTBridge) {
     super(bridge);
 
-    Object.assign(this.style, {
+    this.updateHostStyle({
       position: "static",
       display: "inline",
       contain: "none",
@@ -34,7 +34,7 @@ class RCTText extends RCTView {
       boxDecorationBreak: "clone"
     });
 
-    Object.assign(this.childContainer.style, {
+    this.updateChildContainerStyle({
       display: "inline",
       position: "static"
     });
@@ -53,11 +53,12 @@ class RCTText extends RCTView {
     if (color.getAlpha() < 0.3) {
       color.setAlpha(0.3);
     }
+
     color.darken();
     this._highlightedBackgroundColor = color.toRgbString();
   }
 
-  set color(value: number) {
+  set color(value: number | string) {
     if (typeof value === "number") {
       const [a, r, g, b] = ColorArrayFromHexARGB(value);
       const stringValue = `rgba(${r},${g},${b},${a})`;
@@ -75,14 +76,12 @@ class RCTText extends RCTView {
     super.frame = value;
 
     // if text's frame is set revert back to block positioning
-    Object.assign(this.style, {
+    this.updateHostStyle({
       position: "absolute",
       display: "inline-block"
     });
 
-    Object.assign(this.childContainer.style, {
-      display: "inline-block"
-    });
+    this.updateChildContainerStyle("display", "inline-block");
   }
 
   set accessible(value: boolean) {

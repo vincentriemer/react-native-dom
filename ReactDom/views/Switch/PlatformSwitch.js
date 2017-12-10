@@ -3,7 +3,7 @@
  * @flow
  */
 
-import HyperHTMLElement from "hyperhtml-element";
+import HyperHTMLElement from "hyperhtml-element/esm";
 
 type State = {
   disabled: boolean,

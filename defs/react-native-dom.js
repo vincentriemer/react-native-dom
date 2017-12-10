@@ -24,3 +24,7 @@ declare type Inset = {
   bottom: number,
   right: number
 };
+
+declare module "MatrixMath" {
+  declare module.exports: any;
+}
