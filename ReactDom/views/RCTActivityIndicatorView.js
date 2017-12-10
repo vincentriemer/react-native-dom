@@ -49,6 +49,7 @@ class RCTActivityIndicatorView extends RCTView {
   }
 
   constructAnimation() {
+    // $FlowFixMe - WAAPI
     return this.animationContainer.animate(
       [{ transform: "rotate(0deg)" }, { transform: "rotate(360deg)" }],
       {

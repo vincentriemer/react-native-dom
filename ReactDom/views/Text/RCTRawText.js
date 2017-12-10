@@ -13,7 +13,7 @@ class RCTRawText extends RCTView {
   constructor(bridge: RCTBridge) {
     super(bridge);
 
-    Object.assign(this.style, {
+    this.updateHostStyle({
       position: "static",
       display: "inline",
       contain: "style"

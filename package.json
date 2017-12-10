@@ -3,7 +3,7 @@
   "version": "0.0.5",
   "main": "lib/index.js",
   "dependencies": {
-    "@vincentriemer/yoga-layout": "^1.6.1",
+    "@vincentriemer/yoga-layout": "^1.8.0",
     "bezier-easing": "^2.0.3",
     "debounce": "^1.0.2",
     "deepmerge": "^1.5.0",
@@ -38,7 +38,11 @@
       "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/client.js --bundle-output ./dist/client.bundle --platform dom --reset-cache",
     "build:rntester:bundle":
       "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/RNTesterApp.dom.js --bundle-output ./dist/RNTesterApp.dom.bundle --platform dom --assets-dest ./dist --reset-cache",
-    "test": "jest"
+    "test": "jest",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,json,css,md}": ["prettier --write", "git add"]
   },
   "jest": {
     "roots": ["<rootDir>/Libraries/"],
@@ -69,8 +73,10 @@
     "babel-runtime": "^6.23.0",
     "eslint": "^4.1.1",
     "flow-typed": "^2.2.3",
+    "husky": "^0.14.3",
     "jest": "^20.0.4",
-    "prettier": "^1.5.2",
+    "lint-staged": "^6.0.0",
+    "prettier": "^1.9.0",
     "react": "16.0.0",
     "react-native": "~0.50.3",
     "rimraf": "^2.6.1",

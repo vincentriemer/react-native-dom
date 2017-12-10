@@ -44,6 +44,9 @@ class RCTText extends RCTView {
     this.fontFamily = defaultFontStack;
     this.fontSize = defaultFontSize;
     this.lineHeight = null;
+    this.textDecorationColor = null;
+    this.textDecorationLine = null;
+    this.textDecorationStyle = null;
   }
 
   set backgroundColor(value: number | string) {
@@ -119,12 +122,12 @@ class RCTText extends RCTView {
     this._isHighlighted = value;
     if (value !== null) {
       this.touchable = true;
-      if (value) {
-        this.style.backgroundImage =
-          "linear-gradient(-100deg, rgba(0,0,0,0.2), rgba(0,0,0,0.2))";
-      } else {
-        this.style.backgroundImage = "";
-      }
+      this.updateHostStyle(
+        "backgroundImage",
+        value
+          ? "linear-gradient(-100deg, rgba(0,0,0,0.2), rgba(0,0,0,0.2))"
+          : ""
+      );
     } else {
       this.touchable = false;
     }
@@ -134,15 +137,7 @@ class RCTText extends RCTView {
   set selectable(value: boolean) {
     this._selectable = value;
 
-    const userSelectValue = value ? "text" : "none";
-
-    // $FlowFixMe
-    Object.assign(this.style, {
-      webkitUserSelect: userSelectValue,
-      MozUserSelect: userSelectValue,
-      userSelect: userSelectValue
-    });
-
+    this.updateHostStyle("userSelect", value ? "text" : "none");
     this.updatePointerEvents();
   }
 
@@ -161,43 +156,34 @@ class RCTText extends RCTView {
   }
 
   set textDecorationLine(value: ?string) {
-    if (value != null) {
-      this.style.webkitTextDecorationLine = value;
-      this.style.textDecorationLine = value;
-    } else {
-      this.style.webkitTextDecorationLine = "none";
-      this.style.textDecorationLine = "none";
-    }
+    this.updateChildContainerStyle(
+      "textDecorationLine",
+      value ? value : "none"
+    );
   }
 
   set textDecorationStyle(value: ?string) {
-    if (value != null) {
-      this.style.webkitTextDecorationStyle = value;
-      this.style.textDecorationStyle = value;
-    } else {
-      this.style.webkitTextDecorationStyle = "solid";
-      this.style.textDecorationStyle = "solid";
-    }
+    this.updateChildContainerStyle(
+      "textDecorationStyle",
+      value ? value : "solid"
+    );
   }
 
   set textDecorationColor(value: ?number) {
     if (value != null) {
       const [a, r, g, b] = ColorArrayFromHexARGB(value);
       const stringValue = `rgba(${r},${g},${b},${a})`;
-      this.style.webkitTextDecorationColor = stringValue;
-      this.style.textDecorationColor = stringValue;
+      this.updateChildContainerStyle("textDecorationColor", stringValue);
     } else {
-      this.style.webkitTextDecorationColor = "currentcolor";
-      this.style.textDecorationColor = "currentcolor";
+      this.updateChildContainerStyle("textDecorationColor", "currentcolor");
     }
   }
 
   set lineHeight(value: ?number) {
-    if (value != null) {
-      this.style.lineHeight = `${value}px`;
-    } else {
-      this.style.lineHeight = TextDefaults.lineHeight;
-    }
+    this.updateHostStyle(
+      "lineHeight",
+      value ? `${value}px` : TextDefaults.lineHeight
+    );
   }
 }
 

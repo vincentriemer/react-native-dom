@@ -112,10 +112,10 @@ class UIView extends HTMLElement implements RCTComponent {
       })
     );
 
-    ALL_BORDER_PROPS.forEach(propName => {
+    ALL_BORDER_PROPS.forEach((propName) => {
       Object.defineProperty(this, propName, {
         configurable: true,
-        set: value => {
+        set: (value) => {
           if (propName.startsWith("border") && propName.endsWith("Radius")) {
             this.style[propName] = `${value}px`;
           }
@@ -302,8 +302,8 @@ class UIView extends HTMLElement implements RCTComponent {
     }
 
     let transformString = "";
-    value.forEach(transformObject => {
-      Object.keys(transformObject).forEach(property => {
+    value.forEach((transformObject) => {
+      Object.keys(transformObject).forEach((property) => {
         const value = transformObject[property];
         if (["translateX", "translateY", "translateZ"].includes(property)) {
           transformString += `${property}(${value}px)`;
@@ -360,6 +360,7 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   set backfaceVisibility(value: string) {
+    // for some reason the auto prefixer breaks this property on safari so we set it manually
     // $FlowFixMe
     this.style.webkitBackfaceVisibility = value;
     this.style.backfaceVisibility = value;
@@ -379,7 +380,7 @@ class UIView extends HTMLElement implements RCTComponent {
 
   removeReactSubview(subview: UIView) {
     subview.reactSuperview = undefined;
-    this.reactSubviews = this.reactSubviews.filter(s => s !== subview);
+    this.reactSubviews = this.reactSubviews.filter((s) => s !== subview);
   }
 
   purge() {

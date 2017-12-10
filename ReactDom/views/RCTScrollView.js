@@ -145,7 +145,7 @@ class RCTScrollEvent implements RCTEvent {
 class RCTScrollOverflowView extends UIView {
   constructor() {
     super();
-    Object.assign(this.style, {
+    this.updateHostStyle({
       position: "absolute",
       top: "0",
       left: "0",
@@ -159,8 +159,7 @@ class RCTScrollOverflowView extends UIView {
 export class RCTScrollContentView extends RCTView {
   constructor(bridge: RCTBridge) {
     super(bridge);
-
-    Object.assign(this.style, {
+    this.updateHostStyle({
       position: "relative",
       display: "block",
       opacity: "1",
@@ -222,7 +221,7 @@ class RCTScrollView extends RCTView {
 
     this.manager = bridge.uiManager;
 
-    this.style.contain = "strict";
+    this.updateHostStyle("contain", "strict");
 
     this.isScrolling = false;
     this.scrollEventThrottle = 0;
@@ -264,26 +263,29 @@ class RCTScrollView extends RCTView {
   }
 
   updateScrollBehavior() {
+    const styleUpdate = {};
     if (this._overflow === "scroll" && this._scrollEnabled) {
-      this.style.webkitOverflowScrolling = "touch";
-      this.style.scrollBehavior = "smooth";
+      styleUpdate.webkitOverflowScrolling = "touch";
+      styleUpdate.scrollBehavior = "smooth";
       // TODO: Make this conditional based on screen DPI
-      this.style.willChange = "transform";
+      styleUpdate.willChange = "transform";
 
       if (this._horizontal) {
-        this.style.overflowX = "scroll";
-        this.style.overflowY = "hidden";
+        styleUpdate.overflowX = "scroll";
+        styleUpdate.overflowY = "hidden";
       } else {
-        this.style.overflowX = "hidden";
-        this.style.overflowY = "scroll";
+        styleUpdate.overflowX = "hidden";
+        styleUpdate.overflowY = "scroll";
       }
     } else {
-      this.style.webkitOverflowScrolling = "";
-      this.style.willChange = "";
+      styleUpdate.webkitOverflowScrolling = "";
+      styleUpdate.willChange = "";
 
-      this.style.overflowX = "hidden";
-      this.style.overflowY = "hidden";
+      styleUpdate.overflowX = "hidden";
+      styleUpdate.overflowY = "hidden";
     }
+
+    this.updateHostStyle(styleUpdate);
   }
 
   calculateChildFramesData() {
@@ -518,7 +520,7 @@ class RCTScrollView extends RCTView {
 
   set touchable(value: boolean) {
     super.touchable = value;
-    this.style.cursor = "auto";
+    this.updateHostStyle("cursor", "auto");
   }
 }
 

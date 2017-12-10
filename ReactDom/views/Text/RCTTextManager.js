@@ -97,7 +97,7 @@ class RCTTextManager extends RCTViewManager {
   }
 
   @RCT_EXPORT_MIRRORED_PROP("lineHeight", "number")
-  setTextDecorationStyle(view: RCTText, value: number) {
+  setLineHeight(view: RCTText, value: number) {
     view.lineHeight = value;
   }
 
