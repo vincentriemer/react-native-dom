@@ -140,7 +140,7 @@ class RCTTouchHandler {
   }
 
   recordNewTouches(touches: Array<UITouch>) {
-    touches.forEach(touch => {
+    touches.forEach((touch) => {
       invariant(
         !this.nativeTouchesByIdentifier.hasOwnProperty(touch.identifier),
         "Touch is already recorded. This is a critical bug"
@@ -227,7 +227,7 @@ class RCTTouchHandler {
       return;
     }
 
-    const reactTouches = this.reactTouches.map(reactTouch => ({
+    const reactTouches = this.reactTouches.map((reactTouch) => ({
       ...reactTouch
     }));
 

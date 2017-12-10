@@ -24,14 +24,14 @@ class RCTAsyncLocalStorage {
     const callback = this.bridge.callbackFromId(callbackId);
 
     Promise.all(
-      keys.map(key => {
+      keys.map((key) => {
         return idbKeyval.get(key);
       })
     )
-      .then(result => {
+      .then((result) => {
         callback(null, result.map((value, index) => [keys[index], value]));
       })
-      .catch(err => {
+      .catch((err) => {
         callback(err);
       });
   }
@@ -42,7 +42,7 @@ class RCTAsyncLocalStorage {
 
     Promise.all(
       kvPairs.map(([key, prevValue]) => {
-        return idbKeyval.get(key).then(nextValue => {
+        return idbKeyval.get(key).then((nextValue) => {
           if (nextValue == null || typeof nextValue !== "object") {
             return idbKeyval.set(key, prevValue);
           } else {

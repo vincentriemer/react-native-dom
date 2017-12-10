@@ -14,7 +14,7 @@ import type { LayoutAnim } from "RCTLayoutAnimationManager";
 const timestepCoefficient = 1;
 
 const staticEasingFunctions = {
-  linear: x => x,
+  linear: (x) => x,
   easeIn: BezierEasing(0.42, 0, 1, 1),
   easeOut: BezierEasing(0, 0, 0.58, 1),
   easeInEaseOut: BezierEasing(0.42, 0, 0.58, 1)

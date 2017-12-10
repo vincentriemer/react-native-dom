@@ -214,13 +214,13 @@ class RCTNativeAnimatedNodesManager {
 
   stopAnimationsForNode(node: RCTAnimatedNode) {
     const discarded: RCTAnimationDriver[] = [];
-    this.activeAnimations.forEach(driver => {
+    this.activeAnimations.forEach((driver) => {
       if (driver.valueNode === node) {
         discarded.push(driver);
       }
     });
 
-    discarded.forEach(driver => {
+    discarded.forEach((driver) => {
       driver.stopAnimation();
       this.activeAnimations.delete(driver);
     });

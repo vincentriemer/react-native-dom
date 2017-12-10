@@ -95,7 +95,7 @@ class RCTImageViewManager extends RCTViewManager {
       .then(() => {
         resolve(true);
       })
-      .catch(error => {
+      .catch((error) => {
         reject("E_PREFETCH_FAILURE", null, error);
       });
   }
@@ -110,7 +110,7 @@ class RCTImageViewManager extends RCTViewManager {
       .then((size: Size) => {
         success(size.width, size.height);
       })
-      .catch(errorMsg => {
+      .catch((errorMsg) => {
         error(errorMsg);
       });
   }

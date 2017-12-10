@@ -77,12 +77,12 @@ class RCTShadowView implements RCTComponent {
   constructor() {
     this.yogaNode = new YogaNode();
 
-    SHADOW_PROPS.forEach(shadowPropName => {
+    SHADOW_PROPS.forEach((shadowPropName) => {
       Object.defineProperty(this, shadowPropName, {
         configurable: true,
         // $FlowFixMe
         get: () => this.yogaNode.style[shadowPropName],
-        set: value => {
+        set: (value) => {
           // $FlowFixMe
           this.yogaNode.style[shadowPropName] = value;
           this.makeDirty();
@@ -198,7 +198,7 @@ class RCTShadowView implements RCTComponent {
 
       this.previousLayout = newLayout;
 
-      this.reactSubviews.forEach(subView => {
+      this.reactSubviews.forEach((subView) => {
         layoutChanges = layoutChanges.concat(
           subView.getLayoutChanges(currentPosition)
         );
@@ -206,7 +206,7 @@ class RCTShadowView implements RCTComponent {
     } else {
       const shouldUpdateChildren: boolean = (() => {
         let result = false;
-        this.reactSubviews.forEach(subView => {
+        this.reactSubviews.forEach((subView) => {
           if (subView.isDirty) {
             result = true;
           }
@@ -215,7 +215,7 @@ class RCTShadowView implements RCTComponent {
       })();
 
       if (shouldUpdateChildren) {
-        this.reactSubviews.forEach(subView => {
+        this.reactSubviews.forEach((subView) => {
           layoutChanges = layoutChanges.concat(
             subView.getLayoutChanges(currentPosition)
           );
@@ -239,7 +239,7 @@ class RCTShadowView implements RCTComponent {
   }
 
   makeDirtyRecursive(): void {
-    this.reactSubviews.forEach(subView => {
+    this.reactSubviews.forEach((subView) => {
       subView.makeDirtyRecursive();
     });
     this.isDirty = true;
@@ -254,13 +254,13 @@ class RCTShadowView implements RCTComponent {
 
   removeReactSubview(subview: RCTShadowView) {
     subview.reactSuperview = undefined;
-    this.reactSubviews = this.reactSubviews.filter(s => s !== subview);
+    this.reactSubviews = this.reactSubviews.filter((s) => s !== subview);
     this.yogaNode.removeChild(subview.yogaNode);
     this.makeDirty();
   }
 
   purge() {
-    this.reactSubviews.forEach(subView => subView.purge());
+    this.reactSubviews.forEach((subView) => subView.purge());
     this.yogaNode.free();
   }
 

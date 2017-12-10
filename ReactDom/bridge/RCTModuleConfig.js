@@ -8,7 +8,7 @@ export type ModuleConfig = [
   ?Object /* constants */,
   ?Array<string> /* functions */,
   ?Array<number> /* promise method IDs */,
-  ?Array<number> /* sync method IDs */,
+  ?Array<number> /* sync method IDs */
 ];
 
 export function moduleConfigFactory(

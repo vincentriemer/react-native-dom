@@ -118,7 +118,7 @@ class RCTLayoutAnimationManager {
   }
 
   createOpacityKeyframes(from: number, to: number, keyframes: number[]) {
-    return keyframes.map(keyframe => ({
+    return keyframes.map((keyframe) => ({
       opacity: `${to + (from - to) * (1 - keyframe)}`
     }));
   }
@@ -256,10 +256,10 @@ class RCTLayoutAnimationManager {
     } = keyframes;
 
     const addedNodes = this.layoutChanges
-      .filter(lc => !lc.previousMeasurement)
-      .map(lc => lc.reactTag);
+      .filter((lc) => !lc.previousMeasurement)
+      .map((lc) => lc.reactTag);
 
-    this.layoutChanges.forEach(layoutChange => {
+    this.layoutChanges.forEach((layoutChange) => {
       const {
         reactTag,
         layout,
@@ -458,7 +458,7 @@ class RCTLayoutAnimationManager {
       }
     });
 
-    Object.keys(registry).forEach(tag => {
+    Object.keys(registry).forEach((tag) => {
       const reactTag = parseInt(tag, 10);
 
       const [keyframeConfigs, { duration, layout, origin }] = registry[
@@ -493,7 +493,7 @@ class RCTLayoutAnimationManager {
       const prevWillChange = view.style.willChange;
       view.style.willChange = "transform";
 
-      (prevWillChange =>
+      ((prevWillChange) =>
         animations.push(() => {
           // $FlowFixMe
           const animation = view.animate(keyframes, config);
@@ -509,7 +509,7 @@ class RCTLayoutAnimationManager {
     });
 
     // Animate view removal
-    this.removedNodes.forEach(reactTag => {
+    this.removedNodes.forEach((reactTag) => {
       const view = this.manager.viewRegistry.get(reactTag);
       invariant(view, "view does not exist");
 
@@ -550,7 +550,7 @@ class RCTLayoutAnimationManager {
       view.style.willChange = "opacity";
 
       animations.push(
-        (thisView => {
+        ((thisView) => {
           return () => {
             // $FlowFixMe
             const animation = thisView.animate(keyframes, config);
@@ -576,7 +576,7 @@ class RCTLayoutAnimationManager {
     keyframeConfigs: TransformKeyframeConfig[],
     origin: Position
   ) {
-    return keyframeConfigs.map(config => {
+    return keyframeConfigs.map((config) => {
       const { translateX, translateY, scaleX, scaleY } = config;
 
       // shift transformation origin
@@ -621,7 +621,7 @@ class RCTLayoutAnimationManager {
     const animations = this.createTransformAnimations(keyframes, pendingConfig);
 
     this.manager.addUIBlock(() => {
-      Promise.all(animations.map(f => f())).then(() => {
+      Promise.all(animations.map((f) => f())).then(() => {
         callback();
       });
       this.reset();

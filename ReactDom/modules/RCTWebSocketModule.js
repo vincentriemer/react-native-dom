@@ -43,7 +43,7 @@ class RCTWebSocketModule {
 
     // set the onclose, onerror and onmessage functions so that the
     // React event can be dispatched
-    socket.onclose = event => {
+    socket.onclose = (event) => {
       const payload = {
         id: socketId,
         code: event.code,
@@ -54,7 +54,7 @@ class RCTWebSocketModule {
         payload
       ]);
     };
-    socket.onerror = event => {
+    socket.onerror = (event) => {
       const payload = {
         id: socketId,
         message: "Native WebSocket error"
@@ -64,7 +64,7 @@ class RCTWebSocketModule {
         payload
       ]);
     };
-    socket.onmessage = event => {
+    socket.onmessage = (event) => {
       let data = event.data;
       if (data instanceof ArrayBuffer) {
         // Convert arraybuffer to string because the current bridge format is
@@ -88,7 +88,7 @@ class RCTWebSocketModule {
         payload
       ]);
     };
-    socket.onopen = event => {
+    socket.onopen = (event) => {
       const payload = {
         id: socketId
       };

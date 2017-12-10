@@ -225,7 +225,7 @@ class RCTViewManager {
 
   @RCT_EXPORT_DIRECT_VIEW_PROPS
   getDirectViewProps() {
-    const borderPropConfig = ALL_BORDER_PROPS.map(propName => [
+    const borderPropConfig = ALL_BORDER_PROPS.map((propName) => [
       propName,
       "string"
     ]);

@@ -103,7 +103,7 @@ export function bridgeModuleNameForClass(cls: Class<ModuleClass>): string {
 
 function generateModuleConfig(name: string, bridgeModule: ModuleClass) {
   const methodNames = [...new Set(getPropertyNames(bridgeModule))].filter(
-    methodName => methodName.startsWith("__rct_export__")
+    (methodName) => methodName.startsWith("__rct_export__")
   );
 
   const constants = bridgeModule.constantsToExport
@@ -114,7 +114,7 @@ function generateModuleConfig(name: string, bridgeModule: ModuleClass) {
   const promiseMethods = [];
   const syncMethods = [];
 
-  methodNames.forEach(rctName => {
+  methodNames.forEach((rctName) => {
     if (bridgeModule[rctName]) {
       const [methodName, methodType] = bridgeModule[rctName].call(bridgeModule);
       allMethods.push(methodName);
@@ -261,7 +261,7 @@ export default class RCTBridge {
 
   generateModuleConfig(name: string, bridgeModule: ModuleClass) {
     const methodNames = [...new Set(getPropertyNames(bridgeModule))].filter(
-      methodName => methodName.startsWith("__rct_export__")
+      (methodName) => methodName.startsWith("__rct_export__")
     );
 
     const constants = bridgeModule.constantsToExport
@@ -272,7 +272,7 @@ export default class RCTBridge {
     const promiseMethods = [];
     const syncMethods = [];
 
-    methodNames.forEach(rctName => {
+    methodNames.forEach((rctName) => {
       if (bridgeModule[rctName]) {
         const [methodName, methodType] = bridgeModule[rctName].call(
           bridgeModule
@@ -310,7 +310,7 @@ export default class RCTBridge {
 
   getInitialModuleConfig = () => {
     const remoteModuleConfig = Object.keys(this.modulesByName).map(
-      moduleName => {
+      (moduleName) => {
         const bridgeModule = this.modulesByName[moduleName];
         return this.generateModuleConfig(moduleName, bridgeModule);
       }

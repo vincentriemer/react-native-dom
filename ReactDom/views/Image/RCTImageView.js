@@ -149,7 +149,7 @@ class RCTImageView extends RCTView {
             ]);
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.bridge.enqueueJSCall("RCTEventEmitter", "receiveEvent", [
             this.reactTag,
             "topError",

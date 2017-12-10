@@ -437,7 +437,7 @@ class YogaNode {
               styleHandlerFactory(target._node)
             );
 
-            Object.keys(value).forEach(propName => {
+            Object.keys(value).forEach((propName) => {
               processedValue[propName] = value[propName];
             });
 

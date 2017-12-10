@@ -45,21 +45,21 @@ class RCTNativeAnimatedModule extends RCTEventEmitter {
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
   createAnimatedNode(tag: number, config: Config) {
-    this.addOperationBlock(nodesManager => {
+    this.addOperationBlock((nodesManager) => {
       nodesManager.createAnimatedNode(tag, config);
     });
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
   connectAnimatedNodes(parentTag: number, childTag: number) {
-    this.addOperationBlock(nodesManager => {
+    this.addOperationBlock((nodesManager) => {
       nodesManager.connectAnimatedNodes(parentTag, childTag);
     });
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
   disconnectAnimatedNodes(parentTag: number, childTag: number) {
-    this.addOperationBlock(nodesManager => {
+    this.addOperationBlock((nodesManager) => {
       nodesManager.disconnectAnimatedNodes(parentTag, childTag);
     });
   }
@@ -72,7 +72,7 @@ class RCTNativeAnimatedModule extends RCTEventEmitter {
     endCallbackId: number
   ) {
     const endCallback = this.bridge.callbackFromId(endCallbackId);
-    this.addOperationBlock(nodesManager => {
+    this.addOperationBlock((nodesManager) => {
       nodesManager.startAnimatingNode(
         animationId,
         nodeTag,
@@ -84,35 +84,35 @@ class RCTNativeAnimatedModule extends RCTEventEmitter {
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
   stopAnimation(animationId: number) {
-    this.addOperationBlock(nodesManager => {
+    this.addOperationBlock((nodesManager) => {
       nodesManager.stopAnimation(animationId);
     });
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
   setAnimatedNodeValue(nodeTag: number, value: number) {
-    this.addOperationBlock(nodesManager => {
+    this.addOperationBlock((nodesManager) => {
       nodesManager.setAnimatedNodeValue(nodeTag, value);
     });
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
   setAnimatedNodeOffset(nodeTag: number, offset: number) {
-    this.addOperationBlock(nodesManager => {
+    this.addOperationBlock((nodesManager) => {
       nodesManager.setAnimatedNodeOffset(nodeTag, offset);
     });
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
   flattenAnimatedNodeOffset(nodeTag: number) {
-    this.addOperationBlock(nodesManager => {
+    this.addOperationBlock((nodesManager) => {
       nodesManager.flattenAnimatedNodeOffset(nodeTag);
     });
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
   extractAnimatedNodeOffset(nodeTag: number) {
-    this.addOperationBlock(nodesManager => {
+    this.addOperationBlock((nodesManager) => {
       nodesManager.extractAnimatedNodeOffset(nodeTag);
     });
   }
@@ -121,7 +121,7 @@ class RCTNativeAnimatedModule extends RCTEventEmitter {
   connectAnimatedNodeToView(nodeTag: number, viewTag: number) {
     const viewName = this.bridge.uiManager.viewNameForReactTag(viewTag);
     invariant(viewName, `No such viewName for react tag ${viewTag}`);
-    this.addOperationBlock(nodesManager => {
+    this.addOperationBlock((nodesManager) => {
       nodesManager.connectAnimatedNodeToView(nodeTag, viewTag, viewName);
     });
   }
@@ -131,14 +131,14 @@ class RCTNativeAnimatedModule extends RCTEventEmitter {
     // Disconnecting a view also restores its default values so we have to make
     // sure this happens before views get updated with their new props. This is
     // why we enqueue this on the pre-operations queue.
-    this.addPreOperationBlock(nodesManager => {
+    this.addPreOperationBlock((nodesManager) => {
       nodesManager.disconnectAnimatedNodeFromView(nodeTag, viewTag);
     });
   }
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
   dropAnimatedNode(tag: number) {
-    this.addOperationBlock(nodesManager => {
+    this.addOperationBlock((nodesManager) => {
       nodesManager.dropAnimatedNode(tag);
     });
   }
@@ -146,7 +146,7 @@ class RCTNativeAnimatedModule extends RCTEventEmitter {
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
   startListeningToAnimatedNodeValue(tag: number) {
     const valueObserver = this;
-    this.addOperationBlock(nodesManager => {
+    this.addOperationBlock((nodesManager) => {
       this.addListener("onAnimatedValueUpdate");
       nodesManager.startListeningToAnimatedNodeValue(tag, valueObserver);
     });
@@ -154,7 +154,7 @@ class RCTNativeAnimatedModule extends RCTEventEmitter {
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
   stopListeningToAnimatedNodeValue(tag: number) {
-    this.addOperationBlock(nodesManager => {
+    this.addOperationBlock((nodesManager) => {
       this.removeListener("onAnimatedValueUpdate");
       nodesManager.stopListeningToAnimatedNodeValue(tag);
     });
@@ -166,7 +166,7 @@ class RCTNativeAnimatedModule extends RCTEventEmitter {
     eventName: string,
     eventMapping: Object
   ) {
-    this.addOperationBlock(nodesManager => {
+    this.addOperationBlock((nodesManager) => {
       nodesManager.addAnimatedEventToView(viewTag, eventName, eventMapping);
     });
   }
@@ -177,7 +177,7 @@ class RCTNativeAnimatedModule extends RCTEventEmitter {
     eventName: string,
     animatedNodeTag: number
   ) {
-    this.addOperationBlock(nodesManager => {
+    this.addOperationBlock((nodesManager) => {
       nodesManager.removeAnimatedEventFromView(
         viewTag,
         eventName,

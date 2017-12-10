@@ -156,9 +156,7 @@ class RCTEventDispatcher {
     if (previousEvent) {
       invariant(
         event.canCoalesce(),
-        `Got event which cannot be coalesced, but has the same eventID ${
-          eventID
-        } as the previous event`
+        `Got event which cannot be coalesced, but has the same eventID ${eventID} as the previous event`
       );
       event = previousEvent.coalesceWithEvent(previousEvent);
     } else {
@@ -194,7 +192,7 @@ class RCTEventDispatcher {
 
     this.eventsDispatchScheduled = false;
 
-    eventQueue.forEach(eventId => {
+    eventQueue.forEach((eventId) => {
       this.dispatchEvent(events[eventId]);
     });
   }

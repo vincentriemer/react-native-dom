@@ -16,7 +16,7 @@ export interface RCTUIManagerObserver {
    * some components which have own React-independent state can compute and cache
    * own intrinsic content size (which will be used by Yoga) at this point.
    */
-  uiManagerWillPerformLayout?: (manager: RCTUIManager) => void,
+  uiManagerWillPerformLayout?: (manager: RCTUIManager) => void;
 
   /**
    * Called just after the UIManager layout views.
@@ -24,12 +24,12 @@ export interface RCTUIManagerObserver {
    * So, for instance, this can be used for computing final layout for a component,
    * since it has its final frame set by Yoga at this point.
    */
-  uiManagerDidPerformLayout?: (manager: RCTUIManager) => void,
+  uiManagerDidPerformLayout?: (manager: RCTUIManager) => void;
 
   /**
    * Called before flushing UI blocks at the end of a batch.
    */
-  uiManagerWillFlushBlocks?: (manager: RCTUIManager) => void
+  uiManagerWillFlushBlocks?: (manager: RCTUIManager) => void;
 }
 
 class RCTUIManagerObserverCoordinator implements RCTUIManagerObserver {
@@ -40,8 +40,8 @@ class RCTUIManagerObserverCoordinator implements RCTUIManagerObserver {
   }
 
   /**
- * Add a UIManagerObserver. See the `RCTUIManagerObserver` iterface for more info.
- */
+   * Add a UIManagerObserver. See the `RCTUIManagerObserver` iterface for more info.
+   */
   addObserver(observer: RCTUIManagerObserver) {
     this.observers.add(observer);
   }

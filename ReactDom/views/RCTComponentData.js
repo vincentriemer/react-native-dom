@@ -159,7 +159,7 @@ class RCTComponentData {
 
   setPropsForView(props: Props, view: RCTComponent) {
     if (props) {
-      Object.keys(props).forEach(propName => {
+      Object.keys(props).forEach((propName) => {
         if (this.propConfig.hasOwnProperty(propName)) {
           const propConfig = this.propConfig[propName];
           const propValue = props[propName];
@@ -173,7 +173,7 @@ class RCTComponentData {
 
   setPropsForShadowView(props: Props, shadowView: RCTShadowView) {
     if (props) {
-      Object.keys(props).forEach(propName => {
+      Object.keys(props).forEach((propName) => {
         if (this.shadowPropConfig.hasOwnProperty(propName)) {
           const propConfig = this.shadowPropConfig[propName];
           const propValue = props[propName];

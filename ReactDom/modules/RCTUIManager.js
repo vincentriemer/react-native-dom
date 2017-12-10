@@ -62,7 +62,7 @@ function reactViewFromPoint(topView: UIView, x: number, y: number) {
   }
 
   elements = elements.filter(
-    elem => topView.contains(elem) && elem instanceof UIView
+    (elem) => topView.contains(elem) && elem instanceof UIView
   );
   elements.sort(byPosition);
 
@@ -177,9 +177,7 @@ class RCTUIManager {
     const shadowView = this.shadowViewRegistry.get(tag);
     if (shadowView == null) {
       console.warn(
-        `Could not locate shadow view with tag ${
-          tag
-        }, this is probably caused by a temporary inconsistency between native views and shadow views.`
+        `Could not locate shadow view with tag ${tag}, this is probably caused by a temporary inconsistency between native views and shadow views.`
       );
       return;
     }
@@ -228,7 +226,7 @@ class RCTUIManager {
   frame() {
     this.observerCoordinator.uiManagerWillPerformLayout(this);
 
-    this.rootViewTags.forEach(rootTag => {
+    this.rootViewTags.forEach((rootTag) => {
       const rootShadowView = this.shadowViewRegistry.get(rootTag);
       if (rootShadowView != null && rootShadowView.isDirty) {
         invariant(
@@ -257,7 +255,7 @@ class RCTUIManager {
       const uiBlocks = [...this.pendingUIBlocks];
       this.pendingUIBlocks = [];
 
-      uiBlocks.forEach(block => {
+      uiBlocks.forEach((block) => {
         block.call(null, this, this.viewRegistry);
       });
       this.requestTick();
@@ -269,7 +267,7 @@ class RCTUIManager {
   }
 
   requestTick() {
-    this.rootViewTags.forEach(rootViewTag => {
+    this.rootViewTags.forEach((rootViewTag) => {
       const rootView = this.viewRegistry.get(rootViewTag);
       invariant(
         rootView && rootView instanceof RCTRootView,
@@ -280,7 +278,7 @@ class RCTUIManager {
   }
 
   applyLayoutChanges(layoutChanges: LayoutChange[]) {
-    layoutChanges.forEach(layoutChange => {
+    layoutChanges.forEach((layoutChange) => {
       const { reactTag, layout } = layoutChange;
       const view = this.viewRegistry.get(reactTag);
       invariant(view, `View with reactTag ${reactTag} does not exist`);
@@ -393,7 +391,7 @@ class RCTUIManager {
   ) {
     const container = registry.get(containerTag);
     let index = 0;
-    reactTags.forEach(reactTag => {
+    reactTags.forEach((reactTag) => {
       const view = registry.get(reactTag);
       invariant(container, `No container view found with id: ${containerTag}`);
       invariant(view, `No view found with id: ${reactTag}`);

@@ -60,13 +60,13 @@ class RCTAnimatedNode {
 
   detachNode() {
     if (this.parentNodes) {
-      Object.values(this.parentNodes).forEach(parent => {
+      Object.values(this.parentNodes).forEach((parent) => {
         // $FlowFixMe - Flow considers the return for Object.values to be Array<mixed>
         parent.removeChild(this);
       });
     }
     if (this.childNodes) {
-      Object.values(this.childNodes).forEach(child => {
+      Object.values(this.childNodes).forEach((child) => {
         // $FlowFixMe - Flow considers the return for Object.values to be Array<mixed>
         this.removeChild(child);
       });
@@ -76,7 +76,7 @@ class RCTAnimatedNode {
   setNeedsUpdate() {
     this.needsUpdate = true;
     if (this.childNodes) {
-      Object.values(this.childNodes).forEach(child => {
+      Object.values(this.childNodes).forEach((child) => {
         // $FlowFixMe - Flow considers the return for Object.values to be Array<mixed>
         child.setNeedsUpdate();
       });
@@ -86,7 +86,7 @@ class RCTAnimatedNode {
   updateNodeIfNecessary() {
     if (this.needsUpdate) {
       if (this.parentNodes) {
-        Object.values(this.parentNodes).forEach(parent => {
+        Object.values(this.parentNodes).forEach((parent) => {
           // $FlowFixMe - Flow considers the return for Object.values to be Array<mixed>
           parent.updateNodeIfNecessary();
         });

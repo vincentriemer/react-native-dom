@@ -21,11 +21,11 @@ class RCTSafeAreaShadowView extends RCTShadowView {
   constructor() {
     super();
 
-    PADDING_PROPS.forEach(shadowPropName => {
+    PADDING_PROPS.forEach((shadowPropName) => {
       Object.defineProperty(this, shadowPropName, {
         configurable: true,
         get: () => this.yogaNode.style[shadowPropName],
-        set: value => true
+        set: (value) => true
       });
     });
   }

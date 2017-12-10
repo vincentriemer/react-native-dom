@@ -69,7 +69,8 @@ class RCTTouchEvent implements RCTEvent {
     }
 
     invariant(
-      [oldEventIsMoreRecent, newEventIsMoreRecent].filter(e => e).length === 1,
+      [oldEventIsMoreRecent, newEventIsMoreRecent].filter((e) => e).length ===
+        1,
       "Neither touch event is exclusively more recent than the other one."
     );
 

@@ -25,8 +25,9 @@ class RCTEventEmitter {
     invariant(
       this.bridge,
       "bridge is not set. This is probably because you've" +
-        `explicitly synthesized the bridge in ${this.constructor
-          .name}, even though it's inherited ` +
+        `explicitly synthesized the bridge in ${
+          this.constructor.name
+        }, even though it's inherited ` +
         "from RCTEventEmitter."
     );
 

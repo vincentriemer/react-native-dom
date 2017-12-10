@@ -67,9 +67,7 @@ class RCTScrollViewManager extends RCTViewManager {
       const contentView = view.reactSubviews[0];
       invariant(
         contentView && contentView instanceof RCTScrollContentView,
-        `Cannot find coresponding RCTScrollContentView for RCTScrollView with tag ${
-          reactTag
-        }`
+        `Cannot find coresponding RCTScrollContentView for RCTScrollView with tag ${reactTag}`
       );
 
       cb({

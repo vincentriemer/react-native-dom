@@ -66,7 +66,7 @@ class RCTShadowText extends RCTShadowView {
       Object.defineProperty(this, shadowPropName, {
         configurable: true,
         get: () => this.props[shadowPropName],
-        set: value => {
+        set: (value) => {
           if (value != null) {
             this.props[shadowPropName] = TEXT_PX_PROPS.includes(shadowPropName)
               ? `${value}px`
@@ -196,7 +196,7 @@ class RCTShadowText extends RCTShadowView {
     const spanWrapper = document.createElement("span");
     Object.assign(spanWrapper.style, this.props);
 
-    this.textChildren.forEach(child => {
+    this.textChildren.forEach((child) => {
       if (child instanceof RCTShadowRawText && child.text.length) {
         // Split text by newline and insert breaks manually as insertAdjacentText does not respect newlines
         const textLines = child.text.split(/\r?\n/);
@@ -233,7 +233,7 @@ class RCTShadowText extends RCTShadowView {
 
   removeReactSubview(subview: RCTShadowText | RCTShadowRawText) {
     subview.reactSuperview = undefined;
-    this.textChildren = this.textChildren.filter(s => s !== subview);
+    this.textChildren = this.textChildren.filter((s) => s !== subview);
     this.markTextDirty();
   }
 

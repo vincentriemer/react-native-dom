@@ -8,7 +8,7 @@ import type { Config } from "RCTNativeAnimatedModule";
 import RCTAnimatedNode from "RCTAnimatedNode";
 
 export interface RCTValueAnimatedNodeObserver {
-  animatedNodeDidUpdateValue(node: RCTValueAnimatedNode, value: number): void
+  animatedNodeDidUpdateValue(node: RCTValueAnimatedNode, value: number): void;
 }
 
 class RCTValueAnimatedNode extends RCTAnimatedNode {

@@ -66,10 +66,10 @@ class UIBorderView extends HTMLElement {
       touchAction: "manipulation"
     });
 
-    BORDER_STYLE_PROPS.forEach(propName => {
+    BORDER_STYLE_PROPS.forEach((propName) => {
       Object.defineProperty(this, propName, {
         configurable: true,
-        set: value => {
+        set: (value) => {
           if (value == null) {
             this.style[propName] = "solid";
           } else {
@@ -79,10 +79,10 @@ class UIBorderView extends HTMLElement {
       });
     });
 
-    BORDER_COLOR_PROPS.forEach(propName => {
+    BORDER_COLOR_PROPS.forEach((propName) => {
       Object.defineProperty(this, propName, {
         configurable: true,
-        set: value => {
+        set: (value) => {
           const [a, r, g, b] = ColorArrayFromHexARGB(value);
           const stringValue = `rgba(${r},${g},${b},${a})`;
           this.style[propName] = stringValue;
@@ -90,10 +90,10 @@ class UIBorderView extends HTMLElement {
       });
     });
 
-    [].concat(BORDER_WIDTH_PROPS, BORDER_RADIUS_PROPS).forEach(propName => {
+    [].concat(BORDER_WIDTH_PROPS, BORDER_RADIUS_PROPS).forEach((propName) => {
       Object.defineProperty(this, propName, {
         configurable: true,
-        set: value => {
+        set: (value) => {
           this.style[propName] = `${value}px`;
         }
       });
