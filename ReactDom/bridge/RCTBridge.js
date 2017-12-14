@@ -327,9 +327,7 @@ export default class RCTBridge {
   }
 
   enqueueJSCallWithDotMethod(moduleDotMethod: string, args: Array<any>) {
-    const ids = moduleDotMethod.split(".");
-    const module = ids[0];
-    const method = ids[1];
+    const [module, method] = moduleDotMethod.split(".");
     this.enqueueJSCall(module, method, args);
   }
 

@@ -133,7 +133,7 @@ class UIView extends HTMLElement implements RCTComponent {
     } else {
       styleObject = propName;
     }
-    return styleObject;
+    return prefixInlineStyles(styleObject);
   }
 
   updateHostStyle(propName: string | Object, propValue?: string) {
@@ -360,10 +360,7 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   set backfaceVisibility(value: string) {
-    // for some reason the auto prefixer breaks this property on safari so we set it manually
-    // $FlowFixMe
-    this.style.webkitBackfaceVisibility = value;
-    this.style.backfaceVisibility = value;
+    this.updateHostStyle("backfaceVisibility", value);
   }
 
   insertReactSubviewAtIndex(subview: UIView, index: number) {
