@@ -469,6 +469,7 @@ class RCTUIManager {
 
     const view = this.viewRegistry.get(reactTag);
     if (view) {
+      // console.log("animating view", view, props);
       componentData.setPropsForView(props, view);
     }
   }

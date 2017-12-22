@@ -1,6 +1,6 @@
 {
-  "name": "react-native-dom",
-  "version": "0.0.5",
+  "name": "@vincentriemer/react-native-dom",
+  "version": "0.0.6",
   "main": "lib/index.js",
   "dependencies": {
     "@vincentriemer/yoga-layout": "^1.8.0",
@@ -22,13 +22,15 @@
     "tinycolor2": "^1.4.1",
     "wolfy87-eventemitter": "^5.1.0"
   },
+  "files": ["lib", "Libraries"],
   "peerDependencies": {
     "react": "16.0.0",
     "react-native": "^0.50.3"
   },
   "scripts": {
+    "prestart": "cd Examples/NavigationPlayground && yarn",
     "flow": "flow",
-    "build": "BABEL_ENV=lib babel ReactDom --out-dir lib --source-maps=inline",
+    "build": "BABEL_ENV=lib babel ReactDom --out-dir lib --source-maps inline",
     "prebuild": "rimraf lib",
     "start": "react-native start",
     "prebuild:rntester": "rimraf dist && mkdir -p dist",
@@ -39,7 +41,8 @@
     "build:rntester:bundle":
       "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/RNTesterApp.dom.js --bundle-output ./dist/RNTesterApp.dom.bundle --platform dom --assets-dest ./dist --reset-cache",
     "test": "jest",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "prepublishOnly": "yarn build"
   },
   "lint-staged": {
     "*.{js,json,css,md}": ["prettier --write", "git add"]

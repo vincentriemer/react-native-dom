@@ -265,6 +265,7 @@ class RCTScrollView extends RCTView {
   updateScrollBehavior() {
     const styleUpdate = {};
     if (this._overflow === "scroll" && this._scrollEnabled) {
+      this.pointerEvents = "auto";
       styleUpdate.webkitOverflowScrolling = "touch";
       styleUpdate.scrollBehavior = "smooth";
       // TODO: Make this conditional based on screen DPI
@@ -283,6 +284,7 @@ class RCTScrollView extends RCTView {
 
       styleUpdate.overflowX = "hidden";
       styleUpdate.overflowY = "hidden";
+      this.pointerEvents = "box-none";
     }
 
     this.updateHostStyle(styleUpdate);

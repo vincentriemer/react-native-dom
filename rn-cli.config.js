@@ -9,7 +9,10 @@ function getRoots() {
   if (root) {
     return [path.resolve(root)];
   }
-  return [path.resolve(__dirname)];
+  return [
+    path.resolve(__dirname),
+    path.resolve(__dirname, "Examples", "NavigationPlayground")
+  ];
 }
 
 var config = {
@@ -17,7 +20,7 @@ var config = {
     return getRoots();
   },
   getBlacklistRE() {
-    return blacklist([/Examples\/NavigationPlayground\/.*/]);
+    return blacklist([]);
   },
   getAssetExts() {
     return [];

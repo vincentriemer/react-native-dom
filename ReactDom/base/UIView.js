@@ -201,12 +201,10 @@ class UIView extends HTMLElement implements RCTComponent {
   updateTransform() {
     const transforms = [`translate(${this._left}px, ${this._top}px)`];
 
-    if (this._transform) {
-      transforms.push(`matrix3d(${this._transform.join(", ")})`);
-    }
-
     if (this._animatedTransform) {
       transforms.push(this._animatedTransform);
+    } else if (this._transform) {
+      transforms.push(`matrix3d(${this._transform.join(", ")})`);
     }
 
     const transformString = transforms.join(" ");
@@ -316,7 +314,8 @@ class UIView extends HTMLElement implements RCTComponent {
         }
       });
     });
-    this._animatedTransform = transformString;
+
+    this._animatedTransform = transformString + " translateZ(0px)";
     this.updateTransform();
   }
 

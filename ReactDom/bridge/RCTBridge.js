@@ -206,7 +206,7 @@ export default class RCTBridge {
       `No such method ${functionName} on module ${name}`
     );
 
-    // console.log(name, functionName, params);
+    // console.log("JS -> Native", name, functionName, params);
 
     nativeModule[functionName].apply(nativeModule, params);
   }
@@ -319,6 +319,7 @@ export default class RCTBridge {
   };
 
   enqueueJSCall(moduleName: string, methodName: string, args: Array<any>) {
+    // console.log("Native -> JS", moduleName, methodName, args);
     this.sendMessage("callFunctionReturnFlushedQueue", [
       moduleName,
       methodName,
@@ -332,6 +333,7 @@ export default class RCTBridge {
   }
 
   enqueueJSCallback(id: number, args: Array<any>) {
+    // console.log("invokeCallback", id, args);
     this.sendMessage("invokeCallbackAndReturnFlushedQueue", [id, args]);
   }
 

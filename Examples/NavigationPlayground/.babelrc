@@ -1,0 +1,9 @@
+{
+  "presets": ["react-native"],
+  "plugins": [],
+  "env": {
+    "development": {
+      "plugins": ["transform-react-jsx-source"]
+    }
+  }
+}

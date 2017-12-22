@@ -1,0 +1,42 @@
+{
+  "name": "NavigationPlayground",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
+  "scripts": {
+    "start": "react-native start",
+    "test": "node node_modules/jest/bin/jest.js",
+    "prebuild:rntester": "mkdir -p dist",
+    "build:rntester":
+      "yarn run build:rntester:client && yarn run build:rntester:bundle && cp ./dom/index.html ./dist/index.html",
+    "build:rntester:client":
+      "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./dom/client.js --bundle-output ./dist/client.bundle --platform dom --assets-dest ./dist --reset-cache",
+    "build:rntester:bundle":
+      "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./dom/index.js --bundle-output ./dist/index.bundle --platform dom --assets-dest ./dist --reset-cache"
+  },
+  "dependencies": {
+    "react-navigation": "1.0.0-beta.21",
+    "react-native-vector-icons": "^4.4.2"
+  },
+  "devDependencies": {
+    "babel-jest": "^21.0.0",
+    "flow-bin": "^0.51.0",
+    "jest": "^21.0.1",
+    "jest-expo": "^21.0.0",
+    "react-addons-test-utils": "16.0.0-alpha.3",
+    "react-native-scripts": "^1.3.1",
+    "react-test-renderer": "16.0.0-alpha.12",
+    "babel-plugin-replace-require": "^0.0.4"
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "moduleFileExtensions": ["web.js", "js", "json", "jsx", "node"],
+    "modulePathIgnorePatterns": [
+      "/node_modules/.*/react-native/",
+      "/node_modules/.*/react/"
+    ],
+    "transformIgnorePatterns": [
+      "/node_modules/(?!react-native|react-navigation)/"
+    ]
+  }
+}
