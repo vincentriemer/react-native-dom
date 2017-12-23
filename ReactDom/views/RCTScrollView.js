@@ -266,19 +266,21 @@ class RCTScrollView extends RCTView {
     const styleUpdate = {};
     if (this._overflow === "scroll" && this._scrollEnabled) {
       this.pointerEvents = "auto";
+      styleUpdate.msOverflowStyle = "-ms-autohiding-scrollbar";
       styleUpdate.webkitOverflowScrolling = "touch";
       styleUpdate.scrollBehavior = "smooth";
       // TODO: Make this conditional based on screen DPI
       styleUpdate.willChange = "transform";
 
       if (this._horizontal) {
-        styleUpdate.overflowX = "scroll";
+        styleUpdate.overflowX = "auto";
         styleUpdate.overflowY = "hidden";
       } else {
         styleUpdate.overflowX = "hidden";
-        styleUpdate.overflowY = "scroll";
+        styleUpdate.overflowY = "auto";
       }
     } else {
+      styleUpdate.msOverflowStyle = "auto";
       styleUpdate.webkitOverflowScrolling = "";
       styleUpdate.willChange = "";
 

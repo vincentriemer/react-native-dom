@@ -106,8 +106,8 @@ class RCTTouchHandler {
         resultingTouchList.push({
           view: target,
           identifier: rawTouch.identifier % 20,
-          pageX: rawTouch.pageX,
-          pageY: rawTouch.pageY,
+          pageX: rawTouch.clientX,
+          pageY: rawTouch.clientY,
           locationX: rawTouch.pageX - rect.left,
           locationY: rawTouch.pageY - rect.top,
           timestamp: performance.now()
