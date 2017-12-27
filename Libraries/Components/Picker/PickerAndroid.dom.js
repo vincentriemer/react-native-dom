@@ -11,3 +11,7 @@
 "use strict";
 
 module.exports = require("UnimplementedView");
+
+const UnimplementedView = require("UnimplementedView");
+UnimplementedView.Item = require("UnimplementedView");
+module.exports = UnimplementedView;

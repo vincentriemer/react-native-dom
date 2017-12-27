@@ -12,7 +12,7 @@ import RCTView from "RCTView";
 type PropDef = {
   name: string,
   type: string,
-  setter: (view: UIView, value: any) => void,
+  setter: (view: RCTView, value: any) => void,
   exported: boolean
 };
 
@@ -262,6 +262,8 @@ class RCTViewManager {
       ["marginLeft", "string"],
       ["marginVertical", "string"],
       ["marginHorizontal", "string"],
+      ["marginStart", "string"],
+      ["marginEnd", "string"],
       ["margin", "string"],
       ["paddingTop", "string"],
       ["paddingRight", "string"],
@@ -269,6 +271,8 @@ class RCTViewManager {
       ["paddingLeft", "string"],
       ["paddingVertical", "string"],
       ["paddingHorizontal", "string"],
+      ["paddingStart", "string"],
+      ["paddingEnd", "string"],
       ["padding", "string"],
       ["flex", "string"],
       ["flexGrow", "string"],

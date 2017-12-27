@@ -67,6 +67,19 @@ class RCTAsyncLocalStorage {
       callback();
     });
   }
+
+  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+  multiRemove(keys: string[], callbackId: number) {
+    const callback = this.bridge.callbackFromId(callbackId);
+
+    Promise.all(
+      keys.map((key) => {
+        return idbKeyval.delete(key);
+      })
+    ).then(() => {
+      callback();
+    });
+  }
 }
 
 export default RCTAsyncLocalStorage;

@@ -13,6 +13,17 @@ if (!global.process.env.NODE_ENV) {
 import RCTRootView from "RCTRootView";
 import bundleFromRoot from "BundleFromRoot";
 
+import { RCT_EXPORT_METHOD, RCT_EXPORT_MODULE } from "RCTBridge";
+import RCTViewManager, { RCT_EXPORT_VIEW_PROP } from "RCTViewManager";
+
+// export native platform hooks
+export {
+  RCTViewManager,
+  RCT_EXPORT_METHOD,
+  RCT_EXPORT_MODULE,
+  RCT_EXPORT_VIEW_PROP
+};
+
 // Register Built-in Native Modules
 import "RCTEventDispatcher";
 import "RCTDeviceInfo";
