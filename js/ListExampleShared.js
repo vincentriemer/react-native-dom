@@ -9,10 +9,10 @@
  * @flow
  * @providesModule ListExampleShared
  */
-'use strict';
+"use strict";
 
-const React = require('react');
-const ReactNative = require('react-native');
+const React = require("react");
+const ReactNative = require("react-native");
 const {
   Animated,
   Image,
@@ -22,20 +22,26 @@ const {
   Switch,
   Text,
   TextInput,
-  View,
+  View
 } = ReactNative;
 
-type Item = {title: string, text: string, key: string, pressed: boolean, noImage?: ?boolean};
+type Item = {
+  title: string,
+  text: string,
+  key: string,
+  pressed: boolean,
+  noImage?: ?boolean
+};
 
 function genItemData(count: number, start: number = 0): Array<Item> {
   const dataBlob = [];
   for (let ii = start; ii < count + start; ii++) {
-    const itemHash = Math.abs(hashCode('Item ' + ii));
+    const itemHash = Math.abs(hashCode("Item " + ii));
     dataBlob.push({
-      title: 'Item ' + ii,
+      title: "Item " + ii,
       text: LOREM_IPSUM.substr(0, itemHash % 301 + 20),
       key: String(ii),
-      pressed: false,
+      pressed: false
     });
   }
   return dataBlob;
@@ -50,13 +56,13 @@ class ItemComponent extends React.PureComponent<{
   item: Item,
   onPress: (key: string) => void,
   onShowUnderlay?: () => void,
-  onHideUnderlay?: () => void,
+  onHideUnderlay?: () => void
 }> {
   _onPress = () => {
     this.props.onPress(this.props.item.key);
   };
   render() {
-    const {fixedHeight, horizontal, item} = this.props;
+    const { fixedHeight, horizontal, item } = this.props;
     const itemHash = Math.abs(hashCode(item.title));
     const imgSource = THUMB_URLS[itemHash % THUMB_URLS.length];
     return (
@@ -64,13 +70,20 @@ class ItemComponent extends React.PureComponent<{
         onPress={this._onPress}
         onShowUnderlay={this.props.onShowUnderlay}
         onHideUnderlay={this.props.onHideUnderlay}
-        style={horizontal ? styles.horizItem : styles.item}>
-        <View style={[
-          styles.row, horizontal && {width: HORIZ_WIDTH}, fixedHeight && {height: ITEM_HEIGHT}]}>
+        style={horizontal ? styles.horizItem : styles.item}
+      >
+        <View
+          style={[
+            styles.row,
+            horizontal && { width: HORIZ_WIDTH },
+            fixedHeight && { height: ITEM_HEIGHT }
+          ]}
+        >
           {!item.noImage && <Image style={styles.thumb} source={imgSource} />}
           <Text
             style={styles.text}
-            numberOfLines={(horizontal || fixedHeight) ? 3 : undefined}>
+            numberOfLines={horizontal || fixedHeight ? 3 : undefined}
+          >
             {item.title} - {item.text}
           </Text>
         </View>
@@ -79,12 +92,14 @@ class ItemComponent extends React.PureComponent<{
   }
 }
 
-const renderStackedItem = ({item}: {item: Item}) => {
+const renderStackedItem = ({ item }: { item: Item }) => {
   const itemHash = Math.abs(hashCode(item.title));
   const imgSource = THUMB_URLS[itemHash % THUMB_URLS.length];
   return (
     <View style={styles.stacked}>
-      <Text style={styles.stackedText}>{item.title} - {item.text}</Text>
+      <Text style={styles.stackedText}>
+        {item.title} - {item.text}
+      </Text>
       <Image style={styles.thumb} source={imgSource} />
     </View>
   );
@@ -125,7 +140,10 @@ class SeparatorComponent extends React.PureComponent<{}> {
 class ItemSeparatorComponent extends React.PureComponent<$FlowFixMeProps> {
   render() {
     const style = this.props.highlighted
-      ? [styles.itemSeparator, {marginLeft: 0, backgroundColor: 'rgb(217, 217, 217)'}]
+      ? [
+          styles.itemSeparator,
+          { marginLeft: 0, backgroundColor: "rgb(217, 217, 217)" }
+        ]
       : styles.itemSeparator;
     return <View style={style} />;
   }
@@ -134,56 +152,65 @@ class ItemSeparatorComponent extends React.PureComponent<$FlowFixMeProps> {
 class Spindicator extends React.PureComponent<$FlowFixMeProps> {
   render() {
     return (
-      <Animated.View style={[styles.spindicator, {
-        transform: [
-          {rotate: this.props.value.interpolate({
-            inputRange: [0, 5000],
-            outputRange: ['0deg', '360deg'],
-            extrapolate: 'extend',
-          })}
-        ]
-      }]} />
+      <Animated.View
+        style={[
+          styles.spindicator,
+          {
+            transform: [
+              {
+                rotate: this.props.value.interpolate({
+                  inputRange: [0, 5000],
+                  outputRange: ["0deg", "360deg"],
+                  extrapolate: "extend"
+                })
+              }
+            ]
+          }
+        ]}
+      />
     );
   }
 }
 
 const THUMB_URLS = [
-  require('./Thumbnails/like.png'),
-  require('./Thumbnails/dislike.png'),
-  require('./Thumbnails/call.png'),
-  require('./Thumbnails/fist.png'),
-  require('./Thumbnails/bandaged.png'),
-  require('./Thumbnails/flowers.png'),
-  require('./Thumbnails/heart.png'),
-  require('./Thumbnails/liking.png'),
-  require('./Thumbnails/party.png'),
-  require('./Thumbnails/poke.png'),
-  require('./Thumbnails/superlike.png'),
-  require('./Thumbnails/victory.png'),
+  require("./Thumbnails/like.png"),
+  require("./Thumbnails/dislike.png"),
+  require("./Thumbnails/call.png"),
+  require("./Thumbnails/fist.png"),
+  require("./Thumbnails/bandaged.png"),
+  require("./Thumbnails/flowers.png"),
+  require("./Thumbnails/heart.png"),
+  require("./Thumbnails/liking.png"),
+  require("./Thumbnails/party.png"),
+  require("./Thumbnails/poke.png"),
+  require("./Thumbnails/superlike.png"),
+  require("./Thumbnails/victory.png")
 ];
 
-const LOREM_IPSUM = 'Lorem ipsum dolor sit amet, ius ad pertinax oportere accommodare, an vix \
+const LOREM_IPSUM =
+  "Lorem ipsum dolor sit amet, ius ad pertinax oportere accommodare, an vix \
 civibus corrumpit referrentur. Te nam case ludus inciderint, te mea facilisi adipiscing. Sea id \
 integre luptatum. In tota sale consequuntur nec. Erat ocurreret mei ei. Eu paulo sapientem \
 vulputate est, vel an accusam intellegam interesset. Nam eu stet pericula reprimique, ea vim illud \
-modus, putant invidunt reprehendunt ne qui.';
+modus, putant invidunt reprehendunt ne qui.";
 
 /* eslint no-bitwise: 0 */
 function hashCode(str: string): number {
   let hash = 15;
   for (let ii = str.length - 1; ii >= 0; ii--) {
-    hash = ((hash << 5) - hash) + str.charCodeAt(ii);
+    hash = (hash << 5) - hash + str.charCodeAt(ii);
   }
   return hash;
 }
 
-const HEADER = {height: 30, width: 100};
+const HEADER = { height: 30, width: 100 };
 const SEPARATOR_HEIGHT = StyleSheet.hairlineWidth;
 
 function getItemLayout(data: any, index: number, horizontal?: boolean) {
-  const [length, separator, header] = horizontal ?
-    [HORIZ_WIDTH, 0, HEADER.width] : [ITEM_HEIGHT, SEPARATOR_HEIGHT, HEADER.height];
-  return {length, offset: (length + separator) * index + header, index};
+  const [length, separator, header] = horizontal
+    ? [HORIZ_WIDTH, 0, HEADER.width]
+    : [ITEM_HEIGHT, SEPARATOR_HEIGHT, HEADER.height];
+  return { length, offset: (length + separator) * index + header, index };
 }
 
 function pressItem(context: Object, key: string) {
@@ -194,14 +221,14 @@ function pressItem(context: Object, key: string) {
     newData[index] = {
       ...state.data[index],
       pressed,
-      title: 'Item ' + key + (pressed ? ' (pressed)' : ''),
+      title: "Item " + key + (pressed ? " (pressed)" : "")
     };
-    return {data: newData};
+    return { data: newData };
   });
 }
 
 function renderSmallSwitchOption(context: Object, key: string) {
-  if(Platform.isTVOS) {
+  if (Platform.isTVOS) {
     return null;
   }
   return (
@@ -210,7 +237,7 @@ function renderSmallSwitchOption(context: Object, key: string) {
       <Switch
         style={styles.smallSwitch}
         value={context.state[key]}
-        onValueChange={(value) => context.setState({[key]: value})}
+        onValueChange={(value) => context.setState({ [key]: value })}
       />
     </View>
   );
@@ -232,85 +259,90 @@ function PlainInput(props: Object) {
 const styles = StyleSheet.create({
   headerFooter: {
     ...HEADER,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center"
   },
   headerFooterContainer: {
-    backgroundColor: 'rgb(239, 239, 244)',
+    backgroundColor: "rgb(239, 239, 244)"
   },
   horizItem: {
-    alignSelf: 'flex-start', // Necessary for touch highlight
+    alignSelf: "flex-start" // Necessary for touch highlight
   },
   item: {
-    flex: 1,
+    flex: 1
   },
   itemSeparator: {
     height: SEPARATOR_HEIGHT,
-    backgroundColor: 'rgb(200, 199, 204)',
-    marginLeft: 60,
+    backgroundColor: "rgb(200, 199, 204)",
+    marginLeft: 60
   },
   option: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 8,
-    paddingRight: 0,
+    paddingRight: 0
   },
   row: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 10,
-    backgroundColor: 'white',
+    backgroundColor: "white"
   },
   searchTextInput: {
-    backgroundColor: 'white',
-    borderColor: '#cccccc',
+    backgroundColor: "white",
+    borderColor: "#cccccc",
     borderRadius: 3,
     borderWidth: 1,
     paddingLeft: 8,
     paddingVertical: 0,
     height: 26,
     fontSize: 14,
-    flexGrow: 1,
+    flexGrow: 1
   },
   separator: {
     height: SEPARATOR_HEIGHT,
-    backgroundColor: 'rgb(200, 199, 204)',
+    backgroundColor: "rgb(200, 199, 204)"
   },
   smallSwitch: Platform.select({
     android: {
       top: 1,
       margin: -6,
-      transform: [{scale: 0.7}],
+      transform: [{ scale: 0.7 }]
     },
     ios: {
       top: 4,
       margin: -10,
-      transform: [{scale: 0.5}],
+      transform: [{ scale: 0.5 }]
     },
+    dom: {
+      top: 5,
+      margin: -10,
+      transform: [{ scale: 0.5 }]
+    }
   }),
   stacked: {
-    alignItems: 'center',
-    backgroundColor: 'white',
-    padding: 10,
+    alignItems: "center",
+    backgroundColor: "white",
+    padding: 10
   },
   thumb: {
     width: 50,
     height: 50,
-    left: -5,
+    left: -5
   },
   spindicator: {
-    marginLeft: 'auto',
+    marginLeft: "auto",
     marginTop: 8,
     width: 2,
     height: 16,
-    backgroundColor: 'darkgray',
+    backgroundColor: "darkgray"
   },
   stackedText: {
     padding: 4,
-    fontSize: 18,
+    fontSize: 18
   },
   text: {
-    flex: 1,
-  },
+    flex: 1
+  }
 });
 
 module.exports = {
@@ -325,5 +357,5 @@ module.exports = {
   getItemLayout,
   pressItem,
   renderSmallSwitchOption,
-  renderStackedItem,
+  renderStackedItem
 };

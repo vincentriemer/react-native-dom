@@ -137,10 +137,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: "TouchableExample",
     module: require("./TouchableExample")
   },
-  // {
-  //   key: "TransparentHitTestExample",
-  //   module: require("./TransparentHitTestExample")
-  // },
+  {
+    key: "TransparentHitTestExample",
+    module: require("./TransparentHitTestExample")
+  },
   {
     key: "ViewExample",
     module: require("./ViewExample")
@@ -180,10 +180,10 @@ const APIExamples: Array<RNTesterExample> = [
     key: "AppStateExample",
     module: require("./AppStateExample")
   },
-  // {
-  //   key: "AsyncStorageExample",
-  //   module: require("./AsyncStorageExample")
-  // },
+  {
+    key: "AsyncStorageExample",
+    module: require("./AsyncStorageExample")
+  },
   {
     key: "BorderExample",
     module: require("./BorderExample")
@@ -240,10 +240,10 @@ const APIExamples: Array<RNTesterExample> = [
     key: "PanResponderExample",
     module: require("./PanResponderExample")
   },
-  // {
-  //   key: "PointerEventsExample",
-  //   module: require("./PointerEventsExample")
-  // },
+  {
+    key: "PointerEventsExample",
+    module: require("./PointerEventsExample")
+  },
   // {
   //   key: "PushNotificationIOSExample",
   //   module: require("./PushNotificationIOSExample")
@@ -252,10 +252,10 @@ const APIExamples: Array<RNTesterExample> = [
   //   key: "RCTRootViewIOSExample",
   //   module: require("./RCTRootViewIOSExample")
   // },
-  // {
-  //   key: "RTLExample",
-  //   module: require("./RTLExample")
-  // },
+  {
+    key: "RTLExample",
+    module: require("./RTLExample")
+  },
   // {
   //   key: "ShareExample",
   //   module: require("./ShareExample")
@@ -288,7 +288,7 @@ const APIExamples: Array<RNTesterExample> = [
 
 const Modules = {};
 
-APIExamples.concat(ComponentExamples).forEach(Example => {
+APIExamples.concat(ComponentExamples).forEach((Example) => {
   Modules[Example.key] = Example.module;
 });
 
