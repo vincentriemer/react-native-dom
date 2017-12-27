@@ -141,20 +141,6 @@ class RCTScrollEvent implements RCTEvent {
   }
 }
 
-@CustomElement("rct-scroll-overflow-view")
-class RCTScrollOverflowView extends UIView {
-  constructor() {
-    super();
-    this.updateHostStyle({
-      position: "absolute",
-      top: "0",
-      left: "0",
-      width: "calc(100% + 2px)",
-      height: "calc(100% + 2px)"
-    });
-  }
-}
-
 @CustomElement("rct-scroll-content-view")
 export class RCTScrollContentView extends RCTView {
   constructor(bridge: RCTBridge) {
@@ -214,7 +200,6 @@ class RCTScrollView extends RCTView {
   cachedChildFrames: Array<Frame>;
 
   contentSize: Size = { width: 0, height: 0 };
-  overflowView: RCTScrollOverflowView;
 
   constructor(bridge: RCTBridge) {
     super(bridge);
@@ -234,11 +219,6 @@ class RCTScrollView extends RCTView {
     this._scrollEnabled = true;
 
     this.updateTransform();
-
-    if (SHOULD_ADD_SCROLL_OVERFLOW) {
-      this.overflowView = new RCTScrollOverflowView();
-      this.insertBefore(this.overflowView, this.childContainer);
-    }
 
     this.addEventListener("scroll", this.handleScroll, SCROLL_LISTENER_OPTIONS);
   }
