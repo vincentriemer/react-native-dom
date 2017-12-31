@@ -391,7 +391,7 @@ export default class RCTBridge {
     return this._devSettings;
   }
 
-  frame() {
+  async frame() {
     this.sendMessage("flush");
 
     const messages = [...this.messages];

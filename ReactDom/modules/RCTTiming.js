@@ -75,7 +75,7 @@ class RCTTiming {
     this.sendIdleEvents = sendIdle;
   }
 
-  frame() {
+  async frame() {
     const toRemove = [];
     const timers = [];
     const time = Date.now();
@@ -103,7 +103,7 @@ class RCTTiming {
     }
   }
 
-  idle(frameStart: number) {
+  async idle(frameStart: number) {
     if (!this.sendIdleEvents) {
       return;
     }

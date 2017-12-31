@@ -223,7 +223,7 @@ class RCTUIManager {
     }
   }
 
-  frame() {
+  async frame() {
     this.observerCoordinator.uiManagerWillPerformLayout(this);
 
     this.rootViewTags.forEach((rootTag) => {

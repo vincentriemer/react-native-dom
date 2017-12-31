@@ -10,6 +10,13 @@
     "syntax-trailing-function-commas",
     "transform-decorators-legacy",
     "transform-class-properties",
+    [
+      "transform-runtime",
+      {
+        "polyfill": false,
+        "regenerator": true
+      }
+    ],
     "transform-inline-environment-variables",
     "preval",
     "./scripts/babel-plugin-haste-require"

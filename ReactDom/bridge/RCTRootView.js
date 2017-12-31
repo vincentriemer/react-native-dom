@@ -137,16 +137,16 @@ class RCTRootView extends UIView {
     this.ticking = true;
   }
 
-  renderLoop() {
+  async renderLoop() {
     this.ticking = false;
 
     const frameStart = window.performance ? performance.now() : Date.now();
 
-    this.timing.frame();
-    this.bridge.frame();
-    this.uiManager.frame();
+    await this.timing.frame();
+    await this.bridge.frame();
+    await this.uiManager.frame();
 
-    this.timing.idle(frameStart);
+    await this.timing.idle(frameStart);
 
     if (
       this.timing.shouldContinue() ||

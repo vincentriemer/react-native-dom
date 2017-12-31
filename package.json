@@ -20,7 +20,8 @@
     "proxy-polyfill": "^0.1.7",
     "rebound": "^0.0.15",
     "tinycolor2": "^1.4.1",
-    "wolfy87-eventemitter": "^5.1.0"
+    "wolfy87-eventemitter": "^5.1.0",
+    "babel-runtime": "^6.26.0"
   },
   "files": ["lib", "Libraries"],
   "peerDependencies": {
@@ -70,10 +71,10 @@
     "babel-plugin-transform-es2015-classes": "^6.24.1",
     "babel-plugin-transform-inline-environment-variables": "^0.1.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-polyfill": "^6.23.0",
     "babel-preset-env": "^1.5.1",
     "babel-preset-flow": "^6.23.0",
-    "babel-runtime": "^6.23.0",
     "eslint": "^4.1.1",
     "flow-typed": "^2.2.3",
     "husky": "^0.14.3",

@@ -22,15 +22,7 @@ const SCROLL_LISTENER_OPTIONS = detectIt.passiveEvents
   ? { passive: true }
   : false;
 
-var isSafari =
-  navigator.vendor &&
-  navigator.vendor.indexOf("Apple") > -1 &&
-  navigator.userAgent &&
-  !navigator.userAgent.match("CriOS");
-
 const SHOULD_CORRECT_SCROLL = !!navigator.platform.match(/iPhone|iPod|iPad/g);
-const SHOULD_ADD_SCROLL_OVERFLOW =
-  !!navigator.platform.match(/iPhone|iPod|iPad/g) || isSafari;
 
 type ScrollEventArgs = [
   number,
