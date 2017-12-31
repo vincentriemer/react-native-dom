@@ -2,7 +2,7 @@
  * @providesModule ReactDom
  * @flow
  */
-import "proxy-polyfill";
+import "nodent-runtime";
 
 global.process = global.process || {};
 global.process.env = global.process.env || {};

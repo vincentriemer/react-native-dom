@@ -4,17 +4,17 @@
     "node_modules/@vincentriemer/yoga-layout/build/Release/nbind.js",
     "node_modules/localforage"
   ],
-  "presets": ["flow", "react-native"],
+  "presets": ["flow", "react-native-without-regenerator"],
   "plugins": [
     "syntax-object-rest-spread",
     "syntax-trailing-function-commas",
     "transform-decorators-legacy",
     "transform-class-properties",
     [
-      "transform-runtime",
+      "fast-async",
       {
-        "polyfill": false,
-        "regenerator": true
+        "runtimePattern": null,
+        "useRuntimeModule": false
       }
     ],
     "transform-inline-environment-variables",
