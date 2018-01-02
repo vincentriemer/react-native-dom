@@ -2,8 +2,7 @@
  * @providesModule RCTLayoutAnimationManager
  * @flow
  */
-import type RCTShadowView, { LayoutChange } from "RCTShadowView";
-import type RCTUIManager from "RCTUIManager";
+import type { LayoutChange } from "RCTShadowView";
 import type { KeyframeResult } from "RCTKeyframeGenerator";
 
 import invariant from "Invariant";
@@ -69,14 +68,14 @@ type TransformAnimationConfigRegistry = {
 };
 
 class RCTLayoutAnimationManager {
-  manager: RCTUIManager;
+  manager: *;
 
   pendingConfig: ?LayoutAnimationConfig;
   pendingCallback: ?Function;
   removedNodes: number[];
   layoutChanges: LayoutChange[];
 
-  constructor(manager: RCTUIManager) {
+  constructor(manager: *) {
     this.manager = manager;
     this.reset();
   }
@@ -206,7 +205,7 @@ class RCTLayoutAnimationManager {
   }
 
   applyInverseTransformOnChildren(
-    shadowView: RCTShadowView,
+    shadowView: *,
     registry: TransformAnimationConfigRegistry,
     updateKeyConfig: KeyframeResult,
     newFrames: TransformKeyframeConfig[],
@@ -221,23 +220,24 @@ class RCTLayoutAnimationManager {
         const subShadowView = this.manager.shadowViewRegistry.get(subReactTag);
         invariant(subShadowView, "Shadow View does not exist");
 
-        if (subShadowView.previousLayout != null) {
-          if (!registry.hasOwnProperty(subReactTag)) {
-            registry[subReactTag] = this.transformAnimationConfigFactory(
-              updateKeyConfig.keyframes.length,
-              updateKeyConfig.duration,
-              subShadowView.previousLayout
-            );
-          }
+        const previousLayout = subShadowView.previousLayout;
+        invariant(previousLayout, "Shadow View has no previous layout");
 
-          registry[
-            subReactTag
-          ][0] = this.createInverseTransformAnimationKeyframes(
-            propName,
-            registry[subReactTag][0],
-            newFrames
+        if (!registry.hasOwnProperty(subReactTag)) {
+          registry[subReactTag] = this.transformAnimationConfigFactory(
+            updateKeyConfig.keyframes.length,
+            updateKeyConfig.duration,
+            previousLayout
           );
         }
+
+        registry[
+          subReactTag
+        ][0] = this.createInverseTransformAnimationKeyframes(
+          propName,
+          registry[subReactTag][0],
+          newFrames
+        );
       });
     }
   }

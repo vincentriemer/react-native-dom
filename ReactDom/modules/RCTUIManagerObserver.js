@@ -3,10 +3,12 @@
  * @flow
  */
 
-import type RCTUIManager from "RCTUIManager";
 import { getPropertyNames } from "RCTBridge";
 import memoize from "fast-memoize";
 import RCTViewManager from "RCTViewManager";
+
+import typeof _RCTUIManager from "RCTUIManager";
+type RCTUIManager = ExtractPromise<_RCTUIManager>;
 
 export interface RCTUIManagerObserver {
   /**

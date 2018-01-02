@@ -6,7 +6,7 @@ export interface RCTComponent {
   reactTag: number;
 
   reactSubviews: Array<$Subtype<RCTComponent>>;
-  reactSuperview: $Subtype<RCTComponent>;
+  reactSuperview: ?$Subtype<RCTComponent>;
 
   insertReactSubviewAtIndex(
     subview: $Subtype<RCTComponent>,

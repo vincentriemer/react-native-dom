@@ -3,15 +3,12 @@
  * @flow
  */
 import RCTBridge from "RCTBridge";
-import RCTUIManager from "RCTUIManager";
 import UIView, { FrameZero } from "UIView";
 import NotificationCenter from "NotificationCenter";
 import RCTDeviceInfo from "RCTDeviceInfo";
 import RCTTiming from "RCTTiming";
 import RCTTouchHandler from "RCTTouchHandler";
 import CustomElement from "CustomElement";
-
-type Size = { width: number, height: number };
 
 function getAvailableSize() {
   return {
@@ -21,6 +18,7 @@ function getAvailableSize() {
 }
 
 @CustomElement("rct-root-view")
+// $FlowFixMe
 class RCTRootView extends UIView {
   _reactTag: number;
 
@@ -29,7 +27,7 @@ class RCTRootView extends UIView {
   moduleName: string;
   availableSize: Size;
   parent: Element;
-  uiManager: RCTUIManager;
+  uiManager: *;
   timing: RCTTiming;
   ticking: boolean;
   bundleLocation: string;
@@ -37,11 +35,14 @@ class RCTRootView extends UIView {
 
   touchHandler: RCTTouchHandler;
 
+  initialization: Promise<void>;
+
   constructor(
     bundle: string,
     moduleName: string,
     parent: Element,
-    enableHotReload: boolean = false
+    enableHotReload: boolean = false,
+    nativeModules: Array<Promise<any> | any>
   ) {
     super();
 
@@ -54,10 +55,15 @@ class RCTRootView extends UIView {
       bundle += "&hot=true";
     }
 
-    // initialize bridge
-    this.bridge = new RCTBridge(moduleName, bundle);
+    const bridge = new RCTBridge(moduleName, bundle, nativeModules);
+    this.initialization = this.initializeBridge(bridge);
+  }
+
+  async initializeBridge(bridge: RCTBridge) {
+    this.bridge = bridge;
     this.bridge.bundleFinishedLoading = this.bundleFinishedLoading.bind(this);
-    this.bridge.initializeModules();
+
+    await this.bridge.initializeModules();
 
     const deviceInfoModule: RCTDeviceInfo = (this.bridge.modulesByName[
       "DeviceInfo"
@@ -72,7 +78,7 @@ class RCTRootView extends UIView {
     this.width = this.availableSize.width;
     this.height = this.availableSize.height;
 
-    this.uiManager = (this.bridge.modulesByName["UIManager"]: any);
+    this.uiManager = this.bridge.uiManager;
     this.timing = (this.bridge.modulesByName["Timing"]: any);
 
     this.touchHandler = new RCTTouchHandler(this.bridge);
@@ -153,7 +159,9 @@ class RCTRootView extends UIView {
     }
   }
 
-  render() {
+  async render() {
+    await this.initialization;
+
     this.parent.appendChild(this);
     this.bridge.loadBridgeConfig();
     this.requestTick();

@@ -6,7 +6,6 @@
 import RCTView from "RCTView";
 import UIView from "UIView";
 import type RCTBridge from "RCTBridge";
-import type RCTUIManager from "RCTUIManager";
 import CustomElement from "CustomElement";
 import type { RCTEvent } from "RCTEventDispatcher";
 import detectIt from "detect-it";
@@ -35,6 +34,7 @@ type ScrollEventArgs = [
   ?Object
 ];
 
+// $FlowFixMe - coalesceWithEvent should be compatible but I think flow has a bug
 class RCTScrollEvent implements RCTEvent {
   // interface properties
   viewTag: number;
@@ -178,7 +178,7 @@ type ChildFrame = {
 @CustomElement("rct-scroll-view")
 class RCTScrollView extends RCTView {
   bridge: RCTBridge;
-  manager: RCTUIManager;
+  manager: *;
 
   isScrolling: boolean;
   scrollEventThrottle: number;

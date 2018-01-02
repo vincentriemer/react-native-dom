@@ -4,29 +4,34 @@
  */
 
 import * as YG from "yoga-dom";
-import RCTShadowView from "RCTShadowView";
 import RCTScrollViewLocalData from "RCTScrollViewLocalData";
 
-class RCTShadowScrollView extends RCTShadowView {
-  scrollOffset: {
-    top: number,
-    left: number
-  };
+import _RCTShadowView from "RCTShadowView";
 
-  constructor(YogaModule: YG.Module) {
-    super(YogaModule);
-    this.scrollOffset = {
-      top: 0,
-      left: 0
+module.exports = (async () => {
+  const RCTShadowView = await _RCTShadowView;
+
+  class RCTShadowScrollView extends RCTShadowView {
+    scrollOffset: {
+      top: number,
+      left: number
     };
+
+    constructor() {
+      super();
+      this.scrollOffset = {
+        top: 0,
+        left: 0
+      };
+    }
+
+    set localData(data: RCTScrollViewLocalData) {
+      this.scrollOffset = {
+        top: data.scrollOffsetY,
+        left: data.scrollOffsetX
+      };
+    }
   }
 
-  set localData(data: RCTScrollViewLocalData) {
-    this.scrollOffset = {
-      top: data.scrollOffsetY,
-      left: data.scrollOffsetX
-    };
-  }
-}
-
-export default RCTShadowScrollView;
+  return RCTShadowScrollView;
+})();

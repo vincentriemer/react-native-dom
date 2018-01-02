@@ -3,7 +3,6 @@
  * @flow
  */
 
-import type RCTUIManager from "RCTUIManager";
 import type { Config } from "RCTNativeAnimatedModule";
 import RCTAnimatedNode from "RCTAnimatedNode";
 import RCTStyleAnimatedNode from "RCTStyleAnimatedNode";
@@ -12,7 +11,7 @@ import RCTValueAnimatedNode from "RCTValueAnimatedNode";
 class RCTPropsAnimatedNode extends RCTAnimatedNode {
   connectedViewTag: ?number;
   connectedViewName: ?string;
-  uiManager: ?RCTUIManager;
+  uiManager: ?*;
   propsDictionary: { [propName: string]: any };
 
   constructor(tag: number, config: Config) {
@@ -20,7 +19,7 @@ class RCTPropsAnimatedNode extends RCTAnimatedNode {
     this.propsDictionary = {};
   }
 
-  connectToView(viewTag: number, viewName: string, uiManager: RCTUIManager) {
+  connectToView(viewTag: number, viewName: string, uiManager: *) {
     this.connectedViewTag = viewTag;
     this.connectedViewName = viewName;
     this.uiManager = uiManager;

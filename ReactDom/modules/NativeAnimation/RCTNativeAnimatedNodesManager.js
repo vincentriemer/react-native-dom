@@ -3,7 +3,6 @@
  * @flow
  */
 
-import type RCTUIManager from "RCTUIManager";
 import type { Config } from "RCTNativeAnimatedModule";
 import type { RCTEvent } from "RCTEventDispatcher";
 
@@ -28,6 +27,9 @@ import RCTEventAnimation from "RCTEventAnimation";
 import RCTFrameAnimation from "RCTFrameAnimation";
 import RCTDecayAnimation from "RCTDecayAnimation";
 import RCTSpringAnimation from "RCTSpringAnimation";
+
+import typeof _RCTUIManager from "RCTUIManager";
+type RCTUIManager = ExtractPromise<_RCTUIManager>;
 
 const NODE_TYPE_MAP: { [typeName: string]: Class<RCTAnimatedNode> } = {
   style: RCTStyleAnimatedNode,

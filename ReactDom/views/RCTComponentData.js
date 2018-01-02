@@ -9,16 +9,20 @@ import RCTBridge, {
   bridgeModuleNameForClass
 } from "RCTBridge";
 import RCTUIManager from "RCTUIManager";
-import RCTViewManager from "RCTViewManager";
-import RCTShadowView, { SHADOW_PROPS } from "RCTShadowView";
+
 import type { RCTComponent } from "RCTComponent";
 import UIView from "UIView";
 import { normalizeInputEventName } from "RCTEventDispatcher";
 import RCTText from "RCTText";
 import RCTRawText from "RCTRawText";
 import type RCTView from "RCTView";
-
 import RCTTextInput from "RCTTextInput";
+
+import typeof _RCTShadowView from "RCTShadowView";
+import typeof _RCTViewManager from "RCTViewManager";
+
+type RCTViewManager = ExtractPromise<_RCTViewManager>;
+type RCTShadowView = ExtractPromise<_RCTShadowView>;
 
 type Props = { [string]: any };
 
@@ -31,7 +35,7 @@ type ViewConfig = {
 type RCTPropBlock = (view: RCTComponent, { [string]: any }) => void;
 type RCTPropBlockDictionary = { [string]: RCTPropBlock };
 
-function moduleNameForClass(cls) {
+function moduleNameForClass(cls: Class<RCTViewManager>) {
   let name = cls.__moduleName;
   if (name != null) {
     if (name.startsWith("RK")) {

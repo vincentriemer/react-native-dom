@@ -12,50 +12,43 @@ if (!global.process.env.NODE_ENV) {
 import RCTRootView from "RCTRootView";
 import bundleFromRoot from "BundleFromRoot";
 
-import { RCT_EXPORT_METHOD, RCT_EXPORT_MODULE } from "RCTBridge";
-import RCTViewManager, { RCT_EXPORT_VIEW_PROP } from "RCTViewManager";
-
-// export native platform hooks
-export {
-  RCTViewManager,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE,
-  RCT_EXPORT_VIEW_PROP
-};
-
 // Register Built-in Native Modules
-import "RCTEventDispatcher";
-import "RCTDeviceInfo";
-import "RCTPlatform";
-import "RCTTiming";
-import "RCTUIManager";
-import "RCTViewManager";
-import "RCTTextManager";
-import "RCTRawTextManager";
-import "RCTScrollViewManager";
-import "RCTNativeAnimatedModule";
-import "RCTAsyncLocalStorage";
-import "RCTImageViewManager";
-import "RCTLinkingManager";
-import "RCTSourceCode";
-import "RCTTextInputManager";
-import "RCTImageLoader";
-import "RCTActivityIndicatorViewManager";
-import "RCTWebSocketModule";
-import "RCTAppState";
-import "RCTSafeAreaViewManager";
-import "RCTSwitchManager";
-import "RCTStatusBarManager";
+const builtInNativeModules = [
+  import("RCTEventDispatcher"),
+  import("RCTDeviceInfo"),
+  import("RCTPlatform"),
+  import("RCTTiming"),
+  import("RCTUIManager"),
+  import("RCTViewManager"),
+  import("RCTTextManager"),
+  import("RCTRawTextManager"),
+  import("RCTScrollViewManager"),
+  import("RCTScrollContentViewManager"),
+  import("RCTNativeAnimatedModule"),
+  import("RCTAsyncLocalStorage"),
+  import("RCTImageViewManager"),
+  import("RCTLinkingManager"),
+  import("RCTSourceCode"),
+  import("RCTTextInputManager"),
+  import("RCTImageLoader"),
+  import("RCTActivityIndicatorViewManager"),
+  import("RCTWebSocketModule"),
+  import("RCTAppState"),
+  import("RCTSafeAreaViewManager"),
+  import("RCTSwitchManager"),
+  import("RCTStatusBarManager")
+];
 
-// Development Related Native Modules
+// Development Specific Native Modules
 if (__DEV__) {
-  require("RCTDevLoadingView");
-  require("RCTDevSettings");
-  require("RCTDevMenu");
+  builtInNativeModules.push(import("RCTDevLoadingView"));
+  builtInNativeModules.push(import("RCTDevSettings"));
+  builtInNativeModules.push(import("RCTDevMenu"));
 }
 
 type RNDomInstanceOptions = {
-  enableHotReload?: boolean
+  enableHotReload?: boolean,
+  nativeModules?: any[]
 };
 
 // React Native Web Entrypoint instance
@@ -72,11 +65,16 @@ export class RNDomInstance {
       ? options.enableHotReload
       : false;
 
+    const userNativeModules = options.nativeModules
+      ? options.nativeModules
+      : [];
+
     this.rootView = new RCTRootView(
       bundleFromRoot(bundle),
       moduleName,
       parent,
-      enableHotReload
+      enableHotReload,
+      builtInNativeModules.concat(userNativeModules)
     );
   }
 

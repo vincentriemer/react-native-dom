@@ -40,6 +40,7 @@ class RCTDecayAnimation implements RCTAnimationDriver {
     this.iterations = config.iterations != null ? config.iterations : 1;
     this.currentLoop = 1;
     this.animationHasFinished = this.iterations === 0;
+    return this;
   }
 
   startAnimation() {
