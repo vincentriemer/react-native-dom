@@ -3,7 +3,7 @@
   "version": "0.0.8",
   "main": "lib/index.js",
   "dependencies": {
-    "yoga-dom": "^0.0.2",
+    "babel-runtime": "^6.26.0",
     "bezier-easing": "^2.0.3",
     "debounce": "^1.0.2",
     "deepmerge": "^1.5.0",
@@ -21,7 +21,7 @@
     "rebound": "^0.0.15",
     "tinycolor2": "^1.4.1",
     "wolfy87-eventemitter": "^5.1.0",
-    "babel-runtime": "^6.26.0"
+    "yoga-dom": "^0.0.2"
   },
   "files": ["lib", "Libraries"],
   "peerDependencies": {

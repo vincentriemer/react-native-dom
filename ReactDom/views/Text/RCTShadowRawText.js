@@ -4,43 +4,47 @@
  */
 
 import * as YG from "yoga-dom";
-import RCTShadowView from "RCTShadowView";
+import _RCTShadowView from "RCTShadowView";
 
-class RCTShadowRawText extends RCTShadowView {
-  textDirty: boolean;
-  _text: string;
+export default (async () => {
+  const RCTShadowView = await _RCTShadowView;
 
-  constructor(YogaModule: YG.Module) {
-    super(YogaModule);
+  class RCTShadowRawText extends RCTShadowView {
+    textDirty: boolean;
+    _text: string;
 
-    this.textDirty = true;
-    this._text = "";
-  }
+    constructor() {
+      super();
 
-  markTextDirty() {
-    let cur = (this.reactSuperview: any);
-    while (cur) {
-      cur.isDirty = true;
-      cur.markTextDirty && cur.markTextDirty();
-      cur = cur.reactSuperview;
+      this.textDirty = true;
+      this._text = "";
+    }
+
+    markTextDirty() {
+      let cur = (this.reactSuperview: any);
+      while (cur) {
+        cur.isDirty = true;
+        cur.markTextDirty && cur.markTextDirty();
+        cur = cur.reactSuperview;
+      }
+    }
+
+    get text(): string {
+      return this._text;
+    }
+
+    set text(value: ?string) {
+      this._text = value || "";
+      this.textDirty = true;
+      this.markTextDirty();
+    }
+
+    purge() {
+      super.purge();
+      this.markTextDirty();
+      console.log(this);
     }
   }
 
-  get text(): string {
-    return this._text;
-  }
-
-  set text(value: ?string) {
-    this._text = value || "";
-    this.textDirty = true;
-    this.markTextDirty();
-  }
-
-  purge() {
-    super.purge();
-    this.markTextDirty();
-    console.log(this);
-  }
-}
-
-export default RCTShadowRawText;
+  return RCTShadowRawText;
+})();

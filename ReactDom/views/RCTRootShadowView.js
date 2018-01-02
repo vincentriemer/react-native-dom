@@ -3,39 +3,52 @@
  * @flow
  */
 
-import * as YG from "yoga-dom";
 import type { LayoutChange } from "RCTShadowView";
-import RCTShadowView from "RCTShadowView";
 
-class RCTRootShadowView extends RCTShadowView {
-  availableSize: Size;
-  // YGDirection
+import _RCTShadowView from "RCTShadowView";
+import _Yoga from "yoga-dom";
 
-  constructor(YogaModule: YG.Module, GlobalConfig: YG.Config) {
-    super(YogaModule);
+export default (async () => {
+  const RCTShadowView = await _RCTShadowView;
+  const Yoga = await _Yoga;
 
-    this.yogaNode.free();
-    this.yogaNode = YogaModule.Node.createWithConfig(GlobalConfig);
+  class RCTRootShadowView extends RCTShadowView {
+    availableSize: Size;
+    yogaConfig: Yoga.Config;
+    // YGDirection
 
-    this.availableSize = { width: Infinity, height: Infinity };
+    constructor() {
+      super();
+
+      this.yogaConfig = new Yoga.Config();
+
+      this.yogaNode.free();
+      this.yogaNode = Yoga.Node.createWithConfig(this.yogaConfig);
+
+      this.availableSize = { width: Infinity, height: Infinity };
+    }
+
+    updateAvailableSize(size: Size) {
+      this.availableSize = size;
+      this.makeDirtyRecursive();
+    }
+
+    updatePointScaleFactor(ratio: number) {
+      this.yogaConfig.setPointScaleFactor(ratio);
+    }
+
+    recalculateLayout(): Array<LayoutChange> {
+      const { width, height } = this.availableSize;
+      this.yogaNode.calculateLayout(width, height);
+
+      const layoutChanges = this.getLayoutChanges({
+        top: 0,
+        left: 0
+      });
+
+      return layoutChanges;
+    }
   }
 
-  updateAvailableSize(size: Size) {
-    this.availableSize = size;
-    this.makeDirtyRecursive();
-  }
-
-  recalculateLayout(): Array<LayoutChange> {
-    const { width, height } = this.availableSize;
-    this.yogaNode.calculateLayout(width, height);
-
-    const layoutChanges = this.getLayoutChanges({
-      top: 0,
-      left: 0
-    });
-
-    return layoutChanges;
-  }
-}
-
-export default RCTRootShadowView;
+  return RCTRootShadowView;
+})();

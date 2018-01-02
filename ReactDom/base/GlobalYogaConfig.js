@@ -1,0 +1,4 @@
+/**
+ * @providesModule GlobalYogaConfig
+ * @flow
+ */

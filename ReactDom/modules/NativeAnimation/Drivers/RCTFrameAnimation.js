@@ -42,6 +42,7 @@ class RCTFrameAnimation implements RCTAnimationDriver {
     this.currentLoop = 1;
     this.animationHasBegun = false;
     this.animationHasFinished = this.iterations === 0;
+    return this;
   }
 
   startAnimation() {

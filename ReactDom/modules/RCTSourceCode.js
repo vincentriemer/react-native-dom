@@ -20,3 +20,5 @@ class RCTSourceCode {
     };
   }
 }
+
+export default RCTSourceCode;

@@ -66,6 +66,7 @@ class RCTSpringAnimation implements RCTAnimationDriver {
     this.animationHasFinished = iterations === 0;
     this.iterations = iterations;
     this.currentLoop = 1;
+    return this;
   }
 
   startAnimation() {

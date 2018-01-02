@@ -6,13 +6,15 @@
 import * as YG from "yoga-dom";
 import guid from "Guid";
 import invariant from "Invariant";
-import RCTShadowView from "RCTShadowView";
-import RCTShadowRawText from "RCTShadowRawText";
 import {
   defaultFontStack,
   defaultFontSize,
   defaults as TextDefaults
 } from "RCTSharedTextValues";
+
+import _Yoga from "yoga-dom";
+import _RCTShadowView from "RCTShadowView";
+import _RCTShadowRawText from "RCTShadowRawText";
 
 const TEXT_SHADOW_STYLE_PROPS = [
   "fontFamily",
@@ -30,222 +32,227 @@ textMeasurementContainer.id = "text-measurement";
 // Object.assign(textMeasurementContainer, { contain: "strict" });
 document.body && document.body.appendChild(textMeasurementContainer);
 
-class RCTShadowText extends RCTShadowView {
-  previousWidth: number;
-  previousHeight: number;
-  textChildren: Array<RCTShadowText | RCTShadowRawText>;
-  textDirty: boolean;
-  props: { [string]: any };
+module.exports = (async () => {
+  const { Constants } = await _Yoga;
+  const RCTShadowView = await _RCTShadowView;
+  const RCTShadowRawText = await _RCTShadowRawText;
 
-  fontFamily: ?string;
-  fontSize: ?string;
-  fontStyle: ?string;
-  fontWeight: ?string;
-  lineHeight: ?string;
+  class RCTShadowText extends RCTShadowView {
+    previousWidth: number;
+    previousHeight: number;
+    textChildren: Array<RCTShadowText | RCTShadowRawText>;
+    textDirty: boolean;
+    props: { [string]: any };
 
-  measureModes: *;
+    fontFamily: ?string;
+    fontSize: ?string;
+    fontStyle: ?string;
+    fontWeight: ?string;
+    lineHeight: ?string;
 
-  _testTree: ?HTMLElement;
-  _testDOMElement: ?HTMLElement;
-  _numberOfLines: number;
+    _testTree: ?HTMLElement;
+    _testDOMElement: ?HTMLElement;
+    _numberOfLines: number;
 
-  constructor(YogaModule: YG.Module) {
-    super(YogaModule);
+    constructor() {
+      super();
 
-    this.measureModes = YogaModule.Constants.measureMode;
+      // custom measure function for the flexbox layout
+      this.yogaNode.setMeasureFunc(
+        (width, widthMeasureMode, height, heightMeasureMode) =>
+          this.measure(width, widthMeasureMode, height, heightMeasureMode)
+      );
 
-    // custom measure function for the flexbox layout
-    this.yogaNode.setMeasureFunc(
-      (width, widthMeasureMode, height, heightMeasureMode) =>
-        this.measure(width, widthMeasureMode, height, heightMeasureMode)
-    );
+      this.props = {};
+      this.textChildren = [];
+      this.textDirty = true;
+      this.numberOfLines = 0;
 
-    this.props = {};
-    this.textChildren = [];
-    this.textDirty = true;
-    this.numberOfLines = 0;
-
-    TEXT_SHADOW_STYLE_PROPS.forEach((shadowPropName: string) => {
-      Object.defineProperty(this, shadowPropName, {
-        configurable: true,
-        get: () => this.props[shadowPropName],
-        set: (value) => {
-          if (value != null) {
-            this.props[shadowPropName] = TEXT_PX_PROPS.includes(shadowPropName)
-              ? `${value}px`
-              : value;
-          } else {
-            this.props[shadowPropName] = TextDefaults[shadowPropName];
+      TEXT_SHADOW_STYLE_PROPS.forEach((shadowPropName: string) => {
+        Object.defineProperty(this, shadowPropName, {
+          configurable: true,
+          get: () => this.props[shadowPropName],
+          set: (value) => {
+            if (value != null) {
+              this.props[shadowPropName] = TEXT_PX_PROPS.includes(
+                shadowPropName
+              )
+                ? `${value}px`
+                : value;
+            } else {
+              this.props[shadowPropName] = TextDefaults[shadowPropName];
+            }
+            this.markTextDirty();
+            return true;
           }
-          this.markTextDirty();
-          return true;
-        }
+        });
+        // $FlowFixMe
+        this[shadowPropName] = null;
       });
-      // $FlowFixMe
-      this[shadowPropName] = null;
-    });
-  }
-
-  get numberOfLines(): number {
-    return this._numberOfLines;
-  }
-
-  set numberOfLines(value: number) {
-    this._numberOfLines = value;
-    this.markTextDirty();
-  }
-
-  get testDOMElement(): HTMLElement {
-    if (this._testDOMElement == null) {
-      // create dom node for measuring text
-      const domElement = document.createElement("div");
-      domElement.id = guid();
-      Object.assign(domElement.style, {
-        position: "absolute",
-        visibility: "hidden",
-        maxHeight: "auto",
-        maxWidth: "auto",
-        whiteSpace: "nowrap",
-        display: "inline-block"
-      });
-      textMeasurementContainer.appendChild(domElement);
-      this._testDOMElement = domElement;
     }
-    return this._testDOMElement;
-  }
 
-  markTextDirty() {
-    this.yogaNode.markDirty();
-    this.textDirty = true;
-    if (this.reactSuperview instanceof RCTShadowText) {
-      this.reactSuperview.markTextDirty();
-    } else if (this.reactSuperview instanceof RCTShadowView) {
-      this.reactSuperview.makeDirty();
+    get numberOfLines(): number {
+      return this._numberOfLines;
     }
-  }
 
-  clearTestDomElement() {
-    const testDomElement = this.testDOMElement;
-    while (testDomElement.firstChild) {
-      testDomElement.removeChild(testDomElement.firstChild);
+    set numberOfLines(value: number) {
+      this._numberOfLines = value;
+      this.markTextDirty();
     }
-  }
 
-  /**
-   * Measure the dimensions of the text associated
-   * callback for css-layout
-   * @param: width - input width extents
-   * @param: widthMeasureMode - mode to constrain width CSS_MEASURE_MODE_EXACTLY, CSS_MEASURE_MODE_UNDEFINED
-   * @param: height - input height extents
-   * @param: heightMeasureMode - mode to constrain height CSS_MEASURE_MODE_EXACTLY, CSS_MEASURE_MODE_UNDEFINED
-   * @return: object containing measured width and height
-   */
-  measure(
-    width: number,
-    widthMeasureMode: *,
-    height: number,
-    heightMeasureMode: *
-  ): { width: number, height: number } {
-    this.clearTestDomElement();
-
-    const whiteSpace = this.numberOfLines === 1 ? "nowrap" : "pre-wrap";
-
-    if (
-      widthMeasureMode !== this.measureModes.exactly ||
-      heightMeasureMode !== this.measureModes.exactly
-    ) {
-      if (widthMeasureMode !== this.measureModes.undefined) {
-        Object.assign(this.testDOMElement.style, {
-          maxWidth: `${width}px`,
+    get testDOMElement(): HTMLElement {
+      if (this._testDOMElement == null) {
+        // create dom node for measuring text
+        const domElement = document.createElement("div");
+        domElement.id = guid();
+        Object.assign(domElement.style, {
+          position: "absolute",
+          visibility: "hidden",
           maxHeight: "auto",
-          whiteSpace
-        });
-      } else {
-        Object.assign(this.testDOMElement.style, {
           maxWidth: "auto",
-          maxHeight: `${height}px`,
-          whiteSpace
+          whiteSpace: "nowrap",
+          display: "inline-block"
         });
+        textMeasurementContainer.appendChild(domElement);
+        this._testDOMElement = domElement;
       }
-    } else {
+      return this._testDOMElement;
+    }
+
+    markTextDirty() {
+      this.yogaNode.markDirty();
+      this.textDirty = true;
+      if (this.reactSuperview instanceof RCTShadowText) {
+        this.reactSuperview.markTextDirty();
+      } else if (this.reactSuperview instanceof RCTShadowView) {
+        this.reactSuperview.makeDirty();
+      }
+    }
+
+    clearTestDomElement() {
+      const testDomElement = this.testDOMElement;
+      while (testDomElement.firstChild) {
+        testDomElement.removeChild(testDomElement.firstChild);
+      }
+    }
+
+    /**
+     * Measure the dimensions of the text associated
+     * callback for css-layout
+     * @param: width - input width extents
+     * @param: widthMeasureMode - mode to constrain width CSS_MEASURE_MODE_EXACTLY, CSS_MEASURE_MODE_UNDEFINED
+     * @param: height - input height extents
+     * @param: heightMeasureMode - mode to constrain height CSS_MEASURE_MODE_EXACTLY, CSS_MEASURE_MODE_UNDEFINED
+     * @return: object containing measured width and height
+     */
+    measure(
+      width: number,
+      widthMeasureMode: *,
+      height: number,
+      heightMeasureMode: *
+    ): { width: number, height: number } {
+      this.clearTestDomElement();
+
+      const whiteSpace = this.numberOfLines === 1 ? "nowrap" : "pre-wrap";
+
+      if (
+        widthMeasureMode !== Constants.measureMode.exactly ||
+        heightMeasureMode !== Constants.measureMode.exactly
+      ) {
+        if (widthMeasureMode !== Constants.measureMode.undefined) {
+          Object.assign(this.testDOMElement.style, {
+            maxWidth: `${width}px`,
+            maxHeight: "auto",
+            whiteSpace
+          });
+        } else {
+          Object.assign(this.testDOMElement.style, {
+            maxWidth: "auto",
+            maxHeight: `${height}px`,
+            whiteSpace
+          });
+        }
+      } else {
+        return {
+          width: width || 0,
+          height: height || 0
+        };
+      }
+
+      this.testDOMElement.appendChild(this.getTestTree());
+
+      const {
+        width: measuredWidth,
+        height: measuredHeight
+      } = this.testDOMElement.getBoundingClientRect();
+
       return {
-        width: width || 0,
-        height: height || 0
+        width: Math.ceil(measuredWidth),
+        height: Math.ceil(measuredHeight)
       };
     }
 
-    this.testDOMElement.appendChild(this.getTestTree());
+    getTestTree(): HTMLElement {
+      if (!this.textDirty) {
+        invariant(
+          this._testTree,
+          "ShadowText is not marked as dirty but there is no cached testTree"
+        );
+        return this._testTree;
+      }
 
-    const {
-      width: measuredWidth,
-      height: measuredHeight
-    } = this.testDOMElement.getBoundingClientRect();
+      const spanWrapper = document.createElement("span");
+      Object.assign(spanWrapper.style, this.props);
 
-    return {
-      width: Math.ceil(measuredWidth),
-      height: Math.ceil(measuredHeight)
-    };
-  }
+      this.textChildren.forEach((child) => {
+        if (child instanceof RCTShadowRawText && child.text.length) {
+          // Split text by newline and insert breaks manually as insertAdjacentText does not respect newlines
+          const textLines = child.text.split(/\r?\n/);
+          for (let i = 0; i < textLines.length; i++) {
+            const currentLine = textLines[i];
+            spanWrapper.insertAdjacentText("beforeend", currentLine);
 
-  getTestTree(): HTMLElement {
-    if (!this.textDirty) {
-      invariant(
-        this._testTree,
-        "ShadowText is not marked as dirty but there is no cached testTree"
-      );
+            if (i < textLines.length - 1) {
+              spanWrapper.insertAdjacentElement(
+                "beforeend",
+                document.createElement("br")
+              );
+            }
+          }
+        } else if (child instanceof RCTShadowText) {
+          spanWrapper.insertAdjacentElement("beforeend", child.getTestTree());
+        }
+      });
+
+      this._testTree = spanWrapper;
+      this.textDirty = false;
+
       return this._testTree;
     }
 
-    const spanWrapper = document.createElement("span");
-    Object.assign(spanWrapper.style, this.props);
+    insertReactSubviewAtIndex(
+      subview: RCTShadowText | RCTShadowRawText,
+      index: number
+    ) {
+      subview.reactSuperview = this;
+      this.textChildren.splice(index, 0, subview);
+      this.markTextDirty();
+    }
 
-    this.textChildren.forEach((child) => {
-      if (child instanceof RCTShadowRawText && child.text.length) {
-        // Split text by newline and insert breaks manually as insertAdjacentText does not respect newlines
-        const textLines = child.text.split(/\r?\n/);
-        for (let i = 0; i < textLines.length; i++) {
-          const currentLine = textLines[i];
-          spanWrapper.insertAdjacentText("beforeend", currentLine);
+    removeReactSubview(subview: RCTShadowText | RCTShadowRawText) {
+      subview.reactSuperview = undefined;
+      this.textChildren = this.textChildren.filter((s) => s !== subview);
+      this.markTextDirty();
+    }
 
-          if (i < textLines.length - 1) {
-            spanWrapper.insertAdjacentElement(
-              "beforeend",
-              document.createElement("br")
-            );
-          }
-        }
-      } else if (child instanceof RCTShadowText) {
-        spanWrapper.insertAdjacentElement("beforeend", child.getTestTree());
+    purge() {
+      super.purge();
+      if (this._testDOMElement) {
+        this._testDOMElement.parentNode &&
+          this._testDOMElement.parentNode.removeChild(this._testDOMElement);
       }
-    });
-
-    this._testTree = spanWrapper;
-    this.textDirty = false;
-
-    return this._testTree;
-  }
-
-  insertReactSubviewAtIndex(
-    subview: RCTShadowText | RCTShadowRawText,
-    index: number
-  ) {
-    subview.reactSuperview = this;
-    this.textChildren.splice(index, 0, subview);
-    this.markTextDirty();
-  }
-
-  removeReactSubview(subview: RCTShadowText | RCTShadowRawText) {
-    subview.reactSuperview = undefined;
-    this.textChildren = this.textChildren.filter((s) => s !== subview);
-    this.markTextDirty();
-  }
-
-  purge() {
-    super.purge();
-    if (this._testDOMElement) {
-      this._testDOMElement.parentNode.removeChild(this._testDOMElement);
     }
   }
-}
 
-export default RCTShadowText;
+  return RCTShadowText;
+})();

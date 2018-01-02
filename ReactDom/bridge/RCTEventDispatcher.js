@@ -85,6 +85,7 @@ class RCTEventDispatcher {
     this.eventQueue = [];
     this.eventsDispatchScheduled = false;
     this.observers = new Set();
+    return this;
   }
 
   sendDeviceEvent(name: string, body: ?Object) {

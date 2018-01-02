@@ -3,6 +3,6 @@
  * @flow
  */
 
-import Invariant from "fbjs/lib/invariant";
+import Invariant from "invariant";
 
 export default Invariant;

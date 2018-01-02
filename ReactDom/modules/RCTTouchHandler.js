@@ -51,7 +51,9 @@ class RCTTouchHandler {
   view: ?UIView;
 
   constructor(bridge: RCTBridge) {
-    this.eventDispatcher = (bridge.moduleForClass(RCTEventDispatcher): any);
+    this.eventDispatcher = (bridge.moduleForClass(
+      (RCTEventDispatcher: any)
+    ): any);
 
     this.nativeTouches = [];
     this.nativeTouchesByIdentifier = {};
@@ -132,11 +134,7 @@ class RCTTouchHandler {
 
   detachFromView(view: UIView) {
     this.view = undefined;
-    view.removeGestureRecognizer(
-      this,
-      detectIt.deviceType,
-      TOUCH_LISTENER_OPTIONS
-    );
+    view.removeGestureRecognizer(this);
   }
 
   recordNewTouches(touches: Array<UITouch>) {

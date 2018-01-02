@@ -3,7 +3,6 @@
  * @flow
  */
 
-import type RCTUIManager from "RCTUIManager";
 import type RCTBridge from "RCTBridge";
 import type { RCTEvent } from "RCTEventDispatcher";
 import type RCTValueAnimatedNode from "RCTValueAnimatedNode";
@@ -194,7 +193,7 @@ class RCTNativeAnimatedModule extends RCTEventEmitter {
     this.preOperations.push(operation);
   }
 
-  uiManagerWillFlushBlocks = (uiManager: RCTUIManager) => {
+  uiManagerWillFlushBlocks = (uiManager: *) => {
     if (this.preOperations.length === 0 && this.operations.length === 0) {
       return;
     }

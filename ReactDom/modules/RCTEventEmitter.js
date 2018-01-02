@@ -37,8 +37,7 @@ class RCTEventEmitter {
       this.bridge.enqueueJSCall(
         "RCTDeviceEventEmitter",
         "emit",
-        body ? [eventName, body] : [eventName],
-        null
+        body ? [eventName, body] : [eventName]
       );
       NotificationCenter.emitEvent(eventName, [body]);
     } else {

@@ -19,7 +19,8 @@ import type RCTDeviceInfo from "RCTDeviceInfo";
 import type RCTDevLoadingView from "RCTDevLoadingView";
 import type RCTDevSettings from "RCTDevSettings";
 
-import type RCTUIManager from "RCTUIManager";
+import typeof _RCTUIManager from "RCTUIManager";
+type RCTUIManager = ExtractPromise<_RCTUIManager>;
 
 export { RCTFunctionTypeNormal, RCTFunctionTypePromise, RCTFunctionTypeSync };
 export type { RCTFunctionType };
@@ -134,11 +135,7 @@ function generateModuleConfig(name: string, bridgeModule: ModuleClass) {
 }
 
 export default class RCTBridge {
-  static RCTModuleClasses: Array<Class<ModuleClass>> = [];
-
-  static RCTRegisterModule = (cls: Class<ModuleClass>) => {
-    RCTBridge.RCTModuleClasses.push(cls);
-  };
+  nativeModules: Array<Promise<Class<ModuleClass>> | Class<ModuleClass>>;
 
   modulesByName: { [name: string]: ModuleClass } = {};
   moduleClasses: Array<Class<ModuleClass>> = [];
@@ -149,9 +146,6 @@ export default class RCTBridge {
   bundleLocation: string;
   loading: boolean;
 
-  YogaModule: YG.Module;
-  GlobalYogaConfig: YG.Config;
-
   _uiManager: ?RCTUIManager;
   _eventDispatcher: ?RCTEventDispatcher;
   _imageLoader: ?RCTImageLoader;
@@ -159,10 +153,15 @@ export default class RCTBridge {
   _devLoadingView: ?RCTDevLoadingView;
   _devSettings: ?RCTDevSettings;
 
-  constructor(moduleName: string, bundle: string) {
+  constructor(
+    moduleName: string,
+    bundle: string,
+    nativeModules: Array<Promise<Class<ModuleClass>> | Class<ModuleClass>>
+  ) {
     this.loading = true;
     this.moduleName = moduleName;
     this.bundleLocation = bundle;
+    this.nativeModules = nativeModules;
 
     const bridgeCodeBlob = new Blob([WORKER_SRC]);
     const worker = new Worker(URL.createObjectURL(bridgeCodeBlob));
@@ -220,19 +219,11 @@ export default class RCTBridge {
 
     switch (topic) {
       case "bundleFinishedLoading": {
-        (async () => {
-          this.YogaModule = await Yoga;
-
-          const pixelRatio = this.deviceInfo.getDevicePixelRatio();
-          this.GlobalYogaConfig = new this.YogaModule.Config();
-          this.GlobalYogaConfig.setPointScaleFactor(pixelRatio);
-
-          this.loading = false;
-          NotificationCenter.emitEvent("RCTJavaScriptDidLoadNotification");
-          if (this.bundleFinishedLoading) {
-            this.bundleFinishedLoading();
-          }
-        })();
+        this.loading = false;
+        NotificationCenter.emitEvent("RCTJavaScriptDidLoadNotification");
+        if (this.bundleFinishedLoading) {
+          this.bundleFinishedLoading();
+        }
         break;
       }
       case "flushedQueue": {
@@ -262,9 +253,15 @@ export default class RCTBridge {
     }
   }
 
-  initializeModules = () => {
-    this.moduleClasses = [...RCTBridge.RCTModuleClasses];
-    RCTBridge.RCTModuleClasses.forEach((moduleClass: Class<ModuleClass>) => {
+  initializeModules = async () => {
+    this.moduleClasses = await Promise.all(this.nativeModules);
+
+    // resolve default exports from es modules
+    this.moduleClasses = this.moduleClasses.map((maybeModule) => {
+      return maybeModule.__esModule ? (maybeModule: any).default : maybeModule;
+    });
+
+    this.moduleClasses.forEach((moduleClass: Class<ModuleClass>) => {
       const module = new moduleClass(this);
       const moduleName = bridgeModuleNameForClass(moduleClass);
       this.modulesByName[moduleName] = module;
@@ -436,5 +433,4 @@ export const RCT_EXPORT_MODULE = (name: string) => (
   target: Class<ModuleClass>
 ) => {
   target.__moduleName = name;
-  RCTBridge.RCTRegisterModule(target);
 };

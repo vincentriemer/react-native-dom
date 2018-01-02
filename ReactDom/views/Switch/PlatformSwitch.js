@@ -18,7 +18,7 @@ type State = {
 class PlatformSwitch extends HyperHTMLElement {
   state: State;
 
-  static get observedAttributes() {
+  static get observedAttributes(): string[] {
     return [
       "disabled",
       "value",
