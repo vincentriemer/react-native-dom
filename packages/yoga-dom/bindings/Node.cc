@@ -398,8 +398,8 @@ EMSCRIPTEN_BINDINGS(YGNode)
     .field("height", &Layout::height)
     ;
 
-  constant("YGValueUndefined", YGValueUndefined);
-  constant("YGValueAuto", YGValueAuto);
+  // constant("YGValueUndefined", YGValueUndefined);
+  // constant("YGValueAuto", YGValueAuto);
 
   class_<Node>("YGNode")
     .constructor<>(&Node::createDefault, allow_raw_pointers())

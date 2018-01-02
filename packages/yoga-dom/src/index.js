@@ -24,6 +24,26 @@ export default new Promise(function(resolve) {
       this.free();
     });
 
+    function wrapMeasureFunction(measureFunction) {
+      return Module.MeasureCallback.implement({ measure: measureFunction });
+    }
+
+    patch(Module.YGNode.prototype, "setMeasureFunc", function(
+      original,
+      measureFunc
+    ) {
+      original.call(this, wrapMeasureFunction(measureFunc));
+    });
+
+    patch(Module.YGNode.prototype, "calculateLayout", function(
+      original,
+      width = NaN,
+      height = NaN,
+      direction = Module.YGDirection.ltr
+    ) {
+      return original.call(this, width, height, direction);
+    });
+
     resolve({
       Node: Module.YGNode,
       Config: Module.YGConfig,
@@ -32,20 +52,17 @@ export default new Promise(function(resolve) {
         dimension: Module.YGDimension,
         direction: Module.YGDirection,
         display: Module.YGDisplay,
-        edge: Module.YGEdge,
+        // edge: Module.YGEdge,
         flexDirection: Module.YGFlexDirection,
         justify: Module.YGJustify,
         measureMode: Module.YGMeasureMode,
-        nodeType: Module.YGNodeType,
+        // nodeType: Module.YGNodeType,
         overflow: Module.YGOverflow,
-        positionType: Module.YGPositionType,
+        position: Module.YGPositionType,
         unit: Module.YGUnit,
         wrap: Module.YGWrap,
-        undefinedValue: Module.YGValueUndefined,
-        autoValue: Module.YGValueAuto,
-      },
-      wrapMeasureFunction: function(measureFunction) {
-        return Module.MeasureCallback.implement({ measure: measureFunction });
+        // undefinedValue: Module.YGValueUndefined,
+        // autoValue: Module.YGValueAuto,
       },
     });
   });

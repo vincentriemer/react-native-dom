@@ -35,17 +35,17 @@ EMSCRIPTEN_BINDINGS(YGEnums) {
     .value("none", YGDisplayNone)
     ;
 
-  enum_<YGEdge>("YGEdge")
-    .value("left", YGEdgeLeft)
-    .value("top", YGEdgeTop)
-    .value("right", YGEdgeRight)
-    .value("bottom", YGEdgeBottom)
-    .value("start", YGEdgeStart)
-    .value("end", YGEdgeEnd)
-    .value("horizontal", YGEdgeHorizontal)
-    .value("vertical", YGEdgeVertical)
-    .value("all", YGEdgeAll)
-    ;
+  // enum_<YGEdge>("YGEdge")
+  //   .value("left", YGEdgeLeft)
+  //   .value("top", YGEdgeTop)
+  //   .value("right", YGEdgeRight)
+  //   .value("bottom", YGEdgeBottom)
+  //   .value("start", YGEdgeStart)
+  //   .value("end", YGEdgeEnd)
+  //   .value("horizontal", YGEdgeHorizontal)
+  //   .value("vertical", YGEdgeVertical)
+  //   .value("all", YGEdgeAll)
+  //   ;
   
   enum_<YGFlexDirection>("YGFlexDirection")
     .value("column", YGFlexDirectionColumn)
@@ -63,18 +63,18 @@ EMSCRIPTEN_BINDINGS(YGEnums) {
     .value("space-evenly", YGJustifySpaceEvenly)
     ;
 
-  // TODO: YGLogLevel
+  // YGLogLevel
 
   enum_<YGMeasureMode>("YGMeasureMode")
     .value("undefined", YGMeasureModeUndefined)
     .value("exactly", YGMeasureModeExactly)
-    .value("atMost", YGMeasureModeExactly)
+    .value("atMost", YGMeasureModeAtMost)
     ;
 
-  enum_<YGNodeType>("YGNodeType")
-    .value("default", YGNodeTypeDefault)
-    .value("text", YGNodeTypeText)
-    ;
+  // enum_<YGNodeType>("YGNodeType")
+  //   .value("default", YGNodeTypeDefault)
+  //   .value("text", YGNodeTypeText)
+  //   ;
 
   enum_<YGOverflow>("YGOverflow")
     .value("visible", YGOverflowVisible)
