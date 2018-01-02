@@ -3,12 +3,11 @@
   "version": "0.0.8",
   "main": "lib/index.js",
   "dependencies": {
-    "@vincentriemer/yoga-layout": "^1.8.0",
+    "yoga-dom": "^0.0.2",
     "bezier-easing": "^2.0.3",
     "debounce": "^1.0.2",
     "deepmerge": "^1.5.0",
     "detect-it": "^3.0.0",
-    "fast-async": "^6.3.0",
     "fast-memoize": "^2.2.7",
     "fbjs": "^0.8.12",
     "flow-bin": "^0.47.0",
@@ -21,7 +20,8 @@
     "proxy-polyfill": "^0.1.7",
     "rebound": "^0.0.15",
     "tinycolor2": "^1.4.1",
-    "wolfy87-eventemitter": "^5.1.0"
+    "wolfy87-eventemitter": "^5.1.0",
+    "babel-runtime": "^6.26.0"
   },
   "files": ["lib", "Libraries"],
   "peerDependencies": {
@@ -71,6 +71,7 @@
     "babel-plugin-transform-es2015-classes": "^6.24.1",
     "babel-plugin-transform-inline-environment-variables": "^0.1.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-polyfill": "^6.23.0",
     "babel-preset-env": "^1.5.1",
     "babel-preset-flow": "^6.23.0",

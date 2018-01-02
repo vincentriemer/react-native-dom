@@ -18,7 +18,7 @@ class RCTSafeAreaViewManager extends RCTViewManager {
   }
 
   shadowView(): RCTShadowView {
-    return new RCTSafeAreaShadowView();
+    return new RCTSafeAreaShadowView(this.bridge.YogaModule);
   }
 }
 

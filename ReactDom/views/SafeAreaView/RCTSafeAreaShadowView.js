@@ -3,6 +3,7 @@
  * @flow
  */
 
+import * as YG from "yoga-dom";
 import RCTShadowView from "RCTShadowView";
 
 import type RCTSafeAreaViewLocalData from "RCTSafeAreaViewLocalData";
@@ -18,24 +19,24 @@ const PADDING_PROPS = [
 ];
 
 class RCTSafeAreaShadowView extends RCTShadowView {
-  constructor() {
-    super();
+  constructor(YogaModule: YG.Module) {
+    super(YogaModule);
 
-    PADDING_PROPS.forEach((shadowPropName) => {
-      Object.defineProperty(this, shadowPropName, {
-        configurable: true,
-        get: () => this.yogaNode.style[shadowPropName],
-        set: (value) => true
-      });
-    });
+    // PADDING_PROPS.forEach((shadowPropName) => {
+    //   Object.defineProperty(this, shadowPropName, {
+    //     configurable: true,
+    //     get: () => this.yogaNode.style[shadowPropName],
+    //     set: (value) => true
+    //   });
+    // });
   }
 
   set localData(data: RCTSafeAreaViewLocalData) {
     const insets = data.insets;
-    super.paddingLeft = insets.left;
-    super.paddingRight = insets.right;
-    super.paddingTop = insets.top;
-    super.paddingBottom = insets.bottom;
+    // super.paddingLeft = insets.left;
+    // super.paddingRight = insets.right;
+    // super.paddingTop = insets.top;
+    // super.paddingBottom = insets.bottom;
   }
 
   set padding(v: any) {}

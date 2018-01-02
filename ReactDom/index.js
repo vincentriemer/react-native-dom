@@ -2,7 +2,6 @@
  * @providesModule ReactDom
  * @flow
  */
-import "nodent-runtime";
 
 global.process = global.process || {};
 global.process.env = global.process.env || {};

@@ -3,6 +3,7 @@
  * @flow
  */
 
+import * as YG from "yoga-dom";
 import type { LayoutChange } from "RCTShadowView";
 import RCTShadowView from "RCTShadowView";
 
@@ -10,8 +11,12 @@ class RCTRootShadowView extends RCTShadowView {
   availableSize: Size;
   // YGDirection
 
-  constructor() {
-    super();
+  constructor(YogaModule: YG.Module, GlobalConfig: YG.Config) {
+    super(YogaModule);
+
+    this.yogaNode.free();
+    this.yogaNode = YogaModule.Node.createWithConfig(GlobalConfig);
+
     this.availableSize = { width: Infinity, height: Infinity };
   }
 

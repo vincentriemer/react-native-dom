@@ -3,6 +3,7 @@
  * @flow
  */
 
+import * as YG from "yoga-dom";
 import guid from "Guid";
 import invariant from "Invariant";
 import RCTShadowView from "RCTShadowView";
@@ -12,8 +13,6 @@ import {
   defaultFontSize,
   defaults as TextDefaults
 } from "RCTSharedTextValues";
-
-import { MEASURE_MODE_EXACTLY, MEASURE_MODE_UNDEFINED } from "yoga-js";
 
 const TEXT_SHADOW_STYLE_PROPS = [
   "fontFamily",
@@ -44,12 +43,16 @@ class RCTShadowText extends RCTShadowView {
   fontWeight: ?string;
   lineHeight: ?string;
 
+  measureModes: *;
+
   _testTree: ?HTMLElement;
   _testDOMElement: ?HTMLElement;
   _numberOfLines: number;
 
-  constructor() {
-    super();
+  constructor(YogaModule: YG.Module) {
+    super(YogaModule);
+
+    this.measureModes = YogaModule.Constants.measureMode;
 
     // custom measure function for the flexbox layout
     this.yogaNode.setMeasureFunc(
@@ -139,28 +142,28 @@ class RCTShadowText extends RCTShadowView {
    */
   measure(
     width: number,
-    widthMeasureMode: number,
+    widthMeasureMode: *,
     height: number,
-    heightMeasureMode: number
+    heightMeasureMode: *
   ): { width: number, height: number } {
     this.clearTestDomElement();
 
     const whiteSpace = this.numberOfLines === 1 ? "nowrap" : "pre-wrap";
 
     if (
-      widthMeasureMode !== MEASURE_MODE_EXACTLY ||
-      heightMeasureMode !== MEASURE_MODE_EXACTLY
+      widthMeasureMode !== this.measureModes.exactly ||
+      heightMeasureMode !== this.measureModes.exactly
     ) {
-      if (widthMeasureMode !== MEASURE_MODE_UNDEFINED) {
+      if (widthMeasureMode !== this.measureModes.undefined) {
         Object.assign(this.testDOMElement.style, {
-          maxWidth: width,
+          maxWidth: `${width}px`,
           maxHeight: "auto",
           whiteSpace
         });
       } else {
         Object.assign(this.testDOMElement.style, {
           maxWidth: "auto",
-          maxHeight: height,
+          maxHeight: `${height}px`,
           whiteSpace
         });
       }

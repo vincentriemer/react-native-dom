@@ -19,7 +19,7 @@ class RCTTextManager extends RCTViewManager {
   }
 
   shadowView(): RCTShadowText {
-    return new RCTShadowText();
+    return new RCTShadowText(this.bridge.YogaModule);
   }
 
   @RCT_EXPORT_MIRRORED_PROP("fontFamily", "string")

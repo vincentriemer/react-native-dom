@@ -156,7 +156,7 @@ class RCTViewManager {
   }
 
   shadowView(): RCTShadowView {
-    return new RCTShadowView();
+    return new RCTShadowView(this.bridge.YogaModule);
   }
 
   customBubblingEventTypes(): Array<string> {
