@@ -20,7 +20,6 @@ import RCTRootShadowView from "RCTRootShadowView";
 import RCTLayoutAnimationManager from "RCTLayoutAnimationManager";
 import RCTUIManagerObserverCoordinator from "RCTUIManagerObserverCoordinator";
 import RCTShadowText from "RCTShadowText";
-import { GlobalConfig } from "yoga-js";
 import CanUse from "CanUse";
 
 import type { RCTComponent } from "RCTComponent";
@@ -114,7 +113,7 @@ class RCTUIManager {
   }
 
   didUpdateDimensions = ({ window: { width, height, scale } }: any) => {
-    GlobalConfig.setPointScaleFactor(scale);
+    this.bridge.GlobalYogaConfig.setPointScaleFactor(scale);
 
     for (let rootViewTag of this.rootViewTags) {
       const rootView = this.viewRegistry.get(rootViewTag);
@@ -146,7 +145,10 @@ class RCTUIManager {
     this.viewRegistry.set(reactTag, rootView);
 
     // register shadow view
-    const shadowView = new RCTRootShadowView();
+    const shadowView = new RCTRootShadowView(
+      this.bridge.YogaModule,
+      this.bridge.GlobalYogaConfig
+    );
     shadowView.availableSize = availableSize;
     shadowView.reactTag = reactTag;
     shadowView.backgroundColor = rootView.backgroundColor;

@@ -3,49 +3,10 @@
  * @flow
  */
 
-import type { RCTComponent } from "RCTComponent";
-
-import YogaNode from "yoga-js";
+import * as YG from "yoga-dom";
 import invariant from "Invariant";
 
-export const SHADOW_PROPS = [
-  "top",
-  "right",
-  "bottom",
-  "left",
-  "width",
-  "height",
-  "minWidth",
-  "maxWidth",
-  "minHeight",
-  "minWidth",
-  "borderTopWidth",
-  "borderRightWidth",
-  "borderBottomWidth",
-  "borderLeftWidth",
-  "borderWidth",
-  "marginTop",
-  "marginRight",
-  "marginBottom",
-  "marginLeft",
-  "marginVertical",
-  "marginHorizontal",
-  "margin",
-  "flex",
-  "flexGrow",
-  "flexShrink",
-  "flexBasis",
-  "flexDirection",
-  "flexWrap",
-  "justifyContent",
-  "alignItems",
-  "alignSelf",
-  "alignContent",
-  "position",
-  "aspectRatio",
-  "overflow",
-  "display"
-];
+import type { RCTComponent } from "RCTComponent";
 
 const LAYOUT_PROPS = ["top", "left", "width", "height"];
 
@@ -56,13 +17,125 @@ export type LayoutChange = {
   nextMeasurement: Frame
 };
 
+function convertToYogaValue(
+  input: number | string,
+  units: $PropertyType<YG.Constants, "unit">
+): YG.Value {
+  if (typeof input === "number") {
+    return { value: input, unit: units.point };
+  } else {
+    if (input === "auto") {
+      return { value: NaN, unit: units.auto };
+    } else {
+      return {
+        value: parseFloat(input),
+        unit: input.endsWith("%") ? units.percent : units.point
+      };
+    }
+  }
+}
+
+function setEnumProp<T: YG.PropEnumMap>(
+  yogaNode: YG.Node,
+  propName: string,
+  enumMap: T,
+  value: string
+) {
+  const enumValue = enumMap[value];
+  if (enumValue != null) {
+    yogaNode[propName] = enumValue;
+  } else if (__DEV__) {
+    console.warn(`No such value '${value}' found for prop '${propName}'`);
+  }
+}
+
+function bindEnumProps(
+  instance: RCTShadowView,
+  propDefs: [string, YG.PropEnumMap][]
+) {
+  propDefs.forEach(([propName, enumMap]) => {
+    Object.defineProperty(instance, propName, {
+      configurable: true,
+      get() {
+        return instance.yogaNode[propName];
+      },
+      set(value: string) {
+        setEnumProp(instance.yogaNode, propName, enumMap, value);
+        instance.makeDirty();
+        return true;
+      }
+    });
+  });
+}
+
+function bindUnitProps(instance: RCTShadowView, propDefs: string[]) {
+  propDefs.forEach((propName) => {
+    Object.defineProperty(instance, propName, {
+      configurable: true,
+      get() {
+        return instance.yogaNode[propName];
+      },
+      set(value: string | number) {
+        instance.yogaNode[propName] = convertToYogaValue(
+          value,
+          instance.yogaContants.unit
+        );
+        instance.makeDirty();
+        return true;
+      }
+    });
+  });
+}
+
+function bindNumberProps(instance: RCTShadowView, propDefs: string[]) {
+  propDefs.forEach((propName) => {
+    Object.defineProperty(instance, propName, {
+      configurable: true,
+      get() {
+        return instance.yogaNode[propName];
+      },
+      set(value: number) {
+        instance.yogaNode[propName] = value;
+        instance.makeDirty();
+        return true;
+      }
+    });
+  });
+}
+
+const EDGES = [
+  "Left",
+  "Right",
+  "Top",
+  "Bottom",
+  "Start",
+  "End",
+  "Horizontal",
+  "Vertical"
+];
+
+function bindEdgeProps(
+  instance: RCTShadowView,
+  propDefs: string[],
+  bindingFunc: (instance: RCTShadowView, propDefs: string[]) => void
+) {
+  propDefs.forEach((propName) => {
+    bindingFunc.call(
+      null,
+      instance,
+      EDGES.map((edge) => `${propName}${edge}`).concat([propName])
+    );
+  });
+}
+
 class RCTShadowView implements RCTComponent {
   _backgroundColor: string;
   _transform: Array<number>;
 
   viewName: string;
 
-  yogaNode: YogaNode;
+  yogaContants: YG.Constants;
+  yogaNode: YG.Node;
   previousLayout: ?Frame;
   isNewView: boolean;
   isHidden: boolean;
@@ -74,63 +147,47 @@ class RCTShadowView implements RCTComponent {
 
   measurement: ?Frame;
 
-  constructor() {
-    this.yogaNode = new YogaNode();
+  constructor({ Node, Constants }: YG.Module) {
+    this.yogaContants = Constants;
+    this.yogaNode = new Node();
 
-    SHADOW_PROPS.forEach((shadowPropName) => {
-      Object.defineProperty(this, shadowPropName, {
-        configurable: true,
-        // $FlowFixMe
-        get: () => this.yogaNode.style[shadowPropName],
-        set: (value) => {
-          // $FlowFixMe
-          this.yogaNode.style[shadowPropName] = value;
-          this.makeDirty();
-          return true;
-        }
-      });
-    });
+    bindEnumProps(this, [
+      ["direction", Constants.direction],
+      ["flexDirection", Constants.flexDirection],
+      ["justifyContent", Constants.justify],
+      ["alignContent", Constants.align],
+      ["alignItems", Constants.align],
+      ["alignSelf", Constants.align],
+      ["position", Constants.position],
+      ["flexWrap", Constants.wrap],
+      ["overflow", Constants.overflow],
+      ["display", Constants.display]
+    ]);
+    bindUnitProps(this, [
+      "width",
+      "height",
+      "minWidth",
+      "minHeight",
+      "maxWidth",
+      "maxHeight",
+      "left",
+      "right",
+      "top",
+      "bottom",
+      "start",
+      "end",
+      "horizontal",
+      "vertical"
+    ]);
+    bindNumberProps(this, ["flex", "flexGrow", "flexShrink", "aspectRatio"]);
+    bindEdgeProps(this, ["margin", "padding"], bindUnitProps);
+    bindEdgeProps(this, ["border"], bindNumberProps);
 
     this.previousLayout = undefined;
     this.measurement = undefined;
   }
 
   set localData(value: any) {}
-
-  set paddingTop(value: number) {
-    this.yogaNode.style.paddingTop = value;
-    this.makeDirty();
-  }
-
-  set paddingRight(value: number) {
-    this.yogaNode.style.paddingRight = value;
-    this.makeDirty();
-  }
-
-  set paddingLeft(value: number) {
-    this.yogaNode.style.paddingLeft = value;
-    this.makeDirty();
-  }
-
-  set paddingBottom(value: number) {
-    this.yogaNode.style.paddingBottom = value;
-    this.makeDirty();
-  }
-
-  set paddingVertical(value: number) {
-    this.yogaNode.style.paddingVertical = value;
-    this.makeDirty();
-  }
-
-  set paddingHorizontal(value: number) {
-    this.yogaNode.style.paddingHorizontal = value;
-    this.makeDirty();
-  }
-
-  set padding(value: number) {
-    this.yogaNode.style.padding = value;
-    this.makeDirty();
-  }
 
   get backgroundColor(): string {
     return this._backgroundColor;
@@ -171,7 +228,7 @@ class RCTShadowView implements RCTComponent {
   }): Array<LayoutChange> {
     let layoutChanges = [];
 
-    const newLayout = this.yogaNode.layout;
+    const newLayout = this.yogaNode.getComputedLayout();
 
     const currentPosition = {
       top: previousPosition.top + newLayout.top,

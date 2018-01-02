@@ -3,14 +3,15 @@
  * @flow
  */
 
+import * as YG from "yoga-dom";
 import RCTShadowView from "RCTShadowView";
 
 class RCTShadowRawText extends RCTShadowView {
   textDirty: boolean;
   _text: string;
 
-  constructor() {
-    super();
+  constructor(YogaModule: YG.Module) {
+    super(YogaModule);
 
     this.textDirty = true;
     this._text = "";

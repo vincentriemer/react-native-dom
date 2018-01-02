@@ -3,6 +3,7 @@
  * @flow
  */
 
+import * as YG from "yoga-dom";
 import RCTShadowView from "RCTShadowView";
 import RCTScrollViewLocalData from "RCTScrollViewLocalData";
 
@@ -12,8 +13,8 @@ class RCTShadowScrollView extends RCTShadowView {
     left: number
   };
 
-  constructor() {
-    super();
+  constructor(YogaModule: YG.Module) {
+    super(YogaModule);
     this.scrollOffset = {
       top: 0,
       left: 0

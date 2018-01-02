@@ -3,6 +3,7 @@
  * @flow
  */
 import invariant from "Invariant";
+import Yoga, * as YG from "yoga-dom";
 import { moduleConfigFactory } from "RCTModuleConfig";
 import NotificationCenter from "NotificationCenter";
 import {
@@ -148,6 +149,9 @@ export default class RCTBridge {
   bundleLocation: string;
   loading: boolean;
 
+  YogaModule: YG.Module;
+  GlobalYogaConfig: YG.Config;
+
   _uiManager: ?RCTUIManager;
   _eventDispatcher: ?RCTEventDispatcher;
   _imageLoader: ?RCTImageLoader;
@@ -216,11 +220,19 @@ export default class RCTBridge {
 
     switch (topic) {
       case "bundleFinishedLoading": {
-        this.loading = false;
-        NotificationCenter.emitEvent("RCTJavaScriptDidLoadNotification");
-        if (this.bundleFinishedLoading) {
-          this.bundleFinishedLoading();
-        }
+        (async () => {
+          this.YogaModule = await Yoga;
+
+          const pixelRatio = this.deviceInfo.getDevicePixelRatio();
+          this.GlobalYogaConfig = new this.YogaModule.Config();
+          this.GlobalYogaConfig.setPointScaleFactor(pixelRatio);
+
+          this.loading = false;
+          NotificationCenter.emitEvent("RCTJavaScriptDidLoadNotification");
+          if (this.bundleFinishedLoading) {
+            this.bundleFinishedLoading();
+          }
+        })();
         break;
       }
       case "flushedQueue": {
