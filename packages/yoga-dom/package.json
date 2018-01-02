@@ -6,7 +6,7 @@
   "author": "Vincent Riemer",
   "main": "dist/Yoga.cjs.js",
   "module": "dist/Yoga.es.js",
-  "files": ["dist"],
+  "files": ["READNE.md", "dist"],
   "scripts": {
     "clean:bundle": "rimraf dist",
     "build:wasm": "./build.sh",
