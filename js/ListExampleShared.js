@@ -203,7 +203,7 @@ function hashCode(str: string): number {
   return hash;
 }
 
-const HEADER = { height: 30, width: 100 };
+const HEADER = { height: 30, width: 110 };
 const SEPARATOR_HEIGHT = StyleSheet.hairlineWidth;
 
 function getItemLayout(data: any, index: number, horizontal?: boolean) {
