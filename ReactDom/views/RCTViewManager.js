@@ -17,7 +17,7 @@ type PropDef = {
   exported: boolean
 };
 
-module.exports = (async function(): * {
+module.exports = (async function() {
   const RCTShadowView = await _RCTShadowView;
 
   function eventSetter(view: RCTView, propName: string) {
@@ -256,6 +256,8 @@ module.exports = (async function(): * {
         ["right", "string"],
         ["bottom", "string"],
         ["left", "string"],
+        ["start", "string"],
+        ["end", "string"],
         ["width", "string"],
         ["height", "string"],
         ["minWidth", "string"],
@@ -266,6 +268,8 @@ module.exports = (async function(): * {
         ["borderRightWidth", "string"],
         ["borderBottomWidth", "string"],
         ["borderLeftWidth", "string"],
+        ["borderStartWidth", "string"],
+        ["borderEndWidth", "string"],
         ["borderWidth", "string"],
         ["marginTop", "string"],
         ["marginRight", "string"],
@@ -298,7 +302,8 @@ module.exports = (async function(): * {
         ["position", "string"],
         ["aspectRatio", "string"],
         ["overflow", "string"],
-        ["display", "string"]
+        ["display", "string"],
+        ["direction", "string"]
       ];
     }
   }
