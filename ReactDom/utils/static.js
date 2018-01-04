@@ -1,3 +1,5 @@
+// adapted from react-native-web
+
 import crossFade from "inline-style-prefixer/static/plugins/crossFade";
 import cursor from "inline-style-prefixer/static/plugins/cursor";
 import filter from "inline-style-prefixer/static/plugins/filter";
@@ -24,7 +26,8 @@ export default {
     flex,
     flexboxIE,
     flexboxOld,
-    gradient,
+    // TODO: re-enable when https://github.com/rofrischmann/inline-style-prefixer/pull/140 is merged
+    // gradient,
     imageSet,
     position,
     sizing,
@@ -41,6 +44,7 @@ export default {
     animationPlayState: w,
     animationTimingFunction: w,
     appearance: wm,
+    backgroundImage: w,
     userSelect: wmms,
     textEmphasisPosition: w,
     textEmphasis: w,
