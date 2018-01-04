@@ -196,7 +196,7 @@ declare module "yoga-dom" {
     },
     wrap: {
       [string]: ?Wrap,
-      "no-wrap": WrapNoWrap,
+      nowrap: WrapNoWrap,
       wrap: WrapWrap,
       "wrap-reverse": WrapWrapReverse
     }

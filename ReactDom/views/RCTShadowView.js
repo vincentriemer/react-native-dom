@@ -21,11 +21,13 @@ module.exports = (async () => {
   const Yoga: YG.Module = (await require("yoga-dom"): any);
 
   function convertToYogaValue(
-    input: number | string,
+    input: ?(number | string),
     units: $PropertyType<YG.Constants, "unit">
   ): YG.Value {
     if (typeof input === "number") {
       return { value: input, unit: units.point };
+    } else if (input == null) {
+      return { value: NaN, unit: units.undefined };
     } else {
       if (input === "auto") {
         return { value: NaN, unit: units.auto };
@@ -42,13 +44,17 @@ module.exports = (async () => {
     yogaNode: YG.Node,
     propName: string,
     enumMap: T,
-    value: string
+    value: ?string
   ) {
-    const enumValue = enumMap[value];
-    if (enumValue != null) {
-      yogaNode[propName] = enumValue;
-    } else if (__DEV__) {
-      console.warn(`No such value '${value}' found for prop '${propName}'`);
+    if (value == null) {
+      yogaNode[propName] = NaN;
+    } else {
+      const enumValue = enumMap[value];
+      if (enumValue != null) {
+        yogaNode[propName] = enumValue;
+      } else if (__DEV__) {
+        console.warn(`No such value '${value}' found for prop '${propName}'`);
+      }
     }
   }
 
