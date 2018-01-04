@@ -95,7 +95,7 @@ EMSCRIPTEN_BINDINGS(YGEnums) {
     ;
 
   enum_<YGWrap>("YGWrap")
-    .value("no-wrap", YGWrapNoWrap)
+    .value("nowrap", YGWrapNoWrap)
     .value("wrap", YGWrapWrap)
     .value("wrap-reverse", YGWrapWrapReverse)
     ;
