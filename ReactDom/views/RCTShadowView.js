@@ -20,6 +20,23 @@ export type LayoutChange = {
 module.exports = (async () => {
   const Yoga: YG.Module = (await require("yoga-dom"): any);
 
+  function propAlias(
+    target: RCTShadowView.prototype,
+    targetProp: string,
+    sourceProp: string
+  ) {
+    Object.defineProperty(target, targetProp, {
+      configurable: true,
+      get() {
+        return this[sourceProp];
+      },
+      set(value: any) {
+        this[sourceProp] = value;
+        return true;
+      }
+    });
+  }
+
   function convertToYogaValue(
     input: ?(number | string),
     units: $PropertyType<YG.Constants, "unit">
@@ -346,6 +363,17 @@ module.exports = (async () => {
   ]);
   bindEdgeProps(RCTShadowView.prototype, ["margin", "padding"], bindUnitProps);
   bindEdgeProps(RCTShadowView.prototype, ["border"], bindNumberProps);
+
+  [
+    "borderTop",
+    "borderLeft",
+    "borderRight",
+    "borderBottom",
+    "borderStart",
+    "borderEnd"
+  ].forEach((propName) => {
+    propAlias(RCTShadowView.prototype, propName + "Width", propName);
+  });
 
   return RCTShadowView;
 })();

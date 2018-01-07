@@ -1,6 +1,6 @@
 {
-  "name": "@vincentriemer/react-native-dom",
-  "version": "0.0.8",
+  "name": "react-native-dom",
+  "version": "0.0.1",
   "main": "lib/index.js",
   "dependencies": {
     "babel-runtime": "^6.26.0",
