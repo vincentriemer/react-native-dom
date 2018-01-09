@@ -25,8 +25,8 @@
   },
   "files": ["lib", "Libraries"],
   "peerDependencies": {
-    "react": "16.0.0",
-    "react-native": "^0.50.3"
+    "react": "16.2.0",
+    "react-native": "~0.52.0"
   },
   "scripts": {
     "prestart": "cd Examples/NavigationPlayground && yarn",
@@ -82,8 +82,8 @@
     "jest": "^20.0.4",
     "lint-staged": "^6.0.0",
     "prettier": "^1.9.0",
-    "react": "16.0.0",
-    "react-native": "~0.50.3",
+    "react": "16.2.0",
+    "react-native": "~0.52.0",
     "rimraf": "^2.6.1",
     "rollup": "^0.50.0",
     "rollup-plugin-babel": "^3.0.2",

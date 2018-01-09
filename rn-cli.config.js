@@ -1,7 +1,7 @@
 "use strict";
 
 var path = require("path");
-const blacklist = require("metro-bundler/src/blacklist");
+const blacklist = require("metro/src/blacklist");
 const defaultPolyfills = require("react-native/rn-get-polyfills");
 
 function getRoots() {
