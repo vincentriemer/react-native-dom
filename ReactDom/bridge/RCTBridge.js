@@ -184,7 +184,7 @@ export default class RCTBridge {
 
   sendMessage(topic: string, payload: any) {
     if (this.thread) {
-      this.thread.postMessage(JSON.stringify({ topic, payload }));
+      this.thread.postMessage({ topic, payload });
     }
   }
 
@@ -215,7 +215,7 @@ export default class RCTBridge {
   }
 
   onMessage(message: any) {
-    const { topic, payload } = JSON.parse(message.data);
+    const { topic, payload } = message.data;
 
     switch (topic) {
       case "bundleFinishedLoading": {

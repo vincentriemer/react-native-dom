@@ -4,7 +4,7 @@ ErrorUtils = {
 };
 
 function sendMessage(topic, payload) {
-  postMessage(JSON.stringify({ topic, payload }));
+  postMessage({ topic, payload });
 }
 
 var Status = undefined;
@@ -85,7 +85,7 @@ function handleError(e) {
 }
 
 onmessage = ({ data }) => {
-  const { topic, payload } = JSON.parse(data);
+  const { topic, payload } = data;
   // console.log("Recieved message from main thread:", topic, payload);
 
   switch (topic) {

@@ -8,6 +8,19 @@ import type RCTBridge from "RCTBridge";
 import RCTView from "RCTView";
 import RCTImageSource from "RCTImageSource";
 import CustomElement from "CustomElement";
+import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
+
+const tintColorSVG = (color: string, id: number) => {
+  return `
+    <svg>
+      <defs>
+        <filter id="tint-${id}">
+          <feFlood flood-color="${color}"/>
+          <feComposite in2="SourceAlpha" operator="atop"/>
+        </filter>
+      </defs>
+    </svg>`;
+};
 
 const onLoadParamsForSource = (source: RCTImageSource) => ({
   source: {
@@ -17,15 +30,23 @@ const onLoadParamsForSource = (source: RCTImageSource) => ({
   }
 });
 
+let idCounter = 0;
+
 @CustomElement("rct-image-view")
 class RCTImageView extends RCTView {
   _imageSources: RCTImageSource[];
   imageElement: HTMLImageElement;
+  imageContainer: HTMLDivElement;
   childShadowRoot: ShadowRoot;
 
   onLoadStart: boolean = false;
   onLoad: boolean = false;
   onLoadEnd: boolean = false;
+
+  filterId: number;
+  svgFilter: HTMLElement;
+  _blurRadius: ?number;
+  _tintColor: ?string;
 
   constructor(bridge: RCTBridge) {
     super(bridge);
@@ -43,6 +64,25 @@ class RCTImageView extends RCTView {
     });
     this.childShadowRoot.appendChild(this.imageElement);
     this.childShadowRoot.appendChild(document.createElement("slot"));
+
+    this.svgFilter = document.createElement("div");
+    this.svgFilter.style.height = "0";
+    this.childShadowRoot.appendChild(this.svgFilter);
+    this.filterId = idCounter;
+    idCounter++;
+  }
+
+  updateFilter() {
+    const filterStrings: string[] = [];
+    if (this._tintColor) {
+      filterStrings.push(`url(#tint-${this.filterId})`);
+    }
+    if (this._blurRadius) {
+      filterStrings.push(`blur(${this._blurRadius}px)`);
+    }
+    // $FlowFixMe
+    this.imageElement.style.webkitFilter = filterStrings.join(" ");
+    this.imageElement.style.filter = filterStrings.join(" ");
   }
 
   set imageSources(value: RCTImageSource[]) {
@@ -54,8 +94,24 @@ class RCTImageView extends RCTView {
     this.imageElement.style.objectFit = value;
   }
 
-  set blurRadius(value: number) {
-    this.imageElement.style.filter = `blur(${value}px)`;
+  set blurRadius(value: ?number) {
+    this._blurRadius = value;
+    this.updateFilter();
+  }
+
+  set tintColor(value: ?number) {
+    if (typeof value === "number") {
+      const [a, r, g, b] = ColorArrayFromHexARGB(value);
+      const stringValue = `rgba(${r},${g},${b},${a})`;
+      this._tintColor = stringValue;
+    } else {
+      this._tintColor = value;
+    }
+    this.svgFilter.style.color = this._tintColor || "";
+    this.svgFilter.innerHTML = this._tintColor
+      ? tintColorSVG(this._tintColor, this.filterId)
+      : "";
+    this.updateFilter();
   }
 
   get imageScale(): number {

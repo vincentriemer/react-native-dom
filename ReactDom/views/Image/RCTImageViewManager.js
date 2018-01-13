@@ -68,6 +68,11 @@ module.exports = (async () => {
       view.blurRadius = value;
     }
 
+    @RCT_EXPORT_VIEW_PROP("tintColor", "color")
+    setTintColor(view: RCTImageView, value: ?number) {
+      view.tintColor = value;
+    }
+
     @RCT_EXPORT_VIEW_PROP("onLoadStart", "RCTDirectEventBlock")
     setOnLoadStart(view: RCTImageView, value: boolean) {
       view.onLoadStart = value;
