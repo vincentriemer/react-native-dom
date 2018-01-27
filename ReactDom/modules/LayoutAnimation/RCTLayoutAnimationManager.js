@@ -9,6 +9,9 @@ import invariant from "Invariant";
 import RCTKeyframeGenerator from "RCTKeyframeGenerator";
 import * as MatrixMath from "MatrixMath";
 
+import typeof _RCTUIManager from "RCTUIManager";
+type RCTUIManager = $Call<$await<_RCTUIManager>>;
+
 const PropertiesEnum = {
   opacity: true,
   scaleXY: true
@@ -68,14 +71,14 @@ type TransformAnimationConfigRegistry = {
 };
 
 class RCTLayoutAnimationManager {
-  manager: *;
+  manager: RCTUIManager;
 
   pendingConfig: ?LayoutAnimationConfig;
   pendingCallback: ?Function;
   removedNodes: number[];
   layoutChanges: LayoutChange[];
 
-  constructor(manager: *) {
+  constructor(manager: RCTUIManager) {
     this.manager = manager;
     this.reset();
   }

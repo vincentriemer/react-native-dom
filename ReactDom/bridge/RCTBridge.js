@@ -18,6 +18,11 @@ import type RCTImageLoader from "RCTImageLoader";
 import type RCTDeviceInfo from "RCTDeviceInfo";
 import type RCTDevLoadingView from "RCTDevLoadingView";
 import type RCTDevSettings from "RCTDevSettings";
+import type {
+  RCTModule,
+  RCTModuleStatics,
+  NativeModuleImports
+} from "RCTModule";
 
 import typeof _RCTUIManager from "RCTUIManager";
 type RCTUIManager = $Call<$await<_RCTUIManager>>;
@@ -71,18 +76,6 @@ if (__DEV__) {
 } else {
   WORKER_SRC = "__DEV__ = false;\n" + WORKER_SRC;
 }
-
-export interface RCTModuleClass {
-  constructor(bridge: RCTBridge): RCTModule;
-  constantsToExport?: () => { [string]: any };
-  [propName: string]: any;
-}
-
-export type RCTModuleStatics = {
-  __moduleName: ?string
-};
-
-export type RCTModule = RCTModuleClass & RCTModuleStatics;
 
 export function getPropertyNames(obj: ?Object): Array<string> {
   if (obj == null) return [];
@@ -140,7 +133,7 @@ function generateModuleConfig(name: string, bridgeModule: RCTModule) {
 }
 
 export default class RCTBridge {
-  nativeModules: Array<Promise<Class<RCTModule>> | Class<RCTModule>>;
+  nativeModules: NativeModuleImports;
 
   modulesByName: { [name: string]: RCTModule } = {};
   moduleClasses: Array<Class<RCTModule>> = [];
@@ -161,7 +154,7 @@ export default class RCTBridge {
   constructor(
     moduleName: string,
     bundle: string,
-    nativeModules: Array<Promise<Class<RCTModule>> | Class<RCTModule>>
+    nativeModules: NativeModuleImports
   ) {
     this.loading = true;
     this.moduleName = moduleName;

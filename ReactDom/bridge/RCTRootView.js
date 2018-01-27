@@ -10,6 +10,8 @@ import RCTTiming from "RCTTiming";
 import RCTTouchHandler from "RCTTouchHandler";
 import CustomElement from "CustomElement";
 
+import type { NativeModuleImports } from "RCTModule";
+
 function getAvailableSize() {
   return {
     width: window.innerWidth,
@@ -42,7 +44,7 @@ class RCTRootView extends UIView {
     moduleName: string,
     parent: Element,
     enableHotReload: boolean = false,
-    nativeModules: Array<Promise<any> | any>
+    nativeModules: NativeModuleImports
   ) {
     super();
 

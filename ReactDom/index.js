@@ -12,38 +12,40 @@ if (!global.process.env.NODE_ENV) {
 import RCTRootView from "RCTRootView";
 import bundleFromRoot from "BundleFromRoot";
 
+import type { NativeModuleImports } from "RCTModule";
+
 // Register Built-in Native Modules
-const builtInNativeModules = [
-  import("RCTEventDispatcher"),
-  import("RCTDeviceInfo"),
-  import("RCTPlatform"),
-  import("RCTTiming"),
-  import("RCTUIManager"),
-  import("RCTViewManager"),
-  import("RCTTextManager"),
-  import("RCTRawTextManager"),
-  import("RCTScrollViewManager"),
-  import("RCTScrollContentViewManager"),
-  import("RCTNativeAnimatedModule"),
-  import("RCTAsyncLocalStorage"),
-  import("RCTImageViewManager"),
-  import("RCTLinkingManager"),
-  import("RCTSourceCode"),
-  import("RCTTextInputManager"),
-  import("RCTImageLoader"),
-  import("RCTActivityIndicatorViewManager"),
-  import("RCTWebSocketModule"),
-  import("RCTAppState"),
-  import("RCTSafeAreaViewManager"),
-  import("RCTSwitchManager"),
-  import("RCTStatusBarManager")
+const builtInNativeModules: any[] = [
+  require("RCTEventDispatcher"),
+  require("RCTDeviceInfo"),
+  require("RCTPlatform"),
+  require("RCTTiming"),
+  require("RCTUIManager"),
+  require("RCTViewManager"),
+  require("RCTTextManager"),
+  require("RCTRawTextManager"),
+  require("RCTScrollViewManager"),
+  require("RCTScrollContentViewManager"),
+  require("RCTNativeAnimatedModule"),
+  require("RCTAsyncLocalStorage"),
+  require("RCTImageViewManager"),
+  require("RCTLinkingManager"),
+  require("RCTSourceCode"),
+  require("RCTTextInputManager"),
+  require("RCTImageLoader"),
+  require("RCTActivityIndicatorViewManager"),
+  require("RCTWebSocketModule"),
+  require("RCTAppState"),
+  require("RCTSafeAreaViewManager"),
+  require("RCTSwitchManager"),
+  require("RCTStatusBarManager")
 ];
 
 // Development Specific Native Modules
 if (__DEV__) {
-  builtInNativeModules.push(import("RCTDevLoadingView"));
-  builtInNativeModules.push(import("RCTDevSettings"));
-  builtInNativeModules.push(import("RCTDevMenu"));
+  builtInNativeModules.push(require("RCTDevLoadingView"));
+  builtInNativeModules.push(require("RCTDevSettings"));
+  builtInNativeModules.push(require("RCTDevMenu"));
 }
 
 type RNDomInstanceOptions = {
@@ -74,7 +76,7 @@ export class RNDomInstance {
       moduleName,
       parent,
       enableHotReload,
-      builtInNativeModules.concat(userNativeModules)
+      (builtInNativeModules.concat(userNativeModules): NativeModuleImports)
     );
   }
 
