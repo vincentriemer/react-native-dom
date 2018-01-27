@@ -21,10 +21,10 @@ export default (async () => {
     }
 
     markTextDirty() {
-      let cur = (this.reactSuperview: any);
+      let cur = this.reactSuperview;
       while (cur) {
         cur.isDirty = true;
-        cur.markTextDirty && cur.markTextDirty();
+        typeof cur.markTextDirty === "function" && cur.markTextDirty();
         cur = cur.reactSuperview;
       }
     }
@@ -42,7 +42,6 @@ export default (async () => {
     purge() {
       super.purge();
       this.markTextDirty();
-      console.log(this);
     }
   }
 

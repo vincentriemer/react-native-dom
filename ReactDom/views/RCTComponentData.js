@@ -21,14 +21,16 @@ import RCTTextInput from "RCTTextInput";
 import typeof _RCTShadowView from "RCTShadowView";
 import typeof _RCTViewManager from "RCTViewManager";
 
-type RCTViewManager = ExtractPromise<_RCTViewManager>;
-type RCTShadowView = ExtractPromise<_RCTShadowView>;
+type RCTViewManager = $Call<$await<_RCTViewManager>>;
+type RCTShadowView = $Call<$await<_RCTShadowView>>;
 
 type Props = { [string]: any };
 
 type ViewConfig = {
   propTypes: Props,
-  bubblingEvents: Array<string>
+  bubblingEvents: Array<string>,
+  directEvents: Array<string>,
+  baseModuleName: ?string
   // uiClassViewName: string
 };
 

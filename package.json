@@ -10,7 +10,6 @@
     "detect-it": "^3.0.0",
     "fast-memoize": "^2.2.7",
     "fbjs": "^0.8.12",
-    "flow-bin": "^0.47.0",
     "glob": "^7.1.2",
     "hyperhtml-element": "^1.2.1",
     "idb-keyval": "^2.3.0",
@@ -31,6 +30,8 @@
   "scripts": {
     "prestart": "cd Examples/NavigationPlayground && yarn",
     "flow": "flow",
+    "flow:coverage":
+      "flow-coverage-report -i 'ReactDom/**/*.js' -t html -t text",
     "build": "BABEL_ENV=lib babel ReactDom --out-dir lib --source-maps inline",
     "prebuild": "rimraf lib",
     "start": "react-native start",
@@ -77,6 +78,8 @@
     "babel-preset-flow": "^6.23.0",
     "babel-preset-react-native-without-regenerator": "^1.9.0-a",
     "eslint": "^4.1.1",
+    "flow-bin": "^0.64.0",
+    "flow-coverage-report": "^0.4.1",
     "flow-typed": "^2.2.3",
     "husky": "^0.14.3",
     "jest": "^20.0.4",

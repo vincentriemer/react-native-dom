@@ -20,7 +20,7 @@ import type RCTDevLoadingView from "RCTDevLoadingView";
 import type RCTDevSettings from "RCTDevSettings";
 
 import typeof _RCTUIManager from "RCTUIManager";
-type RCTUIManager = ExtractPromise<_RCTUIManager>;
+type RCTUIManager = $Call<$await<_RCTUIManager>>;
 
 export { RCTFunctionTypeNormal, RCTFunctionTypePromise, RCTFunctionTypeSync };
 export type { RCTFunctionType };
@@ -72,12 +72,17 @@ if (__DEV__) {
   WORKER_SRC = "__DEV__ = false;\n" + WORKER_SRC;
 }
 
-export interface ModuleClass {
-  static __moduleName: ?string;
-  constructor(bridge: RCTBridge): ModuleClass;
+export interface RCTModuleClass {
+  constructor(bridge: RCTBridge): RCTModule;
   constantsToExport?: () => { [string]: any };
   [propName: string]: any;
 }
+
+export type RCTModuleStatics = {
+  __moduleName: ?string
+};
+
+export type RCTModule = RCTModuleClass & RCTModuleStatics;
 
 export function getPropertyNames(obj: ?Object): Array<string> {
   if (obj == null) return [];
@@ -88,7 +93,7 @@ export function getPropertyNames(obj: ?Object): Array<string> {
   );
 }
 
-export function bridgeModuleNameForClass(cls: Class<ModuleClass>): string {
+export function bridgeModuleNameForClass(cls: RCTModuleStatics): string {
   let name = cls.__moduleName;
 
   if (name != null) {
@@ -103,7 +108,7 @@ export function bridgeModuleNameForClass(cls: Class<ModuleClass>): string {
   return "";
 }
 
-function generateModuleConfig(name: string, bridgeModule: ModuleClass) {
+function generateModuleConfig(name: string, bridgeModule: RCTModule) {
   const methodNames = [...new Set(getPropertyNames(bridgeModule))].filter(
     (methodName) => methodName.startsWith("__rct_export__")
   );
@@ -135,10 +140,10 @@ function generateModuleConfig(name: string, bridgeModule: ModuleClass) {
 }
 
 export default class RCTBridge {
-  nativeModules: Array<Promise<Class<ModuleClass>> | Class<ModuleClass>>;
+  nativeModules: Array<Promise<Class<RCTModule>> | Class<RCTModule>>;
 
-  modulesByName: { [name: string]: ModuleClass } = {};
-  moduleClasses: Array<Class<ModuleClass>> = [];
+  modulesByName: { [name: string]: RCTModule } = {};
+  moduleClasses: Array<Class<RCTModule>> = [];
   moduleConfigs: Array<ModuleConfig> = [];
   bundleFinishedLoading: ?() => void;
   messages: Array<NativeCall> = [];
@@ -156,7 +161,7 @@ export default class RCTBridge {
   constructor(
     moduleName: string,
     bundle: string,
-    nativeModules: Array<Promise<Class<ModuleClass>> | Class<ModuleClass>>
+    nativeModules: Array<Promise<Class<RCTModule>> | Class<RCTModule>>
   ) {
     this.loading = true;
     this.moduleName = moduleName;
@@ -168,7 +173,7 @@ export default class RCTBridge {
     this.setThread(worker);
   }
 
-  moduleForClass(cls: Class<ModuleClass>): ModuleClass {
+  moduleForClass(cls: RCTModuleStatics): RCTModule {
     invariant(cls.__moduleName, "Class does not seem to be exported");
     return this.modulesByName[bridgeModuleNameForClass(cls)];
   }
@@ -261,14 +266,14 @@ export default class RCTBridge {
       return maybeModule.__esModule ? (maybeModule: any).default : maybeModule;
     });
 
-    this.moduleClasses.forEach((moduleClass: Class<ModuleClass>) => {
+    this.moduleClasses.forEach((moduleClass: Class<RCTModule>) => {
       const module = new moduleClass(this);
       const moduleName = bridgeModuleNameForClass(moduleClass);
       this.modulesByName[moduleName] = module;
     });
   };
 
-  generateModuleConfig(name: string, bridgeModule: ModuleClass) {
+  generateModuleConfig(name: string, bridgeModule: RCTModule) {
     const methodNames = [...new Set(getPropertyNames(bridgeModule))].filter(
       (methodName) => methodName.startsWith("__rct_export__")
     );
@@ -430,7 +435,7 @@ export function RCT_EXPORT_METHOD(type: RCTFunctionType) {
 }
 
 export const RCT_EXPORT_MODULE = (name: string) => (
-  target: Class<ModuleClass>
+  target: RCTModuleStatics
 ) => {
   target.__moduleName = name;
 };

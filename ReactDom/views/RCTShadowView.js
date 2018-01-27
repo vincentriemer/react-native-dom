@@ -21,7 +21,7 @@ module.exports = (async () => {
   const Yoga: YG.Module = (await require("yoga-dom"): any);
 
   function propAlias(
-    target: RCTShadowView.prototype,
+    target: typeof RCTShadowView.prototype,
     targetProp: string,
     sourceProp: string
   ) {
@@ -76,7 +76,7 @@ module.exports = (async () => {
   }
 
   function bindEnumProps(
-    instance: RCTShadowView.prototype,
+    instance: typeof RCTShadowView.prototype,
     propDefs: [string, YG.PropEnumMap][]
   ) {
     propDefs.forEach(([propName, enumMap]) => {
@@ -95,7 +95,7 @@ module.exports = (async () => {
   }
 
   function bindUnitProps(
-    instance: RCTShadowView.prototype,
+    instance: typeof RCTShadowView.prototype,
     propDefs: string[]
   ) {
     propDefs.forEach((propName) => {
@@ -117,7 +117,7 @@ module.exports = (async () => {
   }
 
   function bindNumberProps(
-    instance: RCTShadowView.prototype,
+    instance: typeof RCTShadowView.prototype,
     propDefs: string[]
   ) {
     propDefs.forEach((propName) => {
@@ -147,9 +147,12 @@ module.exports = (async () => {
   ];
 
   function bindEdgeProps(
-    instance: RCTShadowView.prototype,
+    instance: typeof RCTShadowView.prototype,
     propDefs: string[],
-    bindingFunc: (instance: RCTShadowView.prototype, propDefs: string[]) => void
+    bindingFunc: (
+      instance: typeof RCTShadowView.prototype,
+      propDefs: string[]
+    ) => void
   ) {
     propDefs.forEach((propName) => {
       bindingFunc.call(

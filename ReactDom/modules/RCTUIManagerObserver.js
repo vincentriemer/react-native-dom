@@ -8,7 +8,7 @@ import memoize from "fast-memoize";
 import RCTViewManager from "RCTViewManager";
 
 import typeof _RCTUIManager from "RCTUIManager";
-type RCTUIManager = ExtractPromise<_RCTUIManager>;
+type RCTUIManager = $Call<$await<_RCTUIManager>>;
 
 export interface RCTUIManagerObserver {
   /**
@@ -58,6 +58,7 @@ class RCTUIManagerObserverCoordinator implements RCTUIManagerObserver {
   uiManagerWillPerformLayout = (manager: RCTUIManager) => {
     for (let observer of this.observers) {
       if (typeof observer.uiManagerWillPerformLayout === "function") {
+        // $FlowFixMe - I don't know why this fails when the other methods don't
         observer.uiManagerDidPerformLayout(manager);
       }
     }

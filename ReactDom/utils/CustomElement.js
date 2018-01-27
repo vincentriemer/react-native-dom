@@ -4,7 +4,7 @@
  */
 
 export default function CustomElement(name: string) {
-  return function(target: any) {
+  return function(target: Function) {
     customElements.define(name, target);
   };
 }

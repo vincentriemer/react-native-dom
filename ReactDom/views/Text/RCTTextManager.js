@@ -26,7 +26,7 @@ module.exports = (async () => {
     }
 
     shadowView(): RCTShadowText {
-      return new RCTShadowText(this.bridge.YogaModule);
+      return new RCTShadowText();
     }
 
     @RCT_EXPORT_MIRRORED_PROP("fontFamily", "string")

@@ -29,7 +29,7 @@ import RCTDecayAnimation from "RCTDecayAnimation";
 import RCTSpringAnimation from "RCTSpringAnimation";
 
 import typeof _RCTUIManager from "RCTUIManager";
-type RCTUIManager = ExtractPromise<_RCTUIManager>;
+type RCTUIManager = $Call<$await<_RCTUIManager>>;
 
 const NODE_TYPE_MAP: { [typeName: string]: Class<RCTAnimatedNode> } = {
   style: RCTStyleAnimatedNode,
