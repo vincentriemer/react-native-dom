@@ -1,6 +1,6 @@
 {
   "name": "react-native-dom",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "lib/index.js",
   "dependencies": {
     "babel-runtime": "^6.26.0",
@@ -20,9 +20,13 @@
     "rebound": "^0.0.15",
     "tinycolor2": "^1.4.1",
     "wolfy87-eventemitter": "^5.1.0",
-    "yoga-dom": "^0.0.3"
+    "yoga-dom": "^0.0.3",
+    "yeoman-environment": "^1.5.3",
+    "yeoman-generator": "^0.21.2",
+    "opn": "^5.2.0",
+    "node-fetch": "^1.7.3"
   },
-  "files": ["lib", "Libraries"],
+  "files": ["lib", "Libraries", "local-cli"],
   "peerDependencies": {
     "react": "16.2.0",
     "react-native": "~0.52.0"
@@ -98,5 +102,8 @@
   },
   "quokka": {
     "babel": true
+  },
+  "rnpm": {
+    "plugin": "./local-cli/index.js"
   }
 }
