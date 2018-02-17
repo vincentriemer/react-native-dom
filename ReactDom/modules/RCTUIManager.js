@@ -157,7 +157,6 @@ module.exports = (async () => {
       const shadowView = new RCTRootShadowView();
       shadowView.availableSize = availableSize;
       shadowView.reactTag = reactTag;
-      shadowView.backgroundColor = rootView.backgroundColor;
       shadowView.viewName = rootView.constructor.name;
 
       const pixelRatio = this.bridge.deviceInfo.getDevicePixelRatio();
@@ -334,6 +333,14 @@ module.exports = (async () => {
         globalX,
         globalY
       };
+    }
+
+    @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+    measureInWindow(reactTag: number, callbackId: number) {
+      const result = this.measure(reactTag);
+      invariant(result, `No measurement available for view ${reactTag}`);
+      const { globalX, globalY, width, height } = result;
+      this.bridge.callbackFromId(callbackId)(globalX, globalY, width, height);
     }
 
     @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)

@@ -15,7 +15,7 @@
       "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./dom/index.js --bundle-output ./dist/index.bundle --platform dom --assets-dest ./dist --reset-cache"
   },
   "dependencies": {
-    "react-navigation": "1.0.0-beta.21",
+    "react-navigation": "^1.0.0",
     "react-native-vector-icons": "^4.4.2"
   },
   "devDependencies": {

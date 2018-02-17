@@ -82,7 +82,7 @@
     "babel-preset-flow": "^6.23.0",
     "babel-preset-react-native-without-regenerator": "^1.9.0-a",
     "eslint": "^4.1.1",
-    "flow-bin": "^0.64.0",
+    "flow-bin": "^0.66.0",
     "flow-coverage-report": "^0.4.1",
     "flow-typed": "^2.2.3",
     "husky": "^0.14.3",
