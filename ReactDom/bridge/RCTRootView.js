@@ -9,6 +9,7 @@ import RCTDeviceInfo from "RCTDeviceInfo";
 import RCTTiming from "RCTTiming";
 import RCTTouchHandler from "RCTTouchHandler";
 import CustomElement from "CustomElement";
+import instrument from "Instrument";
 
 import type { NativeModuleImports } from "RCTModule";
 
@@ -146,9 +147,9 @@ class RCTRootView extends UIView {
 
     const frameStart = window.performance ? performance.now() : Date.now();
 
-    await this.timing.frame();
-    await this.bridge.frame();
-    await this.uiManager.frame();
+    await instrument("⚛️ Timing", () => this.timing.frame());
+    await instrument("⚛️ Bridge", () => this.bridge.frame());
+    await instrument("⚛️ Rendering", () => this.uiManager.frame());
 
     await this.timing.idle(frameStart);
 

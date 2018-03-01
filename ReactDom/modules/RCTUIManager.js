@@ -18,6 +18,7 @@ import RCTLayoutAnimationManager from "RCTLayoutAnimationManager";
 import RCTUIManagerObserverCoordinator from "RCTUIManagerObserverCoordinator";
 import RCTComponentData from "RCTComponentData";
 import CanUse from "CanUse";
+import instrument from "Instrument";
 
 import type { RCTComponent } from "RCTComponent";
 import type { LayoutChange } from "RCTShadowView";
@@ -74,6 +75,8 @@ module.exports = (async () => {
   const RCTRootShadowView = await _RCTRootShadowView;
   const RCTShadowText = await _RCTShadowText;
 
+  type UIBlock = (RCTUIManager, Map<number, UIView>) => void;
+
   @RCT_EXPORT_MODULE("RCTUIManager")
   class RCTUIManager {
     bridge: RCTBridge;
@@ -85,7 +88,7 @@ module.exports = (async () => {
     layoutAnimationManager: RCTLayoutAnimationManager;
     observerCoordinator: RCTUIManagerObserverCoordinator;
 
-    pendingUIBlocks: Array<Function> = [];
+    pendingUIBlocks: Array<UIBlock> = [];
 
     constructor(bridge: RCTBridge) {
       this.bridge = bridge;
@@ -229,7 +232,9 @@ module.exports = (async () => {
         this.addUIBlock((uiManager, viewRegistry) => {
           const view = viewRegistry.get(reactTag);
           viewRegistry.delete(reactTag);
-          view.purge();
+          if (view) {
+            view.purge();
+          }
         });
       }
     }
@@ -245,7 +250,10 @@ module.exports = (async () => {
             "attempting to recalculate from shadowView that isn't root"
           );
 
-          const layoutChanges = rootShadowView.recalculateLayout();
+          const layoutChanges = instrument("⚛️ Layout", () =>
+            rootShadowView.recalculateLayout()
+          );
+
           if (this.layoutAnimationManager.isPending()) {
             this.layoutAnimationManager.addLayoutChanges(layoutChanges);
           } else {
@@ -257,20 +265,25 @@ module.exports = (async () => {
       this.observerCoordinator.uiManagerDidPerformLayout(this);
 
       if (this.layoutAnimationManager.isPending()) {
-        this.layoutAnimationManager.applyLayoutChanges();
+        instrument("⚛️ LayoutAnimation Construction", () => {
+          this.layoutAnimationManager.applyLayoutChanges();
+        });
       }
 
       this.observerCoordinator.uiManagerWillFlushBlocks(this);
 
-      if (this.pendingUIBlocks.length > 0) {
-        const uiBlocks = [...this.pendingUIBlocks];
-        this.pendingUIBlocks = [];
+      instrument("⚛️ Style", () => {
+        if (this.pendingUIBlocks.length > 0) {
+          const uiBlocks = [...this.pendingUIBlocks];
+          this.pendingUIBlocks = [];
 
-        uiBlocks.forEach((block) => {
-          block.call(null, this, this.viewRegistry);
-        });
-        this.requestTick();
-      }
+          uiBlocks.forEach((block) => {
+            block.call(null, this, this.viewRegistry);
+          });
+
+          this.requestTick();
+        }
+      });
     }
 
     shouldContinue(): boolean {
@@ -291,9 +304,11 @@ module.exports = (async () => {
     applyLayoutChanges(layoutChanges: LayoutChange[]) {
       layoutChanges.forEach((layoutChange) => {
         const { reactTag, layout } = layoutChange;
-        const view = this.viewRegistry.get(reactTag);
-        invariant(view, `View with reactTag ${reactTag} does not exist`);
-        view.frame = layout;
+        this.addUIBlock((uiManager, viewRegistry) => {
+          const view = viewRegistry.get(reactTag);
+          invariant(view, `View with reactTag ${reactTag} does not exist`);
+          view.frame = layout;
+        });
       });
     }
 
@@ -376,15 +391,15 @@ module.exports = (async () => {
       }
     }
 
-    addUIBlock(block: ?Function) {
+    addUIBlock(block: ?UIBlock) {
       if (block == null || this.viewRegistry == null) {
         return;
       }
-      block.call(null, this, this.viewRegistry);
-      // this.pendingUIBlocks.push(block);
+      // block.call(null, this, this.viewRegistry);
+      this.pendingUIBlocks.push(block);
     }
 
-    prependUIBlock(block: ?Function) {
+    prependUIBlock(block: ?UIBlock) {
       if (!block) {
         return;
       }
@@ -676,6 +691,10 @@ module.exports = (async () => {
 
         this.addUIBlock((uiManager, viewRegistry) => {
           const subView = viewRegistry.get(tagToAdd);
+          invariant(
+            subView,
+            `Attempted to insert subview with tag ${tagToAdd} that does not exist`
+          );
           viewToManage.insertReactSubviewAtIndex(subView, indexToAdd);
         });
       }

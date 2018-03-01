@@ -4,5 +4,7 @@
  */
 
 export default {
-  matchMedia: typeof window.matchMedia === "function"
+  matchMedia: typeof window.matchMedia === "function",
+  performanceMeasure:
+    !!window.performance && typeof window.performance.measure === "function"
 };

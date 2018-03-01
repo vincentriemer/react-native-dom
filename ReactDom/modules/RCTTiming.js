@@ -16,7 +16,11 @@ type Timer = {
   repeats: boolean
 };
 
-const IDLE_CALLBACK_THRESHOLD = 3; // Minimum idle execution time of 1ms
+const IDLE_CALLBACK_THRESHOLD = 1; // Minimum idle execution time of 1ms
+
+function now() {
+  return window.performance ? performance.now() : Date.now();
+}
 
 @RCT_EXPORT_MODULE("RCTTiming")
 class RCTTiming {
@@ -39,7 +43,7 @@ class RCTTiming {
     jsSchedulingTime: number,
     repeats: boolean
   ) {
-    const currentTimeMillis = Date.now();
+    const currentTimeMillis = now();
     const currentDateNowTimeMillis = jsSchedulingTime + 1000 / 60;
     const adjustedDuration = Math.max(
       0.0,
@@ -78,7 +82,7 @@ class RCTTiming {
   async frame() {
     const toRemove = [];
     const timers = [];
-    const time = Date.now();
+    const time = now();
 
     for (const timer in this.timers) {
       const t = this.timers[timer];
@@ -107,8 +111,8 @@ class RCTTiming {
     if (!this.sendIdleEvents) {
       return;
     }
-    const now = window.performance ? performance.now() : Date.now();
-    const frameElapsed = now - frameStart;
+    const frameNow = now();
+    const frameElapsed = frameNow - frameStart;
     if (this.targetFrameDuration - frameElapsed >= IDLE_CALLBACK_THRESHOLD) {
       this.bridge.enqueueJSCall("JSTimers", "callIdleCallbacks", [
         Date.now() - frameElapsed
