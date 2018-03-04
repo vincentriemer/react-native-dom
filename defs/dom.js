@@ -940,6 +940,11 @@ declare class Document extends Node {
   // And for when whatToShow is not provided, it is assumed to be SHOW_ALL
   createNodeIterator<RootNodeT: Node>(root: RootNodeT, whatToShow?: number, filter?: NodeFilterInterface): NodeIterator<RootNodeT, Node>;
   createTreeWalker<RootNodeT: Node>(root: RootNodeT, whatToShow?: number, filter?: NodeFilterInterface, entityReferenceExpansion?: boolean): TreeWalker<RootNodeT, Node>;
+
+  // Animation Timeline
+  timeline: {
+    play: (anim: any) => any
+  }
 }
 
 declare class DocumentFragment extends Node {
@@ -3283,3 +3288,5 @@ declare var status: string;
 declare var top: WindowProxy;
 declare function getSelection(): Selection | null;
 declare var customElements: CustomElementRegistry;
+
+// Custom Additions

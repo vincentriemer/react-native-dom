@@ -250,6 +250,7 @@ class RCTLayoutAnimationManager {
     config: LayoutAnimationConfig
   ) {
     const animations = [];
+    const cleanup = [];
     const registry: TransformAnimationConfigRegistry = {};
 
     const {
@@ -301,23 +302,15 @@ class RCTLayoutAnimationManager {
         const config = {
           duration: createKeyConfig.duration,
           delay: createKeyConfig.delay,
-          fill: "both"
+          fill: "none"
         };
 
         view.style.willChange = "opacity";
+        view.frame = layout;
 
-        animations.push(() => {
-          view.frame = layout;
-          view.opacity = 0;
-
-          // $FlowFixMe
-          const animation = view.animate(keyframes, config);
-
-          animation.onfinish = () => {
-            view.style.willChange = "";
-          };
-
-          return animation.finished;
+        animations.push(new KeyframeEffect(view, keyframes, config));
+        cleanup.push(() => {
+          view.style.willChange = "";
         });
       } else {
         // skip layout update animation
@@ -445,16 +438,11 @@ class RCTLayoutAnimationManager {
             const config = { duration: updateKeyConfig.duration, fill: "none" };
 
             childContainer.style.willChange = "transform";
-
-            animations.push(() => {
-              // $FlowFixMe
-              const animation = childContainer.animate(keyframes, config);
-
-              animation.onfinish = () => {
-                childContainer.style.willChange = "";
-              };
-
-              return animation.finished;
+            animations.push(
+              new KeyframeEffect(childContainer, keyframes, config)
+            );
+            cleanup.push(() => {
+              childContainer.style.willChange = "";
             });
           }
         }
@@ -481,34 +469,15 @@ class RCTLayoutAnimationManager {
         height: `${layout.height}px`
       };
 
-      keyframes[0] = {
-        ...keyframes[0],
-        ...layoutStyle
-      };
-
-      keyframes[keyframes.length - 1] = {
-        ...keyframes[keyframes.length - 1],
-        ...layoutStyle
-      };
-
       const config = { duration, fill: "none" };
 
       const prevWillChange = view.style.willChange;
       view.style.willChange = "transform";
-
-      ((prevWillChange) =>
-        animations.push(() => {
-          // $FlowFixMe
-          const animation = view.animate(keyframes, config);
-
-          view.frame = layout;
-
-          animation.onfinish = () => {
-            view.style.willChange = prevWillChange;
-          };
-
-          return animation.finished;
-        }))(prevWillChange);
+      view.frame = layout;
+      animations.push(new KeyframeEffect(view, keyframes, config));
+      cleanup.push(() => {
+        view.style.willChange = prevWillChange;
+      });
     });
 
     // Animate view removal
@@ -551,28 +520,17 @@ class RCTLayoutAnimationManager {
       };
 
       view.style.willChange = "opacity";
-
-      animations.push(
-        ((thisView) => {
-          return () => {
-            // $FlowFixMe
-            const animation = thisView.animate(keyframes, config);
-
-            animation.onfinish = () => {
-              if (thisView.reactSuperview) {
-                thisView.reactSuperview.removeReactSubview(view);
-              }
-              this.manager.viewRegistry.delete(reactTag);
-              thisView.purge();
-            };
-
-            return animation.finished;
-          };
-        })(view)
-      );
+      animations.push(new KeyframeEffect(view, keyframes, config));
+      cleanup.push(() => {
+        if (view.reactSuperview) {
+          view.reactSuperview.removeReactSubview(view);
+        }
+        this.manager.viewRegistry.delete(reactTag);
+        view.purge();
+      });
     });
 
-    return animations;
+    return [animations, cleanup];
   }
 
   constructTransformKeyframes(
@@ -621,14 +579,20 @@ class RCTLayoutAnimationManager {
     );
 
     const keyframes = this.constructKeyframes(pendingConfig);
-    const animations = this.createTransformAnimations(keyframes, pendingConfig);
+    const [animations, cleanup] = this.createTransformAnimations(
+      keyframes,
+      pendingConfig
+    );
 
-    this.manager.addUIBlock(() => {
-      Promise.all(animations.map((f) => f())).then(() => {
-        callback();
-      });
-      this.reset();
+    const groupEffect = new GroupEffect(animations);
+
+    const animation = document.timeline.play(groupEffect);
+    animation.finished.then(() => {
+      cleanup.forEach((c) => c());
+      callback();
     });
+
+    this.reset();
   }
 }
 
