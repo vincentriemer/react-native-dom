@@ -314,45 +314,49 @@ module.exports = (async () => {
 
     @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
     measure(reactTag: number, callbackId: ?number) {
-      let shadowView = this.shadowViewRegistry.get(reactTag);
-      let view = this.viewRegistry.get(reactTag);
+      return new Promise((resolve, reject) => {
+        this.addUIBlock(() => {
+          let shadowView = this.shadowViewRegistry.get(reactTag);
+          let view = this.viewRegistry.get(reactTag);
 
-      if (!shadowView || !shadowView.measurement) {
-        return;
-      }
+          if (!shadowView || !shadowView.measurement) {
+            return;
+          }
 
-      const { globalX, globalY } = shadowView.measureGlobal();
+          const { globalX, globalY } = shadowView.measureGlobal();
 
-      invariant(
-        shadowView.previousLayout,
-        "Shadow view has no previous layout"
-      );
-      let { left, top, width, height } = shadowView.previousLayout;
+          invariant(
+            shadowView.previousLayout,
+            "Shadow view has no previous layout"
+          );
+          let { left, top, width, height } = shadowView.previousLayout;
 
-      if (callbackId != null) {
-        this.bridge.callbackFromId(callbackId)(
-          left,
-          top,
-          width,
-          height,
-          globalX,
-          globalY
-        );
-      }
-
-      return {
-        left,
-        top,
-        width,
-        height,
-        globalX,
-        globalY
-      };
+          if (callbackId != null) {
+            this.bridge.callbackFromId(callbackId)(
+              left,
+              top,
+              width,
+              height,
+              globalX,
+              globalY
+            );
+          } else {
+            resolve({
+              left,
+              top,
+              width,
+              height,
+              globalX,
+              globalY
+            });
+          }
+        });
+      });
     }
 
     @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-    measureInWindow(reactTag: number, callbackId: number) {
-      const result = this.measure(reactTag);
+    async measureInWindow(reactTag: number, callbackId: number) {
+      const result = await this.measure(reactTag);
       invariant(result, `No measurement available for view ${reactTag}`);
       const { globalX, globalY, width, height } = result;
       this.bridge.callbackFromId(callbackId)(globalX, globalY, width, height);
@@ -545,7 +549,7 @@ module.exports = (async () => {
     }
 
     @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-    findSubviewIn(
+    async findSubviewIn(
       reactTag: number,
       atPoint: [number, number],
       callbackId: number
@@ -559,7 +563,8 @@ module.exports = (async () => {
 
       if (!target || !(target instanceof UIView)) return;
 
-      const measurement = this.measure(target.reactTag);
+      const measurement = await this.measure(target.reactTag);
+
       invariant(
         measurement,
         `View with tag ${target.reactTag} has no measurement`

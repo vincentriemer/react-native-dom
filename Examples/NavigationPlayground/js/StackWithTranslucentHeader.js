@@ -8,8 +8,15 @@ import type {
 } from "react-navigation";
 
 import * as React from "react";
-import { Button, ScrollView, StatusBar } from "react-native";
-import { StackNavigator, SafeAreaView, withNavigation } from "react-navigation";
+import {
+  Button,
+  Dimensions,
+  Platform,
+  ScrollView,
+  StatusBar,
+  View
+} from "react-native";
+import { Header, StackNavigator } from "react-navigation";
 import SampleText from "./SampleText";
 
 type MyNavScreenProps = {
@@ -17,23 +24,11 @@ type MyNavScreenProps = {
   banner: React.Node
 };
 
-class MyBackButton extends React.Component<any, any> {
-  render() {
-    return <Button onPress={this._navigateBack} title="Custom Back" />;
-  }
-
-  _navigateBack = () => {
-    this.props.navigation.goBack(null);
-  };
-}
-
-const MyBackButtonWithNavigation = withNavigation(MyBackButton);
-
 class MyNavScreen extends React.Component<MyNavScreenProps> {
   render() {
     const { navigation, banner } = this.props;
     return (
-      <SafeAreaView>
+      <ScrollView style={{ flex: 1 }} {...this.getHeaderInset()}>
         <SampleText>{banner}</SampleText>
         <Button
           onPress={() => navigation.push("Profile", { name: "Jane" })}
@@ -51,8 +46,36 @@ class MyNavScreen extends React.Component<MyNavScreenProps> {
         <Button onPress={() => navigation.pop()} title="Pop" />
         <Button onPress={() => navigation.goBack(null)} title="Go back" />
         <StatusBar barStyle="default" />
-      </SafeAreaView>
+      </ScrollView>
     );
+  }
+
+  // Inset to compensate for navigation bar being transparent.
+  // And improved abstraction for this will be built in to react-navigation
+  // at some point.
+
+  getHeaderInset() {
+    const NOTCH_HEIGHT = 0;
+
+    // $FlowIgnore: we will remove the HEIGHT static soon enough
+    const BASE_HEADER_HEIGHT = Header.HEIGHT;
+
+    const HEADER_HEIGHT =
+      Platform.OS === "ios"
+        ? BASE_HEADER_HEIGHT + NOTCH_HEIGHT
+        : BASE_HEADER_HEIGHT + 0;
+
+    return Platform.select({
+      ios: {
+        contentInset: { top: HEADER_HEIGHT },
+        contentOffset: { y: -HEADER_HEIGHT }
+      },
+      android: {
+        contentContainerStyle: {
+          paddingTop: HEADER_HEIGHT
+        }
+      }
+    });
   }
 }
 
@@ -105,8 +128,7 @@ type MyPhotosScreenProps = {
 };
 class MyPhotosScreen extends React.Component<MyPhotosScreenProps> {
   static navigationOptions = {
-    title: "Photos",
-    headerLeft: <MyBackButtonWithNavigation />
+    title: "Photos"
   };
   _s0: NavigationEventSubscription;
   _s1: NavigationEventSubscription;
@@ -178,18 +200,32 @@ MyProfileScreen.navigationOptions = (props) => {
   };
 };
 
-const SimpleStack = StackNavigator({
-  Home: {
-    screen: MyHomeScreen
+const StackWithTranslucentHeader = StackNavigator(
+  {
+    Home: {
+      screen: MyHomeScreen
+    },
+    Profile: {
+      path: "people/:name",
+      screen: MyProfileScreen
+    },
+    Photos: {
+      path: "photos/:name",
+      screen: MyPhotosScreen
+    }
   },
-  Profile: {
-    path: "people/:name",
-    screen: MyProfileScreen
-  },
-  Photos: {
-    path: "photos/:name",
-    screen: MyPhotosScreen
+  {
+    headerTransitionPreset: "uikit",
+    navigationOptions: {
+      headerTransparent: true,
+      headerBackground: Platform.select({
+        // ios: <BlurView style={{ flex: 1 }} intensity={98} />,
+        android: (
+          <View style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.7)" }} />
+        )
+      })
+    }
   }
-});
+);
 
-export default SimpleStack;
+export default StackWithTranslucentHeader;

@@ -372,7 +372,7 @@ class RCTScrollView extends RCTView {
     }, 0);
   }
 
-  handleScroll = (e: Event, userData: ?Object) => {
+  handleScroll = async (e: Event, userData: ?Object) => {
     this.coalescingKey++;
 
     const scrollLeft = this.scrollLeft;
@@ -397,7 +397,7 @@ class RCTScrollView extends RCTView {
       height: this.scrollHeight
     };
 
-    const contentFrame = this.manager.measure(this.reactTag);
+    const contentFrame = await this.manager.measure(this.reactTag);
 
     const args = [
       this.reactTag,

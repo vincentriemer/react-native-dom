@@ -8,6 +8,7 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
+  StatusBar,
   Text,
   TouchableOpacity,
   View
@@ -15,20 +16,23 @@ import {
 import {
   createNavigator,
   createNavigationContainer,
-  TabRouter,
-  addNavigationHelpers
+  SafeAreaView,
+  TabRouter
 } from "react-navigation";
 import SampleText from "./SampleText";
 
 const MyNavScreen = ({ navigation, banner }) => (
   <ScrollView>
-    <SampleText>{banner}</SampleText>
-    <Button
-      onPress={() => {
-        navigation.goBack(null);
-      }}
-      title="Go back"
-    />
+    <SafeAreaView forceInset={{ horizontal: "always" }}>
+      <SampleText>{banner}</SampleText>
+      <Button
+        onPress={() => {
+          navigation.goBack(null);
+        }}
+        title="Go back"
+      />
+    </SafeAreaView>
+    <StatusBar barStyle="default" />
   </ScrollView>
 );
 
@@ -47,7 +51,7 @@ const MySettingsScreen = ({ navigation }) => (
 const CustomTabBar = ({ navigation }) => {
   const { routes } = navigation.state;
   return (
-    <View style={styles.tabContainer}>
+    <SafeAreaView style={styles.tabContainer}>
       {routes.map((route) => (
         <TouchableOpacity
           onPress={() => navigation.navigate(route.routeName)}
@@ -57,23 +61,19 @@ const CustomTabBar = ({ navigation }) => {
           <Text>{route.routeName}</Text>
         </TouchableOpacity>
       ))}
-    </View>
+    </SafeAreaView>
   );
 };
 
-const CustomTabView = ({ router, navigation }) => {
+const CustomTabView = ({ descriptors, navigation }) => {
   const { routes, index } = navigation.state;
-  const ActiveScreen = router.getComponentForRouteName(routes[index].routeName);
+  const descriptor = descriptors[routes[index].key];
+  const ActiveScreen = descriptor.getComponent();
   return (
-    <View style={styles.container}>
+    <SafeAreaView forceInset={{ top: "always" }}>
       <CustomTabBar navigation={navigation} />
-      <ActiveScreen
-        navigation={addNavigationHelpers({
-          ...navigation,
-          state: routes[index]
-        })}
-      />
-    </View>
+      <ActiveScreen navigation={descriptor.navigation} />
+    </SafeAreaView>
   );
 };
 
@@ -99,13 +99,10 @@ const CustomTabRouter = TabRouter(
 );
 
 const CustomTabs = createNavigationContainer(
-  createNavigator(CustomTabRouter)(CustomTabView)
+  createNavigator(CustomTabView, CustomTabRouter, {})
 );
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: Platform.OS === "ios" ? 20 : 0
-  },
   tabContainer: {
     flexDirection: "row",
     height: 48
