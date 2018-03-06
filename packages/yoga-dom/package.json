@@ -1,7 +1,7 @@
 {
   "name": "yoga-dom",
   "description": "WASM bindings for Yoga Layout",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "license": "MIT",
   "author": "Vincent Riemer",
   "main": "dist/Yoga.cjs.js",
@@ -25,6 +25,7 @@
     "rollup": "^0.53.2",
     "rollup-plugin-commonjs": "^8.2.6",
     "rollup-plugin-filesize": "^1.5.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-uglify": "^2.0.1",
     "uglify-es": "^3.3.4"
   }

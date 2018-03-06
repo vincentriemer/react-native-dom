@@ -22,5 +22,4 @@ docker run --rm -v $(pwd):$(pwd) -w $(pwd) -u emscripten -t trzeci/emscripten:sd
   -s ALLOW_MEMORY_GROWTH=1 \
   -s MODULARIZE=1 \
   -s "DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=['memcpy','memset','malloc','free','strlen']" \
-  -s "SHELL_FILE=\"$(pwd)/bindings/shell.js\"" \
   -o build/$OUTPUT_FILENAME
