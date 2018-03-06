@@ -20,7 +20,7 @@ var config = {
     return getRoots();
   },
   getBlacklistRE() {
-    return blacklist([]);
+    return blacklist([/react-native\/local-cli\/core\/__fixtures__.*/]);
   },
   getAssetExts() {
     return [];

@@ -42,13 +42,13 @@ module.exports = (async () => {
       // super.paddingBottom = insets.bottom;
     }
 
-    set padding(v: any) {}
-    set paddingLeft(v: any) {}
-    set paddingRight(v: any) {}
-    set paddingTop(v: any) {}
-    set paddingBottom(v: any) {}
-    set paddingHorizontal(v: any) {}
-    set paddingVertical(v: any) {}
+    // set padding(v: any) {}
+    // set paddingLeft(v: any) {}
+    // set paddingRight(v: any) {}
+    // set paddingTop(v: any) {}
+    // set paddingBottom(v: any) {}
+    // set paddingHorizontal(v: any) {}
+    // set paddingVertical(v: any) {}
   }
 
   return RCTSafeAreaShadowView;
