@@ -45,10 +45,7 @@ if (Platform.OS === "android") {
   var RCTTextField = requireNativeComponent("RCTTextField", null);
 } else if (Platform.OS === "dom") {
   var RCTTextInput = requireNativeComponent("RCTTextInput", null);
-  var RCTMultilineTextInput = requireNativeComponent(
-    "RCTMultilineTextInput",
-    null
-  );
+  var RCTMultilineTextInput = require("UnimplementedView");
 }
 
 type Event = Object;
@@ -413,8 +410,8 @@ const TextInput = createReactClass({
      */
     secureTextEntry: PropTypes.bool,
     /**
-    * The highlight and cursor color of the text input.
-    */
+     * The highlight and cursor color of the text input.
+     */
     selectionColor: ColorPropType,
     /**
      * An instance of `DocumentSelectionState`, this is some state that is responsible for
@@ -573,7 +570,7 @@ const TextInput = createReactClass({
     }
     this._focusSubscription = this.context.focusEmitter.addListener(
       "focus",
-      el => {
+      (el) => {
         if (this === el) {
           this.requestAnimationFrame(this.focus);
         } else if (this.isFocused()) {
@@ -677,11 +674,7 @@ const TextInput = createReactClass({
         "Cannot specify both value and children."
       );
       if (childCount >= 1) {
-        children = (
-          <Text style={props.style}>
-            {children}
-          </Text>
-        );
+        children = <Text style={props.style}>{children}</Text>;
       }
       if (props.inputView) {
         children = [children, props.inputView];
@@ -737,11 +730,7 @@ const TextInput = createReactClass({
       "Cannot specify both value and children."
     );
     if (childCount > 1) {
-      children = (
-        <Text>
-          {children}
-        </Text>
-      );
+      children = <Text>{children}</Text>;
     }
 
     if (props.selection && props.selection.end == null) {
