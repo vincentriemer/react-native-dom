@@ -36,8 +36,8 @@ module.exports = (async () => {
     setImageSources(view: RCTImageView, value: ImageSourceJson[]) {
       const imageSources = value.map((srcJson: ImageSourceJson) => {
         const size = {
-          width: value.width ? value.width : 0,
-          height: value.height ? value.height : 0
+          width: srcJson.width != null ? srcJson.width : 0,
+          height: srcJson.height != null ? srcJson.height : 0
         };
 
         const imageSource = new RCTImageSource(
@@ -45,7 +45,7 @@ module.exports = (async () => {
           // $FlowFixMe
           size,
           // $FlowFixMe
-          value.scale ? value.scale : 1
+          srcJson.scale ? srcJson.scale : 1
         );
 
         if (srcJson.__packager_asset != null) {

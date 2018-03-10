@@ -153,13 +153,14 @@ class RCTRootView extends UIView {
 
     await this.timing.idle(frameStart);
 
-    if (
-      this.timing.shouldContinue() ||
-      this.bridge.shouldContinue() ||
-      this.uiManager.shouldContinue()
-    ) {
-      this.requestTick();
-    }
+    // TODO: Re-enable conditional render loop
+    // if (
+    //   this.timing.shouldContinue() ||
+    //   this.bridge.shouldContinue() ||
+    //   this.uiManager.shouldContinue()
+    // ) {
+    this.requestTick();
+    // }
   }
 
   async render() {

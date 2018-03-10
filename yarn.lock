@@ -7426,6 +7426,6 @@ yeoman-welcome@^1.0.0:
   dependencies:
     chalk "^1.0.0"
 
-yoga-dom@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/yoga-dom/-/yoga-dom-0.0.3.tgz#c5dfe4922f8f82747ba68d217d7b20f3cedfd69b"
+yoga-dom@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/yoga-dom/-/yoga-dom-0.0.5.tgz#491bf183e0b02d32889702349cbaa6bd8046db44"

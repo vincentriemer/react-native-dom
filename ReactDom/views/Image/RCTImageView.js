@@ -70,6 +70,8 @@ class RCTImageView extends RCTView {
     this.childShadowRoot.appendChild(this.svgFilter);
     this.filterId = idCounter;
     idCounter++;
+
+    this.resizeMode = "stretch";
   }
 
   updateFilter() {
@@ -91,7 +93,25 @@ class RCTImageView extends RCTView {
   }
 
   set resizeMode(value: string) {
-    this.imageElement.style.objectFit = value;
+    let outputValue: string = "";
+    switch (value) {
+      case "contain":
+      case "cover":
+        outputValue = value;
+        break;
+      case "center":
+        outputValue = "scale-down";
+        break;
+      case "stretch":
+        outputValue = "fill";
+        break;
+      case "none":
+        outputValue = `none`;
+        break;
+    }
+    Object.assign(this.imageElement.style, {
+      objectFit: outputValue
+    });
   }
 
   set blurRadius(value: ?number) {
