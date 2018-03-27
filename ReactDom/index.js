@@ -11,8 +11,41 @@ if (!global.process.env.NODE_ENV) {
 
 import RCTRootView from "RCTRootView";
 import bundleFromRoot from "BundleFromRoot";
-
 import type { NativeModuleImports } from "RCTModule";
+
+// Export native modules to provide ability for others to provide their own modules
+import {
+  RCT_EXPORT_MODULE,
+  RCT_EXPORT_METHOD,
+  RCTFunctionTypeNormal,
+  RCTFunctionTypePromise,
+  RCTFunctionTypeSync
+} from "RCTBridge";
+import UIView from "UIView";
+import RCTView from "RCTView";
+import RCTViewManager from "RCTViewManager";
+import RCTEventEmitter from "RCTNativeEventEmitter";
+
+export {
+  RCT_EXPORT_MODULE,
+  RCT_EXPORT_METHOD,
+  RCTFunctionTypeNormal,
+  RCTFunctionTypePromise,
+  RCTFunctionTypeSync,
+  RCTView,
+  RCTViewManager,
+  RCTEventEmitter,
+  UIView
+};
+
+// Export type definitions useful for native module development
+import RCTEventDispatcher from "RCTEventDispatcher";
+import RCTBridge from "RCTBridge";
+import _RCTUIManager from "RCTUIManager";
+
+type RCTUIManager = $await<typeof _RCTUIManager>;
+
+export type { RCTUIManager, RCTEventDispatcher, RCTBridge };
 
 // Register Built-in Native Modules
 const builtInNativeModules: any[] = [
@@ -38,7 +71,8 @@ const builtInNativeModules: any[] = [
   require("RCTAppState"),
   require("RCTSafeAreaViewManager"),
   require("RCTSwitchManager"),
-  require("RCTStatusBarManager")
+  require("RCTStatusBarManager"),
+  require("RCTDeviceEventManager")
 ];
 
 // Development Specific Native Modules
