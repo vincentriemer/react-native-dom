@@ -90,6 +90,7 @@ class RCTRootView extends UIView {
     this.updateHostStyle({
       WebkitTapHighlightColor: "transparent",
       userSelect: "none",
+      overflow: "hidden",
       position: "fixed"
     });
 
@@ -125,7 +126,7 @@ class RCTRootView extends UIView {
       const bundleURL = new URL(this.bundleLocation);
       console.warn("HotReload on " + this.bundleLocation);
       this.bridge.enqueueJSCall("HMRClient", "enable", [
-        "web",
+        "dom",
         bundleURL.pathname.toString().substr(1),
         bundleURL.hostname,
         bundleURL.port
@@ -153,14 +154,13 @@ class RCTRootView extends UIView {
 
     await this.timing.idle(frameStart);
 
-    // TODO: Re-enable conditional render loop
-    // if (
-    //   this.timing.shouldContinue() ||
-    //   this.bridge.shouldContinue() ||
-    //   this.uiManager.shouldContinue()
-    // ) {
-    this.requestTick();
-    // }
+    if (
+      this.timing.shouldContinue() ||
+      this.bridge.shouldContinue() ||
+      this.uiManager.shouldContinue()
+    ) {
+      this.requestTick();
+    }
   }
 
   async render() {
