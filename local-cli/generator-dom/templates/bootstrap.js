@@ -40,7 +40,7 @@ polyfillPromises.push(waitForWebComponentsPolyfill());
 // Web Animations Polyfill
 polyfillPromises.push(
   addScript(
-    "https://cdnjs.cloudflare.com/ajax/libs/web-animations/2.2.5/web-animations.min.js"
+    "https://cdnjs.cloudflare.com/ajax/libs/web-animations/2.3.1/web-animations-next.min.js"
   )
 );
 
