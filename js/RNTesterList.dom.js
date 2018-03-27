@@ -53,10 +53,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   //   key: "ListViewGridLayoutExample",
   //   module: require("./ListViewGridLayoutExample")
   // },
-  // {
-  //   key: "ListViewPagingExample",
-  //   module: require("./ListViewPagingExample")
-  // },
+  {
+    key: "ListViewPagingExample",
+    module: require("./ListViewPagingExample")
+  },
   // {
   //   key: "MaskedViewExample",
   //   module: require("./MaskedViewExample")
