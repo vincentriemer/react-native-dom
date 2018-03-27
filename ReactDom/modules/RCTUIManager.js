@@ -364,14 +364,12 @@ module.exports = (async () => {
 
     @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
     setJSResponder(reactTag: number) {
-      this.addUIBlock(() => {
-        this.jsResponder = this.viewRegistry.get(reactTag);
-        if (!this.jsResponder) {
-          console.error(
-            `Invalid view set to be the JS responder - tag ${reactTag}`
-          );
-        }
-      });
+      this.jsResponder = this.viewRegistry.get(reactTag);
+      if (!this.jsResponder) {
+        console.error(
+          `Invalid view set to be the JS responder - tag ${reactTag}`
+        );
+      }
     }
 
     @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)

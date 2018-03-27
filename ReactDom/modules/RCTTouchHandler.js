@@ -39,6 +39,16 @@ const TOUCH_LISTENER_OPTIONS = detectIt.passiveEvents
   ? { passive: true, capture: false }
   : false;
 
+function getFirstParentUIView(target: any) {
+  while (target.parentElement) {
+    if (target instanceof UIView || target instanceof UIChildContainerView) {
+      return target;
+    }
+    target = target.parentElement;
+  }
+  return target;
+}
+
 class RCTTouchHandler {
   eventDispatcher: RCTEventDispatcher;
 
@@ -65,13 +75,7 @@ class RCTTouchHandler {
     rawEvent: TouchEvent | MouseEvent
   ): ?Array<UITouch> {
     if (rawEvent instanceof MouseEvent) {
-      // rawEvent.preventDefault();
-      const target = rawEvent.target;
-
-      invariant(
-        target instanceof UIView || target instanceof UIChildContainerView,
-        "Cannot normalize interaction event on object which does not inherit from UIView"
-      );
+      const target: UIView = getFirstParentUIView(rawEvent.target);
 
       if ("which" in rawEvent && rawEvent.which === 3) {
         return null;
@@ -96,12 +100,7 @@ class RCTTouchHandler {
 
       for (let i = 0; i < rawTouches.length; i++) {
         const rawTouch = rawTouches[i];
-        const target = rawTouch.target;
-
-        invariant(
-          target instanceof UIView || target instanceof UIChildContainerView,
-          "Cannot normalize interaction event on object which does not inherit from UIView"
-        );
+        const target: UIView = getFirstParentUIView(rawTouch.target);
 
         const rect = target.getBoundingClientRect();
 
@@ -293,17 +292,24 @@ class RCTTouchHandler {
 
     const view = this.view;
     if (view) {
-      view.addEventListener(
+      window.addEventListener(
         "touchend",
         this.nativeTouchEnded,
         TOUCH_LISTENER_OPTIONS
       );
-      view.addEventListener(
+      window.addEventListener(
         "touchmove",
         this.nativeTouchMoved,
         TOUCH_LISTENER_OPTIONS
       );
+      window.addEventListener(
+        "touchcancel",
+        this.nativeTouchCanceled,
+        TOUCH_LISTENER_OPTIONS
+      );
     }
+
+    return true;
   };
 
   nativeTouchMoved = (event: TouchEvent) => {
@@ -311,6 +317,8 @@ class RCTTouchHandler {
     if (!touches) return;
 
     this.touchesMoved(touches);
+
+    return true;
   };
 
   nativeTouchEnded = (event: TouchEvent) => {
@@ -321,17 +329,42 @@ class RCTTouchHandler {
 
     const view = this.view;
     if (view) {
-      view.removeEventListener(
-        "touchend",
-        this.nativeTouchEnded,
-        TOUCH_LISTENER_OPTIONS
-      );
-      view.removeEventListener(
-        "touchmove",
-        this.nativeTouchMoved,
-        TOUCH_LISTENER_OPTIONS
-      );
+      this.removeTouchEvents(view);
     }
+
+    return true;
+  };
+
+  removeTouchEvents(view: UIView) {
+    window.removeEventListener(
+      "touchend",
+      this.nativeTouchEnded,
+      TOUCH_LISTENER_OPTIONS
+    );
+    window.removeEventListener(
+      "touchmove",
+      this.nativeTouchMoved,
+      TOUCH_LISTENER_OPTIONS
+    );
+    window.removeEventListener(
+      "touchcancel",
+      this.nativeTouchCanceled,
+      TOUCH_LISTENER_OPTIONS
+    );
+  }
+
+  nativeTouchCanceled = (event: TouchEvent) => {
+    const touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
+    if (!touches) return;
+
+    this.touchesCanceled(touches);
+
+    const view = this.view;
+    if (view) {
+      this.removeTouchEvents(view);
+    }
+
+    return true;
   };
 
   touchesBegan(touches: Array<UITouch>) {
@@ -345,6 +378,11 @@ class RCTTouchHandler {
 
   touchesEnded(touches: Array<UITouch>) {
     this.updateAndDispatchTouches(touches, "touchEnd");
+    this.recordRemovedTouches(touches);
+  }
+
+  touchesCanceled(touches: Array<UITouch>) {
+    this.updateAndDispatchTouches(touches, "touchCancel");
     this.recordRemovedTouches(touches);
   }
 }
