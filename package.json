@@ -28,8 +28,8 @@
   },
   "files": ["lib", "Libraries", "local-cli/index.js", "local-cli/runDom"],
   "peerDependencies": {
-    "react": "^16.2.0",
-    "react-native": "^0.52.0"
+    "react": "^16.3.0-alpha.1",
+    "react-native": "~0.54.0"
   },
   "scripts": {
     "prestart": "cd Examples/NavigationPlayground && yarn",
