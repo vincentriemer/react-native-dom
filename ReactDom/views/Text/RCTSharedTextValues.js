@@ -17,7 +17,7 @@ export const defaults = {
     sans-serif`,
   fontSize: "17px",
   lineHeight: "1.2",
-  fontStyle: "normal",
-  fontWeight: "normal",
+  fontStyle: "inherit",
+  fontWeight: "inherit",
   letterSpacing: "0px"
 };
