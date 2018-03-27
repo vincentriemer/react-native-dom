@@ -62,6 +62,7 @@ class RCTAppState extends RCTEventEmitter {
   }
 
   didUpdateVisibility() {
+    this.bridge.uiManager.requestTick();
     this.sendEventWithName("appStateDidChange", {
       app_state: this.currentBackgroundState()
     });
