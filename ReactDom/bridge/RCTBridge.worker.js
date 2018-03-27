@@ -101,10 +101,12 @@ onmessage = ({ data }) => {
     }
     case "callFunctionReturnFlushedQueue": {
       try {
-        const flushedQueue = __fbBatchedBridge.callFunctionReturnFlushedQueue(
-          ...payload
-        );
-        sendMessage("flushedQueue", flushedQueue);
+        if (self.__fbBatchedBridge) {
+          const flushedQueue = __fbBatchedBridge.callFunctionReturnFlushedQueue(
+            ...payload
+          );
+          sendMessage("flushedQueue", flushedQueue);
+        }
       } catch (e) {
         console.warn(e);
         console.warn("topic", topic);
@@ -114,10 +116,12 @@ onmessage = ({ data }) => {
     }
     case "invokeCallbackAndReturnFlushedQueue": {
       try {
-        const flushedQueue = __fbBatchedBridge.invokeCallbackAndReturnFlushedQueue(
-          ...payload
-        );
-        sendMessage("flushedQueue", flushedQueue);
+        if (self.__fbBatchedBridge) {
+          const flushedQueue = __fbBatchedBridge.invokeCallbackAndReturnFlushedQueue(
+            ...payload
+          );
+          sendMessage("flushedQueue", flushedQueue);
+        }
       } catch (e) {
         console.warn(e);
         console.warn("topic", topic);
@@ -127,8 +131,10 @@ onmessage = ({ data }) => {
     }
     case "flush": {
       try {
-        const flushedQueue = __fbBatchedBridge.flushedQueue.apply(null);
-        sendMessage("flushedQueue", flushedQueue);
+        if (self.__fbBatchedBridge) {
+          const flushedQueue = __fbBatchedBridge.flushedQueue.apply(null);
+          sendMessage("flushedQueue", flushedQueue);
+        }
       } catch (e) {
         console.warn(e);
         console.warn("topic", topic);
