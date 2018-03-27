@@ -29,7 +29,7 @@ var config = {
     return ["dom"];
   },
   getProvidesModuleNodeModules() {
-    return ["react-native"];
+    return ["react-native", "react-native-dom"];
   },
   getPolyfills: () =>
     [].concat(defaultPolyfills(), [

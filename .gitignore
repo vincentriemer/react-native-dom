@@ -4,3 +4,5 @@ lib
 stats.html
 yarn-error.log
 flow-coverage
+.yarnrc
+yalc.lock
