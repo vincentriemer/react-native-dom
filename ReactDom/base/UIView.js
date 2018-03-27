@@ -55,6 +55,12 @@ class UIView extends HTMLElement implements RCTComponent {
   _animatedTransform: string;
   _backgroundColor: string;
   _disabled: boolean = false;
+  _pointerEvents: string = "auto";
+
+  _shadowColor: [number, number, number, number] = [1, 0, 0, 0];
+  _shadowOffset: { width: number, height: number } = { width: 0, height: 0 };
+  _shadowOpacity: number = 0;
+  _shadowRadius: number = 0;
 
   childContainer: UIChildContainerView;
   borderView: ?UIBorderView;
@@ -226,6 +232,7 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   set pointerEvents(value: string) {
+    this._pointerEvents = value;
     switch (value) {
       case "box-none": {
         this.updateHostStyle("pointerEvents", "none");
@@ -338,6 +345,41 @@ class UIView extends HTMLElement implements RCTComponent {
 
   set backfaceVisibility(value: string) {
     this.updateHostStyle("backfaceVisibility", value);
+  }
+
+  // SHADOW PROPS ================================================
+
+  updateShadow() {
+    const [, r, g, b] = this._shadowColor;
+    const resolvedColor = `rgba(${r}, ${g}, ${b}, ${this._shadowOpacity})`;
+
+    this.updateHostStyle(
+      "boxShadow",
+      `${this._shadowOffset.width}px ${this._shadowOffset.height}px ${
+        this._shadowRadius
+      }px ${resolvedColor}`
+    );
+  }
+
+  set shadowColor(value: number) {
+    const color = ColorArrayFromHexARGB(value);
+    this._shadowColor = color;
+    this.updateShadow();
+  }
+
+  set shadowOffset(value: { width: number, height: number }) {
+    this._shadowOffset = value;
+    this.updateShadow();
+  }
+
+  set shadowOpacity(value: number) {
+    this._shadowOpacity = value;
+    this.updateShadow();
+  }
+
+  set shadowRadius(value: number) {
+    this._shadowRadius = value;
+    this.updateShadow();
   }
 
   insertReactSubviewAtIndex(subview: UIView, index: number) {

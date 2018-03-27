@@ -245,7 +245,11 @@ module.exports = (async function() {
         ...borderPropConfig,
         ["backfaceVisibility", "string"],
         ["overflow", "string"],
-        ["zIndex", "number"]
+        ["zIndex", "number"],
+        ["shadowColor", "color"],
+        ["shadowOffset", "object"],
+        ["shadowOpacity", "number"],
+        ["shadowRadius", "number"]
       ];
     }
 
