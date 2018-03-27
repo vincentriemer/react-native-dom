@@ -200,6 +200,25 @@ class RCTScrollView extends RCTView {
 
     this.updateHostStyle("contain", "strict");
 
+    if (!this.hasScrollParent()) {
+      this.updateHostStyle("overscrollBehavior", "contain");
+      this.addEventListener(
+        "touchstart",
+        () => {
+          const top = this.scrollTop;
+          const totalScroll = this.scrollHeight;
+          const currentScroll = top + this.offsetHeight;
+
+          if (top === 0) {
+            this.scrollTop = 1;
+          } else if (currentScroll === totalScroll) {
+            this.scrollTop = top - 1;
+          }
+        },
+        false
+      );
+    }
+
     this.isScrolling = false;
     this.scrollEventThrottle = 0;
 
@@ -213,6 +232,17 @@ class RCTScrollView extends RCTView {
     this.updateTransform();
 
     this.addEventListener("scroll", this.handleScroll, SCROLL_LISTENER_OPTIONS);
+  }
+
+  hasScrollParent() {
+    let currentView = this;
+    while (currentView.reactSuperview) {
+      if (currentView instanceof RCTScrollView) {
+        return true;
+      }
+      currentView = currentView.reactSuperView;
+    }
+    return false;
   }
 
   set scrollEnabled(value: ?boolean) {
@@ -237,7 +267,6 @@ class RCTScrollView extends RCTView {
   updateScrollBehavior() {
     const styleUpdate = {};
     if (this._overflow === "scroll" && this._scrollEnabled) {
-      this.pointerEvents = "auto";
       styleUpdate.msOverflowStyle = "-ms-autohiding-scrollbar";
       styleUpdate.webkitOverflowScrolling = "touch";
       styleUpdate.scrollBehavior = "smooth";
@@ -258,7 +287,6 @@ class RCTScrollView extends RCTView {
 
       styleUpdate.overflowX = "hidden";
       styleUpdate.overflowY = "hidden";
-      this.pointerEvents = "box-none";
     }
 
     this.updateHostStyle(styleUpdate);
@@ -345,8 +373,6 @@ class RCTScrollView extends RCTView {
       width: contentFrame.width,
       height: contentFrame.height
     };
-
-    this.correctScrollPosition();
 
     const args = [
       this.reactTag,
@@ -440,36 +466,6 @@ class RCTScrollView extends RCTView {
       ...eventArgs
     );
     this.bridge.eventDispatcher.sendEvent(momentumScrollEvent);
-
-    this.correctScrollPosition();
-  }
-
-  correctScrollPosition() {
-    const scrollNudge = 1;
-
-    if (SHOULD_CORRECT_SCROLL) {
-      if (!this._horizontal) {
-        const endTopPosition = this.scrollTop + this.contentSize.height;
-        if (this.scrollTop <= 0 && this.scrollTop >= -0.1) {
-          this.scrollTop = scrollNudge;
-        } else if (
-          endTopPosition >= this.scrollHeight &&
-          endTopPosition <= this.scrollHeight + 0.1
-        ) {
-          this.scrollTop = this.scrollTop - scrollNudge;
-        }
-      } else {
-        const endLeftPosition = this.scrollLeft + this.contentSize.width;
-        if (this.scrollLeft <= 0 && this.scrollLeft >= -0.1) {
-          this.scrollLeft = scrollNudge;
-        } else if (
-          endLeftPosition >= this.scrollWidth &&
-          endLeftPosition <= this.scrollWidth + 0.1
-        ) {
-          this.scrollLeft = this.scrollLeft - scrollNudge;
-        }
-      }
-    }
   }
 
   handleScrollTick(...eventArgs: ScrollEventArgs) {
