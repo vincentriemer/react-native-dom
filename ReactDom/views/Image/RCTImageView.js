@@ -15,8 +15,8 @@ const tintColorSVG = (color: string, id: number) => {
     <svg>
       <defs>
         <filter id="tint-${id}">
-          <feFlood flood-color="${color}"/>
-          <feComposite in2="SourceAlpha" operator="atop"/>
+          <feFlood flood-color="${color}"></feFlood>
+          <feComposite in2="SourceAlpha" operator="atop"></feComposite>
         </filter>
       </defs>
     </svg>`;
@@ -38,6 +38,7 @@ class RCTImageView extends RCTView {
   imageElement: HTMLImageElement;
   imageContainer: HTMLDivElement;
   childShadowRoot: ShadowRoot;
+  imgStyle: HTMLStyleElement;
 
   onLoadStart: boolean = false;
   onLoad: boolean = false;
@@ -57,21 +58,24 @@ class RCTImageView extends RCTView {
 
     this._imageSources = [];
 
-    this.childShadowRoot = this.childContainer.attachShadow({ mode: "open" });
-    this.imageElement = document.createElement("img");
-    Object.assign(this.imageElement.style, {
-      pointerEvents: "none"
-    });
-    this.childShadowRoot.appendChild(this.imageElement);
-    this.childShadowRoot.appendChild(document.createElement("slot"));
+    // TODO: Using a shadow root breaks the tintColor functionality on safari,
+    //       figure out why and re-enable
+    // this.childShadowRoot = this.childContainer.attachShadow({ mode: "open" });
 
     this.svgFilter = document.createElement("div");
     this.svgFilter.style.height = "0";
-    this.childShadowRoot.appendChild(this.svgFilter);
+    this.childContainer.appendChild(this.svgFilter);
     this.filterId = idCounter;
     idCounter++;
 
+    this.imageElement = document.createElement("img");
+    this.childContainer.appendChild(this.imageElement);
+
     this.resizeMode = "stretch";
+
+    this.imageElement.addEventListener("load", () => {
+      this.forceRasterization();
+    });
   }
 
   updateFilter() {
@@ -82,9 +86,21 @@ class RCTImageView extends RCTView {
     if (this._blurRadius) {
       filterStrings.push(`blur(${this._blurRadius}px)`);
     }
+
     // $FlowFixMe
     this.imageElement.style.webkitFilter = filterStrings.join(" ");
     this.imageElement.style.filter = filterStrings.join(" ");
+  }
+
+  forceRasterization() {
+    if (this._tintColor != null) {
+      requestAnimationFrame(() => {
+        this.imageElement.style.willChange = "transform";
+        requestAnimationFrame(() => {
+          this.imageElement.style.willChange = "";
+        });
+      });
+    }
   }
 
   set imageSources(value: RCTImageSource[]) {
@@ -127,7 +143,6 @@ class RCTImageView extends RCTView {
     } else {
       this._tintColor = value;
     }
-    this.svgFilter.style.color = this._tintColor || "";
     this.svgFilter.innerHTML = this._tintColor
       ? tintColorSVG(this._tintColor, this.filterId)
       : "";
