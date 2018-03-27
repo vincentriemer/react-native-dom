@@ -18,12 +18,9 @@ if (style.styleSheet) {
 document.head.appendChild(style);
 
 function init(bundle, parent, enableHotReload) {
-  const dom = new RNDomInstance(
-    bundle,
-    "NavigationPlayground",
-    parent,
+  const dom = new RNDomInstance(bundle, "NavigationPlayground", parent, {
     enableHotReload
-  );
+  });
 
   dom.start();
   return dom;

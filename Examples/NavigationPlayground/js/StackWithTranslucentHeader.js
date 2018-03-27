@@ -9,15 +9,16 @@ import type {
 
 import * as React from "react";
 import {
-  Button,
   Dimensions,
   Platform,
   ScrollView,
   StatusBar,
   View
 } from "react-native";
-import { Header, StackNavigator } from "react-navigation";
+import { Header, createStackNavigator } from "react-navigation";
 import SampleText from "./SampleText";
+import { Button } from "./commonComponents/ButtonWithMargin";
+import { HeaderButtons } from "./commonComponents/HeaderButtons";
 
 type MyNavScreenProps = {
   navigation: NavigationScreenProp<*>,
@@ -190,17 +191,19 @@ MyProfileScreen.navigationOptions = (props) => {
     // Render a button on the right side of the header.
     // When pressed switches the screen to edit mode.
     headerRight: (
-      <Button
-        title={params.mode === "edit" ? "Done" : "Edit"}
-        onPress={() =>
-          setParams({ mode: params.mode === "edit" ? "" : "edit" })
-        }
-      />
+      <HeaderButtons>
+        <HeaderButtons.Item
+          title={params.mode === "edit" ? "Done" : "Edit"}
+          onPress={() =>
+            setParams({ mode: params.mode === "edit" ? "" : "edit" })
+          }
+        />
+      </HeaderButtons>
     )
   };
 };
 
-const StackWithTranslucentHeader = StackNavigator(
+const StackWithTranslucentHeader = createStackNavigator(
   {
     Home: {
       screen: MyHomeScreen
@@ -221,6 +224,9 @@ const StackWithTranslucentHeader = StackNavigator(
       headerBackground: Platform.select({
         // ios: <BlurView style={{ flex: 1 }} intensity={98} />,
         android: (
+          <View style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.7)" }} />
+        ),
+        dom: (
           <View style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.7)" }} />
         )
       })

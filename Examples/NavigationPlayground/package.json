@@ -10,13 +10,14 @@
     "build:rntester":
       "yarn run build:rntester:client && yarn run build:rntester:bundle && cp ./dom/index.html ./dist/index.html",
     "build:rntester:client":
-      "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./dom/client.js --bundle-output ./dist/client.bundle --platform dom --assets-dest ./dist --reset-cache",
+      "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./Examples/NavigationPlayground/dom/client.js --bundle-output ./dist/client.bundle --platform dom --assets-dest ./dist --reset-cache",
     "build:rntester:bundle":
-      "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./dom/index.js --bundle-output ./dist/index.bundle --platform dom --assets-dest ./dist --reset-cache"
+      "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./Examples/NavigationPlayground/dom/index.js --bundle-output ./dist/index.bundle --platform dom --assets-dest ./dist --reset-cache"
   },
   "dependencies": {
-    "react-navigation": "^1.4.0",
-    "react-native-vector-icons": "^4.4.2"
+    "react-navigation": "react-navigation/react-navigation",
+    "react-native-vector-icons": "^4.4.2",
+    "react-navigation-header-buttons": "^0.0.4"
   },
   "devDependencies": {
     "babel-jest": "^21.0.0",
