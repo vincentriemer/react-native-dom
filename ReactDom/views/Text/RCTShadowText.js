@@ -29,7 +29,10 @@ const TEXT_PX_PROPS = ["lineHeight"];
 
 const textMeasurementContainer = document.createElement("div");
 textMeasurementContainer.id = "text-measurement";
-// Object.assign(textMeasurementContainer, { contain: "strict" });
+Object.assign(textMeasurementContainer.style, {
+  visibility: "hidden",
+  pointerEvents: "none"
+});
 document.body && document.body.appendChild(textMeasurementContainer);
 
 module.exports = (async () => {

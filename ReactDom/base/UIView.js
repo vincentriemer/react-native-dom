@@ -91,7 +91,8 @@ class UIView extends HTMLElement implements RCTComponent {
         opacity: "0",
         touchAction: "manipulation",
         userSelect: "inherit",
-        isolation: "isolate"
+        isolation: "isolate",
+        overflow: "visible"
         // overflow: "hidden"
       })
     );
@@ -340,6 +341,7 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   set overflow(value: string) {
+    if (value === "scroll") value = "auto";
     this.updateHostStyle("overflow", value);
   }
 

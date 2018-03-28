@@ -147,6 +147,7 @@ class RCTImageView extends RCTView {
       ? tintColorSVG(this._tintColor, this.filterId)
       : "";
     this.updateFilter();
+    this.forceRasterization();
   }
 
   get imageScale(): number {
