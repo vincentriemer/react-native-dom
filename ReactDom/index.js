@@ -3,6 +3,10 @@
  * @flow
  */
 
+// Polyfills
+import "@webcomponents/webcomponentsjs/webcomponents-sd-ce.js";
+import "web-animations-js/web-animations-next.min";
+
 global.process = global.process || {};
 global.process.env = global.process.env || {};
 if (!global.process.env.NODE_ENV) {

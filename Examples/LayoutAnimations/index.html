@@ -139,10 +139,6 @@
 </head>
 
 <body>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/1.0.4/custom-elements-es5-adapter.js"></script>
-  <!--Web Components Polyfill-->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/1.0.1/webcomponents-loader.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/web-animations/2.3.1/web-animations-next.min.js"></script>
   <!--Bundle Paths-->
   <script>
     var clientBundlePath = "./client.bundle?platform=dom&dev=true";
@@ -161,15 +157,13 @@
 
   <!--App Initialization-->
   <script>
-    window.addEventListener('WebComponentsReady', function () {
-      addScript(clientBundlePath, function () {
-        // Initialize the React Native application
-        ReactDom.init(
-          rnBundlePath,
-          // Attach it to the body tag
-          document.body
-        );
-      });
+    addScript(clientBundlePath, function () {
+      // Initialize the React Native application
+      ReactDom.init(
+        rnBundlePath,
+        // Attach it to the body tag
+        document.body
+      );
     });
   </script>
 </body>
