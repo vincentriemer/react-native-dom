@@ -41,6 +41,60 @@ export class UIChildContainerView extends HTMLElement {
   }
 }
 
+export type HitSlop = {
+  top?: number,
+  bottom?: number,
+  left?: number,
+  right?: number
+};
+
+@CustomElement("ui-hit-slop-view")
+export class UIHitSlopView extends HTMLElement {
+  static defaultHitSlop: HitSlop = {
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0
+  };
+
+  viewOwner: UIView;
+
+  constructor(viewOwner: UIView, touchable: boolean) {
+    super();
+
+    this.viewOwner = viewOwner;
+    this.touchable = touchable;
+
+    Object.assign(
+      this.style,
+      prefixInlineStyles({
+        contain: "strict",
+        position: "absolute",
+        touchAction: "manipulation"
+      })
+    );
+  }
+
+  set slop(value: HitSlop) {
+    const resolvedValue = Object.entries({
+      ...UIHitSlopView.defaultHitSlop,
+      ...value
+    }).reduce(
+      (acc, cur: any) => ({
+        ...acc,
+        [cur[0]]: `${-1 * cur[1]}px`
+      }),
+      {}
+    );
+
+    Object.assign(this.style, resolvedValue);
+  }
+
+  set touchable(value: boolean) {
+    this.style.cursor = value ? "pointer" : "auto";
+  }
+}
+
 @CustomElement("ui-view")
 class UIView extends HTMLElement implements RCTComponent {
   _top: number = 0;
@@ -64,6 +118,7 @@ class UIView extends HTMLElement implements RCTComponent {
 
   childContainer: UIChildContainerView;
   borderView: ?UIBorderView;
+  hitSlopView: ?UIHitSlopView;
 
   _reactTag: number;
   reactSubviews: Array<UIView>;
@@ -328,6 +383,9 @@ class UIView extends HTMLElement implements RCTComponent {
 
   set touchable(value: boolean) {
     this._touchable = value;
+    if (this.hitSlopView) {
+      this.hitSlopView.touchable = value;
+    }
     this.updateCursor();
   }
 
@@ -382,6 +440,24 @@ class UIView extends HTMLElement implements RCTComponent {
   set shadowRadius(value: number) {
     this._shadowRadius = value;
     this.updateShadow();
+  }
+
+  // HITSLOP PROPS ================================================
+
+  set hitSlop(value?: HitSlop) {
+    console.log(value);
+    if (value != null) {
+      let hitSlopView = this.hitSlopView;
+      if (hitSlopView == null) {
+        hitSlopView = new UIHitSlopView(this, this._touchable);
+        this.insertBefore(hitSlopView, this.childContainer);
+        this.hitSlopView = hitSlopView;
+      }
+      hitSlopView.slop = value;
+    } else if (this.hitSlopView != null) {
+      this.removeChild(this.hitSlopView);
+      this.hitSlopView = undefined;
+    }
   }
 
   insertReactSubviewAtIndex(subview: UIView, index: number) {

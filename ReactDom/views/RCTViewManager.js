@@ -8,6 +8,8 @@ import UIView from "UIView";
 import { ALL_BORDER_PROPS } from "UIBorderView";
 import RCTView from "RCTView";
 
+import type { HitSlop } from "UIView";
+
 import _RCTShadowView from "RCTShadowView";
 
 type PropDef = {
@@ -229,11 +231,15 @@ module.exports = (async function() {
       view.pointerEvents = value;
     }
 
+    @RCT_EXPORT_VIEW_PROP("hitSlop", "EdgeInsetsProp")
+    setHitSlop(view: RCTView, value: HitSlop) {
+      view.hitSlop = value;
+    }
+
     // @RCT_EXPORT_VIEW_PROP("accessible", "bool")
     // setAccessible(view: RCTView, value: boolean) {
     //   view.accessible = value;
     // }
-
     @RCT_EXPORT_DIRECT_VIEW_PROPS
     getDirectViewProps() {
       const borderPropConfig = ALL_BORDER_PROPS.map((propName) => [

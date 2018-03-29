@@ -28,6 +28,16 @@ module.exports = (async () => {
 
   @RCT_EXPORT_MODULE("RCTImageViewManager")
   class RCTImageViewManager extends RCTViewManager {
+    constructor(bridge: RCTBridge) {
+      super(bridge);
+
+      // TODO: Revamp ViewManager decorators so this isn't necessary
+      // $FlowFixMe
+      this.__props = this.__props.filter((v) => {
+        return v.name !== "hitSlop";
+      });
+    }
+
     view(): RCTImageView {
       return new RCTImageView(this.bridge);
     }
