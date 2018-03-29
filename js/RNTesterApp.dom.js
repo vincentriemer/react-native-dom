@@ -59,12 +59,12 @@ class RNTesterApp extends React.Component {
   props: Props;
   state: RNTesterNavigationState;
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     BackHandler.addEventListener("hardwareBackPress", this._handleBack);
   }
 
   componentDidMount() {
-    Linking.getInitialURL().then(url => {
+    Linking.getInitialURL().then((url) => {
       AsyncStorage.getItem(APP_STATE_KEY, (err, storedString) => {
         const exampleAction = URIActionMap(
           this.props.exampleFromAppetizeParams
@@ -84,7 +84,7 @@ class RNTesterApp extends React.Component {
         this.setState(storedState);
       });
     });
-    Linking.addEventListener("url", url => {
+    Linking.addEventListener("url", (url) => {
       this._handleAction(URIActionMap(url));
     });
   }
