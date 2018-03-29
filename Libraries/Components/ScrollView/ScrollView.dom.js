@@ -281,10 +281,10 @@ const ScrollView = createReactClass({
      */
     pagingEnabled: PropTypes.bool,
     /**
-    * When true, ScrollView allows use of pinch gestures to zoom in and out.
-    * The default value is true.
-    * @platform ios
-    */
+     * When true, ScrollView allows use of pinch gestures to zoom in and out.
+     * The default value is true.
+     * @platform ios
+     */
     pinchGestureEnabled: PropTypes.bool,
     /**
      * When false, the view cannot be scrolled via touch interaction.
@@ -447,7 +447,7 @@ const ScrollView = createReactClass({
     return this.scrollResponderMixinGetInitialState();
   },
 
-  componentWillMount: function() {
+  UNSAFE_componentWillMount: function() {
     this._scrollAnimatedValue = new Animated.Value(
       this.props.contentOffset ? this.props.contentOffset.y : 0
     );
@@ -693,7 +693,7 @@ const ScrollView = createReactClass({
     if (__DEV__ && this.props.style) {
       style = flattenStyle(this.props.style);
       childLayoutProps = ["alignItems", "justifyContent"].filter(
-        prop => style && style[prop] !== undefined
+        (prop) => style && style[prop] !== undefined
       );
       invariant(
         childLayoutProps.length === 0,
@@ -724,12 +724,13 @@ const ScrollView = createReactClass({
             return (
               <ScrollViewStickyHeader
                 key={key}
-                ref={ref => this._setStickyHeaderRef(key, ref)}
+                ref={(ref) => this._setStickyHeaderRef(key, ref)}
                 nextHeaderLayoutY={this._headerLayoutYs.get(
                   this._getKeyForIndex(nextIndex, childArray)
                 )}
-                onLayout={event =>
-                  this._onStickyHeaderLayout(index, event, key)}
+                onLayout={(event) =>
+                  this._onStickyHeaderLayout(index, event, key)
+                }
                 scrollAnimatedValue={this._scrollAnimatedValue}
               >
                 {child}
