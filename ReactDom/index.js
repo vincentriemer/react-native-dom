@@ -76,7 +76,8 @@ const builtInNativeModules: any[] = [
   require("RCTSafeAreaViewManager"),
   require("RCTSwitchManager"),
   require("RCTStatusBarManager"),
-  require("RCTDeviceEventManager")
+  require("RCTDeviceEventManager"),
+  require("RCTNetworking")
 ];
 
 // Development Specific Native Modules
