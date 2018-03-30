@@ -132,6 +132,12 @@ function generateModuleConfig(name: string, bridgeModule: RCTModule) {
   return [name, constants, allMethods, promiseMethods, syncMethods];
 }
 
+type ModuleData = {
+  name: string,
+  methods: string[],
+  constants: { [string]: any }
+};
+
 export default class RCTBridge {
   nativeModules: NativeModuleImports;
 
@@ -140,6 +146,7 @@ export default class RCTBridge {
   moduleConfigs: Array<ModuleConfig> = [];
   bundleFinishedLoading: ?() => void;
   messages: Array<NativeCall> = [];
+  moduleDataForName: { [name: string]: ModuleData } = {};
   moduleName: string;
   bundleLocation: string;
   loading: boolean;
@@ -295,15 +302,23 @@ export default class RCTBridge {
         }
       }
     });
-    this.moduleConfigs.push(
-      moduleConfigFactory(
-        name,
-        constants,
-        allMethods,
-        promiseMethods,
-        syncMethods
-      )
+
+    this.moduleDataForName[name] = {
+      name,
+      constants: constants || {},
+      methods: allMethods
+    };
+
+    const moduleConfig = moduleConfigFactory(
+      name,
+      constants,
+      allMethods,
+      promiseMethods,
+      syncMethods
     );
+
+    this.moduleConfigs.push(moduleConfig);
+
     return [name, constants, allMethods, promiseMethods, syncMethods];
   }
 

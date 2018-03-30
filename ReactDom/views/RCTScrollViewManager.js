@@ -75,6 +75,50 @@ module.exports = (async () => {
       );
     }
 
+    @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+    scrollTo(
+      reactTag: number,
+      offsetX: number,
+      offsetY: number,
+      animated: boolean
+    ) {
+      this.bridge.uiManager.addUIBlock(
+        (_, viewRegistry: Map<number, UIView>) => {
+          const view = viewRegistry.get(reactTag);
+          invariant(
+            view && view instanceof RCTScrollView,
+            `Cannot find RCTScrollView with tag ${reactTag}`
+          );
+
+          view.scrollBehavior = animated ? "smooth" : "auto";
+          view.scrollLeft = offsetX;
+          view.scrollTop = offsetY;
+        }
+      );
+    }
+
+    @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+    scrollToEnd(reactTag: number, animated: boolean) {
+      this.bridge.uiManager.addUIBlock(
+        (_, viewRegistry: Map<number, UIView>) => {
+          const view = viewRegistry.get(reactTag);
+          invariant(
+            view && view instanceof RCTScrollView,
+            `Cannot find RCTScrollView with tag ${reactTag}`
+          );
+
+          view.scrollBehavior = animated ? "smooth" : "auto";
+          view.scrollLeft = view.scrollWidth;
+          view.scrollTop = view.scrollHeight;
+        }
+      );
+    }
+
+    @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+    flashScrollIndicators(reactTag: number) {
+      // no-op
+    }
+
     @RCT_EXPORT_VIEW_PROP("horizontal", "boolean")
     setHorizontal(view: RCTScrollView, value: ?boolean) {
       view.horizontal = value;
