@@ -356,10 +356,17 @@ module.exports = (async () => {
 
     @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
     async measureInWindow(reactTag: number, callbackId: number) {
-      const result = await this.measure(reactTag);
-      invariant(result, `No measurement available for view ${reactTag}`);
-      const { globalX, globalY, width, height } = result;
-      this.bridge.callbackFromId(callbackId)(globalX, globalY, width, height);
+      // const result = await this.measure(reactTag);
+      // invariant(result, `No measurement available for view ${reactTag}`);
+
+      // TODO: Replace with calculation from shadowView tree
+      const view = this.viewRegistry.get(reactTag);
+      invariant(view, `No such view with tag: ${reactTag}`);
+
+      const { left, top, width, height } = view.getBoundingClientRect();
+
+      // const { globalX, globalY, width, height } = result;
+      this.bridge.callbackFromId(callbackId)(left, top, width, height);
     }
 
     @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
@@ -705,6 +712,34 @@ module.exports = (async () => {
       for (let i = 0; i < tagsToDelete.length; i++) {
         this.purgeView(tagsToDelete[i]);
       }
+    }
+
+    @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+    dispatchViewManagerCommand(
+      reactTag: number,
+      commandID: number,
+      commandArgs: any[]
+    ) {
+      const shadowView = this.shadowViewRegistry.get(reactTag);
+      invariant(shadowView, `No such shadow view with tag ${reactTag}`);
+
+      const componentData = this.componentDataByName.get(shadowView.viewName);
+      invariant(
+        componentData,
+        `No such componentData for name ${shadowView.viewName}`
+      );
+
+      const managerClass = componentData.managerClass;
+      const moduleData = this.bridge.moduleDataForName[
+        bridgeModuleNameForClass(managerClass)
+      ];
+
+      const methodName = moduleData.methods[commandID];
+      console.log(methodName);
+      const args = [reactTag, ...commandArgs];
+
+      const manager = this.bridge.moduleForClass(managerClass);
+      manager[methodName].apply(manager, args);
     }
 
     @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
