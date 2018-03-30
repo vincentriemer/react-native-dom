@@ -41,6 +41,12 @@ class RCTStatusBarManager extends RCTEventEmitter {
   setNetworkActivityIndicatorVisible() {
     /* no-op */
   }
+
+  constantsToExport() {
+    return {
+      HEIGHT: 0
+    };
+  }
 }
 
 export default RCTStatusBarManager;
