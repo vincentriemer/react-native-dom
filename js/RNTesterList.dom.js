@@ -49,10 +49,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: "ListViewExample",
     module: require("./ListViewExample")
   },
-  // {
-  //   key: "ListViewGridLayoutExample",
-  //   module: require("./ListViewGridLayoutExample")
-  // },
+  {
+    key: "ListViewGridLayoutExample",
+    module: require("./ListViewGridLayoutExample")
+  },
   {
     key: "ListViewPagingExample",
     module: require("./ListViewPagingExample")
@@ -65,10 +65,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   //   key: "ModalExample",
   //   module: require("./ModalExample")
   // },
-  // {
-  //   key: "MultiColumnExample",
-  //   module: require("./MultiColumnExample")
-  // },
+  {
+    key: "MultiColumnExample",
+    module: require("./MultiColumnExample")
+  },
   // {
   //   key: "NavigatorIOSColorsExample",
   //   module: require("./NavigatorIOSColorsExample")
@@ -97,10 +97,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: "ScrollViewExample",
     module: require("./ScrollViewExample")
   },
-  // {
-  //   key: "SectionListExample",
-  //   module: require("./SectionListExample")
-  // },
+  {
+    key: "SectionListExample",
+    module: require("./SectionListExample")
+  },
   // {
   //   key: "SegmentedControlIOSExample",
   //   module: require("./SegmentedControlIOSExample")
@@ -109,10 +109,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   //   key: "SliderExample",
   //   module: require("./SliderExample")
   // },
-  // {
-  //   key: "StatusBarExample",
-  //   module: require("./StatusBarExample")
-  // },
+  {
+    key: "StatusBarExample",
+    module: require("./StatusBarExample")
+  },
   {
     key: "SwipeableListViewExample",
     module: require("./SwipeableListViewExample")
@@ -228,10 +228,10 @@ const APIExamples: Array<RNTesterExample> = [
     key: "NativeAnimationsExample",
     module: require("./NativeAnimationsExample")
   },
-  // {
-  //   key: "NetInfoExample",
-  //   module: require("./NetInfoExample")
-  // },
+  {
+    key: "NetInfoExample",
+    module: require("./NetInfoExample")
+  },
   // {
   //   key: "OrientationChangeExample",
   //   module: require("./OrientationChangeExample")
