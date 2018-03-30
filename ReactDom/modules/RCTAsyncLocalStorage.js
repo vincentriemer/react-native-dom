@@ -80,6 +80,17 @@ class RCTAsyncLocalStorage {
       callback();
     });
   }
+
+  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+  async getAllKeys(callbackId: number) {
+    const callback = this.bridge.callbackFromId(callbackId);
+    try {
+      const keys = await idbKeyval.keys();
+      callback(null, keys);
+    } catch (err) {
+      callback(err, null);
+    }
+  }
 }
 
 export default RCTAsyncLocalStorage;
