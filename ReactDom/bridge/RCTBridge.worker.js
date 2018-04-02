@@ -9,6 +9,9 @@ function sendMessage(topic, payload) {
 
 var Status = undefined;
 
+// store a reference to the original XMLHttpRequest before initializeCore is called
+self._XMLHttpRequest = XMLHttpRequest;
+
 function loadBundle(bundle) {
   return new Promise(function(resolve, reject) {
     if (__DEV__) {
