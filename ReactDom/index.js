@@ -29,6 +29,7 @@ import UIView from "UIView";
 import RCTView from "RCTView";
 import RCTViewManager from "RCTViewManager";
 import RCTEventEmitter from "RCTNativeEventEmitter";
+import CustomElement from "CustomElement";
 
 export {
   RCT_EXPORT_MODULE,
@@ -39,7 +40,8 @@ export {
   RCTView,
   RCTViewManager,
   RCTEventEmitter,
-  UIView
+  UIView,
+  CustomElement
 };
 
 // Export type definitions useful for native module development
@@ -67,7 +69,6 @@ const builtInNativeModules: any[] = [
   require("RCTAsyncLocalStorage"),
   require("RCTImageViewManager"),
   require("RCTLinkingManager"),
-  require("RCTSourceCode"),
   require("RCTTextInputManager"),
   require("RCTImageLoader"),
   require("RCTActivityIndicatorViewManager"),
@@ -76,12 +77,12 @@ const builtInNativeModules: any[] = [
   require("RCTSafeAreaViewManager"),
   require("RCTSwitchManager"),
   require("RCTStatusBarManager"),
-  require("RCTDeviceEventManager"),
-  require("RCTNetworking")
+  require("RCTDeviceEventManager")
 ];
 
 // Development Specific Native Modules
 if (__DEV__) {
+  builtInNativeModules.push(require("RCTSourceCode"));
   builtInNativeModules.push(require("RCTDevLoadingView"));
   builtInNativeModules.push(require("RCTDevSettings"));
   builtInNativeModules.push(require("RCTDevMenu"));
