@@ -1,4 +1,4 @@
-# react-native-dom
+# React Native DOM
 
 [![CircleCI](https://circleci.com/gh/vincentriemer/react-native-dom.svg?style=svg&circle-token=96448c580730a065cb93c0a10af0f85f6c954166)](https://circleci.com/gh/vincentriemer/react-native-dom)
 
