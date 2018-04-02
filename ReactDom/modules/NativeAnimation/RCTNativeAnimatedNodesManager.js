@@ -21,6 +21,7 @@ import RCTTransformAnimatedNode from "RCTTransformAnimatedNode";
 import RCTMultiplicationAnimatedNode from "RCTMultiplicationAnimatedNode";
 import RCTAdditionAnimatedNode from "RCTAdditionAnimatedNode";
 import RCTModuloAnimatedNode from "RCTModuloAnimatedNode";
+import RCTDivisionAnimatedNode from "RCTDivisionAnimatedNode";
 
 // Drivers
 import RCTEventAnimation from "RCTEventAnimation";
@@ -39,7 +40,8 @@ const NODE_TYPE_MAP: { [typeName: string]: Class<RCTAnimatedNode> } = {
   transform: RCTTransformAnimatedNode,
   multiplication: RCTMultiplicationAnimatedNode,
   addition: RCTAdditionAnimatedNode,
-  modulus: RCTModuloAnimatedNode
+  modulus: RCTModuloAnimatedNode,
+  division: RCTDivisionAnimatedNode
 };
 
 const DRIVER_TYPE_MAP: { [typeName: string]: Class<RCTAnimationDriver> } = {
