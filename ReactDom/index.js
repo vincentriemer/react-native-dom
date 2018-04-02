@@ -55,6 +55,7 @@ export type { RCTUIManager, RCTEventDispatcher, RCTBridge };
 
 // Register Built-in Native Modules
 const builtInNativeModules: any[] = [
+  require("RCTSourceCode"),
   require("RCTEventDispatcher"),
   require("RCTDeviceInfo"),
   require("RCTPlatform"),
@@ -82,7 +83,6 @@ const builtInNativeModules: any[] = [
 
 // Development Specific Native Modules
 if (__DEV__) {
-  builtInNativeModules.push(require("RCTSourceCode"));
   builtInNativeModules.push(require("RCTDevLoadingView"));
   builtInNativeModules.push(require("RCTDevSettings"));
   builtInNativeModules.push(require("RCTDevMenu"));
