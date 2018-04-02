@@ -36,6 +36,12 @@ const connection: ?NetworkInformation = (navigator.connection ||
 
 function _resolveConnectionInfo(connection: NetworkInformation) {
   let type = connection.type;
+  let effectiveType = connection.effectiveType;
+
+  if (type == null && effectiveType != null) {
+    type = "wifi";
+  }
+
   switch (type) {
     case "wifi":
     case "cellular":
@@ -56,7 +62,6 @@ function _resolveConnectionInfo(connection: NetworkInformation) {
     }
   }
 
-  let effectiveType = connection.effectiveType;
   if (!effectiveConnectionTypes.includes(effectiveType)) {
     effectiveType = "unknown";
   }
