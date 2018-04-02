@@ -126,7 +126,8 @@ module.exports = (async () => {
         get: function() {
           return this.yogaNode[propName];
         },
-        set: function(value: number) {
+        set: function(value: ?number) {
+          if (value == null) value = NaN;
           this.yogaNode[propName] = value;
           this.makeDirty();
           return true;
