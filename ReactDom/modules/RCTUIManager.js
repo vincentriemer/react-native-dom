@@ -404,8 +404,9 @@ module.exports = (async () => {
       if (block == null || this.viewRegistry == null) {
         return;
       }
-      // block.call(null, this, this.viewRegistry);
-      this.pendingUIBlocks.push(block);
+      // TODO: Determine why defering the UI blocks causes flatlist to crash
+      block.call(null, this, this.viewRegistry);
+      // this.pendingUIBlocks.push(block);
     }
 
     prependUIBlock(block: ?UIBlock) {
