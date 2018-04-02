@@ -25,19 +25,20 @@ if (typeof document.hidden !== "undefined") {
 
 @RCT_EXPORT_MODULE("RCTAppState")
 class RCTAppState extends RCTEventEmitter {
-  bridge: RCTBridge;
-
-  constructor(bridge: RCTBridge) {
-    super(bridge);
-    this.bridge = bridge;
-
+  startObserving() {
     document.addEventListener(
       visibilityChange,
-      this.didUpdateVisibility.bind(this),
+      this.didUpdateVisibility,
       false
     );
+  }
 
-    this.listenerCount = 1;
+  stopObserving() {
+    document.removeEventListener(
+      visibilityChange,
+      this.didUpdateVisibility,
+      false
+    );
   }
 
   currentBackgroundState() {
@@ -61,12 +62,12 @@ class RCTAppState extends RCTEventEmitter {
     return ["appStateDidChange"];
   }
 
-  didUpdateVisibility() {
+  didUpdateVisibility = () => {
     this.bridge.uiManager.requestTick();
     this.sendEventWithName("appStateDidChange", {
       app_state: this.currentBackgroundState()
     });
-  }
+  };
 
   @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
   getCurrentAppState(callbackId: number) {

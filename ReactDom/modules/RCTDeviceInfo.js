@@ -8,20 +8,18 @@ import RCTEventEmitter from "RCTNativeEventEmitter";
 
 @RCT_EXPORT_MODULE("RCTDeviceInfo")
 class RCTDeviceInfo extends RCTEventEmitter {
-  constructor(bridge: RCTBridge) {
-    super(bridge);
-
-    window.addEventListener(
-      "resize",
-      this.didUpdateDimensions.bind(this),
-      false
-    );
-
+  startObserving() {
+    window.addEventListener("resize", this.didUpdateDimensions, false);
     window
       .matchMedia("screen and (min-resolution: 2dppx)")
-      .addListener(this.didUpdateDimensions.bind(this));
+      .addListener(this.didUpdateDimensions);
+  }
 
-    this.listenerCount = 1;
+  stopObserving() {
+    window.removeEventListener("resize", this.didUpdateDimensions, false);
+    window
+      .matchMedia("screen and (min-resolution: 2dppx)")
+      .removeEventListener(this.didUpdateDimensions);
   }
 
   constantsToExport() {
@@ -67,9 +65,9 @@ class RCTDeviceInfo extends RCTEventEmitter {
     return Math.min(ratio, 2);
   }
 
-  didUpdateDimensions() {
+  didUpdateDimensions = () => {
     this.sendEventWithName("didUpdateDimensions", this.exportedDimensions());
-  }
+  };
 }
 
 export default RCTDeviceInfo;

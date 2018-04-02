@@ -8,16 +8,13 @@ import RCTBridge, {
   RCT_EXPORT_METHOD,
   RCTFunctionTypePromise
 } from "RCTBridge";
+import RCTEventEmitter from "RCTNativeEventEmitter";
 
 const initialURL = location.href;
 
 @RCT_EXPORT_MODULE("RCTLinkingManager")
-class RCTLinkingManager {
-  bridge: RCTBridge;
-
-  constructor(bridge: RCTBridge) {
-    this.bridge = bridge;
-  }
+class RCTLinkingManager extends RCTEventEmitter {
+  // TODO: URL Events
 
   @RCT_EXPORT_METHOD(RCTFunctionTypePromise)
   openURL(url: string, resolveId: number, rejectId: number) {

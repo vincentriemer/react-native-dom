@@ -9,8 +9,7 @@ import NotificationCenter from "NotificationCenter";
 
 class RCTEventEmitter {
   bridge: RCTBridge;
-  // TODO: Figure out why addListener isn't being called and revert this to 0
-  listenerCount: number = 1;
+  listenerCount: number = 0;
   _supportedMethods: ?Array<string>;
 
   constructor(bridge: RCTBridge, supportedMethods: ?Array<string>) {
