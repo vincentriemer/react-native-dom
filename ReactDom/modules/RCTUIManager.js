@@ -218,7 +218,8 @@ module.exports = (async () => {
     purgeView(reactTag: number) {
       const shadowView = this.shadowViewRegistry.get(reactTag);
       if (shadowView) {
-        this.shadowViewRegistry.delete(reactTag);
+        !this.layoutAnimationManager.isPending() &&
+          this.shadowViewRegistry.delete(reactTag);
         shadowView.purge();
       }
 
@@ -677,7 +678,12 @@ module.exports = (async () => {
           shadowSubView = shadowViewToManage.reactSubviews[childIndex];
         }
 
-        if (shadowSubView) shadowViewToManage.removeReactSubview(shadowSubView);
+        if (shadowSubView) {
+          shadowViewToManage.removeReactSubview(shadowSubView);
+          if (this.layoutAnimationManager.isPending()) {
+            shadowSubView.reactSuperview = shadowViewToManage;
+          }
+        }
 
         if (!this.layoutAnimationManager.isPending()) {
           this.addUIBlock((uiManager, viewRegistry) => {

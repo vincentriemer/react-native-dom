@@ -374,6 +374,31 @@ class RCTLayoutAnimationManager {
           registry[reactTag][0] = newFrames;
         }
 
+        const parentLayout = shadowView.previousLayout;
+        view.reactSubviews.forEach((subView, index) => {
+          if (addedNodes.includes(subView.reactTag)) {
+            const previousLayout =
+              shadowView.reactSubviews[index].previousLayout;
+            const [originalKeyframes, { duration }] = registry[reactTag];
+
+            const adjustedKeyframes = originalKeyframes.map(
+              ({ translateX, translateY }) => ({
+                transform: `translateX(${-translateX +
+                  parentLayout.left +
+                  previousLayout.left}px) translateY(${-translateY +
+                  parentLayout.top +
+                  previousLayout.top}px)`
+              })
+            );
+
+            const config = { duration, fill: "none" };
+
+            animations.push(
+              new KeyframeEffect(subView, adjustedKeyframes, config)
+            );
+          }
+        });
+
         let childContainerTransform = this.childContainerAnimationConfigFactory(
           updateKeyConfig.keyframes.length
         );
@@ -484,8 +509,6 @@ class RCTLayoutAnimationManager {
     this.removedNodes.forEach((reactTag) => {
       const view = this.manager.viewRegistry.get(reactTag);
       invariant(view, "view does not exist");
-
-      const cleanUpRemovedNode = () => {};
 
       if (deleteKeyConfig == null) {
         if (view.reactSuperview) {
