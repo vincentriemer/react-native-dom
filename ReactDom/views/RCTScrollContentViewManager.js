@@ -3,11 +3,11 @@
  * @flow
  */
 
-import RCTBridge, { RCT_EXPORT_MODULE } from "RCTBridge";
-import { RCTScrollContentView } from "RCTScrollView";
-import type UIView from "UIView";
+import RCTBridge, { RCT_EXPORT_MODULE } from "../bridge/RCTBridge";
+import { RCTScrollContentView } from "./RCTScrollView";
+import type UIView from "../base/UIView";
 
-import _RCTViewManager from "RCTViewManager";
+import _RCTViewManager from "./RCTViewManager";
 
 module.exports = (async () => {
   const RCTViewManager = await _RCTViewManager;

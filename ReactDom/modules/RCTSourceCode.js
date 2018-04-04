@@ -3,7 +3,7 @@
  * @flow
  */
 
-import RCTBridge, { RCT_EXPORT_MODULE } from "RCTBridge";
+import RCTBridge, { RCT_EXPORT_MODULE } from "../bridge/RCTBridge";
 
 @RCT_EXPORT_MODULE("RCTSourceCode")
 class RCTSourceCode {

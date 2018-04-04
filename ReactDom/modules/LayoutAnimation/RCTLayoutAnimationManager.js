@@ -2,14 +2,14 @@
  * @providesModule RCTLayoutAnimationManager
  * @flow
  */
-import type { LayoutChange } from "RCTShadowView";
-import type { KeyframeResult } from "RCTKeyframeGenerator";
+import type { LayoutChange } from "../../views/RCTShadowView";
+import type { KeyframeResult } from "./RTCKeyframeGenerator";
 
-import invariant from "Invariant";
-import RCTKeyframeGenerator from "RCTKeyframeGenerator";
+import invariant from "../../utils/Invariant";
+import RCTKeyframeGenerator from "./RTCKeyframeGenerator";
 import * as MatrixMath from "MatrixMath";
 
-import typeof _RCTUIManager from "RCTUIManager";
+import typeof _RCTUIManager from "../RCTUIManager";
 type RCTUIManager = $Call<$await<_RCTUIManager>>;
 
 const PropertiesEnum = {

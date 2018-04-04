@@ -7,8 +7,8 @@ import RCTBridge, {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal
-} from "RCTBridge";
-import { defaultFontStack } from "RCTSharedTextValues";
+} from "../bridge/RCTBridge";
+import { defaultFontStack } from "../views/Text/RCTSharedTextValues";
 
 type DevSettings = {
   isInspectorShown: boolean

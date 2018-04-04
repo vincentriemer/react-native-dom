@@ -4,17 +4,17 @@
  */
 
 import * as YG from "yoga-dom";
-import guid from "Guid";
-import invariant from "Invariant";
+import guid from "../../utils/Guid";
+import invariant from "../../utils/Invariant";
 import {
   defaultFontStack,
   defaultFontSize,
   defaults as TextDefaults
-} from "RCTSharedTextValues";
+} from "./RCTSharedTextValues";
 
 import _Yoga from "yoga-dom";
-import _RCTShadowView from "RCTShadowView";
-import _RCTShadowRawText from "RCTShadowRawText";
+import _RCTShadowView from "../RCTShadowView";
+import _RCTShadowRawText from "./RCTShadowRawText";
 
 const TEXT_SHADOW_STYLE_PROPS = [
   "fontFamily",

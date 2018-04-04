@@ -3,11 +3,11 @@
  * @flow
  */
 
-import RCTView from "RCTView";
-import type RCTBridge from "RCTBridge";
-import CustomElement from "CustomElement";
-import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
-import PlatformSwitch from "PlatformSwitch";
+import RCTView from "../RCTView";
+import type RCTBridge from "../../bridge/RCTBridge";
+import CustomElement from "../../utils/CustomElement";
+import ColorArrayFromHexARGB from "../../utils/ColorArrayFromHexARGB";
+import PlatformSwitch from "./PlatformSwitch";
 
 @CustomElement("rct-switch")
 class RCTSwitch extends RCTView {

@@ -4,9 +4,9 @@
  */
 
 import * as YG from "yoga-dom";
-import type RCTSafeAreaViewLocalData from "RCTSafeAreaViewLocalData";
+import type RCTSafeAreaViewLocalData from "./RCTSafeAreaViewLocalData";
 
-import _RCTShadowView from "RCTShadowView";
+import _RCTShadowView from "../RCTShadowView";
 
 const PADDING_PROPS = [
   "padding",

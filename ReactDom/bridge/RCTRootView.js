@@ -2,16 +2,16 @@
  * @providesModule RCTRootView
  * @flow
  */
-import RCTBridge from "RCTBridge";
-import UIView, { FrameZero } from "UIView";
-import NotificationCenter from "NotificationCenter";
-import RCTDeviceInfo from "RCTDeviceInfo";
-import RCTTiming from "RCTTiming";
-import RCTTouchHandler from "RCTTouchHandler";
-import CustomElement from "CustomElement";
-import instrument from "Instrument";
+import RCTBridge from "./RCTBridge";
+import UIView, { FrameZero } from "../base/UIView";
+import NotificationCenter from "../base/NotificationCenter";
+import RCTDeviceInfo from "../modules/RCTDeviceInfo";
+import RCTTiming from "../modules/RCTTiming";
+import RCTTouchHandler from "../modules/RCTTouchHandler";
+import CustomElement from "../utils/CustomElement";
+import instrument from "../utils/Instrument";
 
-import type { NativeModuleImports } from "RCTModule";
+import type { NativeModuleImports } from "./RCTModule";
 
 function getAvailableSize() {
   return {

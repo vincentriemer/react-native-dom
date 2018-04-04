@@ -2,10 +2,10 @@
  * @providesModule RCTView
  * @flow
  */
-import UIView from "UIView";
-import type RCTBridge from "RCTBridge";
-import RCTEventEmitter from "RCTNativeEventEmitter";
-import CustomElement from "CustomElement";
+import UIView from "../base/UIView";
+import type RCTBridge from "../bridge/RCTBridge";
+import RCTEventEmitter from "../modules/RCTEventEmitter";
+import CustomElement from "../utils/CustomElement";
 
 @CustomElement("rct-view")
 class RCTView extends UIView {

@@ -3,10 +3,10 @@
  * @flow
  */
 
-import type { Config } from "RCTNativeAnimatedModule";
-import RCTAnimatedNode from "RCTAnimatedNode";
-import RCTStyleAnimatedNode from "RCTStyleAnimatedNode";
-import RCTValueAnimatedNode from "RCTValueAnimatedNode";
+import type { Config } from "../RCTNativeAnimatedModule";
+import RCTAnimatedNode from "./RCTAnimatedNode";
+import RCTStyleAnimatedNode from "./RCTStyleAnimatedNode";
+import RCTValueAnimatedNode from "./RCTValueAnimatedNode";
 
 class RCTPropsAnimatedNode extends RCTAnimatedNode {
   connectedViewTag: ?number;

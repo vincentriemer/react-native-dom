@@ -7,8 +7,8 @@ import RCTBridge, {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal
-} from "RCTBridge";
-import RCTEventEmitter from "RCTNativeEventEmitter";
+} from "../bridge/RCTBridge";
+import RCTEventEmitter from "./RCTEventEmitter";
 
 @RCT_EXPORT_MODULE("RCTStatusBarManager")
 class RCTStatusBarManager extends RCTEventEmitter {

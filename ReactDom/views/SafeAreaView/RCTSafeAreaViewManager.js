@@ -3,13 +3,13 @@
  * @flow
  */
 
-import { RCT_EXPORT_MODULE } from "RCTBridge";
+import { RCT_EXPORT_MODULE } from "../../bridge/RCTBridge";
 
-import RCTSafeAreaView from "RCTSafeAreaView";
-import type UIView from "UIView";
+import RCTSafeAreaView from "./RCTSafeAreaView";
+import type UIView from "../../base/UIView";
 
-import _RCTViewManager from "RCTViewManager";
-import _RCTSafeAreaShadowView from "RCTSafeAreaShadowView";
+import _RCTViewManager from "../RCTViewManager";
+import _RCTSafeAreaShadowView from "./RCTSafeAreaShadowView";
 
 module.exports = (async () => {
   const RCTViewManager = await _RCTViewManager;

@@ -3,10 +3,10 @@
  * @flow
  */
 
-import RCTBridge, { RCT_EXPORT_MODULE } from "RCTBridge";
-import RCTTextInput from "RCTTextInput";
+import RCTBridge, { RCT_EXPORT_MODULE } from "../../bridge/RCTBridge";
+import RCTTextInput from "./RCTTextInput";
 
-import _RCTViewManager from "RCTViewManager";
+import _RCTViewManager from "../RCTViewManager";
 
 module.exports = (async () => {
   const RCTViewManager = await _RCTViewManager;

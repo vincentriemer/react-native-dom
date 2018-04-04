@@ -3,8 +3,8 @@
  * @flow
  */
 
-import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
-import CustomElement from "CustomElement";
+import ColorArrayFromHexARGB from "../utils/ColorArrayFromHexARGB";
+import CustomElement from "../utils/CustomElement";
 
 const BORDER_STYLE_PROPS = [
   "borderStyle",

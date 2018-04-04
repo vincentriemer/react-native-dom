@@ -3,13 +3,13 @@
  * @flow
  */
 
-import type RCTTouchHandler from "RCTTouchHandler";
-import type { RCTComponent } from "RCTComponent";
-import UIBorderView, { ALL_BORDER_PROPS } from "UIBorderView";
-import CustomElement from "CustomElement";
-import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
+import type RCTTouchHandler from "../modules/RCTTouchHandler";
+import type { RCTComponent } from "../views/RCTComponent";
+import UIBorderView, { ALL_BORDER_PROPS } from "./UIBorderView";
+import CustomElement from "../utils/CustomElement";
+import ColorArrayFromHexARGB from "../utils/ColorArrayFromHexARGB";
 import * as MatrixMath from "MatrixMath";
-import prefixInlineStyles from "prefixInlineStyles";
+import prefixInlineStyles from "../utils/prefixInlineStyles";
 
 export const FrameZero: Frame = {
   top: 0,

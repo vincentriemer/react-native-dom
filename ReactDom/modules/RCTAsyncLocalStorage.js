@@ -7,7 +7,7 @@ import RCTBridge, {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal
-} from "RCTBridge";
+} from "../bridge/RCTBridge";
 import idbKeyval from "idb-keyval";
 import deepmerge from "deepmerge";
 

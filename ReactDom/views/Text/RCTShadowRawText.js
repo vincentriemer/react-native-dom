@@ -4,7 +4,7 @@
  */
 
 import * as YG from "yoga-dom";
-import _RCTShadowView from "RCTShadowView";
+import _RCTShadowView from "../RCTShadowView";
 
 export default (async () => {
   const RCTShadowView = await _RCTShadowView;

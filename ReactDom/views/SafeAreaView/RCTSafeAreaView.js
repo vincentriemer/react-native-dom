@@ -2,12 +2,12 @@
  * @providesModule RCTSafeAreaView
  * @flow
  */
-import RCTSafeAreaViewLocalData from "RCTSafeAreaViewLocalData";
-import NotificationCenter from "NotificationCenter";
-import RCTView from "RCTView";
-import CustomElement from "CustomElement";
+import RCTSafeAreaViewLocalData from "./RCTSafeAreaViewLocalData";
+import NotificationCenter from "../../base/NotificationCenter";
+import RCTView from "../RCTView";
+import CustomElement from "../../utils/CustomElement";
 
-import type RCTBridge from "RCTBridge";
+import type RCTBridge from "../../bridge/RCTBridge";
 
 const insetView = document.createElement("div");
 insetView.id = "safe-area-inset-view";

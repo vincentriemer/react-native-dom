@@ -3,7 +3,7 @@
  * @flow
  */
 
-import CanUse from "CanUse";
+import CanUse from "./CanUse";
 
 export default function instrument<T>(
   name: string,

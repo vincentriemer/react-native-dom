@@ -7,9 +7,9 @@ import BezierEasing from "bezier-easing";
 import Rebound from "rebound";
 import memoize from "fast-memoize";
 
-import invariant from "Invariant";
+import invariant from "../../utils/Invariant";
 
-import type { LayoutAnim } from "RCTLayoutAnimationManager";
+import type { LayoutAnim } from "./RCTLayoutAnimationManager";
 
 const timestepCoefficient = 1;
 

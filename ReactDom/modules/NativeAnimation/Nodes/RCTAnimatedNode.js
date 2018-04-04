@@ -3,9 +3,9 @@
  * @flow
  */
 
-import type { Config } from "RCTNativeAnimatedModule";
+import type { Config } from "../RCTNativeAnimatedModule";
 
-import invariant from "Invariant";
+import invariant from "../../../utils/Invariant";
 
 class RCTAnimatedNode {
   nodeTag: number;

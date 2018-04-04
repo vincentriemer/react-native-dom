@@ -8,7 +8,7 @@ import RCTBridge, {
   RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal,
   RCTFunctionTypePromise
-} from "RCTBridge";
+} from "../../bridge/RCTBridge";
 
 @RCT_EXPORT_MODULE("RCTImageLoader")
 class RCTImageLoader {

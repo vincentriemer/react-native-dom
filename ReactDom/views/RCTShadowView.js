@@ -4,9 +4,9 @@
  */
 
 import * as YG from "yoga-dom";
-import invariant from "Invariant";
+import invariant from "../utils/Invariant";
 
-import type { RCTComponent } from "RCTComponent";
+import type { RCTComponent } from "./RCTComponent";
 
 const LAYOUT_PROPS = ["top", "left", "width", "height"];
 

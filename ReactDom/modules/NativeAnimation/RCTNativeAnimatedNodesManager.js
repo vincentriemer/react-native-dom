@@ -3,33 +3,33 @@
  * @flow
  */
 
-import type { Config } from "RCTNativeAnimatedModule";
-import type { RCTEvent } from "RCTEventDispatcher";
+import type { Config } from "./RCTNativeAnimatedModule";
+import type { RCTEvent } from "../../bridge/RCTEventDispatcher";
 
-import invariant from "Invariant";
+import invariant from "../../utils/Invariant";
 
-import type { RCTAnimationDriver } from "RCTAnimationDriver";
-import type { RCTValueAnimatedNodeObserver } from "RCTValueAnimatedNode";
+import type { RCTAnimationDriver } from "./Drivers/RCTAnimationDriver";
+import type { RCTValueAnimatedNodeObserver } from "./Nodes/RCTValueAnimatedNode";
 
 // Nodes
-import RCTAnimatedNode from "RCTAnimatedNode";
-import RCTValueAnimatedNode from "RCTValueAnimatedNode";
-import RCTPropsAnimatedNode from "RCTPropsAnimatedNode";
-import RCTStyleAnimatedNode from "RCTStyleAnimatedNode";
-import RCTInterpolationAnimatedNode from "RCTInterpolationAnimatedNode";
-import RCTTransformAnimatedNode from "RCTTransformAnimatedNode";
-import RCTMultiplicationAnimatedNode from "RCTMultiplicationAnimatedNode";
-import RCTAdditionAnimatedNode from "RCTAdditionAnimatedNode";
-import RCTModuloAnimatedNode from "RCTModuloAnimatedNode";
-import RCTDivisionAnimatedNode from "RCTDivisionAnimatedNode";
+import RCTAnimatedNode from "./Nodes/RCTAnimatedNode";
+import RCTValueAnimatedNode from "./Nodes/RCTValueAnimatedNode";
+import RCTPropsAnimatedNode from "./Nodes/RCTPropsAnimatedNode";
+import RCTStyleAnimatedNode from "./Nodes/RCTStyleAnimatedNode";
+import RCTInterpolationAnimatedNode from "./Nodes/RCTInterpolationAnimatedNode";
+import RCTTransformAnimatedNode from "./Nodes/RCTTransformAnimatedNode";
+import RCTMultiplicationAnimatedNode from "./Nodes/RCTMultiplicationAnimatedNode";
+import RCTAdditionAnimatedNode from "./Nodes/RCTAdditionAnimatedNode";
+import RCTModuloAnimatedNode from "./Nodes/RCTModuloAnimatedNode";
+import RCTDivisionAnimatedNode from "./Nodes/RCTDivisionAnimatedNode";
 
 // Drivers
-import RCTEventAnimation from "RCTEventAnimation";
-import RCTFrameAnimation from "RCTFrameAnimation";
-import RCTDecayAnimation from "RCTDecayAnimation";
-import RCTSpringAnimation from "RCTSpringAnimation";
+import RCTEventAnimation from "./Drivers/RCTEventAnimation";
+import RCTFrameAnimation from "./Drivers/RCTFrameAnimation";
+import RCTDecayAnimation from "./Drivers/RCTDecayAnimation";
+import RCTSpringAnimation from "./Drivers/RCTSpringAnimation";
 
-import typeof _RCTUIManager from "RCTUIManager";
+import typeof _RCTUIManager from "../RCTUIManager";
 type RCTUIManager = $Call<$await<_RCTUIManager>>;
 
 const NODE_TYPE_MAP: { [typeName: string]: Class<RCTAnimatedNode> } = {

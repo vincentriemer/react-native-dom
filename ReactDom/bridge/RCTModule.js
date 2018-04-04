@@ -3,7 +3,7 @@
  * @flow
  */
 
-import type RCTBridge from "RCTBridge";
+import type RCTBridge from "./RCTBridge";
 
 export interface RCTModuleClass {
   constructor(bridge: RCTBridge): RCTModule;

@@ -3,10 +3,10 @@
  * @flow
  */
 
-import type { Config } from "RCTNativeAnimatedModule";
-import type RCTAnimatedNode from "RCTAnimatedNode";
-import RCTValueAnimatedNode from "RCTValueAnimatedNode";
-import { RCTInterpolateValueInRange } from "RCTAnimationUtils";
+import type { Config } from "../RCTNativeAnimatedModule";
+import type RCTAnimatedNode from "./RCTAnimatedNode";
+import RCTValueAnimatedNode from "./RCTValueAnimatedNode";
+import { RCTInterpolateValueInRange } from "../RCTAnimationUtils";
 
 class RCTInterpolationAnimatedNode extends RCTValueAnimatedNode {
   parentNode: ?RCTValueAnimatedNode;

@@ -3,11 +3,11 @@
  * @flow
  */
 
-import { getPropertyNames } from "RCTBridge";
+import { getPropertyNames } from "../bridge/RCTBridge";
 import memoize from "fast-memoize";
-import RCTViewManager from "RCTViewManager";
+import RCTViewManager from "../views/RCTViewManager";
 
-import typeof _RCTUIManager from "RCTUIManager";
+import typeof _RCTUIManager from "./RCTUIManager";
 type RCTUIManager = $Call<$await<_RCTUIManager>>;
 
 export interface RCTUIManagerObserver {

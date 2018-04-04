@@ -7,9 +7,9 @@ import RCTBridge, {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal
-} from "RCTBridge";
+} from "../bridge/RCTBridge";
 
-import type RCTEventDispatcher from "RCTEventDispatcher";
+import type RCTEventDispatcher from "../bridge/RCTEventDispatcher";
 
 @RCT_EXPORT_MODULE("RCTDeviceEventManager")
 export default class RCTDeviceEventManager {

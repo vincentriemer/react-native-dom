@@ -2,7 +2,7 @@
  * @providesModule RCTBridgeMethod
  * @flow
  */
-import type RCTBridge from "RCTBridge";
+import type RCTBridge from "./RCTBridge";
 
 export const RCTFunctionTypeNormal = "async";
 export const RCTFunctionTypePromise = "promise";

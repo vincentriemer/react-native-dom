@@ -7,10 +7,10 @@ import RCTBridge, {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal
-} from "RCTBridge";
-import NotificationCenter from "NotificationCenter";
-import { defaultFontStack } from "RCTSharedTextValues";
-import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
+} from "../bridge/RCTBridge";
+import NotificationCenter from "../base/NotificationCenter";
+import { defaultFontStack } from "../views/Text/RCTSharedTextValues";
+import ColorArrayFromHexARGB from "../utils/ColorArrayFromHexARGB";
 
 @RCT_EXPORT_MODULE("RCTDevLoadingView")
 class RCTDevLoadingView {

@@ -5,7 +5,7 @@
 
 // TODO: Need to replace this at some point
 
-import invariant from "Invariant";
+import invariant from "./Invariant";
 
 /**
  * Memory conservative (mutative) matrix math utilities. Uses "command"

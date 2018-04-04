@@ -3,19 +3,19 @@
  * @flow
  */
 
-import RCTView from "RCTView";
-import UIView from "UIView";
-import type RCTBridge from "RCTBridge";
-import CustomElement from "CustomElement";
-import type { RCTEvent } from "RCTEventDispatcher";
+import RCTView from "./RCTView";
+import UIView from "../base/UIView";
+import type RCTBridge from "../bridge/RCTBridge";
+import CustomElement from "../utils/CustomElement";
+import type { RCTEvent } from "../bridge/RCTEventDispatcher";
 import detectIt from "detect-it";
-import RCTScrollViewLocalData from "RCTScrollViewLocalData";
+import RCTScrollViewLocalData from "./RCTScrollViewLocalData";
 
-import invariant from "Invariant";
+import invariant from "../utils/Invariant";
 import debounce from "debounce";
 import RCTEventDispatcher, {
   normalizeInputEventName
-} from "RCTEventDispatcher";
+} from "../bridge/RCTEventDispatcher";
 
 const SCROLL_LISTENER_OPTIONS = detectIt.passiveEvents
   ? { passive: true }
