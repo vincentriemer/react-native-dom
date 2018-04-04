@@ -130,7 +130,7 @@ jobs:
           command: |
             cd dist
             URL=$(now -t ${NOW_TOKEN})
-            now -t ${NOW_TOKEN} alias ${URL} rntester.now.sh
+            now alias -t ${NOW_TOKEN} ${URL} rntester.now.sh
 
 workflows:
   version: 2
