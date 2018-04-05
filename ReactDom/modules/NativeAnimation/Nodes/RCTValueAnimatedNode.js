@@ -3,9 +3,9 @@
  * @flow
  */
 
-import type { Config } from "RCTNativeAnimatedModule";
+import type { Config } from "../RCTNativeAnimatedModule";
 
-import RCTAnimatedNode from "RCTAnimatedNode";
+import RCTAnimatedNode from "./RCTAnimatedNode";
 
 export interface RCTValueAnimatedNodeObserver {
   animatedNodeDidUpdateValue(node: RCTValueAnimatedNode, value: number): void;

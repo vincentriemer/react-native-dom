@@ -3,12 +3,12 @@
  * @flow
  */
 
-import type RCTBridge from "RCTBridge";
+import type RCTBridge from "../../bridge/RCTBridge";
 
-import RCTView from "RCTView";
-import RCTImageSource from "RCTImageSource";
-import CustomElement from "CustomElement";
-import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
+import RCTView from "../RCTView";
+import RCTImageSource from "./RCTImageSource";
+import CustomElement from "../../utils/CustomElement";
+import ColorArrayFromHexARGB from "../../utils/ColorArrayFromHexARGB";
 
 const tintColorSVG = (color: string, id: number) => {
   return `

@@ -3,8 +3,8 @@
  * @flow
  */
 
-import type RCTValueAnimatedNode from "RCTValueAnimatedNode";
-import type { RCTEvent } from "RCTEventDispatcher";
+import type RCTValueAnimatedNode from "../Nodes/RCTValueAnimatedNode";
+import type { RCTEvent } from "../../../bridge/RCTEventDispatcher";
 
 class RCTEventAnimation {
   eventPath: string[];

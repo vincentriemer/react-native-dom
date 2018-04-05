@@ -3,9 +3,9 @@
  * @flow
  */
 
-import type { Config } from "RCTNativeAnimatedModule";
-import RCTValueAnimatedNode from "RCTValueAnimatedNode";
-import RCTAnimatedNode from "RCTAnimatedNode";
+import type { Config } from "../RCTNativeAnimatedModule";
+import RCTValueAnimatedNode from "./RCTValueAnimatedNode";
+import RCTAnimatedNode from "./RCTAnimatedNode";
 
 class RCTTransformAnimatedNode extends RCTAnimatedNode {
   propsDictionary: { [propName: string]: any };

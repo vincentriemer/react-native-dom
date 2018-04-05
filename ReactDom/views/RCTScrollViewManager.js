@@ -7,12 +7,12 @@ import RCTBridge, {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal
-} from "RCTBridge";
-import invariant from "Invariant";
-import RCTScrollView, { RCTScrollContentView } from "RCTScrollView";
-import type UIView from "UIView";
+} from "../bridge/RCTBridge";
+import invariant from "../utils/Invariant";
+import RCTScrollView, { RCTScrollContentView } from "./RCTScrollView";
+import type UIView from "../base/UIView";
 
-import _RCTViewManager from "RCTViewManager";
+import _RCTViewManager from "./RCTViewManager";
 
 module.exports = (async () => {
   const RCTViewManager = await _RCTViewManager;

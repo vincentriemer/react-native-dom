@@ -3,11 +3,11 @@
  * @flow
  */
 
-import type { Config } from "RCTNativeAnimatedModule";
-import type { RCTAnimationDriver } from "RCTAnimationDriver";
-import type RCTValueAnimatedNode from "RCTValueAnimatedNode";
+import type { Config } from "../RCTNativeAnimatedModule";
+import type { RCTAnimationDriver } from "./RCTAnimationDriver";
+import type RCTValueAnimatedNode from "../Nodes/RCTValueAnimatedNode";
 
-import { RCTSingleFrameInterval } from "RCTAnimationDriver";
+import { RCTSingleFrameInterval } from "./RCTAnimationDriver";
 
 const MAX_DELTA_TIME: number = 0.064;
 

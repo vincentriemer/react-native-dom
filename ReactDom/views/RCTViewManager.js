@@ -3,14 +3,17 @@
  * @flow
  */
 
-import RCTBridge, { RCT_EXPORT_MODULE, RCT_EXPORT_METHOD } from "RCTBridge";
-import UIView from "UIView";
-import { ALL_BORDER_PROPS } from "UIBorderView";
-import RCTView from "RCTView";
+import RCTBridge, {
+  RCT_EXPORT_MODULE,
+  RCT_EXPORT_METHOD
+} from "../bridge/RCTBridge";
+import UIView from "../base/UIView";
+import { ALL_BORDER_PROPS } from "../base/UIBorderView";
+import RCTView from "./RCTView";
 
-import type { HitSlop } from "UIView";
+import type { HitSlop } from "../base/UIView";
 
-import _RCTShadowView from "RCTShadowView";
+import _RCTShadowView from "./RCTShadowView";
 
 type PropDef = {
   name: string,

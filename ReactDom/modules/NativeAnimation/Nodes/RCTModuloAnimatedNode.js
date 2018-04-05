@@ -3,8 +3,8 @@
  * @flow
  */
 
-import RCTValueAnimatedNode from "RCTValueAnimatedNode";
-import invariant from "Invariant";
+import RCTValueAnimatedNode from "./RCTValueAnimatedNode";
+import invariant from "../../../utils/Invariant";
 
 class RCTModuloAnimatedNode extends RCTValueAnimatedNode {
   performUpdate() {

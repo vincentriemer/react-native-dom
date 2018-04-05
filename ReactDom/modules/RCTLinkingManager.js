@@ -7,8 +7,8 @@ import RCTBridge, {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
   RCTFunctionTypePromise
-} from "RCTBridge";
-import RCTEventEmitter from "RCTNativeEventEmitter";
+} from "../bridge/RCTBridge";
+import RCTEventEmitter from "./RCTEventEmitter";
 
 const initialURL = location.href;
 

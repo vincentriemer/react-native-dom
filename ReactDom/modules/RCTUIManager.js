@@ -3,30 +3,30 @@
  * @flow
  */
 
-import invariant from "Invariant";
+import invariant from "../utils/Invariant";
 import RCTBridge, {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
   bridgeModuleNameForClass,
   RCTFunctionTypeNormal
-} from "RCTBridge";
-import UIView from "UIView";
-import RCTView from "RCTView";
-import RCTRootView from "RCTRootView";
-import RCTDeviceInfo from "RCTDeviceInfo";
-import RCTLayoutAnimationManager from "RCTLayoutAnimationManager";
-import RCTUIManagerObserverCoordinator from "RCTUIManagerObserverCoordinator";
-import RCTComponentData from "RCTComponentData";
-import CanUse from "CanUse";
-import instrument from "Instrument";
+} from "../bridge/RCTBridge";
+import UIView from "../base/UIView";
+import RCTView from "../views/RCTView";
+import RCTRootView from "../bridge/RCTRootView";
+import RCTDeviceInfo from "./RCTDeviceInfo";
+import RCTLayoutAnimationManager from "./LayoutAnimation/RCTLayoutAnimationManager";
+import RCTUIManagerObserverCoordinator from "./RCTUIManagerObserver";
+import RCTComponentData from "../views/RCTComponentData";
+import CanUse from "../utils/CanUse";
+import instrument from "../utils/Instrument";
 
-import type { RCTComponent } from "RCTComponent";
-import type { LayoutChange } from "RCTShadowView";
-import type { LayoutAnimationConfig } from "RCTLayoutAnimationManager";
+import type { RCTComponent } from "../views/RCTComponent";
+import type { LayoutChange } from "../views/RCTShadowView";
+import type { LayoutAnimationConfig } from "./LayoutAnimation/RCTLayoutAnimationManager";
 
-import _RCTShadowView from "RCTShadowView";
-import _RCTRootShadowView from "RCTRootShadowView";
-import _RCTShadowText from "RCTShadowText";
+import _RCTShadowView from "../views/RCTShadowView";
+import _RCTRootShadowView from "../views/RCTRootShadowView";
+import _RCTShadowText from "../views/Text/RCTShadowText";
 
 type ShadowView = any;
 type Size = { width: number, height: number };

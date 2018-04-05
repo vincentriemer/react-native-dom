@@ -3,18 +3,18 @@
  * @flow
  */
 
-import type RCTBridge from "RCTBridge";
-import type { RCTEvent } from "RCTEventDispatcher";
-import type RCTValueAnimatedNode from "RCTValueAnimatedNode";
+import type RCTBridge from "../../bridge/RCTBridge";
+import type { RCTEvent } from "../../bridge/RCTEventDispatcher";
+import type RCTValueAnimatedNode from "./Nodes/RCTValueAnimatedNode";
 
-import invariant from "Invariant";
-import RCTNativeAnimatedNodesManager from "RCTNativeAnimatedNodesManager";
+import invariant from "../../utils/Invariant";
+import RCTNativeAnimatedNodesManager from "./RCTNativeAnimatedNodesManager";
 import {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal
-} from "RCTBridge";
-import RCTEventEmitter from "RCTNativeEventEmitter";
+} from "../../bridge/RCTBridge";
+import RCTEventEmitter from "../RCTEventEmitter";
 
 export type Config = Object;
 type AnimatedOperation = (nodesManager: RCTNativeAnimatedNodesManager) => void;

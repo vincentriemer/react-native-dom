@@ -3,8 +3,11 @@
  * @flow
  */
 
-import RCTBridge, { RCT_EXPORT_MODULE, RCT_EXPORT_METHOD } from "RCTBridge";
-import RCTEventEmitter from "RCTNativeEventEmitter";
+import RCTBridge, {
+  RCT_EXPORT_MODULE,
+  RCT_EXPORT_METHOD
+} from "../bridge/RCTBridge";
+import RCTEventEmitter from "./RCTEventEmitter";
 
 @RCT_EXPORT_MODULE("RCTDeviceInfo")
 class RCTDeviceInfo extends RCTEventEmitter {

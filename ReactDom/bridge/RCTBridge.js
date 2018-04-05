@@ -2,29 +2,29 @@
  * @providesModule RCTBridge
  * @flow
  */
-import invariant from "Invariant";
+import invariant from "../utils/Invariant";
 import Yoga, * as YG from "yoga-dom";
-import { moduleConfigFactory } from "RCTModuleConfig";
-import NotificationCenter from "NotificationCenter";
+import { moduleConfigFactory } from "./RCTModuleConfig";
+import NotificationCenter from "../base/NotificationCenter";
 import {
   RCTFunctionTypeNormal,
   RCTFunctionTypePromise,
   RCTFunctionTypeSync
-} from "RCTBridgeMethod";
-import type { ModuleConfig } from "RCTModuleConfig";
-import type { RCTFunctionType } from "RCTBridgeMethod";
-import type RCTEventDispatcher from "RCTEventDispatcher";
-import type RCTImageLoader from "RCTImageLoader";
-import type RCTDeviceInfo from "RCTDeviceInfo";
-import type RCTDevLoadingView from "RCTDevLoadingView";
-import type RCTDevSettings from "RCTDevSettings";
+} from "./RCTBridgeMethod";
+import type { ModuleConfig } from "./RCTModuleConfig";
+import type { RCTFunctionType } from "./RCTBridgeMethod";
+import type RCTEventDispatcher from "./RCTEventDispatcher";
+import type RCTImageLoader from "../views/Image/RCTImageLoader";
+import type RCTDeviceInfo from "../modules/RCTDeviceInfo";
+import type RCTDevLoadingView from "../DevSupport/RCTDevLoadingView";
+import type RCTDevSettings from "../modules/RCTDevSettings";
 import type {
   RCTModule,
   RCTModuleStatics,
   NativeModuleImports
-} from "RCTModule";
+} from "./RCTModule";
 
-import typeof _RCTUIManager from "RCTUIManager";
+import typeof _RCTUIManager from "../modules/RCTUIManager";
 type RCTUIManager = $Call<$await<_RCTUIManager>>;
 
 export { RCTFunctionTypeNormal, RCTFunctionTypePromise, RCTFunctionTypeSync };

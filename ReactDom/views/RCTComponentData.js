@@ -3,23 +3,23 @@
  * @flow
  */
 
-import invariant from "Invariant";
+import invariant from "../utils/Invariant";
 import RCTBridge, {
   getPropertyNames,
   bridgeModuleNameForClass
-} from "RCTBridge";
-import RCTUIManager from "RCTUIManager";
+} from "../bridge/RCTBridge";
+import RCTUIManager from "../modules/RCTUIManager";
 
-import type { RCTComponent } from "RCTComponent";
-import UIView from "UIView";
-import { normalizeInputEventName } from "RCTEventDispatcher";
-import RCTText from "RCTText";
-import RCTRawText from "RCTRawText";
-import type RCTView from "RCTView";
-import RCTTextInput from "RCTTextInput";
+import type { RCTComponent } from "./RCTComponent";
+import UIView from "../base/UIView";
+import { normalizeInputEventName } from "../bridge/RCTEventDispatcher";
+import RCTText from "./Text/RCTText";
+import RCTRawText from "./Text/RCTRawText";
+import type RCTView from "./RCTView";
+import RCTTextInput from "./Text/RCTTextInput";
 
-import typeof _RCTShadowView from "RCTShadowView";
-import typeof _RCTViewManager from "RCTViewManager";
+import typeof _RCTShadowView from "./RCTShadowView";
+import typeof _RCTViewManager from "./RCTViewManager";
 
 type RCTViewManager = $Call<$await<_RCTViewManager>>;
 type RCTShadowView = $Call<$await<_RCTShadowView>>;

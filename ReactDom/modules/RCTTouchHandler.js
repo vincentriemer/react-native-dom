@@ -3,15 +3,15 @@
  * @flow
  */
 
-import type RCTBridge from "RCTBridge";
+import type RCTBridge from "../bridge/RCTBridge";
 
 import detectIt from "detect-it";
 
-import invariant from "Invariant";
-import UIView, { UIChildContainerView } from "UIView";
-import RCTEventDispatcher from "RCTEventDispatcher";
-import RCTTouchEvent from "RCTTouchEvent";
-import guid from "Guid";
+import invariant from "../utils/Invariant";
+import UIView, { UIChildContainerView } from "../base/UIView";
+import RCTEventDispatcher from "../bridge/RCTEventDispatcher";
+import RCTTouchEvent from "./RCTTouchEvent";
+import guid from "../utils/Guid";
 
 type UITouch = {
   view: UIView | UIChildContainerView,

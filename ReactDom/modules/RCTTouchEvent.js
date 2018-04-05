@@ -3,12 +3,12 @@
  * @flow
  */
 
-import type { RCTEvent } from "RCTEventDispatcher";
+import type { RCTEvent } from "../bridge/RCTEventDispatcher";
 
-import invariant from "Invariant";
+import invariant from "../utils/Invariant";
 import RCTEventDispatcher, {
   normalizeInputEventName
-} from "RCTEventDispatcher";
+} from "../bridge/RCTEventDispatcher";
 
 class RCTTouchEvent implements RCTEvent {
   // interface properties

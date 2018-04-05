@@ -2,17 +2,17 @@
  * @providesModule RCTImageViewManager
  * @flow
  */
-import type UIView from "UIView";
+import type UIView from "../../base/UIView";
 import RCTBridge, {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal,
   RCTFunctionTypePromise
-} from "RCTBridge";
-import RCTImageView from "RCTImageView";
-import RCTImageSource from "RCTImageSource";
+} from "../../bridge/RCTBridge";
+import RCTImageView from "./RCTImageView";
+import RCTImageSource from "./RCTImageSource";
 
-import _RCTViewManager from "RCTViewManager";
+import _RCTViewManager from "../RCTViewManager";
 
 type ImageSourceJson = {
   __packager_asset?: boolean,

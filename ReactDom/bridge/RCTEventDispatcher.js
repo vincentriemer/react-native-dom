@@ -7,8 +7,8 @@ import RCTBridge, {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal
-} from "RCTBridge";
-import invariant from "Invariant";
+} from "./RCTBridge";
+import invariant from "../utils/Invariant";
 
 export const RCTTextEventType = {
   RCTTextEventTypeFocus: 0,

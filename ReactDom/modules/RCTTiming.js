@@ -7,7 +7,7 @@ import RCTBridge, {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal
-} from "RCTBridge";
+} from "../bridge/RCTBridge";
 
 type Timer = {
   callbackId: number,

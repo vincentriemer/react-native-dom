@@ -3,12 +3,12 @@
  * @flow
  */
 
-import invariant from "Invariant";
+import invariant from "../utils/Invariant";
 import RCTBridge, {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal
-} from "RCTBridge";
+} from "../bridge/RCTBridge";
 
 @RCT_EXPORT_MODULE("RCTWebSocketModule")
 class RCTWebSocketModule {

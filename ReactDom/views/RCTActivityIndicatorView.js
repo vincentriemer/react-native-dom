@@ -2,10 +2,10 @@
  * @providesModule RCTActivityIndicatorView
  * @flow
  */
-import RCTView from "RCTView";
-import type RCTBridge from "RCTBridge";
-import CustomElement from "CustomElement";
-import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
+import RCTView from "./RCTView";
+import type RCTBridge from "../bridge/RCTBridge";
+import CustomElement from "../utils/CustomElement";
+import ColorArrayFromHexARGB from "../utils/ColorArrayFromHexARGB";
 
 // adapted from https://github.com/necolas/react-native-web/blob/master/src/components/ActivityIndicator/index.js
 const INDICATOR_SVG = `

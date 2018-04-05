@@ -3,11 +3,11 @@
  * @flow
  */
 
-import type RCTBridge from "RCTBridge";
+import type RCTBridge from "../../bridge/RCTBridge";
 
-import RCTView from "RCTView";
-import { defaultFontStack, defaultFontSize } from "RCTSharedTextValues";
-import CustomElement from "CustomElement";
+import RCTView from "../RCTView";
+import { defaultFontStack, defaultFontSize } from "./RCTSharedTextValues";
+import CustomElement from "../../utils/CustomElement";
 
 @CustomElement("rct-text-input")
 class RCTTextInput extends RCTView {

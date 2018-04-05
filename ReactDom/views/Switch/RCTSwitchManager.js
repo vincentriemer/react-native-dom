@@ -7,11 +7,11 @@ import RCTBridge, {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal
-} from "RCTBridge";
-import RCTSwitch from "RCTSwitch";
-import type UIView from "UIView";
+} from "../../bridge/RCTBridge";
+import RCTSwitch from "./RCTSwitch";
+import type UIView from "../../base/UIView";
 
-import _RCTViewManager from "RCTViewManager";
+import _RCTViewManager from "../RCTViewManager";
 
 module.exports = (async () => {
   const RCTViewManager = await _RCTViewManager;

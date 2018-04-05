@@ -7,8 +7,8 @@ import RCTBridge, {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal
-} from "RCTBridge";
-import RCTEventEmitter from "RCTNativeEventEmitter";
+} from "../bridge/RCTBridge";
+import RCTEventEmitter from "./RCTEventEmitter";
 
 let hidden, visibilityChange;
 if (typeof document.hidden !== "undefined") {

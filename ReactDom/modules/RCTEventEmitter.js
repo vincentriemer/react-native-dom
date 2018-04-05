@@ -3,9 +3,12 @@
  * @flow
  */
 
-import invariant from "Invariant";
-import RCTBridge, { RCT_EXPORT_METHOD, RCTFunctionTypeNormal } from "RCTBridge";
-import NotificationCenter from "NotificationCenter";
+import invariant from "../utils/Invariant";
+import RCTBridge, {
+  RCT_EXPORT_METHOD,
+  RCTFunctionTypeNormal
+} from "../bridge/RCTBridge";
+import NotificationCenter from "../base/NotificationCenter";
 
 class RCTEventEmitter {
   bridge: RCTBridge;

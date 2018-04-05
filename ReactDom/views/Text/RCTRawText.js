@@ -2,9 +2,9 @@
  * @providesModule RCTRawText
  * @flow
  */
-import type RCTBridge from "RCTBridge";
-import RCTView from "RCTView";
-import CustomElement from "CustomElement";
+import type RCTBridge from "../../bridge/RCTBridge";
+import RCTView from "../RCTView";
+import CustomElement from "../../utils/CustomElement";
 
 @CustomElement("rct-raw-text")
 class RCTRawText extends RCTView {

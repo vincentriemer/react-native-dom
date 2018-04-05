@@ -3,9 +3,9 @@
  * @flow
  */
 
-import type { LayoutChange } from "RCTShadowView";
+import type { LayoutChange } from "./RCTShadowView";
 
-import _RCTShadowView from "RCTShadowView";
+import _RCTShadowView from "./RCTShadowView";
 import _Yoga from "yoga-dom";
 
 export default (async () => {

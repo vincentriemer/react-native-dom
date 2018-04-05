@@ -3,16 +3,16 @@
  * @flow
  */
 
-import type RCTBridge from "RCTBridge";
+import type RCTBridge from "../../bridge/RCTBridge";
 
-import RCTView from "RCTView";
+import RCTView from "../RCTView";
 import {
   defaultFontStack,
   defaultFontSize,
   defaults as TextDefaults
-} from "RCTSharedTextValues";
-import CustomElement from "CustomElement";
-import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
+} from "./RCTSharedTextValues";
+import CustomElement from "../../utils/CustomElement";
+import ColorArrayFromHexARGB from "../../utils/ColorArrayFromHexARGB";
 import tinycolor from "tinycolor2";
 
 @CustomElement("rct-text")

@@ -3,12 +3,12 @@
  * @flow
  */
 
-import type { Config } from "RCTNativeAnimatedModule";
-import type { RCTAnimationDriver } from "RCTAnimationDriver";
-import type RCTValueAnimatedNode from "RCTValueAnimatedNode";
+import type { Config } from "../RCTNativeAnimatedModule";
+import type { RCTAnimationDriver } from "./RCTAnimationDriver";
+import type RCTValueAnimatedNode from "../Nodes/RCTValueAnimatedNode";
 
-import { RCTSingleFrameInterval } from "RCTAnimationDriver";
-import { RCTInterpolateValue } from "RCTAnimationUtils";
+import { RCTSingleFrameInterval } from "./RCTAnimationDriver";
+import { RCTInterpolateValue } from "../RCTAnimationUtils";
 
 class RCTFrameAnimation implements RCTAnimationDriver {
   animationId: number;

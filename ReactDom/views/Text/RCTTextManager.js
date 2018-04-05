@@ -3,11 +3,11 @@
  * @flow
  */
 
-import RCTBridge, { RCT_EXPORT_MODULE } from "RCTBridge";
-import RCTText from "RCTText";
+import RCTBridge, { RCT_EXPORT_MODULE } from "../../bridge/RCTBridge";
+import RCTText from "./RCTText";
 
-import _RCTViewManager from "RCTViewManager";
-import _RCTShadowText from "RCTShadowText";
+import _RCTViewManager from "../RCTViewManager";
+import _RCTShadowText from "./RCTShadowText";
 
 module.exports = (async () => {
   const RCTViewManager = await _RCTViewManager;

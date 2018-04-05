@@ -3,9 +3,9 @@
  * @flow
  */
 
-import type RCTValueAnimatedNode from "RCTValueAnimatedNode";
-import type RCTNativeAnimatedNodesManager from "RCTNativeAnimatedNodesManager";
-import type { Config } from "RCTNativeAnimatedModule";
+import type RCTValueAnimatedNode from "../Nodes/RCTValueAnimatedNode";
+import type RCTNativeAnimatedNodesManager from "../RCTNativeAnimatedNodesManager";
+import type { Config } from "../RCTNativeAnimatedModule";
 
 export interface RCTAnimationDriver {
   animationId: number;

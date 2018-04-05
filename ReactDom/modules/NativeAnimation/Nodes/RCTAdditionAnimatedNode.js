@@ -3,7 +3,7 @@
  * @flow
  */
 
-import RCTValueAnimatedNode from "RCTValueAnimatedNode";
+import RCTValueAnimatedNode from "./RCTValueAnimatedNode";
 
 class RCTAdditionAnimatedNode extends RCTValueAnimatedNode {
   performUpdate() {
