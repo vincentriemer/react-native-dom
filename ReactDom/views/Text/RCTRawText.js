@@ -21,7 +21,6 @@ class RCTRawText extends RCTView {
 
     this._text = "";
     this.hasBeenFramed = true;
-    this.opacity = 1;
   }
 
   get text(): string {

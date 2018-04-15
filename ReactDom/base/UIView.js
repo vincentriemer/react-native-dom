@@ -10,15 +10,8 @@ import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 import * as MatrixMath from "MatrixMath";
 import prefixInlineStyles from "prefixInlineStyles";
-
-export const FrameZero: Frame = {
-  top: 0,
-  left: 0,
-  width: 0,
-  height: 0
-};
-
-const baseDimension = 1000;
+import isIOS from "isIOS";
+import debounce from "debounce";
 
 @CustomElement("ui-child-container-view")
 export class UIChildContainerView extends HTMLElement {
@@ -27,17 +20,20 @@ export class UIChildContainerView extends HTMLElement {
     Object.assign(
       this.style,
       prefixInlineStyles({
-        contain: "layout style",
+        contain: "layout style size",
         position: "absolute",
         top: "0",
         left: "0",
-        right: "0",
-        bottom: "0",
         userSelect: "inherit",
         transformOrigin: "top left",
         touchAction: "manipulation"
       })
     );
+  }
+
+  updateDimensions(width: number, height: number) {
+    this.style.width = `${width}px`;
+    this.style.height = `${height}px`;
   }
 }
 
@@ -47,6 +43,29 @@ export type HitSlop = {
   left?: number,
   right?: number
 };
+
+type WillChangeRegistry = {
+  [key: string]: number
+};
+
+(() => {
+  const styleElement = document.createElement("style");
+  styleElement.innerHTML = `
+    .pe-auto, .pe-box-only {
+      pointer-events: auto;
+    }
+    .pe-box-only > * {
+      pointer-events: none;
+    }
+    .pe-none, .pe-box-none, .pe-none * {
+      pointer-events: none !important;
+    }
+    .pe-box-none > * {
+      pointer-events: auto;
+    }
+  `;
+  document.head && document.head.appendChild(styleElement);
+})();
 
 @CustomElement("ui-hit-slop-view")
 export class UIHitSlopView extends HTMLElement {
@@ -109,12 +128,14 @@ class UIView extends HTMLElement implements RCTComponent {
   _animatedTransform: string;
   _backgroundColor: string;
   _disabled: boolean = false;
-  _pointerEvents: string = "auto";
+  _pointerEvents: ?string;
 
   _shadowColor: [number, number, number, number] = [1, 0, 0, 0];
   _shadowOffset: { width: number, height: number } = { width: 0, height: 0 };
   _shadowOpacity: number = 0;
   _shadowRadius: number = 0;
+
+  _willChangeRegistry: WillChangeRegistry;
 
   childContainer: UIChildContainerView;
   borderView: ?UIBorderView;
@@ -133,22 +154,20 @@ class UIView extends HTMLElement implements RCTComponent {
 
     this.reactSubviews = [];
     this.hasBeenFramed = false;
-    this.opacity = 1;
 
     this.position = "absolute";
     this.backgroundColor = "rgba(0,0,0,0)";
+
+    this._willChangeRegistry = {};
 
     Object.assign(
       this.style,
       prefixInlineStyles({
         contain: "size layout style",
         boxSizing: "border-box",
-        opacity: "0",
         touchAction: "manipulation",
         userSelect: "inherit",
-        isolation: "isolate",
         overflow: "visible"
-        // overflow: "hidden"
       })
     );
 
@@ -164,6 +183,30 @@ class UIView extends HTMLElement implements RCTComponent {
         }
       });
     });
+  }
+
+  addWillChange(key: string) {
+    if (this._willChangeRegistry.hasOwnProperty(key)) {
+      this._willChangeRegistry[key] += 1;
+    } else {
+      this._willChangeRegistry[key] = 1;
+    }
+    this.updateWillChange();
+  }
+
+  removeWillChange(key: string) {
+    if (this._willChangeRegistry.hasOwnProperty(key)) {
+      if (this._willChangeRegistry[key] === 1) {
+        delete this._willChangeRegistry[key];
+      } else {
+        this._willChangeRegistry[key] -= 1;
+      }
+      this.updateWillChange();
+    }
+  }
+
+  updateWillChange() {
+    this.style.willChange = Object.keys(this._willChangeRegistry).join(", ");
   }
 
   prefixStyle(propName: string | Object, propValue?: string) {
@@ -206,9 +249,13 @@ class UIView extends HTMLElement implements RCTComponent {
 
   set frame(value: Frame) {
     Object.assign(this, value);
+
+    this.childContainer.updateDimensions(value.width, value.height);
+    if (this.borderView) {
+      this.borderView.updateDimensions(value.width, value.height);
+    }
     if (!this.hasBeenFramed) {
       this.hasBeenFramed = true;
-      this.updateHostStyle("opacity", `${this._opacity}`);
     }
   }
 
@@ -244,7 +291,11 @@ class UIView extends HTMLElement implements RCTComponent {
     if (this._animatedTransform) {
       transforms.push(this._animatedTransform);
     } else if (this._transform) {
-      transforms.push(`matrix3d(${this._transform.join(", ")})`);
+      transforms.push(
+        this._transform.length === 6
+          ? `matrix(${this._transform.join(", ")}`
+          : `matrix3d(${this._transform.join(", ")})`
+      );
     }
 
     const transformString = transforms.join(" ");
@@ -288,43 +339,67 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   set pointerEvents(value: string) {
-    this._pointerEvents = value;
-    switch (value) {
-      case "box-none": {
-        this.updateHostStyle("pointerEvents", "none");
-        this.updateChildContainerStyle("pointerEvents", "all");
-        break;
-      }
-      case "box-only": {
-        this.updateHostStyle("pointerEvents", "all");
-        this.updateChildContainerStyle("pointerEvents", "none");
-        break;
-      }
-      default: {
-        this.updateHostStyle("pointerEvents", value);
-        this.updateChildContainerStyle("pointerEvents", value);
-      }
+    if (this._pointerEvents != null) {
+      this.classList.remove(`pe-${this._pointerEvents}`);
     }
+
+    if (["auto", "none", "box-none", "box-only"].includes(value)) {
+      this.classList.add(`pe-${value}`);
+    }
+
+    this._pointerEvents = value;
   }
+
+  isAnimatingOpacity = false;
 
   get opacity(): number {
     return this._opacity;
   }
 
   set opacity(value: number) {
+    if (!this.isAnimatingOpacity && this._opacity != null) {
+      this.addWillChange("opacity");
+      this.isAnimatingOpacity = true;
+    }
+
+    this.handleEndedAnimatedOpacity();
+
     this._opacity = value;
     this.updateHostStyle("opacity", `${value}`);
   }
+
+  handleEndedAnimatedOpacity = debounce(() => {
+    this.removeWillChange("opacity");
+    this.isAnimatingOpacity = false;
+  }, 200);
 
   get transform(): number[] {
     return this._transform;
   }
 
+  attempt2d(v: Array<number>) {
+    if (
+      v[2] === 0 &&
+      v[3] === 0 &&
+      v[6] === 0 &&
+      v[7] === 0 &&
+      v[8] === 0 &&
+      v[9] === 0 &&
+      v[10] === 1 &&
+      v[11] === 0 &&
+      v[14] === 0 &&
+      v[15] === 1
+    ) {
+      return [v[0], v[1], v[4], v[5], v[12], v[13]];
+    }
+  }
+
   set transform(value: ?Array<number>) {
     if (value) {
-      this._transform = value;
+      const maybe2d = this.attempt2d(value);
+      this._transform = maybe2d ? maybe2d : value;
     } else {
-      this._transform = MatrixMath.createIdentityMatrix();
+      this._transform = [1, 0, 0, 1, 0, 0];
     }
     this.updateTransform();
   }
@@ -332,6 +407,8 @@ class UIView extends HTMLElement implements RCTComponent {
   get animatedTransform(): string {
     return this._animatedTransform;
   }
+
+  isAnimatingTransform = false;
 
   set animatedTransform(value: ?Array<Object>) {
     if (!value) {
@@ -356,9 +433,21 @@ class UIView extends HTMLElement implements RCTComponent {
       });
     });
 
-    this._animatedTransform = transformString + " translateZ(0px)";
+    if (!this.isAnimatingTransform) {
+      this.addWillChange("transform");
+      this.isAnimatingTransform = true;
+    }
+
+    this.handleEndedAnimatedTransform();
+
+    this._animatedTransform = transformString;
     this.updateTransform();
   }
+
+  handleEndedAnimatedTransform = debounce(() => {
+    this.removeWillChange("transform");
+    this.isAnimatingTransform = false;
+  }, 100);
 
   get borderChild(): UIBorderView {
     if (!this.borderView) {
@@ -445,7 +534,6 @@ class UIView extends HTMLElement implements RCTComponent {
   // HITSLOP PROPS ================================================
 
   set hitSlop(value?: HitSlop) {
-    console.log(value);
     if (value != null) {
       let hitSlopView = this.hitSlopView;
       if (hitSlopView == null) {

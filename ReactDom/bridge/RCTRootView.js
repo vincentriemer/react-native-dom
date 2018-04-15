@@ -3,7 +3,7 @@
  * @flow
  */
 import RCTBridge from "RCTBridge";
-import UIView, { FrameZero } from "UIView";
+import UIView from "UIView";
 import NotificationCenter from "NotificationCenter";
 import RCTDeviceInfo from "RCTDeviceInfo";
 import RCTTiming from "RCTTiming";
@@ -122,7 +122,7 @@ class RCTRootView extends UIView {
       appParameters
     ]);
 
-    if (this.enableHotReload) {
+    if (__DEV__ && this.enableHotReload) {
       const bundleURL = new URL(this.bundleLocation);
       console.warn("HotReload on " + this.bundleLocation);
       this.bridge.enqueueJSCall("HMRClient", "enable", [
@@ -154,13 +154,13 @@ class RCTRootView extends UIView {
 
     await this.timing.idle(frameStart);
 
-    if (
-      this.timing.shouldContinue() ||
-      this.bridge.shouldContinue() ||
-      this.uiManager.shouldContinue()
-    ) {
-      this.requestTick();
-    }
+    // if (
+    //   this.timing.shouldContinue() ||
+    //   this.bridge.shouldContinue() ||
+    //   this.uiManager.shouldContinue()
+    // ) {
+    this.requestTick();
+    // }
   }
 
   async render() {

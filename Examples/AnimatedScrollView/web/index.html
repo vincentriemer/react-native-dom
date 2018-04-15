@@ -136,45 +136,42 @@
     }
   </style>
   <style>
-    html,
     body {
-      height: 100%;
-      width: 100%;
+      width: 0;
+      height: 0;
       overflow: hidden;
-      position: fixed;
     }
   </style>
   <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width">
 </head>
 
-<body>
-  <!--Bundle Paths-->
-  <script>
-    var clientBundlePath = "./client.bundle?platform=dom";
-    var rnBundlePath = "../index.dom.bundle?platform=dom&dev=true";
-  </script>
 
-  <!--Helper Functions-->
-  <script>
-    function addScript(src, callback) {
-      var s = document.createElement("script");
-      s.setAttribute("src", src);
-      s.onload = callback;
-      document.body.appendChild(s);
-    }
-  </script>
+<!--Bundle Paths-->
+<script>
+  var clientBundlePath = "./client.bundle?platform=dom";
+  var rnBundlePath = "../index.dom.bundle?platform=dom&dev=true";
+</script>
 
-  <!--App Initialization-->
-  <script>
-    addScript(clientBundlePath, function () {
-      // Initialize the React Native application
-      ReactDom.init(
-        rnBundlePath,
-        // Attach it to the body tag
-        document.body
-      );
-    });
-  </script>
-</body>
+<!--Helper Functions-->
+<script>
+  function addScript(src, callback) {
+    var s = document.createElement("script");
+    s.setAttribute("src", src);
+    s.onload = callback;
+    document.documentElement.appendChild(s);
+  }
+</script>
+
+<!--App Initialization-->
+<script>
+  addScript(clientBundlePath, function () {
+    // Initialize the React Native application
+    ReactDom.init(
+      rnBundlePath,
+      // Attach it to the body tag
+      document.documentElement
+    );
+  });
+</script>
 
 </html>

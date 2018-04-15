@@ -13,7 +13,7 @@ class RCTPlatformConstants {
       forceTouchAvailable: supportsTouchForceChange,
       reactNativeVersion: {
         major: 0,
-        minor: 54,
+        minor: 55,
         patch: 0
       }
     };

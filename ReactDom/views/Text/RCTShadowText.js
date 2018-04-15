@@ -31,7 +31,8 @@ const textMeasurementContainer = document.createElement("div");
 textMeasurementContainer.id = "text-measurement";
 Object.assign(textMeasurementContainer.style, {
   visibility: "hidden",
-  pointerEvents: "none"
+  pointerEvents: "none",
+  contain: "contents"
 });
 document.body && document.body.appendChild(textMeasurementContainer);
 
@@ -114,7 +115,8 @@ module.exports = (async () => {
           maxHeight: "auto",
           maxWidth: "auto",
           whiteSpace: "nowrap",
-          display: "inline-block"
+          display: "inline-block",
+          contain: "layout paint"
         });
         textMeasurementContainer.appendChild(domElement);
         this._testDOMElement = domElement;
@@ -188,6 +190,9 @@ module.exports = (async () => {
         width: measuredWidth,
         height: measuredHeight
       } = this.testDOMElement.getBoundingClientRect();
+
+      this.testDOMElement.remove();
+      this._testDOMElement = null;
 
       return {
         width: Math.ceil(measuredWidth),
