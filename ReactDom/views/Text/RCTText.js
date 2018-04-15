@@ -78,11 +78,15 @@ class RCTText extends RCTView {
   }
 
   set frame(value: Frame) {
-    super.frame = value;
+    Object.assign(this, value);
 
     // if text's frame is set revert back to block positioning
     this.updateHostStyle({
       position: "absolute",
+      display: "inline-block"
+    });
+
+    this.updateChildContainerStyle({
       display: "inline-block"
     });
   }
