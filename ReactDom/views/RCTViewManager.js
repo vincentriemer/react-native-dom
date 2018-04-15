@@ -236,10 +236,6 @@ module.exports = (async function() {
       view.hitSlop = value;
     }
 
-    // @RCT_EXPORT_VIEW_PROP("accessible", "bool")
-    // setAccessible(view: RCTView, value: boolean) {
-    //   view.accessible = value;
-    // }
     @RCT_EXPORT_DIRECT_VIEW_PROPS
     getDirectViewProps() {
       const borderPropConfig = ALL_BORDER_PROPS.map((propName) => [

@@ -9,6 +9,7 @@ import RCTView from "RCTView";
 import RCTImageSource from "RCTImageSource";
 import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
+import isIOS from "isIOS";
 
 const tintColorSVG = (color: string, id: number) => {
   return `
@@ -68,7 +69,8 @@ class RCTImageView extends RCTView {
     this.filterId = idCounter;
     idCounter++;
 
-    this.imageElement = document.createElement("img");
+    this.imageElement = new Image();
+    // this.imageElement.setAttribute("decoding", "async");
     this.childContainer.appendChild(this.imageElement);
 
     this.resizeMode = "stretch";
@@ -76,6 +78,10 @@ class RCTImageView extends RCTView {
     this.imageElement.addEventListener("load", () => {
       this.forceRasterization();
     });
+
+    if (isIOS) {
+      this.addWillChange("transform");
+    }
   }
 
   updateFilter() {
@@ -163,8 +169,8 @@ class RCTImageView extends RCTView {
 
     const { width, height } = value;
     Object.assign(this.imageElement.style, {
-      width: "100%",
-      height: "100%"
+      width: `${width}px`,
+      height: `${height}px`
     });
 
     this.reloadImage();
@@ -246,7 +252,7 @@ class RCTImageView extends RCTView {
             this.reactTag,
             "topError",
             {
-              error: err
+              error: err.message
             }
           ]);
         })

@@ -79,7 +79,9 @@ const builtInNativeModules: any[] = [
   require("RCTSwitchManager"),
   require("RCTStatusBarManager"),
   require("RCTDeviceEventManager"),
-  require("RCTKeyboardObserver")
+  require("RCTKeyboardObserver"),
+  require("RCTExceptionsManager"),
+  require("RCTRedBox")
 ];
 
 // Development Specific Native Modules

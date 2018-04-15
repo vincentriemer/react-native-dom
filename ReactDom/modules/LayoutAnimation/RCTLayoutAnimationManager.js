@@ -305,12 +305,12 @@ class RCTLayoutAnimationManager {
           fill: "none"
         };
 
-        view.style.willChange = "opacity";
         view.frame = layout;
+        view.addWillChange("opacity");
 
         animations.push(new KeyframeEffect(view, keyframes, config));
         cleanup.push(() => {
-          view.style.willChange = "";
+          view.removeWillChange("opacity");
         });
       } else {
         // skip layout update animation
@@ -320,7 +320,10 @@ class RCTLayoutAnimationManager {
         }
 
         const shadowView = this.manager.shadowViewRegistry.get(reactTag);
-        invariant(shadowView, "shadowView does not exist");
+        invariant(
+          shadowView,
+          `shadowView does not exist with tag: ${reactTag}`
+        );
 
         if (!registry.hasOwnProperty(reactTag)) {
           registry[reactTag] = this.transformAnimationConfigFactory(
@@ -496,12 +499,11 @@ class RCTLayoutAnimationManager {
 
       const config = { duration, fill: "none" };
 
-      const prevWillChange = view.style.willChange;
-      view.style.willChange = "transform";
+      view.addWillChange("transform");
       view.frame = layout;
       animations.push(new KeyframeEffect(view, keyframes, config));
       cleanup.push(() => {
-        view.style.willChange = prevWillChange;
+        view.removeWillChange("transform");
       });
     });
 
@@ -542,7 +544,7 @@ class RCTLayoutAnimationManager {
         fill: "forwards"
       };
 
-      view.style.willChange = "opacity";
+      view.addWillChange("opacity");
       animations.push(new KeyframeEffect(view, keyframes, config));
       cleanup.push(() => {
         if (view.reactSuperview) {

@@ -23,6 +23,7 @@ import type {
   RCTModuleStatics,
   NativeModuleImports
 } from "RCTModule";
+import type RCTRedBox from "RCTRedBox";
 
 import typeof _RCTUIManager from "RCTUIManager";
 type RCTUIManager = $Call<$await<_RCTUIManager>>;
@@ -157,6 +158,7 @@ export default class RCTBridge {
   _deviceInfo: ?RCTDeviceInfo;
   _devLoadingView: ?RCTDevLoadingView;
   _devSettings: ?RCTDevSettings;
+  _redBox: ?RCTRedBox;
 
   constructor(
     moduleName: string,
@@ -411,6 +413,14 @@ export default class RCTBridge {
       this._devSettings = devSettings;
     }
     return this._devSettings;
+  }
+
+  get redBox(): RCTRedBox {
+    if (!this._redBox) {
+      const redBox: any = this.modulesByName["RedBox"];
+      this._redBox = redBox;
+    }
+    return this._redBox;
   }
 
   async frame() {

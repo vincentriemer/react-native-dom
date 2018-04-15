@@ -3,7 +3,7 @@ const fs = require("fs");
 
 const opts = {
   include: [path.resolve(__dirname, "..", "ReactDom")],
-  extensions: [".dom.js", ".js"]
+  extensions: [".js"]
 };
 
 function buildModuleMap(opts) {
@@ -33,7 +33,7 @@ function buildModuleMap(opts) {
         return;
       }
       const m = /^(.*)\.(\w+)$/.exec(fileName);
-      if (m && ["ios", "android", "native", "web"].indexOf(m[2]) >= 0) {
+      if (m && ["ios", "android", "native", "dom"].indexOf(m[2]) >= 0) {
         fileName = m[1];
       }
       const content = fs.readFileSync(file, "utf-8");
@@ -56,7 +56,7 @@ function buildModuleMap(opts) {
     }
   };
 
-  opts.include.forEach(root => {
+  opts.include.forEach((root) => {
     const dir = root.replace(/\/\*\*$/, "");
     walk(dir);
   });
@@ -135,7 +135,12 @@ module.exports = function({ types }) {
       },
       ImportDeclaration: {
         exit(path, state) {
+          if (path.node.seen) {
+            return;
+          }
+
           transformImport(path, state);
+          path.node.seen = true;
         }
       }
     }

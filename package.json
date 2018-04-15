@@ -30,14 +30,14 @@
   },
   "files": ["lib", "Libraries", "local-cli/index.js", "local-cli/runDom"],
   "peerDependencies": {
-    "react-native": "~0.54.0"
+    "react-native": "~0.55.0"
   },
   "scripts": {
     "prestart": "cd Examples/NavigationPlayground && yarn",
     "flow": "flow",
     "flow:coverage":
       "flow-coverage-report -i 'ReactDom/**/*.js' -t html -t text",
-    "build": "BABEL_ENV=lib babel ReactDom --out-dir lib --source-maps inline",
+    "build": "BABEL_ENV=lib babel ReactDom --out-dir lib --source-maps",
     "prebuild": "rimraf lib",
     "postbuild": "flow-copy-source ReactDom lib",
     "start": "react-native start",
@@ -95,8 +95,8 @@
     "jest": "^20.0.4",
     "lint-staged": "^6.0.0",
     "prettier": "^1.9.0",
-    "react": "^16.3.0-alpha.1",
-    "react-native": "0.54.4",
+    "react": "^16.3.1",
+    "react-native": "~0.55.0",
     "rimraf": "^2.6.1",
     "rollup": "^0.50.0",
     "rollup-plugin-babel": "^3.0.2",

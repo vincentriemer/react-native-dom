@@ -9,14 +9,15 @@ import RCTBridge, {
   RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal
 } from "RCTBridge";
+import RCTEventEmitter from "RCTNativeEventEmitter";
 
 @RCT_EXPORT_MODULE("RCTWebSocketModule")
-class RCTWebSocketModule {
+class RCTWebSocketModule extends RCTEventEmitter {
   bridge: RCTBridge;
   sockets: { [id: string]: WebSocket };
 
   constructor(bridge: RCTBridge) {
-    this.bridge = bridge;
+    super(bridge);
     this.sockets = {};
   }
 

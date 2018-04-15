@@ -141,6 +141,7 @@ export class RCTScrollContentView extends RCTView {
       position: "relative",
       display: "block",
       opacity: "1",
+      contain: "layout style",
       // vastly improves scrolling performance (especially on sfarai)
       willChange: "transform"
     });
@@ -202,21 +203,6 @@ class RCTScrollView extends RCTView {
 
     if (!this.hasScrollParent()) {
       this.updateHostStyle("overscrollBehavior", "contain");
-      this.addEventListener(
-        "touchstart",
-        () => {
-          const top = this.scrollTop;
-          const totalScroll = this.scrollHeight;
-          const currentScroll = top + this.offsetHeight;
-
-          if (top === 0) {
-            this.scrollTop = 1;
-          } else if (currentScroll === totalScroll) {
-            this.scrollTop = top - 1;
-          }
-        },
-        false
-      );
     }
 
     this.isScrolling = false;
@@ -229,7 +215,7 @@ class RCTScrollView extends RCTView {
     this._overflow = "scroll";
     this._scrollEnabled = true;
 
-    this.updateTransform();
+    this.addWillChange("transform");
 
     this.addEventListener("scroll", this.handleScroll, SCROLL_LISTENER_OPTIONS);
   }
@@ -275,8 +261,6 @@ class RCTScrollView extends RCTView {
     if (this._overflow === "scroll" && this._scrollEnabled) {
       styleUpdate.msOverflowStyle = "-ms-autohiding-scrollbar";
       styleUpdate.webkitOverflowScrolling = "touch";
-      // TODO: Make this conditional based on screen DPI
-      styleUpdate.willChange = "transform";
 
       if (this._horizontal) {
         styleUpdate.overflowX = "auto";
@@ -428,7 +412,13 @@ class RCTScrollView extends RCTView {
       height: this.scrollHeight
     };
 
-    const contentFrame = await this.manager.measure(this.reactTag);
+    const shadowView = this.manager.shadowViewRegistry.get(this.reactTag);
+    invariant(shadowView, `No ShadowView for tag ${this.reactTag}`);
+    const contentFrame = shadowView.previousLayout;
+    invariant(
+      contentFrame,
+      `ShadowView with tag ${this.reactTag} has not been layed out`
+    );
 
     const args = [
       this.reactTag,
@@ -471,6 +461,36 @@ class RCTScrollView extends RCTView {
       ...eventArgs
     );
     this.bridge.eventDispatcher.sendEvent(momentumScrollEvent);
+
+    this.correctScrollPosition();
+  }
+
+  correctScrollPosition() {
+    const scrollNudge = 1;
+
+    if (SHOULD_CORRECT_SCROLL) {
+      if (!this._horizontal) {
+        const endTopPosition = this.scrollTop + this.contentSize.height;
+        if (this.scrollTop <= 0 && this.scrollTop >= -0.1) {
+          this.scrollTop = scrollNudge;
+        } else if (
+          endTopPosition >= this.scrollHeight &&
+          endTopPosition <= this.scrollHeight + 0.1
+        ) {
+          this.scrollTop = this.scrollTop - scrollNudge;
+        }
+      } else {
+        const endLeftPosition = this.scrollLeft + this.contentSize.width;
+        if (this.scrollLeft <= 0 && this.scrollLeft >= -0.1) {
+          this.scrollLeft = scrollNudge;
+        } else if (
+          endLeftPosition >= this.scrollWidth &&
+          endLeftPosition <= this.scrollWidth + 0.1
+        ) {
+          this.scrollLeft = this.scrollLeft - scrollNudge;
+        }
+      }
+    }
   }
 
   handleScrollTick(...eventArgs: ScrollEventArgs) {

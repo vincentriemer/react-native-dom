@@ -1,8 +1,3 @@
-ErrorUtils = {
-  setGlobalHandler: () => {},
-  reportFatalError: console.error
-};
-
 function sendMessage(topic, payload) {
   postMessage({ topic, payload });
 }

@@ -112,6 +112,11 @@ module.exports = (async () => {
     setIsHighlighted(view: RCTText, value: ?boolean) {
       view.isHighlighted = value;
     }
+
+    @RCT_EXPORT_MIRRORED_PROP("numberOfLines", "number")
+    setNumberOfLines(view: RCTText, value: ?number) {
+      view.numberOfLines = value;
+    }
   }
 
   return RCTTextManager;

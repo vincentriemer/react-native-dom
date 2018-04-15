@@ -54,15 +54,13 @@ class UIBorderView extends HTMLElement {
       position: "absolute",
       top: "0",
       left: "0",
-      bottom: "0",
-      right: "0",
       boxSizing: "border-box",
       transformOrigin: "top left",
       pointerEvents: "none",
       borderStyle: "solid",
       borderWidth: "0",
       overflow: "hidden",
-      contain: "content",
+      contain: "strict",
       touchAction: "manipulation"
     });
 
@@ -98,6 +96,11 @@ class UIBorderView extends HTMLElement {
         }
       });
     });
+  }
+
+  updateDimensions(width: number, height: number) {
+    this.style.width = `${width}px`;
+    this.style.height = `${height}px`;
   }
 
   // property shorthands

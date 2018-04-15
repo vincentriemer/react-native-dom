@@ -44,7 +44,9 @@ module.exports = (async () => {
     if (typeof input === "number") {
       return { value: input, unit: units.point };
     } else if (input == null) {
-      return { value: NaN, unit: units.undefined };
+      // TODO: Figure out why this isn't unsetting the value in Yoga
+      // return { value: NaN, unit: units.undefined };
+      return { value: 0, unit: units.point };
     } else {
       if (input === "auto") {
         return { value: NaN, unit: units.auto };

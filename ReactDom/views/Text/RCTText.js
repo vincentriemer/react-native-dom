@@ -6,6 +6,7 @@
 import type RCTBridge from "RCTBridge";
 
 import RCTView from "RCTView";
+import RCTRawText from "RCTRawText";
 import {
   defaultFontStack,
   defaultFontSize,
@@ -36,6 +37,7 @@ class RCTText extends RCTView {
 
     this.updateChildContainerStyle({
       display: "inline",
+      contain: "none",
       position: "static"
     });
 
@@ -83,8 +85,6 @@ class RCTText extends RCTView {
       position: "absolute",
       display: "inline-block"
     });
-
-    this.updateChildContainerStyle("display", "inline-block");
   }
 
   set accessible(value: boolean) {
@@ -184,6 +184,22 @@ class RCTText extends RCTView {
       "lineHeight",
       value ? `${value}px` : TextDefaults.lineHeight
     );
+  }
+
+  set numberOfLines(value: ?number) {
+    if (value === 1) {
+      this.updateHostStyle({
+        overflow: "hidden",
+        whiteSpace: "nowrap",
+        textOverflow: "ellipsis"
+      });
+    } else {
+      this.updateHostStyle({
+        overflow: "visible",
+        whiteSpace: "pre-wrap",
+        textOverflow: undefined
+      });
+    }
   }
 }
 
