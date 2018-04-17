@@ -16,6 +16,21 @@ import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 import tinycolor from "tinycolor2";
 
+// inject default font stylesheet
+(() => {
+  const styleElement = document.createElement("style");
+  styleElement.innerHTML = `
+    body, html {
+      font-family: ${TextDefaults.fontFamily};
+      font-size: ${TextDefaults.fontSize};
+      line-height: ${TextDefaults.lineHeight};
+      font-weight: ${TextDefaults.fontWeight};
+      letter-spacing: ${TextDefaults.letterSpacing};
+    }
+  `;
+  document.head && document.head.appendChild(styleElement);
+})();
+
 @CustomElement("rct-text")
 class RCTText extends RCTView {
   _selectable: boolean;
@@ -43,8 +58,8 @@ class RCTText extends RCTView {
 
     this.isHighlighted = null;
     this.disabled = true;
-    this.fontFamily = defaultFontStack;
-    this.fontSize = defaultFontSize;
+    this.fontFamily = null;
+    this.fontSize = null;
     this.lineHeight = null;
     this.textDecorationColor = null;
     this.textDecorationLine = null;
@@ -96,11 +111,11 @@ class RCTText extends RCTView {
   }
 
   set fontFamily(value: ?string) {
-    this.style.fontFamily = value ? value : TextDefaults.fontFamily;
+    this.style.fontFamily = value ? value : "inherit";
   }
 
   set fontSize(value: ?number) {
-    this.style.fontSize = value ? `${value}px` : TextDefaults.fontSize;
+    this.style.fontSize = value ? `${value}px` : "inherit";
   }
 
   get selectable(): boolean {
@@ -154,9 +169,7 @@ class RCTText extends RCTView {
   }
 
   set letterSpacing(value: ?number) {
-    this.style.letterSpacing = value
-      ? `${value}px`
-      : TextDefaults.letterSpacing;
+    this.style.letterSpacing = value ? `${value}px` : "inherit";
   }
 
   set textDecorationLine(value: ?string) {
@@ -184,10 +197,7 @@ class RCTText extends RCTView {
   }
 
   set lineHeight(value: ?number) {
-    this.updateHostStyle(
-      "lineHeight",
-      value ? `${value}px` : TextDefaults.lineHeight
-    );
+    this.updateHostStyle("lineHeight", value ? `${value}px` : "inherit");
   }
 
   set numberOfLines(value: ?number) {

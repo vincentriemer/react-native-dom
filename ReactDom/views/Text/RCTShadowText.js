@@ -84,7 +84,7 @@ module.exports = (async () => {
                 ? `${value}px`
                 : value;
             } else {
-              this.props[shadowPropName] = TextDefaults[shadowPropName];
+              this.props[shadowPropName] = "inherit";
             }
             this.markTextDirty();
             return true;
