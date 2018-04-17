@@ -71,55 +71,26 @@ class RCTTouchHandler {
     this.touchViews = [];
   }
 
-  static RCTNormalizeInteractionEvent(
-    rawEvent: TouchEvent | MouseEvent
-  ): ?Array<UITouch> {
-    if (rawEvent instanceof MouseEvent) {
-      const target: UIView = getFirstParentUIView(rawEvent.target);
+  static RCTNormalizeInteractionEvent(rawEvent: PointerEvent): ?Array<UITouch> {
+    const target: UIView = getFirstParentUIView(rawEvent.target);
 
-      if ("which" in rawEvent && rawEvent.which === 3) {
-        return null;
-      } else if ("button" in rawEvent && rawEvent.button === 2) {
-        return null;
-      }
-
-      return [
-        {
-          view: target,
-          identifier: 0,
-          pageX: rawEvent.pageX,
-          pageY: rawEvent.pageY,
-          locationX: rawEvent.clientX,
-          locationY: rawEvent.clientY,
-          timestamp: performance.now()
-        }
-      ];
-    } else if (rawEvent.changedTouches) {
-      const rawTouches = rawEvent.changedTouches;
-      const resultingTouchList = [];
-
-      for (let i = 0; i < rawTouches.length; i++) {
-        const rawTouch = rawTouches[i];
-        const target: UIView = getFirstParentUIView(rawTouch.target);
-
-        const rect = target.getBoundingClientRect();
-
-        resultingTouchList.push({
-          view: target,
-          identifier: rawTouch.identifier % 20,
-          pageX: rawTouch.clientX,
-          pageY: rawTouch.clientY,
-          locationX: rawTouch.pageX - rect.left,
-          locationY: rawTouch.pageY - rect.top,
-          timestamp: performance.now()
-        });
-      }
-
-      return resultingTouchList;
+    if ("which" in rawEvent && rawEvent.which === 3) {
+      return null;
+    } else if ("button" in rawEvent && rawEvent.button === 2) {
+      return null;
     }
 
-    console.error(rawEvent);
-    throw new Error("Invalid Event");
+    return [
+      {
+        view: target,
+        identifier: 0,
+        pageX: rawEvent.pageX,
+        pageY: rawEvent.pageY,
+        locationX: rawEvent.clientX,
+        locationY: rawEvent.clientY,
+        timestamp: performance.now()
+      }
+    ];
   }
 
   attachToView(view: UIView) {
@@ -251,7 +222,7 @@ class RCTTouchHandler {
     this.eventDispatcher.sendEvent(event);
   }
 
-  mouseClickBegan = (event: MouseEvent) => {
+  pointerBegan = (event: PointerEvent) => {
     const touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
     if (!touches) return;
 
@@ -259,19 +230,36 @@ class RCTTouchHandler {
 
     const view = this.view;
     if (view) {
-      view.addEventListener("mouseup", this.mouseClickEnded);
-      view.addEventListener("mousemove", this.mouseClickMoved);
+      // $FlowFixMe
+      view.addEventListener(
+        "pointerup",
+        this.pointerEnded,
+        TOUCH_LISTENER_OPTIONS
+      );
+      // $FlowFixMe
+      view.addEventListener(
+        "pointermove",
+        this.pointerMoved,
+        TOUCH_LISTENER_OPTIONS
+      );
+      // $FlowFixMe
+      view.addEventListener(
+        "pointercancel",
+        this.pointerCancelled,
+        TOUCH_LISTENER_OPTIONS
+      );
     }
   };
 
-  mouseClickMoved = (event: MouseEvent) => {
+  pointerMoved = (event: PointerEvent) => {
     const touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
     if (!touches) return;
 
     this.touchesMoved(touches);
   };
 
-  mouseClickEnded = (event: MouseEvent) => {
+  pointerEnded = (event: PointerEvent) => {
+    event.preventDefault();
     const touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
     if (!touches) return;
 
@@ -279,81 +267,11 @@ class RCTTouchHandler {
 
     const view = this.view;
     if (view) {
-      view.removeEventListener("mouseup", this.mouseClickEnded);
-      view.removeEventListener("mousemove", this.mouseClickMoved);
+      this.removePointerEvents(view);
     }
   };
 
-  nativeTouchBegan = (event: TouchEvent) => {
-    const touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
-    if (!touches) return;
-
-    this.touchesBegan(touches);
-
-    const view = this.view;
-    if (view) {
-      window.addEventListener(
-        "touchend",
-        this.nativeTouchEnded,
-        TOUCH_LISTENER_OPTIONS
-      );
-      window.addEventListener(
-        "touchmove",
-        this.nativeTouchMoved,
-        TOUCH_LISTENER_OPTIONS
-      );
-      window.addEventListener(
-        "touchcancel",
-        this.nativeTouchCanceled,
-        TOUCH_LISTENER_OPTIONS
-      );
-    }
-
-    return true;
-  };
-
-  nativeTouchMoved = (event: TouchEvent) => {
-    const touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
-    if (!touches) return;
-
-    this.touchesMoved(touches);
-
-    return true;
-  };
-
-  nativeTouchEnded = (event: TouchEvent) => {
-    const touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
-    if (!touches) return;
-
-    this.touchesEnded(touches);
-
-    const view = this.view;
-    if (view) {
-      this.removeTouchEvents(view);
-    }
-
-    return true;
-  };
-
-  removeTouchEvents(view: UIView) {
-    window.removeEventListener(
-      "touchend",
-      this.nativeTouchEnded,
-      TOUCH_LISTENER_OPTIONS
-    );
-    window.removeEventListener(
-      "touchmove",
-      this.nativeTouchMoved,
-      TOUCH_LISTENER_OPTIONS
-    );
-    window.removeEventListener(
-      "touchcancel",
-      this.nativeTouchCanceled,
-      TOUCH_LISTENER_OPTIONS
-    );
-  }
-
-  nativeTouchCanceled = (event: TouchEvent) => {
+  pointerCancelled = (event: PointerEvent) => {
     const touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
     if (!touches) return;
 
@@ -361,11 +279,30 @@ class RCTTouchHandler {
 
     const view = this.view;
     if (view) {
-      this.removeTouchEvents(view);
+      this.removePointerEvents(view);
     }
-
-    return true;
   };
+
+  removePointerEvents(view: UIView) {
+    // $FlowFixMe
+    view.removeEventListener(
+      "pointerup",
+      this.pointerEnded,
+      TOUCH_LISTENER_OPTIONS
+    );
+    // $FlowFixMe
+    view.removeEventListener(
+      "pointermove",
+      this.pointerMoved,
+      TOUCH_LISTENER_OPTIONS
+    );
+    // $FlowFixMe
+    view.removeEventListener(
+      "pointercancel",
+      this.pointerCancelled,
+      TOUCH_LISTENER_OPTIONS
+    );
+  }
 
   touchesBegan(touches: Array<UITouch>) {
     this.recordNewTouches(touches);

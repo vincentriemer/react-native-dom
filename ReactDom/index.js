@@ -4,6 +4,7 @@
  */
 
 // Polyfills
+import "pepjs";
 import "@webcomponents/webcomponentsjs/webcomponents-sd-ce.js";
 import "web-animations-js/web-animations-next.min";
 

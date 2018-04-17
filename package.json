@@ -19,6 +19,7 @@
     "node-fetch": "^1.7.3",
     "normalize-css-color": "^1.0.2",
     "opn": "^5.2.0",
+    "pepjs": "^0.4.3",
     "proxy-polyfill": "^0.1.7",
     "rebound": "^0.0.15",
     "tinycolor2": "^1.4.1",

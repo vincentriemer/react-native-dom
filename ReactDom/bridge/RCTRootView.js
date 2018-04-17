@@ -58,6 +58,9 @@ class RCTRootView extends UIView {
       bundle += "&hot=true";
     }
 
+    this.updateHostStyle("touchAction", "none");
+    this.setAttribute("touch-action", "none");
+
     const bridge = new RCTBridge(moduleName, bundle, nativeModules);
     this.initialization = this.initializeBridge(bridge);
   }

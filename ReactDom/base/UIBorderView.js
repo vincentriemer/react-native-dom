@@ -60,8 +60,7 @@ class UIBorderView extends HTMLElement {
       borderStyle: "solid",
       borderWidth: "0",
       overflow: "hidden",
-      contain: "strict",
-      touchAction: "manipulation"
+      contain: "strict"
     });
 
     BORDER_STYLE_PROPS.forEach((propName) => {

@@ -265,11 +265,18 @@ class RCTScrollView extends RCTView {
       if (this._horizontal) {
         styleUpdate.overflowX = "auto";
         styleUpdate.overflowY = "hidden";
+        styleUpdate.touchAction = "pan-x";
+        this.setAttribute("touch-action", "pan-x");
       } else {
         styleUpdate.overflowX = "hidden";
         styleUpdate.overflowY = "auto";
+        styleUpdate.touchAction = "pan-y";
+        this.setAttribute("touch-action", "pan-y");
       }
     } else {
+      styleUpdate.touchAction = undefined;
+      this.removeAttribute("touch-action");
+
       styleUpdate.msOverflowStyle = "auto";
       styleUpdate.webkitOverflowScrolling = "";
       styleUpdate.willChange = "";
@@ -516,7 +523,7 @@ class RCTScrollView extends RCTView {
   }
 
   set touchable(value: boolean) {
-    super.touchable = value;
+    // super.touchable = value;
     this.updateHostStyle("cursor", "auto");
   }
 }

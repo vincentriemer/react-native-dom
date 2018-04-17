@@ -25,8 +25,7 @@ export class UIChildContainerView extends HTMLElement {
         top: "0",
         left: "0",
         userSelect: "inherit",
-        transformOrigin: "top left",
-        touchAction: "manipulation"
+        transformOrigin: "top left"
       })
     );
   }
@@ -88,8 +87,7 @@ export class UIHitSlopView extends HTMLElement {
       this.style,
       prefixInlineStyles({
         contain: "strict",
-        position: "absolute",
-        touchAction: "manipulation"
+        position: "absolute"
       })
     );
   }
@@ -165,7 +163,6 @@ class UIView extends HTMLElement implements RCTComponent {
       prefixInlineStyles({
         contain: "size layout style",
         boxSizing: "border-box",
-        touchAction: "manipulation",
         userSelect: "inherit",
         overflow: "visible"
       })
@@ -577,17 +574,12 @@ class UIView extends HTMLElement implements RCTComponent {
     deviceType: "mouseOnly" | "touchOnly" | "hybrid",
     touchListenerOptions: Object | boolean
   ) {
-    if (deviceType !== "touchOnly") {
-      this.addEventListener("mousedown", handler.mouseClickBegan, false);
-    }
-
-    if (deviceType !== "mouseOnly") {
-      this.addEventListener(
-        "touchstart",
-        handler.nativeTouchBegan,
-        touchListenerOptions
-      );
-    }
+    // $FlowFixMe
+    this.addEventListener(
+      "pointerdown",
+      handler.pointerBegan,
+      touchListenerOptions
+    );
   }
 
   removeGestureRecognizer(handler: RCTTouchHandler) {
