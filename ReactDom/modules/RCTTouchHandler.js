@@ -259,7 +259,6 @@ class RCTTouchHandler {
   };
 
   pointerEnded = (event: PointerEvent) => {
-    event.preventDefault();
     const touches = RCTTouchHandler.RCTNormalizeInteractionEvent(event);
     if (!touches) return;
 
