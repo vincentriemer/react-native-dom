@@ -9,6 +9,7 @@ import RCTView from "RCTView";
 import RCTImageSource from "RCTImageSource";
 import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
+import prefixInlineStyles from "prefixInlineStyles";
 import isIOS from "isIOS";
 
 const tintColorSVG = (color: string, id: number) => {
@@ -70,6 +71,7 @@ class RCTImageView extends RCTView {
     idCounter++;
 
     this.imageElement = new Image();
+    this.imageElement.setAttribute("draggable", "false");
     // this.imageElement.setAttribute("decoding", "async");
     this.childContainer.appendChild(this.imageElement);
 
