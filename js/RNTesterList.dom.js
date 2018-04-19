@@ -144,11 +144,11 @@ const ComponentExamples: Array<RNTesterExample> = [
   {
     key: "ViewExample",
     module: require("./ViewExample")
+  },
+  {
+    key: "WebViewExample",
+    module: require("./WebViewExample")
   }
-  // {
-  //   key: "WebViewExample",
-  //   module: require("./WebViewExample")
-  // }
 ];
 
 const APIExamples: Array<RNTesterExample> = [
