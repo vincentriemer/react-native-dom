@@ -11,12 +11,12 @@ import {
 } from "react-native";
 
 var CustomLayoutAnimation = {
-  ...LayoutAnimation.Presets.spring
-  // delete: {
-  //   type: LayoutAnimation.Types.easeOut,
-  //   property: LayoutAnimation.Properties.opacity,
-  //   duration: 1
-  // }
+  ...LayoutAnimation.Presets.spring,
+  delete: {
+    type: LayoutAnimation.Types.easeOut,
+    property: LayoutAnimation.Properties.opacity,
+    duration: 1
+  }
 };
 
 class AnimationExample extends Component {
@@ -56,9 +56,7 @@ class AnimationExample extends Component {
         style={styles.button}
         onPress={() => this.onPress(index)}
       >
-        <Text>
-          {index}
-        </Text>
+        <Text>{index}</Text>
       </TouchableOpacity>
     );
   }
