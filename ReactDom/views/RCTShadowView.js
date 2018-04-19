@@ -266,7 +266,7 @@ module.exports = (async () => {
         });
       } else {
         const shouldUpdateChildren: boolean = (() => {
-          let result = false;
+          let result = this.isDirty;
           this.reactSubviews.forEach((subView) => {
             if (subView.isDirty) {
               result = true;

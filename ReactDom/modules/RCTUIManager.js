@@ -414,7 +414,8 @@ module.exports = (async () => {
       if (!block) {
         return;
       }
-      this.pendingUIBlocks.unshift(block);
+      block.call(null, this, this.viewRegistry);
+      // this.pendingUIBlocks.unshift(block);
     }
 
     @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
@@ -742,7 +743,6 @@ module.exports = (async () => {
       ];
 
       const methodName = moduleData.methods[commandID];
-      console.log(methodName);
       const args = [reactTag, ...commandArgs];
 
       const manager = this.bridge.moduleForClass(managerClass);
