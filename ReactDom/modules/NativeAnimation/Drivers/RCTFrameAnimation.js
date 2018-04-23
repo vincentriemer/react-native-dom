@@ -22,7 +22,7 @@ class RCTFrameAnimation implements RCTAnimationDriver {
   frames: number[];
   toValue: number;
   fromValue: number;
-  callback: Function;
+  callback: ?Function;
   iterations: number;
   currentLoop: number;
 
@@ -30,7 +30,7 @@ class RCTFrameAnimation implements RCTAnimationDriver {
     animationId: number,
     config: Config,
     valueNode: RCTValueAnimatedNode,
-    callback: Function
+    callback: ?Function
   ) {
     this.animationId = animationId;
     this.toValue = config.toValue != null ? config.toValue : 1;

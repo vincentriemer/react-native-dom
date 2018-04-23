@@ -22,13 +22,13 @@ class RCTDecayAnimation implements RCTAnimationDriver {
   lastValue: number;
   iterations: number;
   currentLoop: number;
-  callback: Function;
+  callback: ?Function;
 
   constructor(
     animationId: number,
     config: Config,
     valueNode: RCTValueAnimatedNode,
-    callback: Function
+    callback: ?Function
   ) {
     this.animationId = animationId;
     this.fromValue = 0;

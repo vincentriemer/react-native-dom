@@ -4,6 +4,7 @@
  */
 
 import type { Config } from "RCTNativeAnimatedModule";
+import type RCTNativeAnimatedNodesManager from "RCTNativeAnimatedNodesManager";
 
 import invariant from "Invariant";
 
@@ -11,6 +12,7 @@ class RCTAnimatedNode {
   nodeTag: number;
   needsUpdate: boolean;
   config: Config;
+  manager: RCTNativeAnimatedNodesManager;
 
   childNodes: ?{ [nodeTag: number]: RCTAnimatedNode };
   parentNodes: ?{ [nodeTag: number]: RCTAnimatedNode };

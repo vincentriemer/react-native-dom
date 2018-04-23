@@ -17,7 +17,7 @@ export interface RCTAnimationDriver {
     animationId: number,
     config: Config,
     valueNode: RCTValueAnimatedNode,
-    callback: Function
+    callback: ?Function
   ): RCTAnimationDriver;
 
   startAnimation(): void;

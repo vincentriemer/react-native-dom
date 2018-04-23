@@ -28,7 +28,7 @@ class RCTSpringAnimation implements RCTAnimationDriver {
   initialVelocity: number;
   animationStartTime: number;
   animationCurrentTime: number;
-  callback: Function;
+  callback: ?Function;
 
   lastPosition: number;
   lastVelocity: number;
@@ -42,7 +42,7 @@ class RCTSpringAnimation implements RCTAnimationDriver {
     animationId: number,
     config: Config,
     valueNode: RCTValueAnimatedNode,
-    callback: Function
+    callback: ?Function
   ) {
     const iterations = config.iterations != null ? config.iterations : 1;
 

@@ -22,6 +22,7 @@ import RCTMultiplicationAnimatedNode from "RCTMultiplicationAnimatedNode";
 import RCTAdditionAnimatedNode from "RCTAdditionAnimatedNode";
 import RCTModuloAnimatedNode from "RCTModuloAnimatedNode";
 import RCTDivisionAnimatedNode from "RCTDivisionAnimatedNode";
+import RCTTrackingAnimatedNode from "RCTTrackingAnimatedNode";
 
 // Drivers
 import RCTEventAnimation from "RCTEventAnimation";
@@ -41,7 +42,8 @@ const NODE_TYPE_MAP: { [typeName: string]: Class<RCTAnimatedNode> } = {
   multiplication: RCTMultiplicationAnimatedNode,
   addition: RCTAdditionAnimatedNode,
   modulus: RCTModuloAnimatedNode,
-  division: RCTDivisionAnimatedNode
+  division: RCTDivisionAnimatedNode,
+  tracking: RCTTrackingAnimatedNode
 };
 
 const DRIVER_TYPE_MAP: { [typeName: string]: Class<RCTAnimationDriver> } = {
@@ -79,6 +81,7 @@ class RCTNativeAnimatedNodesManager {
     }
 
     const node = new NodeClass(tag, config);
+    node.manager = this;
     this.animationNodes[tag] = node;
     node.setNeedsUpdate();
   }
@@ -180,7 +183,7 @@ class RCTNativeAnimatedNodesManager {
     animationId: number,
     nodeTag: number,
     config: Config,
-    endCallback: Function
+    endCallback: ?Function
   ) {
     const valueNode = this.animationNodes[nodeTag];
     invariant(
