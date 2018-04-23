@@ -53,7 +53,8 @@ class RCTText extends RCTView {
     this.updateChildContainerStyle({
       display: "inline",
       contain: "none",
-      position: "static"
+      position: "static",
+      width: "100%"
     });
 
     this.isHighlighted = null;
@@ -200,6 +201,8 @@ class RCTText extends RCTView {
     this.updateHostStyle("lineHeight", value ? `${value}px` : "inherit");
   }
 
+  // TODO: ellipsizeMode
+
   set numberOfLines(value: ?number) {
     if (value === 1) {
       this.updateHostStyle({
@@ -207,10 +210,18 @@ class RCTText extends RCTView {
         whiteSpace: "nowrap",
         textOverflow: "ellipsis"
       });
+      this.updateChildContainerStyle({
+        overflow: "hidden",
+        textOverflow: "ellipsis"
+      });
     } else {
       this.updateHostStyle({
         overflow: "visible",
         whiteSpace: "pre-wrap",
+        textOverflow: undefined
+      });
+      this.updateChildContainerStyle({
+        overflow: "visible",
         textOverflow: undefined
       });
     }
