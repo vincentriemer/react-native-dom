@@ -5,7 +5,7 @@
 
 // Polyfills
 import "pepjs";
-import "@webcomponents/webcomponentsjs/webcomponents-sd-ce.js";
+import "@webcomponents/webcomponentsjs/webcomponents-sd-ce";
 import "web-animations-js/web-animations-next.min";
 
 global.process = global.process || {};
@@ -56,34 +56,34 @@ export type { RCTUIManager, RCTEventDispatcher, RCTBridge };
 
 // Register Built-in Native Modules
 const builtInNativeModules: any[] = [
-  require("RCTSourceCode"),
-  require("RCTEventDispatcher"),
-  require("RCTDeviceInfo"),
-  require("RCTPlatform"),
-  require("RCTTiming"),
-  require("RCTUIManager"),
-  require("RCTViewManager"),
-  require("RCTTextManager"),
-  require("RCTRawTextManager"),
-  require("RCTScrollViewManager"),
-  require("RCTScrollContentViewManager"),
-  require("RCTNativeAnimatedModule"),
-  require("RCTAsyncLocalStorage"),
-  require("RCTImageViewManager"),
-  require("RCTLinkingManager"),
-  require("RCTTextInputManager"),
-  require("RCTImageLoader"),
-  require("RCTActivityIndicatorViewManager"),
-  require("RCTWebSocketModule"),
-  require("RCTAppState"),
-  require("RCTSafeAreaViewManager"),
-  require("RCTSwitchManager"),
-  require("RCTStatusBarManager"),
-  require("RCTDeviceEventManager"),
-  require("RCTKeyboardObserver"),
-  require("RCTExceptionsManager"),
-  require("RCTRedBox"),
-  require("RCTWebViewManager")
+  import("RCTSourceCode"),
+  import("RCTEventDispatcher"),
+  import("RCTDeviceInfo"),
+  import("RCTPlatform"),
+  import("RCTTiming"),
+  import("RCTUIManager"),
+  import("RCTViewManager"),
+  import("RCTTextManager"),
+  import("RCTRawTextManager"),
+  import("RCTScrollViewManager"),
+  import("RCTScrollContentViewManager"),
+  import("RCTNativeAnimatedModule"),
+  import("RCTAsyncLocalStorage"),
+  import("RCTImageViewManager"),
+  import("RCTLinkingManager"),
+  import("RCTTextInputManager"),
+  import("RCTImageLoader"),
+  import("RCTActivityIndicatorViewManager"),
+  import("RCTWebSocketModule"),
+  import("RCTAppState"),
+  import("RCTSafeAreaViewManager"),
+  import("RCTSwitchManager"),
+  import("RCTStatusBarManager"),
+  import("RCTDeviceEventManager"),
+  import("RCTKeyboardObserver"),
+  import("RCTExceptionsManager"),
+  import("RCTRedBox"),
+  import("RCTWebViewManager")
 ];
 
 // Development Specific Native Modules
