@@ -141,10 +141,11 @@ export class RCTScrollContentView extends RCTView {
       position: "relative",
       display: "block",
       opacity: "1",
-      contain: "layout style",
-      // vastly improves scrolling performance (especially on sfarai)
-      willChange: "transform"
+      contain: "layout style"
     });
+
+    // vastly improves scrolling performance (especially on sfarai)
+    this.addWillChange("transform");
   }
 
   set frame(value: Frame) {
@@ -279,7 +280,6 @@ class RCTScrollView extends RCTView {
 
       styleUpdate.msOverflowStyle = "auto";
       styleUpdate.webkitOverflowScrolling = "";
-      styleUpdate.willChange = "";
 
       styleUpdate.overflowX = "hidden";
       styleUpdate.overflowY = "hidden";
