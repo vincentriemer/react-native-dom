@@ -4,14 +4,10 @@
  */
 
 import * as YG from "yoga-dom";
-import _RCTShadowText from "RCTShadowText";
 import _RCTShadowView from "RCTShadowView";
 
 export default (async () => {
-  const [RCTShadowView, RCTShadowText] = await Promise.all([
-    _RCTShadowView,
-    _RCTShadowText
-  ]);
+  const RCTShadowView = await _RCTShadowView;
 
   class RCTShadowRawText extends RCTShadowView {
     textDirty: boolean;
@@ -28,7 +24,8 @@ export default (async () => {
       let cur = this.reactSuperview;
       while (cur) {
         cur.isDirty = true;
-        if (cur instanceof RCTShadowText) {
+        // $FlowFixMe
+        if (typeof cur.markTextDirty === "function") {
           cur.markTextDirty();
         }
         cur = cur.reactSuperview;
