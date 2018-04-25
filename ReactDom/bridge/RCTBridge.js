@@ -275,7 +275,7 @@ export default class RCTBridge {
     });
   };
 
-  generateModuleConfig(name: string, bridgeModule: RCTModule) {
+  generateModuleConfig(name: string, bridgeModule: RCTModule): ModuleConfig {
     const methodNames = [...new Set(getPropertyNames(bridgeModule))].filter(
       (methodName) => methodName.startsWith("__rct_export__")
     );
@@ -333,12 +333,12 @@ export default class RCTBridge {
   }
 
   getInitialModuleConfig = () => {
-    const remoteModuleConfig = Object.keys(this.modulesByName).map(
-      (moduleName) => {
-        const bridgeModule = this.modulesByName[moduleName];
-        return this.generateModuleConfig(moduleName, bridgeModule);
-      }
-    );
+    const remoteModuleConfig: ModuleConfig[] = Object.keys(
+      this.modulesByName
+    ).map((moduleName) => {
+      const bridgeModule = this.modulesByName[moduleName];
+      return this.generateModuleConfig(moduleName, bridgeModule);
+    });
     return { remoteModuleConfig };
   };
 

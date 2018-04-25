@@ -36,6 +36,7 @@ let rootTagCounter = 0;
 function byPosition(a, b) {
   if (a === b) return 0;
   if (!a.compareDocumentPosition) {
+    // $FlowFixMe: libdef
     return b.sourceIndex - a.sourceIndex;
   }
   if (a.compareDocumentPosition(b) & 2) {
@@ -483,11 +484,9 @@ module.exports = (async () => {
       if (view != null) {
         componentData.setPropsForView(props, view);
 
-        if (typeof view.setBackgroundColor === "function") {
-          view.setBackgroundColor(backgroundColor);
-        }
-
-        // TODO: investigate usage of reactBridgeDidFinishTransaction
+        // if (typeof view.setBackgroundColor === "function") {
+        //   view.setBackgroundColor(backgroundColor);
+        // }
 
         this.viewRegistry.set(reactTag, view);
       }

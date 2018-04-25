@@ -87,7 +87,7 @@ module.exports = (async () => {
               this.props[shadowPropName] = "inherit";
             }
             this.markTextDirty();
-            return true;
+            return;
           }
         });
         // $FlowFixMe

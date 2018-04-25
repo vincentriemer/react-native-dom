@@ -38,7 +38,7 @@ const BORDER_RADIUS_PROPS = [
   "borderBottomRightRadius"
 ];
 
-export const ALL_BORDER_PROPS = [].concat(
+export const ALL_BORDER_PROPS: string[] = [].concat(
   BORDER_STYLE_PROPS,
   BORDER_WIDTH_PROPS,
   BORDER_COLOR_PROPS,
@@ -68,8 +68,10 @@ class UIBorderView extends HTMLElement {
         configurable: true,
         set: (value) => {
           if (value == null) {
+            // $FlowFixMe
             this.style[propName] = "solid";
           } else {
+            // $FlowFixMe
             this.style[propName] = value;
           }
         }
@@ -82,6 +84,7 @@ class UIBorderView extends HTMLElement {
         set: (value) => {
           const [a, r, g, b] = ColorArrayFromHexARGB(value);
           const stringValue = `rgba(${r},${g},${b},${a})`;
+          // $FlowFixMe
           this.style[propName] = stringValue;
         }
       });
@@ -91,6 +94,7 @@ class UIBorderView extends HTMLElement {
       Object.defineProperty(this, propName, {
         configurable: true,
         set: (value) => {
+          // $FlowFixMe
           this.style[propName] = `${value}px`;
         }
       });

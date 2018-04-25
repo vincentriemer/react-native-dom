@@ -32,7 +32,6 @@ module.exports = (async () => {
       },
       set(value: any) {
         this[sourceProp] = value;
-        return true;
       }
     });
   }
@@ -90,7 +89,6 @@ module.exports = (async () => {
         set: function(value: string) {
           setEnumProp(this.yogaNode, propName, enumMap, value);
           this.makeDirty();
-          return true;
         }
       });
     });
@@ -112,7 +110,6 @@ module.exports = (async () => {
             Yoga.Constants.unit
           );
           this.makeDirty();
-          return true;
         }
       });
     });
@@ -132,7 +129,6 @@ module.exports = (async () => {
           if (value == null) value = NaN;
           this.yogaNode[propName] = value;
           this.makeDirty();
-          return true;
         }
       });
     });

@@ -9,10 +9,7 @@ function getRoots() {
   if (root) {
     return [path.resolve(root)];
   }
-  return [
-    path.resolve(__dirname),
-    path.resolve(__dirname, "Examples", "NavigationPlayground")
-  ];
+  return [path.resolve(__dirname)];
 }
 
 var config = {

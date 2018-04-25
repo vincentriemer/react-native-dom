@@ -2,8 +2,8 @@
   "sourceMaps": "inline",
   "presets": ["flow", "react-native"],
   "plugins": [
-    "syntax-object-rest-spread",
     "syntax-trailing-function-commas",
+    "transform-object-rest-spread",
     "transform-decorators-legacy",
     "transform-class-properties",
     [

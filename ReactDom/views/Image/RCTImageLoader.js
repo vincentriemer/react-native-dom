@@ -26,6 +26,7 @@ class RCTImageLoader {
       const image = new Image();
       image.src = url;
 
+      // $FlowFixMe: libdef
       if (typeof image.decode === "function") {
         image
           .decode()

@@ -12,5 +12,6 @@ declare class PointerEvent extends MouseEvent {
   +twist: number;
   +pointerType: "mouse" | "pen" | "touch";
   +isPrimary: boolean;
+  +which: number;
   getCoalescedEvents(): PointerEvent[];
 }

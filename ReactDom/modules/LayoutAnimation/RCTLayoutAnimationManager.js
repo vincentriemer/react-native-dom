@@ -119,7 +119,11 @@ class RCTLayoutAnimationManager {
     return keyframes;
   }
 
-  createOpacityKeyframes(from: number, to: number, keyframes: number[]) {
+  createOpacityKeyframes(
+    from: number,
+    to: number,
+    keyframes: number[]
+  ): { opacity: string }[] {
     return keyframes.map((keyframe) => ({
       opacity: `${to + (from - to) * (1 - keyframe)}`
     }));
@@ -131,7 +135,7 @@ class RCTLayoutAnimationManager {
     keyframes: number[],
     propName: string,
     existingKeyframes: any[]
-  ) {
+  ): * {
     return existingKeyframes.map((prevKeyframe, index) => {
       let newValue;
 
@@ -156,7 +160,7 @@ class RCTLayoutAnimationManager {
     propName: string,
     existingKeyframes: any[],
     parentKeyframes: any[]
-  ) {
+  ): * {
     return existingKeyframes.map((prevKeyframe, index) => {
       const parentKeyframe = parentKeyframes[index];
       let parentValue = parentKeyframe[propName];
@@ -200,7 +204,7 @@ class RCTLayoutAnimationManager {
     ];
   }
 
-  childContainerAnimationConfigFactory(keyLength: number) {
+  childContainerAnimationConfigFactory(keyLength: number): * {
     return new Array(keyLength).fill({
       scaleX: 1.0,
       scaleY: 1.0
@@ -561,7 +565,7 @@ class RCTLayoutAnimationManager {
   constructTransformKeyframes(
     keyframeConfigs: TransformKeyframeConfig[],
     origin: Position
-  ) {
+  ): * {
     return keyframeConfigs.map((config) => {
       const { translateX, translateY, scaleX, scaleY } = config;
 
@@ -611,6 +615,7 @@ class RCTLayoutAnimationManager {
 
     const groupEffect = new GroupEffect(animations);
 
+    // $FlowFixMe: libdef
     const animation = document.timeline.play(groupEffect);
     animation.finished.then(() => {
       cleanup.forEach((c) => c());

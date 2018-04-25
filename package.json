@@ -10,8 +10,6 @@
     "deepmerge": "^1.5.0",
     "detect-it": "^3.0.0",
     "fast-memoize": "^2.2.7",
-    "fbjs": "^0.8.12",
-    "glob": "^7.1.2",
     "hyperhtml-element": "^1.2.1",
     "idb-keyval": "^2.3.0",
     "inline-style-prefixer": "^3.0.8",
@@ -20,7 +18,6 @@
     "normalize-css-color": "^1.0.2",
     "opn": "^5.2.0",
     "pepjs": "^0.4.3",
-    "proxy-polyfill": "^0.1.7",
     "rebound": "^0.0.15",
     "tinycolor2": "^1.4.1",
     "web-animations-js": "^2.3.1",
@@ -34,7 +31,6 @@
     "react-native": "~0.55.0"
   },
   "scripts": {
-    "prestart": "cd Examples/NavigationPlayground && yarn",
     "flow": "flow",
     "flow:coverage":
       "flow-coverage-report -i 'ReactDom/**/*.js' -t html -t text",
@@ -69,26 +65,17 @@
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-core": "^6.24.1",
-    "babel-helpers": "^6.24.1",
     "babel-jest": "^20.0.3",
-    "babel-plugin-external-helpers": "^6.22.0",
     "babel-plugin-preval": "^1.3.2",
-    "babel-plugin-replace-require": "^0.0.4",
-    "babel-plugin-syntax-object-rest-spread": "^6.13.0",
     "babel-plugin-syntax-trailing-function-commas": "^6.22.0",
     "babel-plugin-transform-builtin-classes": "^0.6.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-plugin-transform-es2015-classes": "^6.24.1",
     "babel-plugin-transform-inline-environment-variables": "^0.1.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-polyfill": "^6.23.0",
-    "babel-preset-env": "^1.5.1",
     "babel-preset-flow": "^6.23.0",
-    "babel-preset-react-native-without-regenerator": "^1.9.0-a",
-    "eslint": "^4.1.1",
-    "flow-bin": "^0.66.0",
+    "flow-bin": "^0.70.0",
     "flow-copy-source": "^1.3.0",
     "flow-coverage-report": "^0.4.1",
     "flow-typed": "^2.2.3",
@@ -98,17 +85,7 @@
     "prettier": "^1.9.0",
     "react": "^16.3.1",
     "react-native": "~0.55.0",
-    "rimraf": "^2.6.1",
-    "rollup": "^0.50.0",
-    "rollup-plugin-babel": "^3.0.2",
-    "rollup-plugin-commonjs": "^8.2.1",
-    "rollup-plugin-node-globals": "^1.1.0",
-    "rollup-plugin-node-resolve": "^3.0.0",
-    "rollup-plugin-replace": "^2.0.0",
-    "rollup-plugin-visualizer": "^0.3.1"
-  },
-  "quokka": {
-    "babel": true
+    "rimraf": "^2.6.1"
   },
   "rnpm": {
     "plugin": "./local-cli/index.js"

@@ -173,6 +173,7 @@ class UIView extends HTMLElement implements RCTComponent {
         configurable: true,
         set: (value) => {
           if (propName.startsWith("border") && propName.endsWith("Radius")) {
+            // $FlowFixMe
             this.style[propName] = `${value}px`;
           }
           // $FlowFixMe
