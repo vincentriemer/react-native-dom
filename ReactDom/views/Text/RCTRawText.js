@@ -16,11 +16,17 @@ class RCTRawText extends RCTView {
     this.updateHostStyle({
       position: "static",
       display: "inline",
-      contain: "style"
+      contain: "style",
+      textRendering: "optimizeLegibility",
+      fontSmoothing: "antialiased"
     });
 
+    // $FlowFixMe
+    this.style.WebkitFontSmoothing = "antialiased";
+    // $FlowFixMe
+    this.style.MozOsxFontSmoothing = "grayscale";
+
     this._text = "";
-    this.hasBeenFramed = true;
   }
 
   get text(): string {
