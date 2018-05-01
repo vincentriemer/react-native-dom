@@ -18,7 +18,6 @@
     "normalize-css-color": "^1.0.2",
     "opn": "^5.2.0",
     "pepjs": "^0.4.3",
-    "rebound": "^0.0.15",
     "tinycolor2": "^1.4.1",
     "web-animations-js": "^2.3.1",
     "wolfy87-eventemitter": "^5.1.0",
