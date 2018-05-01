@@ -24,22 +24,14 @@ class RCTImageLoader {
   loadImage(url: string): Promise<Image> {
     const loadPromise = new Promise((resolve, reject) => {
       const image = new Image();
-      image.src = url;
 
-      // $FlowFixMe: libdef
-      if (typeof image.decode === "function") {
-        image
-          .decode()
-          .then(() => {
-            resolve(image);
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      } else {
-        image.onload = () => resolve(image);
-        image.onerror = () => reject();
-      }
+      // skip loading on data uris
+      if (url.startsWith("data:")) return resolve(image);
+
+      image.onload = () => resolve(image);
+      image.onerror = () => reject();
+
+      image.src = url;
     });
 
     this.imageCache[url] = loadPromise;

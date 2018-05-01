@@ -38,6 +38,8 @@ let idCounter = 0;
 class RCTImageView extends RCTView {
   _imageSources: RCTImageSource[];
   imageElement: HTMLImageElement;
+  imageElementAlt: HTMLImageElement;
+  mountedImage: ?HTMLImageElement;
   imageContainer: HTMLDivElement;
   childShadowRoot: ShadowRoot;
   imgStyle: HTMLStyleElement;
@@ -71,9 +73,11 @@ class RCTImageView extends RCTView {
     idCounter++;
 
     this.imageElement = new Image();
+    this.imageElementAlt = new Image();
     this.imageElement.setAttribute("draggable", "false");
+    this.imageElementAlt.setAttribute("draggable", "false");
     // this.imageElement.setAttribute("decoding", "async");
-    this.childContainer.appendChild(this.imageElement);
+    // this.childContainer.appendChild(this.imageElement);
 
     this.resizeMode = "stretch";
 
@@ -98,14 +102,19 @@ class RCTImageView extends RCTView {
     // $FlowFixMe
     this.imageElement.style.webkitFilter = filterStrings.join(" ");
     this.imageElement.style.filter = filterStrings.join(" ");
+
+    // $FlowFixMe
+    this.imageElementAlt.style.webkitFilter = filterStrings.join(" ");
+    this.imageElementAlt.style.filter = filterStrings.join(" ");
   }
 
   forceRasterization() {
-    if (this._tintColor != null) {
+    const mountedImage = this.mountedImage;
+    if (this._tintColor != null && mountedImage != null) {
       requestAnimationFrame(() => {
-        this.imageElement.style.willChange = "transform";
+        mountedImage.style.willChange = "transform";
         requestAnimationFrame(() => {
-          this.imageElement.style.willChange = "";
+          mountedImage.style.willChange = "auto";
         });
       });
     }
@@ -134,6 +143,10 @@ class RCTImageView extends RCTView {
         break;
     }
     Object.assign(this.imageElement.style, {
+      objectFit: outputValue
+    });
+
+    Object.assign(this.imageElementAlt.style, {
       objectFit: outputValue
     });
   }
@@ -171,6 +184,11 @@ class RCTImageView extends RCTView {
 
     const { width, height } = value;
     Object.assign(this.imageElement.style, {
+      width: `${width}px`,
+      height: `${height}px`
+    });
+
+    Object.assign(this.imageElementAlt.style, {
       width: `${width}px`,
       height: `${height}px`
     });
@@ -232,7 +250,23 @@ class RCTImageView extends RCTView {
       this.bridge.imageLoader
         .loadImageWithURLRequest(source.request)
         .then((image: Image) => {
-          this.imageElement.src = image.src;
+          let pendingImage =
+            this.mountedImage === this.imageElement
+              ? this.imageElementAlt
+              : this.imageElement;
+          pendingImage.src = image.src;
+
+          // $FlowFixMe
+          if (typeof pendingImage.decode === "function") {
+            return pendingImage.decode().then(() => pendingImage);
+          }
+          return pendingImage;
+        })
+        .then((image: HTMLImageElement) => {
+          this.mountedImage && this.mountedImage.remove();
+
+          this.childContainer.appendChild(image);
+          this.mountedImage = image;
 
           if (this.onLoad) {
             const sourceLoaded = source.imageSourceWithSizeAndScale(
@@ -266,6 +300,7 @@ class RCTImageView extends RCTView {
               null
             ]);
           }
+          this.updateFilter();
         });
     }
   }
