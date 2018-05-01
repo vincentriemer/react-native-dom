@@ -131,6 +131,10 @@ public: // Layout mutators
 public: // Layout getters
   Layout getComputedLayout(void) const;
 
+public: // HasNewLayout manipulators
+  bool hasNewLayout(void) const;
+  void setHasNewLayout(bool hasNewLayout);
+
 private:
   YGNodeRef m_node;
   std::unique_ptr<MeasureCallback> m_measureCb;

@@ -147,6 +147,16 @@ Layout Node::getComputedLayout(void) const
   return layout;
 }
 
+bool Node::hasNewLayout(void) const
+{
+  return YGNodeGetHasNewLayout(m_node);
+}
+
+void Node::setHasNewLayout(bool hasNewLayout)
+{
+  YGNodeSetHasNewLayout(m_node, hasNewLayout);
+}
+
 #define NODE_STYLE_PROPERTY_SETTER_IMPL(type, name, paramName) \
   void Node::set##name(const type paramName)                   \
   {                                                            \
@@ -420,6 +430,8 @@ EMSCRIPTEN_BINDINGS(YGNode)
 
     .function("calculateLayout", &Node::calculateLayout)
     .function("getComputedLayout", &Node::getComputedLayout)
+
+    .property("hasNewLayout", &Node::hasNewLayout, &Node::setHasNewLayout)
     
     EMBIND_NODE_PROP_BINDING(direction, Direction)
     EMBIND_NODE_PROP_BINDING(flexDirection, FlexDirection)
