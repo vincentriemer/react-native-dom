@@ -177,6 +177,9 @@ module.exports = (async () => {
 
     measurement: ?Frame;
 
+    width: number;
+    height: number;
+
     constructor() {
       this.yogaNode = new Yoga.Node();
 

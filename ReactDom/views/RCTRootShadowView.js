@@ -30,6 +30,8 @@ export default (async () => {
 
     updateAvailableSize(size: Size) {
       this.availableSize = size;
+      this.width = size.width;
+      this.height = size.height;
     }
 
     updatePointScaleFactor(ratio: number) {
