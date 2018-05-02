@@ -33,44 +33,6 @@ type Size = { width: number, height: number };
 
 let rootTagCounter = 0;
 
-function byPosition(a, b) {
-  if (a === b) return 0;
-  if (!a.compareDocumentPosition) {
-    // $FlowFixMe: libdef
-    return b.sourceIndex - a.sourceIndex;
-  }
-  if (a.compareDocumentPosition(b) & 2) {
-    return -1;
-  }
-  return 1;
-}
-
-// Doesn't get more hacky than this folks
-function reactViewFromPoint(topView: UIView, x: number, y: number) {
-  var element,
-    elements = [];
-  var old_visibility = [];
-  while (true) {
-    element = document.elementFromPoint(x, y);
-    if (!element || element === document.documentElement) {
-      break;
-    }
-    elements.push(element);
-    old_visibility.push(element.style.visibility);
-    element.style.visibility = "hidden"; // Temporarily hide the element (without changing the layout)
-  }
-  for (var k = 0; k < elements.length; k++) {
-    elements[k].style.visibility = old_visibility[k];
-  }
-
-  elements = elements.filter(
-    (elem) => topView.contains(elem) && elem instanceof UIView
-  );
-  elements.sort(byPosition);
-
-  return elements[0];
-}
-
 module.exports = (async () => {
   const RCTShadowView = await _RCTShadowView;
   const RCTRootShadowView = await _RCTRootShadowView;
