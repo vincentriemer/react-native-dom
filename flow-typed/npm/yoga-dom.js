@@ -106,6 +106,7 @@ declare module "yoga-dom" {
 
   declare class YogaNode {
     [propName: string]:
+      | boolean
       | number
       | YGValue
       | Align
@@ -119,6 +120,8 @@ declare module "yoga-dom" {
       | Wrap;
 
     constructor(): YogaNode;
+
+    hasNewLayout: boolean;
 
     static createWithConfig(config: YogaConfig): YogaNode;
 
@@ -232,5 +235,5 @@ declare module "yoga-dom" {
   declare export type PropEnumMap = $Values<YogaPropConstants>;
   declare export type Value = YGValue;
 
-  declare export default Promise<Exports>
+  declare export default Promise<Exports>;
 }

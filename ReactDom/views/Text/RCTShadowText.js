@@ -129,8 +129,6 @@ module.exports = (async () => {
       this.textDirty = true;
       if (this.reactSuperview instanceof RCTShadowText) {
         this.reactSuperview.markTextDirty();
-      } else if (this.reactSuperview instanceof RCTShadowView) {
-        this.reactSuperview.makeDirty();
       }
     }
 

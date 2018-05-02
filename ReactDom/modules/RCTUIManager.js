@@ -246,6 +246,7 @@ module.exports = (async () => {
 
       this.rootViewTags.forEach((rootTag) => {
         const rootShadowView = this.shadowViewRegistry.get(rootTag);
+
         if (rootShadowView != null && rootShadowView.isDirty) {
           invariant(
             rootShadowView instanceof RCTRootShadowView,
@@ -562,24 +563,22 @@ module.exports = (async () => {
       callbackId: number
     ) {
       const [x, y] = atPoint;
-      const view = this.viewRegistry.get(reactTag);
+      const shadowView = this.shadowViewRegistry.get(reactTag);
 
-      invariant(view, `No such view with tag ${reactTag}`);
+      invariant(shadowView, `No such view with tag ${reactTag}`);
 
-      const target = reactViewFromPoint(view, x, y);
+      const targetReactTag = shadowView.reactTagAtPoint({ x, y });
 
-      if (!target || !(target instanceof UIView)) return;
-
-      const measurement = await this.measure(target.reactTag);
+      const measurement = await this.measure(targetReactTag);
 
       invariant(
         measurement,
-        `View with tag ${target.reactTag} has no measurement`
+        `View with tag ${targetReactTag} has no measurement`
       );
       const { globalX, globalY, width, height } = measurement;
 
       this.bridge.callbackFromId(callbackId)(
-        target.reactTag,
+        targetReactTag,
         globalX,
         globalY,
         width,
@@ -703,7 +702,6 @@ module.exports = (async () => {
             shadowSubView,
             indexToAdd
           );
-          shadowSubView.makeDirty();
         }
 
         this.addUIBlock((uiManager, viewRegistry) => {

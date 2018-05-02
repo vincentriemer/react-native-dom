@@ -6191,10 +6191,6 @@ readline2@^1.0.1:
     is-fullwidth-code-point "^1.0.0"
     mute-stream "0.0.5"
 
-rebound@^0.0.15:
-  version "0.0.15"
-  resolved "https://registry.yarnpkg.com/rebound/-/rebound-0.0.15.tgz#b7796972cd3e6eca37fd1477217e64c77bb122de"
-
 redent@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/redent/-/redent-1.0.0.tgz#cf916ab1fd5f1f16dfb20822dd6ec7f730c2afde"
@@ -7893,6 +7889,6 @@ yeoman-welcome@^1.0.0:
   dependencies:
     chalk "^1.0.0"
 
-yoga-dom@^0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/yoga-dom/-/yoga-dom-0.0.5.tgz#491bf183e0b02d32889702349cbaa6bd8046db44"
+yoga-dom@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/yoga-dom/-/yoga-dom-0.0.8.tgz#e8cb372bbf3ea7ef54c1ecef2985155d2a33cdd6"

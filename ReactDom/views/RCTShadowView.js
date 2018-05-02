@@ -44,6 +44,7 @@ module.exports = (async () => {
       return { value: input, unit: units.point };
     } else if (input == null) {
       // TODO: Figure out why this isn't unsetting the value in Yoga
+      // Found it: https://github.com/facebook/yoga/blob/5e3ffb39a2acb05d4fe93d04f5ae4058c047f6b1/yoga/Yoga.h#L28
       // return { value: NaN, unit: units.undefined };
       return { value: 0, unit: units.point };
     } else {
@@ -88,7 +89,6 @@ module.exports = (async () => {
         },
         set: function(value: string) {
           setEnumProp(this.yogaNode, propName, enumMap, value);
-          this.makeDirty();
         }
       });
     });
@@ -109,7 +109,6 @@ module.exports = (async () => {
             value,
             Yoga.Constants.unit
           );
-          this.makeDirty();
         }
       });
     });
@@ -128,7 +127,6 @@ module.exports = (async () => {
         set: function(value: ?number) {
           if (value == null) value = NaN;
           this.yogaNode[propName] = value;
-          this.makeDirty();
         }
       });
     });
@@ -172,7 +170,6 @@ module.exports = (async () => {
     previousLayout: ?Frame;
     isNewView: boolean;
     isHidden: boolean;
-    isDirty: boolean = true;
 
     reactTag: number;
     reactSubviews: Array<RCTShadowView> = [];
@@ -188,6 +185,14 @@ module.exports = (async () => {
     }
 
     set localData(value: any) {}
+
+    get hasNewLayout(): boolean {
+      return this.yogaNode.hasNewLayout;
+    }
+
+    get isDirty(): boolean {
+      return this.yogaNode.isDirty();
+    }
 
     get backgroundColor(): string {
       return this._backgroundColor;
@@ -226,6 +231,9 @@ module.exports = (async () => {
       top: number,
       left: number
     }): Array<LayoutChange> {
+      if (!this.yogaNode.hasNewLayout && !!this.previousLayout) return [];
+      this.yogaNode.hasNewLayout = false;
+
       let layoutChanges = [];
 
       const newLayout = this.yogaNode.getComputedLayout();
@@ -254,66 +262,28 @@ module.exports = (async () => {
         });
 
         this.previousLayout = newLayout;
-
-        this.reactSubviews.forEach((subView) => {
-          layoutChanges = layoutChanges.concat(
-            subView.getLayoutChanges(currentPosition)
-          );
-        });
-      } else {
-        const shouldUpdateChildren: boolean = (() => {
-          let result = this.isDirty;
-          this.reactSubviews.forEach((subView) => {
-            if (subView.isDirty) {
-              result = true;
-            }
-          });
-          return result;
-        })();
-
-        if (shouldUpdateChildren) {
-          this.reactSubviews.forEach((subView) => {
-            layoutChanges = layoutChanges.concat(
-              subView.getLayoutChanges(currentPosition)
-            );
-          });
-        }
       }
+
+      this.reactSubviews.forEach((subView) => {
+        layoutChanges = layoutChanges.concat(
+          subView.getLayoutChanges(currentPosition)
+        );
+      });
 
       this.measurement = { ...nextMeasurement };
-      this.isDirty = false;
       return layoutChanges;
-    }
-
-    makeDirty(): void {
-      this.isDirty = true;
-
-      let view = this;
-      while (view.reactSuperview) {
-        view = view.reactSuperview;
-        view.isDirty = true;
-      }
-    }
-
-    makeDirtyRecursive(): void {
-      this.reactSubviews.forEach((subView) => {
-        subView.makeDirtyRecursive();
-      });
-      this.isDirty = true;
     }
 
     insertReactSubviewAtIndex(subview: RCTShadowView, index: number) {
       subview.reactSuperview = this;
       this.reactSubviews.splice(index, 0, subview);
       this.yogaNode.insertChild(subview.yogaNode, index);
-      this.makeDirty();
     }
 
     removeReactSubview(subview: RCTShadowView) {
       subview.reactSuperview = undefined;
       this.reactSubviews = this.reactSubviews.filter((s) => s !== subview);
       this.yogaNode.removeChild(subview.yogaNode);
-      this.makeDirty();
     }
 
     purge() {
@@ -324,8 +294,28 @@ module.exports = (async () => {
     // TODO: Implement ===========================================
     didSetProps(changedProps: Array<string>) {}
     didUpdateReactSubviews() {}
+
+    frameContainsPoint(frame: Frame, point: { x: number, y: number }) {
+      return (
+        frame.left <= point.x &&
+        point.x <= frame.left + frame.width &&
+        frame.top <= point.y &&
+        point.y <= frame.top + frame.height
+      );
+    }
+
     reactTagAtPoint(point: { x: number, y: number }): number {
-      return 0;
+      for (const shadowView of this.reactSubviews) {
+        const prevLayout = shadowView.previousLayout;
+        if (prevLayout && this.frameContainsPoint(prevLayout, point)) {
+          let relativePoint = { ...point };
+          const origin = { x: prevLayout.left, y: prevLayout.top };
+          relativePoint.x -= origin.x;
+          relativePoint.y -= origin.y;
+          return shadowView.reactTagAtPoint(relativePoint);
+        }
+      }
+      return this.reactTag;
     }
   }
 

@@ -30,7 +30,6 @@ export default (async () => {
 
     updateAvailableSize(size: Size) {
       this.availableSize = size;
-      this.makeDirtyRecursive();
     }
 
     updatePointScaleFactor(ratio: number) {
