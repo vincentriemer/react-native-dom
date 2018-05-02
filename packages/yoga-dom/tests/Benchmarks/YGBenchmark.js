@@ -26,7 +26,7 @@ function run_benchmarks(YogaModule) {
 
     for (var i = 0; i < ITERATIONS; i++) {
       const child = new Node();
-      child.setMeasureFunc(wrapMeasureFunction(measureCounter.inc));
+      child.setMeasureFunc(measureCounter.inc);
       child.flex = 1;
       root.insertChild(child, 0);
     }
@@ -42,7 +42,7 @@ function run_benchmarks(YogaModule) {
 
     for (var i = 0; i < ITERATIONS; i++) {
       var child = new Node();
-      child.setMeasureFunc(wrapMeasureFunction(measureCounter.inc));
+      child.setMeasureFunc(measureCounter.inc);
       child.height = { value: 20, unit: Constants.unit.point };
       root.insertChild(child, 0);
     }
@@ -65,7 +65,7 @@ function run_benchmarks(YogaModule) {
 
       for (var ii = 0; ii < iterations; ii++) {
         var grandChild = new Node();
-        grandChild.setMeasureFunc(wrapMeasureFunction(measureCounter.inc));
+        grandChild.setMeasureFunc(measureCounter.inc);
         grandChild.flex = 1;
         child.insertChild(grandChild, 0);
       }

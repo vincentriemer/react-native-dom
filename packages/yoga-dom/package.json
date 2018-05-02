@@ -1,7 +1,7 @@
 {
   "name": "yoga-dom",
   "description": "WASM bindings for Yoga Layout",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "license": "MIT",
   "author": "Vincent Riemer",
   "main": "dist/Yoga.cjs.js",
