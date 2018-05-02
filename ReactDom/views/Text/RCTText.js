@@ -105,6 +105,17 @@ class RCTText extends RCTView {
     this.updateChildContainerStyle({
       display: "inline-block"
     });
+
+    if (this.onLayout) {
+      this.onLayout({
+        layout: {
+          x: value.left,
+          y: value.top,
+          width: value.width,
+          height: value.height
+        }
+      });
+    }
   }
 
   set accessible(value: boolean) {
