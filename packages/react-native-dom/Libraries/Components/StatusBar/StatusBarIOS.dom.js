@@ -9,8 +9,8 @@
  * @providesModule StatusBarIOS
  * @flow
  */
-'use strict';
+"use strict";
 
-const NativeEventEmitter = require('NativeEventEmitter');
+const NativeEventEmitter = require("NativeEventEmitter");
 
-module.exports = new NativeEventEmitter('StatusBarManager');
+module.exports = new NativeEventEmitter("StatusBarManager");

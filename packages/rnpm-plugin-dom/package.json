@@ -7,6 +7,9 @@
   "engines": {
     "node": ">= 7.0.0"
   },
+  "scripts": {
+    "compile": "shx echo 'no compilation needed'"
+  },
   "license": "MIT",
   "peerDependencies": {
     "react-native": ">=0.52.0"

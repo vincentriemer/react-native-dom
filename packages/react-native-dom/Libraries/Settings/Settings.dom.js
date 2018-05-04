@@ -28,7 +28,7 @@ var Settings = {
 
   clearWatch(watchId: number) {
     console.warn("Settings is not yet supported on Web");
-  },
+  }
 };
 
 module.exports = Settings;

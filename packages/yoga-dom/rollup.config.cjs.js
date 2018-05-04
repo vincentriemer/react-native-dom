@@ -4,7 +4,7 @@ const CJSConfig = Object.assign({}, baseConfig);
 
 CJSConfig.output = {
   format: "cjs",
-  file: "dist/Yoga.cjs.js",
+  file: "lib/Yoga.cjs.js"
 };
 
 export default CJSConfig;

@@ -10,12 +10,12 @@
  * @flow
  */
 
-'use strict';
+"use strict";
 
-const React = require('React');
-const StyleSheet = require('StyleSheet');
-const TabBarItemIOS = require('TabBarItemIOS');
-const View = require('View');
+const React = require("React");
+const StyleSheet = require("StyleSheet");
+const TabBarItemIOS = require("TabBarItemIOS");
+const View = require("View");
 
 class DummyTabBarIOS extends React.Component {
   static Item = TabBarItemIOS;
@@ -31,7 +31,7 @@ class DummyTabBarIOS extends React.Component {
 
 const styles = StyleSheet.create({
   tabGroup: {
-    flex: 1,
+    flex: 1
   }
 });
 

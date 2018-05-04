@@ -4,7 +4,7 @@ const ESConfig = Object.assign({}, baseConfig);
 
 ESConfig.output = {
   format: "es",
-  file: "dist/Yoga.es.js",
+  file: "lib/Yoga.es.js"
 };
 
 export default ESConfig;

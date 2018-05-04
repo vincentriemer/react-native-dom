@@ -1,0 +1,3 @@
+node_modules
+packages/react-native-dom/defs
+packages/react-native-dom/flow-typed

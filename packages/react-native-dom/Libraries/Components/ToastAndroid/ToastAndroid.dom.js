@@ -9,19 +9,14 @@
  * @providesModule ToastAndroid
  * @noflow
  */
-'use strict';
+"use strict";
 
-var warning = require('fbjs/lib/warning');
+var warning = require("fbjs/lib/warning");
 
 var ToastAndroid = {
-
-  show: function (
-    message: string,
-    duration: number
-  ): void {
-    warning(false, 'ToastAndroid is not supported on this platform.');
-  },
-
+  show: function(message: string, duration: number): void {
+    warning(false, "ToastAndroid is not supported on this platform.");
+  }
 };
 
 module.exports = ToastAndroid;

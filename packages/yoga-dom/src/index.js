@@ -60,10 +60,10 @@ export default new Promise(function(resolve) {
         overflow: Module.YGOverflow,
         position: Module.YGPositionType,
         unit: Module.YGUnit,
-        wrap: Module.YGWrap,
+        wrap: Module.YGWrap
         // undefinedValue: Module.YGValueUndefined,
         // autoValue: Module.YGValueAuto,
-      },
+      }
     });
   });
 });

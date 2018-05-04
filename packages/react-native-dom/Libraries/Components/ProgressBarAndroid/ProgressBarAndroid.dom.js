@@ -8,6 +8,6 @@
  *
  * @providesModule ProgressBarAndroid
  */
-'use strict';
+"use strict";
 
-module.exports = require('UnimplementedView');
+module.exports = require("UnimplementedView");

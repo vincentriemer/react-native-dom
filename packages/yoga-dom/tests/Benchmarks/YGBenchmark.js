@@ -108,11 +108,11 @@ function run_benchmarks(YogaModule) {
             grandGrandGrandChild.flexGrow = 1;
             grandGrandGrandChild.width = {
               value: 10,
-              unit: Constants.unit.point,
+              unit: Constants.unit.point
             };
             grandGrandGrandChild.height = {
               value: 10,
-              unit: Constants.unit.point,
+              unit: Constants.unit.point
             };
             grandGrandChild.insertChild(grandGrandGrandChild, 0);
           }

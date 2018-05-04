@@ -28,7 +28,7 @@ target.getMeasureCounter = function(
 
     get: function() {
       return counter;
-    },
+    }
   };
 };
 

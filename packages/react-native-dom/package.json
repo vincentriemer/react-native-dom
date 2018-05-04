@@ -32,12 +32,10 @@
   },
   "scripts": {
     "flow": "flow",
-    "flow:coverage":
-      "flow-coverage-report -i 'ReactDom/**/*.js' -t html -t text",
-    "build": "BABEL_ENV=lib babel ReactDom --out-dir lib --source-maps",
-    "prebuild": "rimraf lib",
-    "postbuild": "flow-copy-source ReactDom lib",
-    "start": "react-native start",
+    "compile": "BABEL_ENV=lib babel ReactDom --out-dir lib --source-maps",
+    "precompile": "rimraf lib",
+    "postcompile": "flow-copy-source ReactDom lib",
+    "run-examples": "react-native start --port 8081",
     "prebuild:rntester": "rimraf dist && mkdir -p dist",
     "build:rntester":
       "yarn run build:rntester:client && yarn run build:rntester:bundle && cp ./RNTester/js/index.html ./dist/index.html",
@@ -46,13 +44,7 @@
     "build:rntester:bundle":
       "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/RNTesterApp.dom.js --bundle-output ./dist/RNTesterApp.dom.bundle --platform dom --assets-dest ./dist --reset-cache",
     "test": "jest",
-    "precommit": "lint-staged",
-    "prepublishOnly": "yarn build",
-    "build:navigation":
-      "cd Examples/NavigationPlayground && yarn build:rntester"
-  },
-  "lint-staged": {
-    "*.{js,json,css,md}": ["prettier --write", "git add"]
+    "prepublishOnly": "yarn compile"
   },
   "jest": {
     "roots": ["<rootDir>/Libraries/"],
@@ -77,9 +69,7 @@
     "babel-preset-flow": "^6.23.0",
     "flow-bin": "^0.70.0",
     "flow-copy-source": "^1.3.0",
-    "flow-coverage-report": "^0.4.1",
     "flow-typed": "^2.2.3",
-    "husky": "^0.14.3",
     "jest": "^20.0.4",
     "lint-staged": "^6.0.0",
     "prettier": "^1.9.0",

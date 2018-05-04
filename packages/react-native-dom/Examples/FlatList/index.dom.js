@@ -28,15 +28,14 @@ class FlatListExample extends Component {
         <FlatList
           data={this.getData()}
           debug={true}
-          renderItem={({ item }) =>
+          renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => console.log(item.key)}
               style={styles.item}
             >
-              <Text>
-                {item.key}
-              </Text>
-            </TouchableOpacity>}
+              <Text>{item.key}</Text>
+            </TouchableOpacity>
+          )}
         />
       </View>
     );

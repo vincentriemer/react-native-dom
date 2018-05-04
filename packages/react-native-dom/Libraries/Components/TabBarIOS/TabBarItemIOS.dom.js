@@ -21,9 +21,7 @@ class DummyTab extends React.Component {
       return <View />;
     }
     return (
-      <View style={[this.props.style, styles.tab]}>
-        {this.props.children}
-      </View>
+      <View style={[this.props.style, styles.tab]}>{this.props.children}</View>
     );
   }
 }
@@ -37,8 +35,8 @@ var styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     borderColor: "red",
-    borderWidth: 1,
-  },
+    borderWidth: 1
+  }
 });
 
 module.exports = DummyTab;

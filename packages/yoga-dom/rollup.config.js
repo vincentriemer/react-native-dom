@@ -4,5 +4,5 @@ import builtins from "rollup-plugin-node-builtins";
 export default {
   input: "src/index.js",
   context: "window",
-  plugins: [commonjs(), builtins()],
+  plugins: [commonjs(), builtins()]
 };

@@ -15,7 +15,7 @@ let vm = require(`vm`);
 let WARMUP_ITERATIONS = 3;
 let BENCHMARK_ITERATIONS = 10;
 
-let testFiles = process.argv.slice(2).map(file => {
+let testFiles = process.argv.slice(2).map((file) => {
   return fs.readFileSync(file).toString();
 });
 
@@ -45,7 +45,7 @@ require(`../dist/Yoga.cjs.js`)
               let end = Date.now();
 
               testEntry.set(type, (end - start) / BENCHMARK_ITERATIONS);
-            },
+            }
           })
         );
       }
