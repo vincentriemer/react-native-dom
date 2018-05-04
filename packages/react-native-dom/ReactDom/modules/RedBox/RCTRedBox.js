@@ -8,7 +8,8 @@ import RCTBridge, {
   RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal
 } from "RCTBridge";
-import RedBox from "RedBoxView";
+
+import RedBox from "rndom-redbox";
 
 import type { StackEntry } from "RCTExceptionsManager";
 

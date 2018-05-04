@@ -1,0 +1,19 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "modules": false
+      }
+    ]
+  ],
+  "plugins": [
+    [
+      "babel-plugin-transform-builtin-classes",
+      {
+        "globals": ["HTMLElement"]
+      }
+    ],
+    "external-helpers"
+  ]
+}
