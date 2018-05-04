@@ -1,7 +1,46 @@
 {
   "name": "react-native-dom",
   "version": "0.0.10",
+  "homepage": "https://github.com/vincentriemer/react-native-dom",
+  "bugs": {
+    "url": "https://github.com/vincentriemer/react-native-dom/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Vincent Riemer",
+    "email": "vincentriemer+rndom@gmail.com",
+    "url": "https://vincentriemer.com"
+  },
+  "files": ["lib", "Libraries", "local-cli/index.js", "local-cli/runDom"],
   "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vincentriemer/react-native-dom.git"
+  },
+  "scripts": {
+    "prebuild:rntester": "rimraf dist && mkdir -p dist",
+    "build:rntester":
+      "yarn run build:rntester:client && yarn run build:rntester:bundle && cp ./RNTester/js/index.html ./dist/index.html",
+    "build:rntester:bundle":
+      "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/RNTesterApp.dom.js --bundle-output ./dist/RNTesterApp.dom.bundle --platform dom --assets-dest ./dist --reset-cache",
+    "build:rntester:client":
+      "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/client.js --bundle-output ./dist/client.bundle --platform dom --reset-cache",
+    "precompile": "rimraf lib",
+    "compile": "BABEL_ENV=lib babel ReactDom --out-dir lib --source-maps",
+    "postcompile": "flow-copy-source ReactDom lib",
+    "flow": "flow",
+    "prepublishOnly": "yarn compile",
+    "run-examples": "react-native start --port 8081",
+    "test": "jest"
+  },
+  "jest": {
+    "haste": {
+      "defaultPlatform": "dom",
+      "providesModuleNodeModules": ["react-native-dom"],
+      "platforms": ["dom"]
+    },
+    "roots": ["<rootDir>/Libraries/"]
+  },
   "dependencies": {
     "@webcomponents/webcomponentsjs": "^1.1.1",
     "babel-runtime": "^6.26.0",
@@ -19,40 +58,13 @@
     "normalize-css-color": "^1.0.2",
     "opn": "^5.2.0",
     "pepjs": "^0.4.3",
+    "rndom-switch": "^0.0.10",
     "tinycolor2": "^1.4.1",
     "web-animations-js": "^2.3.1",
     "wolfy87-eventemitter": "^5.1.0",
     "yeoman-environment": "^1.5.3",
     "yeoman-generator": "^0.21.2",
     "yoga-dom": "^0.0.10"
-  },
-  "files": ["lib", "Libraries", "local-cli/index.js", "local-cli/runDom"],
-  "peerDependencies": {
-    "react-native": "~0.55.0"
-  },
-  "scripts": {
-    "flow": "flow",
-    "compile": "BABEL_ENV=lib babel ReactDom --out-dir lib --source-maps",
-    "precompile": "rimraf lib",
-    "postcompile": "flow-copy-source ReactDom lib",
-    "run-examples": "react-native start --port 8081",
-    "prebuild:rntester": "rimraf dist && mkdir -p dist",
-    "build:rntester":
-      "yarn run build:rntester:client && yarn run build:rntester:bundle && cp ./RNTester/js/index.html ./dist/index.html",
-    "build:rntester:client":
-      "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/client.js --bundle-output ./dist/client.bundle --platform dom --reset-cache",
-    "build:rntester:bundle":
-      "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/RNTesterApp.dom.js --bundle-output ./dist/RNTesterApp.dom.bundle --platform dom --assets-dest ./dist --reset-cache",
-    "test": "jest",
-    "prepublishOnly": "yarn compile"
-  },
-  "jest": {
-    "roots": ["<rootDir>/Libraries/"],
-    "haste": {
-      "defaultPlatform": "dom",
-      "providesModuleNodeModules": ["react-native-dom"],
-      "platforms": ["dom"]
-    }
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -76,6 +88,9 @@
     "react": "^16.3.1",
     "react-native": "~0.55.0",
     "rimraf": "^2.6.1"
+  },
+  "peerDependencies": {
+    "react-native": "~0.55.0"
   },
   "rnpm": {
     "plugin": "./local-cli/index.js"

@@ -1,36 +1,48 @@
 {
-  "private": true,
-  "version": "0.0.2",
   "name": "react-native-dom-monorepo",
-  "devDependencies": {
-    "lerna": "^2.4.0",
-    "prettier": "^1.12.1",
-    "flow-bin": "^0.70.0",
-    "shx": "^0.2.2",
-    "husky": "^0.14.3"
+  "version": "0.0.2",
+  "private": true,
+  "description": "",
+  "keywords": [],
+  "homepage": "https://github.com/vincentriemer/react-native-dom",
+  "bugs": {
+    "url": "https://github.com/vincentriemer/react-native-dom/issues"
   },
-  "workspaces": {
-    "packages": ["packages/*"],
-    "nohoist": ["**/react-native", "**/react-native/**"]
-  },
-  "lint-staged": {
-    "*.{js,json,css,md}": ["prettier --write", "git add"]
-  },
-  "resolutions": {
-    "react": "^16.3.1"
-  },
+  "license": "MIT",
   "author": {
     "name": "Vincent Riemer",
     "email": "vincentriemer+rndom@gmail.com",
     "url": "https://vincentriemer.com"
   },
-  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vincentriemer/react-native-dom.git"
+  },
   "scripts": {
     "clean": "shx rm -rf packages/*/lib",
-    "fmt": "prettier --write 'packages/**/*.js'",
+    "precommit": "lint-staged",
     "compile": "lerna run compile --stream",
-    "run-examples": "cd packages/react-native-dom && yarn run-examples",
+    "fmt": "prettier --write 'packages/**/*.js'",
     "release:canary": "lerna publish --canary",
-    "precommit": "lint-staged"
+    "run-examples": "cd packages/react-native-dom && yarn run-examples"
+  },
+  "devDependencies": {
+    "flow-bin": "^0.70.0",
+    "husky": "^0.14.3",
+    "lerna": "^2.4.0",
+    "prettier": "^1.12.1",
+    "shx": "^0.2.2",
+    "sort-package-json": "^1.13.0"
+  },
+  "lint-staged": {
+    "package.json": ["sort-package-json", "git add"],
+    "*.{js,json,css,md}": ["prettier --write", "git add"]
+  },
+  "resolutions": {
+    "react": "^16.3.1"
+  },
+  "workspaces": {
+    "packages": ["packages/*"],
+    "nohoist": ["**/react-native", "**/react-native/**"]
   }
 }

@@ -7,7 +7,8 @@ import RCTView from "RCTView";
 import type RCTBridge from "RCTBridge";
 import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
-import PlatformSwitch from "PlatformSwitch";
+
+import Switch from "rndom-switch";
 
 @CustomElement("rct-switch")
 class RCTSwitch extends RCTView {
@@ -21,9 +22,9 @@ class RCTSwitch extends RCTView {
 
     this.style.contain = "strict";
 
-    this.platformSwitch = new PlatformSwitch();
+    this.platformSwitch = new Switch();
     this.platformSwitch.addEventListener(
-      "onchange",
+      "change",
       this.handleChange.bind(this)
     );
 
