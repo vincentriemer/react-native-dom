@@ -139,12 +139,12 @@ class RCTRootView extends UIView {
     this.requestTick();
   }
 
-  requestTick() {
+  requestTick = () => {
     if (!this.ticking) {
       window.requestAnimationFrame(this.renderLoop.bind(this));
     }
     this.ticking = true;
-  }
+  };
 
   async renderLoop() {
     this.ticking = false;
@@ -157,13 +157,17 @@ class RCTRootView extends UIView {
 
     await this.timing.idle(frameStart);
 
-    // if (
-    //   this.timing.shouldContinue() ||
-    //   this.bridge.shouldContinue() ||
-    //   this.uiManager.shouldContinue()
-    // ) {
-    this.requestTick();
-    // }
+    if (
+      this.timing.shouldContinue() ||
+      this.bridge.shouldContinue() ||
+      this.uiManager.shouldContinue()
+    ) {
+      this.requestTick();
+    } else {
+      // Only ocasionally check for updates from the react thread
+      // (this is just a sanity check and shouldn't really be necessary)
+      window.setTimeout(this.requestTick, 1000);
+    }
   }
 
   async render() {

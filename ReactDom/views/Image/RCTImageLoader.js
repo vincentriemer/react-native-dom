@@ -28,6 +28,11 @@ class RCTImageLoader {
       // skip loading on data uris
       if (url.startsWith("data:")) return resolve(image);
 
+      if (url.startsWith("blob:")) {
+        const blob = this.bridge.blobManager.resolveURL(url);
+        url = URL.createObjectURL(blob);
+      }
+
       image.onload = () => resolve(image);
       image.onerror = () => reject();
 

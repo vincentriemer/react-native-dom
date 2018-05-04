@@ -83,7 +83,9 @@ const builtInNativeModules: any[] = [
   import("RCTKeyboardObserver"),
   import("RCTExceptionsManager"),
   import("RCTRedBox"),
-  import("RCTWebViewManager")
+  import("RCTWebViewManager"),
+  import("RCTNetworkingNative"),
+  import("RCTBlobManager")
 ];
 
 // Development Specific Native Modules

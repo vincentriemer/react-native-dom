@@ -6,6 +6,7 @@
     "@webcomponents/webcomponentsjs": "^1.1.1",
     "babel-runtime": "^6.26.0",
     "bezier-easing": "^2.0.3",
+    "cuid": "^2.1.1",
     "debounce": "^1.0.2",
     "deepmerge": "^1.5.0",
     "detect-it": "^3.0.0",

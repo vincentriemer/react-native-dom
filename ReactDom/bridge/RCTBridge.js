@@ -18,6 +18,8 @@ import type RCTImageLoader from "RCTImageLoader";
 import type RCTDeviceInfo from "RCTDeviceInfo";
 import type RCTDevLoadingView from "RCTDevLoadingView";
 import type RCTDevSettings from "RCTDevSettings";
+import type RCTNetworking from "RCTNetworkingNative";
+import type RCTBlobManager from "RCTBlobManager";
 import type {
   RCTModule,
   RCTModuleStatics,
@@ -30,6 +32,8 @@ type RCTUIManager = $Call<$await<_RCTUIManager>>;
 
 export { RCTFunctionTypeNormal, RCTFunctionTypePromise, RCTFunctionTypeSync };
 export type { RCTFunctionType };
+
+type ClassInstance = <T>(Class<T>) => T;
 
 type MessagePayload = {
   data: {
@@ -159,6 +163,8 @@ export default class RCTBridge {
   _devLoadingView: ?RCTDevLoadingView;
   _devSettings: ?RCTDevSettings;
   _redBox: ?RCTRedBox;
+  _networking: ?RCTNetworking;
+  _blobManager: ?RCTBlobManager;
 
   constructor(
     moduleName: string,
@@ -342,6 +348,14 @@ export default class RCTBridge {
     return { remoteModuleConfig };
   };
 
+  modulesConformingToProtocol<T: Class<any>>(
+    protocol: T
+  ): $Call<ClassInstance, T>[] {
+    return Object.values(this.modulesByName).filter((module: RCTModule) => {
+      return module instanceof protocol;
+    });
+  }
+
   enqueueJSCall(moduleName: string, methodName: string, args: Array<any>) {
     // console.log("Native -> JS", moduleName, methodName, args);
     this.sendMessage("callFunctionReturnFlushedQueue", [
@@ -421,6 +435,22 @@ export default class RCTBridge {
       this._redBox = redBox;
     }
     return this._redBox;
+  }
+
+  get networking(): RCTNetworking {
+    if (!this._networking) {
+      const networking: any = this.modulesByName["Networking"];
+      this._networking = networking;
+    }
+    return this._networking;
+  }
+
+  get blobManager(): RCTBlobManager {
+    if (!this._blobManager) {
+      const blobModule: any = this.modulesByName["BlobModule"];
+      this._blobManager = blobModule;
+    }
+    return this._blobManager;
   }
 
   async frame() {
