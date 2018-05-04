@@ -1,1 +1,1 @@
-# RNDomSwitch
+# React Native DOM Switch
