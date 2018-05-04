@@ -1,93 +1,20 @@
 {
-  "name": "react-native-dom",
+  "private": true,
   "version": "0.0.2",
-  "main": "lib/index.js",
-  "dependencies": {
-    "@webcomponents/webcomponentsjs": "^1.1.1",
-    "babel-runtime": "^6.26.0",
-    "bezier-easing": "^2.0.3",
-    "cuid": "^2.1.1",
-    "debounce": "^1.0.2",
-    "deepmerge": "^1.5.0",
-    "detect-it": "^3.0.0",
-    "fast-memoize": "^2.2.7",
-    "hyperhtml-element": "^1.2.1",
-    "idb-keyval": "^2.3.0",
-    "inline-style-prefixer": "^3.0.8",
-    "invariant": "^2.2.2",
-    "node-fetch": "^1.7.3",
-    "normalize-css-color": "^1.0.2",
-    "opn": "^5.2.0",
-    "pepjs": "^0.4.3",
-    "tinycolor2": "^1.4.1",
-    "web-animations-js": "^2.3.1",
-    "wolfy87-eventemitter": "^5.1.0",
-    "yeoman-environment": "^1.5.3",
-    "yeoman-generator": "^0.21.2",
-    "yoga-dom": "^0.0.8"
+  "name": "react-native-dom-monorepo",
+  "devDependencies": {
+    "lerna": "^2.4.0",
+    "prettier": "^1.12.1",
+    "flow-bin": "^0.71.0"
   },
-  "files": ["lib", "Libraries", "local-cli/index.js", "local-cli/runDom"],
-  "peerDependencies": {
-    "react-native": "~0.55.0"
-  },
-  "scripts": {
-    "flow": "flow",
-    "flow:coverage":
-      "flow-coverage-report -i 'ReactDom/**/*.js' -t html -t text",
-    "build": "BABEL_ENV=lib babel ReactDom --out-dir lib --source-maps",
-    "prebuild": "rimraf lib",
-    "postbuild": "flow-copy-source ReactDom lib",
-    "start": "react-native start",
-    "prebuild:rntester": "rimraf dist && mkdir -p dist",
-    "build:rntester":
-      "yarn run build:rntester:client && yarn run build:rntester:bundle && cp ./RNTester/js/index.html ./dist/index.html",
-    "build:rntester:client":
-      "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/client.js --bundle-output ./dist/client.bundle --platform dom --reset-cache",
-    "build:rntester:bundle":
-      "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/RNTesterApp.dom.js --bundle-output ./dist/RNTesterApp.dom.bundle --platform dom --assets-dest ./dist --reset-cache",
-    "test": "jest",
-    "precommit": "lint-staged",
-    "prepublishOnly": "yarn build",
-    "build:navigation":
-      "cd Examples/NavigationPlayground && yarn build:rntester"
-  },
+  "workspaces": ["packages/*"],
   "lint-staged": {
     "*.{js,json,css,md}": ["prettier --write", "git add"]
   },
-  "jest": {
-    "roots": ["<rootDir>/Libraries/"],
-    "haste": {
-      "defaultPlatform": "dom",
-      "providesModuleNodeModules": ["react-native-dom"],
-      "platforms": ["dom"]
-    }
+  "author": {
+    "name": "Vincent Riemer",
+    "email": "vincentriemer+rndom@gmail.com",
+    "url": "https://vincentriemer.com"
   },
-  "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-core": "^6.24.1",
-    "babel-jest": "^20.0.3",
-    "babel-plugin-preval": "^1.3.2",
-    "babel-plugin-syntax-trailing-function-commas": "^6.22.0",
-    "babel-plugin-transform-builtin-classes": "^0.6.1",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-plugin-transform-inline-environment-variables": "^0.1.1",
-    "babel-plugin-transform-object-rest-spread": "^6.23.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-flow": "^6.23.0",
-    "flow-bin": "^0.70.0",
-    "flow-copy-source": "^1.3.0",
-    "flow-coverage-report": "^0.4.1",
-    "flow-typed": "^2.2.3",
-    "husky": "^0.14.3",
-    "jest": "^20.0.4",
-    "lint-staged": "^6.0.0",
-    "prettier": "^1.9.0",
-    "react": "^16.3.1",
-    "react-native": "~0.55.0",
-    "rimraf": "^2.6.1"
-  },
-  "rnpm": {
-    "plugin": "./local-cli/index.js"
-  }
+  "license": "MIT"
 }

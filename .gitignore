@@ -1,8 +1,1 @@
-dist
 node_modules
-lib
-stats.html
-yarn-error.log
-flow-coverage
-.yarnrc
-yalc.lock

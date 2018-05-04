@@ -1,0 +1,15 @@
+0 silly input [ '../yoga-dom' ]
+1 silly flags { _: [ 'import' ], pathToRepo: '../yoga-dom' }
+2 verbose rootPath /Users/vincentriemer/Workspace/react-native-dom
+3 info version 2.4.0
+4 silly isInitialized
+5 silly isInitialized true
+6 silly existsSync /Users/vincentriemer/Workspace/react-native-dom/VERSION
+7 silly initialize attempt
+8 silly statSync /Users/vincentriemer/Workspace/yoga-dom
+9 silly existsSync /Users/vincentriemer/Workspace/react-native-dom/packages/yoga-dom
+10 silly getCurrentSHA
+11 verbose getCurrentSHA 3214a30608319e24e90d6174974ed927701e5323
+12 error initialize callback with error
+13 error Error: Local repository has un-committed changes
+13 error     at ImportCommand.initialize (/usr/local/lib/node_modules/lerna/lib/commands/ImportCommand.js:148:25)
