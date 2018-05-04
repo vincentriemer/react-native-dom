@@ -50,7 +50,6 @@
     "deepmerge": "^1.5.0",
     "detect-it": "^3.0.0",
     "fast-memoize": "^2.2.7",
-    "hyperhtml-element": "^1.2.1",
     "idb-keyval": "^2.3.0",
     "inline-style-prefixer": "^3.0.8",
     "invariant": "^2.2.2",

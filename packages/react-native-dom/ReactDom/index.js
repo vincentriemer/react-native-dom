@@ -18,7 +18,6 @@ import RCTRootView from "RCTRootView";
 import bundleFromRoot from "BundleFromRoot";
 import type { NativeModuleImports } from "RCTModule";
 
-// Export native modules to provide ability for others to provide their own modules
 import {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
@@ -32,6 +31,7 @@ import RCTViewManager from "RCTViewManager";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 import CustomElement from "CustomElement";
 
+// Export native modules to provide ability for others to provide their own modules
 export {
   RCT_EXPORT_MODULE,
   RCT_EXPORT_METHOD,
@@ -45,13 +45,13 @@ export {
   CustomElement
 };
 
-// Export type definitions useful for native module development
 import RCTEventDispatcher from "RCTEventDispatcher";
 import RCTBridge from "RCTBridge";
 import _RCTUIManager from "RCTUIManager";
 
 type RCTUIManager = $await<typeof _RCTUIManager>;
 
+// Export type definitions useful for native module development
 export type { RCTUIManager, RCTEventDispatcher, RCTBridge };
 
 // Register Built-in Native Modules
