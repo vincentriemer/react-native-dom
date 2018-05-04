@@ -1,6 +1,6 @@
 {
   "name": "rnpm-plugin-dom",
-  "version": "0.0.2",
+  "version": "0.0.10",
   "description": "rnpm plugin that generates a DOM template project",
   "main": "index.js",
   "keywords": ["rnpm", "react-native", "react-native-dom", "rnpm dom"],

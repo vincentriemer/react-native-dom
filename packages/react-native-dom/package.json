@@ -1,6 +1,6 @@
 {
   "name": "react-native-dom",
-  "version": "0.0.2",
+  "version": "0.0.10",
   "main": "lib/index.js",
   "dependencies": {
     "@webcomponents/webcomponentsjs": "^1.1.1",
@@ -24,7 +24,7 @@
     "wolfy87-eventemitter": "^5.1.0",
     "yeoman-environment": "^1.5.3",
     "yeoman-generator": "^0.21.2",
-    "yoga-dom": "^0.0.8"
+    "yoga-dom": "^0.0.10"
   },
   "files": ["lib", "Libraries", "local-cli/index.js", "local-cli/runDom"],
   "peerDependencies": {
