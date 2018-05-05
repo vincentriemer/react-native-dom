@@ -188,6 +188,9 @@ workflows:
       - build_react_native_dom:
           requires:
             - checkout_repo
+      - build_components:
+          requires:
+            - checkout_repo
       - build_yoga_wasm:
           requires:
             - checkout_repo
