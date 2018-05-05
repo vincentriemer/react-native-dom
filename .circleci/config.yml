@@ -171,7 +171,7 @@ jobs:
       - run:
           name: Deploy RNTester to now.sh
           command: |
-            sudo npm install --global now
+            sudo npm install -unsafe-perm --global now
             cd packages/react-native-dom/dist
             URL=$(now -t ${NOW_TOKEN})
             now alias -t ${NOW_TOKEN} ${URL} rntester.now.sh
