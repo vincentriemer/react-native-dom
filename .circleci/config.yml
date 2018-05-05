@@ -7,9 +7,9 @@ aliases:
   restore_repo: &restore_repo
     restore_cache:
       keys:
-        - rn-dom-repo-{{ .Branch }}-{{ .Revision }}
-        - rn-dom-repo-{{ .Branch }}
-        - rn-dom-repo
+        - rn-dom-{{ .Branch }}-{{ .Revision }}
+        - rn-dom-{{ .Branch }}
+        - rn-dom
   
   npm_cache_key: &npm_cache_key
     v1-dependency-npm-{{ checksum "yarn.lock" }}
