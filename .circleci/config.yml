@@ -28,13 +28,21 @@ aliases:
         - *npm_cache_key
         - *npm_backup_cache_key
   
-  lib_cache_key: &lib_cache_key
+  rndom_cache_key: &rndom_cache_key
     rn-dom-lib-{{ .Branch }}-{{ .Revision }}
   
-  restore_lib: &restore_lib
+  restore_rndom: &restore_lib
     restore_cache:
       keys:
-        - *lib_cache_key
+        - *rndom_cache_key
+  
+  yoga_dom_cache_key: &yoga_dom_cache_key
+    yoga-dom-{{ .Branch }}-{{ .Revision }}
+
+  restore_yoga_dom: &restore_yoga_dom
+    restore_cache:
+      keys:
+        - *yoga_dom_cache_key
 
   rntester_cache_key: &rntester_cache_key
     rntester-{{ .Branch }}-{{ .Revision }}
@@ -86,8 +94,8 @@ jobs:
       - run:
           name: Build react-native-dom
           command: cd packages/react-native-dom && yarn compile
-      - persist_to_workspace:
-          root: ~/react-native-dom
+      - save_cache:
+          key: *rndom_cache_key
           paths:
             - packages/react-native-dom/lib
 
@@ -99,8 +107,8 @@ jobs:
       - run:
           name: Build yoga-dom wasm
           command: cd packages/yoga-dom && ./build.sh
-      - persist_to_workspace:
-          root: ~/react-native-dom
+      - save_cache:
+          key: yoga-wasm-{{ .Branch }}-{{ .Revision }}
           paths:
             - packages/yoga-dom/build
 
@@ -108,11 +116,14 @@ jobs:
     <<: *container_config
     steps:
       - *restore_repo
+      - restore_cache:
+         keys:
+          - yoga-wasm-{{ .Branch }}-{{ .Revision }}
       - run:
           name: Build yoga-dom
           command: cd packages/yoga-dom && yarn compile:bundle
-      - persist_to_workspace:
-          root: ~/react-native-dom
+      - save_cache:
+          key: *yoga_dom_cache_key
           paths:
             - packages/yoga-dom/lib
   
@@ -120,6 +131,8 @@ jobs:
     <<: *container_config
     steps:
       - *restore_repo
+      - *restore_rndom
+      - *restore_yoga_dom
       - run:
           name: Build RNTester
           command: "yarn build:rntester"
