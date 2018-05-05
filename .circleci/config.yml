@@ -93,9 +93,25 @@ jobs:
 
   build_yoga_dom:
     <<: *container_config
-    machine: true
     steps:
       - *restore_repo
+      - run:
+          name: Install Docker
+          command: |
+            sudo apt-get update
+            sudo apt-get install \
+              apt-transport-https \
+              ca-certificates \
+              curl \
+              software-properties-common
+            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+            sudo add-apt-repository \
+              "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+              $(lsb_release -cs) \
+              stable"
+            sudo apt-get update
+            sudo apt-get install docker-ce
+      - setup_remote_docker
       - run:
           name: Build yoga-dom
           command: cd packages/yoga-dom && yarn compile
