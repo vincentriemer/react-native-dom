@@ -169,11 +169,9 @@ jobs:
       - *restore_repo
       - *restore_rntester
       - run:
-          name: Install now CLI
-          command: yarn global add now
-      - run:
           name: Deploy RNTester to now.sh
           command: |
+            npm install --global now
             cd packages/react-native-dom/dist
             URL=$(now -t ${NOW_TOKEN})
             now alias -t ${NOW_TOKEN} ${URL} rntester.now.sh
