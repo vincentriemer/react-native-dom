@@ -7,7 +7,7 @@ OUTPUT_FILENAME="yoga.js"
 rm -rf build && mkdir -p build
 
 # compile to wasm
-docker run --rm -v $(pwd):$(pwd) -w $(pwd) -u emscripten -t trzeci/emscripten:sdk-incoming-64bit emcc \
+docker run --rm -v $(pwd):$(pwd) -w $(pwd) -u emscripten -t trzeci/emscripten:sdk-tag-1.37.38-64bit emcc \
   yoga/*.cpp bindings/*.cc \
   --bind -Os --memory-init-file 0 --closure 1 --llvm-lto 1 \
   -s BINARYEN=1 \
