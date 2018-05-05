@@ -15,7 +15,8 @@
     "compile": "rollup -c",
     "dev": "serve public & rollup -c -w",
     "prepublishOnly": "yarn compile",
-    "start": "serve public"
+    "start": "serve public",
+    "test": "shx echo 'no tests written :('"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

@@ -24,7 +24,8 @@
     "compile": "lerna run compile --stream",
     "fmt": "prettier --write 'packages/**/*.js'",
     "release:canary": "lerna publish --canary",
-    "run-examples": "cd packages/react-native-dom && yarn run-examples"
+    "run-examples": "cd packages/react-native-dom && yarn run-examples",
+    "test": "lerna run test"
   },
   "devDependencies": {
     "flow-bin": "^0.70.0",

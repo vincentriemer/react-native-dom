@@ -14,7 +14,8 @@
     "url": "https://github.com/vincentriemer/react-native-dom.git"
   },
   "scripts": {
-    "compile": "shx echo 'no compilation needed'"
+    "compile": "shx echo 'no compilation needed'",
+    "test": "shx echo 'no tests written :('"
   },
   "dependencies": {
     "npm-registry": "^0.1.13",
