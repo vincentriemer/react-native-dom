@@ -75,7 +75,7 @@ jobs:
   checkout_repo:
     <<: *container_config
     steps:
-      - *restore_repo
+      # - *restore_repo
       # - *update_gcc
       - checkout
       - *init_submodules
