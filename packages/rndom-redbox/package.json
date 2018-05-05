@@ -7,6 +7,7 @@
     "email": "vincentriemer+rndom@gmail.com",
     "url": "https://vincentriemer.com"
   },
+  "files": ["lib"],
   "main": "lib/rndom-redbox.js",
   "module": "lib/rndom-redbox.m.js",
   "scripts": {
