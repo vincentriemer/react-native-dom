@@ -91,30 +91,26 @@ jobs:
           paths:
             - packages/react-native-dom/lib
 
+  build_yoga_wasm:
+    machine: true
+    working_directory: ~/react-native-dom
+    steps:
+      - *restore_repo
+      - run:
+          name: Build yoga-dom wasm
+          command: cd packages/yoga-dom && yarn compile:wasm
+      - persist_to_workspace:
+          root: ~/react-native-dom
+          paths:
+            - packages/yoga-dom/build
+
   build_yoga_dom:
     <<: *container_config
     steps:
       - *restore_repo
       - run:
-          name: Install Docker
-          command: |
-            apt-get update -y
-            apt-get install -y \
-              apt-transport-https \
-              ca-certificates \
-              curl \
-              software-properties-common
-            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-            add-apt-repository \
-              "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-              $(lsb_release -cs) \
-              stable"
-            apt-get update -y
-            apt-get install -y docker-ce
-      - setup_remote_docker
-      - run:
           name: Build yoga-dom
-          command: cd packages/yoga-dom && yarn compile
+          command: cd packages/yoga-dom && yarn compile:bundle
       - persist_to_workspace:
           root: ~/react-native-dom
           paths:
@@ -158,9 +154,12 @@ workflows:
       - build_react_native_dom:
           requires:
             - checkout_repo
-      - build_yoga_dom:
+      - build_yoga_wasm:
           requires:
             - checkout_repo
+      - build_yoga_dom:
+          requires:
+            - build_yoga_wasm
       - build_rntester:
           requires:
             - build_react_native_dom
