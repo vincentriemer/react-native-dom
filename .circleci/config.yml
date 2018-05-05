@@ -12,7 +12,7 @@ aliases:
         - rn-dom-repo
   
   npm_cache_key: &npm_cache_key
-    v1-dependency-npm-{{ checksum "package.json" }}
+    v1-dependency-npm-{{ checksum "yarn.lock" }}
 
   npm_backup_cache_key: &npm_backup_cache_key
     v1-dependency-npm
@@ -60,33 +60,21 @@ jobs:
     <<: *container_config
     steps:
       - *restore_repo
+      - *update_gcc
       - checkout
       - *init_submodules
-      - save_cache:
-          key: rn-dom-repo-{{ .Branch }}-{{ .Revision }}
-          paths:
-            - .
-
-  node_dependencies:
-    <<: *container_config
-    steps:
-      - *restore_repo
-      - *restore_node_modules
-      - *update_gcc
       - run:
           name: Download Dependencies
           command: yarn install
       - save_cache:
-          key: *npm_cache_key
+          key: rn-dom-repo-{{ .Branch }}-{{ .Revision }}
           paths:
-            - ~/react-native-dom/node_modules
-            - ~/react-native-dom/packages/*/node_modules
+            - .
   
   unittest:
     <<: *container_config
     steps:
       - *restore_repo
-      - *restore_node_modules
       - run:
           name: Run Unittests
           command: yarn test
@@ -95,7 +83,6 @@ jobs:
     <<: *container_config
     steps:
       - *restore_repo
-      - *restore_node_modules
       - run:
           name: Build react-native-dom
           command: cd packages/react-native-dom && yarn compile
@@ -108,7 +95,6 @@ jobs:
     <<: *container_config
     steps:
       - *restore_repo
-      - *restore_node_modules
       - setup_remote_docker
       - run:
           name: Build yoga-dom
@@ -122,8 +108,6 @@ jobs:
     <<: *container_config
     steps:
       - *restore_repo
-      - *restore_node_modules
-      - *restore_lib
       - run:
           name: Build RNTester
           command: "yarn build:rntester"
@@ -136,7 +120,6 @@ jobs:
     <<: *container_config
     steps:
       - *restore_repo
-      - *restore_node_modules
       - *restore_rntester
       - run:
           name: Install now CLI
@@ -153,18 +136,15 @@ workflows:
   build:
     jobs:
       - checkout_repo
-      - node_dependencies:
-          requires:
-            - checkout_repo
       - unittest:
           requires:
-            - node_dependencies
+            - checkout_repo
       - build_react_native_dom:
           requires:
-            - node_dependencies
+            - checkout_repo
       - build_yoga_dom:
           requires:
-            - node_dependencies
+            - checkout_repo
       - build_rntester:
           requires:
             - build_react_native_dom
