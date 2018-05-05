@@ -45,7 +45,7 @@ aliases:
         - *yoga_dom_cache_key
 
   components_cache_key: &components_cache_key
-    yoga-dom-{{ .Branch }}-{{ .Revision }}
+    rndom-components-{{ .Branch }}-{{ .Revision }}
 
   restore_components: &restore_components
     restore_cache:
