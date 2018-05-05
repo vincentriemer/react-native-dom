@@ -12,6 +12,12 @@ module.exports = [
         command: "--verbose",
         description: "Enables logging",
         default: false
+      },
+      {
+        command: "--include-canary",
+        description:
+          "When resolving compatible react-native-dom versions, if canary releases should be considered",
+        default: false
       }
     ]
   }

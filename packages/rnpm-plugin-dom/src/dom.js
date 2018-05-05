@@ -29,6 +29,7 @@ const REACT_NATIVE_DOM_GENERATE_PATH = function() {
 let npmConfReg = execSync("npm config get registry")
   .toString()
   .trim();
+
 let NPM_REGISTRY_URL = validUrl.is_uri(npmConfReg)
   ? npmConfReg
   : "http://registry.npmjs.org";
@@ -76,18 +77,59 @@ function getMatchingVersion(version) {
   });
 }
 
-const getInstallPackage = function(version) {
-  let packageToInstall = "react-native-dom";
+const getAllReactNativeDomReleases = function(includeCanary) {
+  return new Promise((resolve, reject) => {
+    npm.packages.releases("react-native-dom", (err, releases) => {
+      if (err) return reject(err);
+      resolve(
+        Object.keys(releases)
+          .filter((release) => {
+            if (["latest", "canary"].includes(release)) return false;
+            if (!includeCanary && release.includes("alpha")) return false;
+            return true;
+          }, {})
+          .map((r) => releases[r])
+      );
+    });
+  });
+};
 
-  const validVersion = semver.valid(version);
-  const validRange = semver.validRange(version);
+const getInstallPackage = function(version, includeCanary) {
+  if (version) {
+    let packageToInstall = "react-native-dom";
 
-  if (validVersion || validRange) {
-    return getMatchingVersion(version).then(
-      (resultVersion) => packageToInstall + "@" + resultVersion
-    );
+    const validVersion = semver.valid(version);
+    const validRange = semver.validRange(version);
+
+    if (validVersion || validRange) {
+      return getMatchingVersion(version);
+    } else {
+      return Promise.resolve(version);
+    }
   } else {
-    return Promise.resolve(version);
+    const reactNativeVersion = getReactNativeVersion();
+
+    return getAllReactNativeDomReleases(includeCanary).then((releases) => {
+      releases.sort((a, b) => {
+        if (a.date < b.date) return 1;
+        if (a.date > b.date) return -1;
+        return 0;
+      });
+
+      for (const release of releases) {
+        if (
+          semver.satisfies(
+            reactNativeVersion,
+            release.peerDependencies["react-native"]
+          )
+        )
+          return release.version;
+      }
+
+      throw new Error(
+        `No version of 'react-native-dom' found that satisfies a peer dependency on 'react-native@${reactNativeVersion}'`
+      );
+    });
   }
 };
 
@@ -97,7 +139,7 @@ const getReactNativeVersion = function() {
     const version = JSON.parse(
       fs.readFileSync(REACT_NATIVE_PACKAGE_JSON_PATH(), "utf-8")
     ).version;
-    return `${semver.major(version)}.${semver.minor(version)}.*`;
+    return version;
   }
 };
 
@@ -118,11 +160,15 @@ const isGlobalCliUsingYarn = function(projectDir) {
 };
 
 module.exports = function dom(config, args, options) {
-  const name = args[0] ? args[0] : getReactNativeAppName();
-  const version = options.domVersion ? options.domVersion : getLatestVersion();
+  const packageToInstall = "react-native-dom";
 
-  getInstallPackage(version)
-    .then((rnDomPackage) => {
+  const name = args[0] ? args[0] : getReactNativeAppName();
+  const includeCanary = options.includeCanary ? options.includeCanary : false;
+  const version = options.domVersion;
+
+  getInstallPackage(version, includeCanary)
+    .then((versionToInstall) => {
+      const rnDomPackage = `${packageToInstall}@${versionToInstall}`;
       console.log(`Installing ${rnDomPackage}...`);
       const pkgmgr = isGlobalCliUsingYarn(process.cwd())
         ? "yarn add"

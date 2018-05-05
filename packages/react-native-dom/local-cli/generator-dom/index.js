@@ -38,12 +38,6 @@ module.exports = yeoman.Base.extend({
   writting: function() {
     const templateVars = { name: this.name };
 
-    // this.fs.copyTpl(
-    //   this.templatePath("App.dom.js"),
-    //   this.destinationPath("App.dom.js"),
-    //   templateVars
-    // );
-
     this.fs.copyTpl(
       this.templatePath("bootstrap.js"),
       this.destinationPath(path.join("dom", "bootstrap.js")),
@@ -60,34 +54,6 @@ module.exports = yeoman.Base.extend({
       this.templatePath("index.html"),
       this.destinationPath(path.join("dom", "index.html")),
       templateVars
-    );
-  },
-
-  install: function() {
-    const reactNativeDomPackageJson = require("../../package.json");
-
-    const peerDependencies = reactNativeDomPackageJson.peerDependencies;
-    if (!peerDependencies) {
-      return;
-    }
-
-    if (fs.existsSync(REACT_NATIVE_PACKAGE_JSON_PATH)) {
-      return;
-    }
-
-    const reactNativeVersion = peerDependencies["react-native"];
-    if (!reactNativeVersion) {
-      return;
-    }
-
-    const spawnOptions = this.options.verbose ? { stdio: "inherit" } : {};
-
-    console.log(`Installing react-native@${reactNativeVersion}...`);
-    this.npmInstall(
-      `react-native@${reactNativeVersion}`,
-      { "--save": true },
-      null,
-      spawnOptions
     );
   },
 

@@ -89,35 +89,25 @@ function runDom(config, args, options) {
   // fix up options
   options.root = options.root || process.cwd();
 
-  // Get build/deploy options
-  const buildType = options.release ? "Release" : "Debug";
+  isPackagerRunning().then((res) => {
+    const isCurrentlyRunning = res === "running";
+    if (!isCurrentlyRunning) {
+      startServerInNewWindow(options.port);
+    }
 
-  isPackagerRunning()
-    .then((res) => {
-      const isCurrentlyRunning = res === "running";
-      if (!isCurrentlyRunning) {
-        startServerInNewWindow(options.port);
-      }
+    const runBrowser = () => opn("http://localhost:8081/dom");
 
-      const runBrowser = () => opn("http://localhost:8081/dom");
-
-      if (isCurrentlyRunning) {
-        runBrowser();
-      } else {
-        setTimeout(runBrowser, 5000);
-      }
-    })
-    .then(() => {});
+    if (isCurrentlyRunning) {
+      runBrowser();
+    } else {
+      setTimeout(runBrowser, 5000);
+    }
+  });
 }
 
 module.exports = {
   name: "run-dom",
   description: "builds your app and starts it in your default browser",
   func: runDom,
-  options: [
-    {
-      command: "--release",
-      description: "Specifies a release build"
-    }
-  ]
+  options: []
 };
