@@ -89,6 +89,7 @@ function startServerInNewWindow(port = process.env.RCT_METRO_PORT || 8081) {
 function runDom(config, args, options) {
   // fix up options
   options.root = options.root || process.cwd();
+  options.port = options.port || 8081;
 
   isPackagerRunning()
     .then((res) => {
