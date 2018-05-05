@@ -31,7 +31,7 @@ aliases:
   rndom_cache_key: &rndom_cache_key
     rn-dom-lib-{{ .Branch }}-{{ .Revision }}
   
-  restore_rndom: &restore_lib
+  restore_rndom: &restore_rndom
     restore_cache:
       keys:
         - *rndom_cache_key
