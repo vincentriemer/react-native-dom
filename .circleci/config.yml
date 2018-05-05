@@ -98,8 +98,8 @@ jobs:
       - run:
           name: Install Docker
           command: |
-            apt-get update
-            apt-get install \
+            apt-get update -y
+            apt-get install -y \
               apt-transport-https \
               ca-certificates \
               curl \
@@ -109,8 +109,8 @@ jobs:
               "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
               $(lsb_release -cs) \
               stable"
-            apt-get update
-            apt-get install docker-ce
+            apt-get update -y
+            apt-get install -y docker-ce
       - setup_remote_docker
       - run:
           name: Build yoga-dom
