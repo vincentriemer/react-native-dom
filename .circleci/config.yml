@@ -98,7 +98,7 @@ jobs:
       - *restore_repo
       - run:
           name: Build yoga-dom wasm
-          command: cd packages/yoga-dom && yarn compile:wasm
+          command: cd packages/yoga-dom && ./build.sh
       - persist_to_workspace:
           root: ~/react-native-dom
           paths:
