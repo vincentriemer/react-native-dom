@@ -145,7 +145,8 @@ jobs:
       - save_cache:
           key: *components_cache_key
           paths:
-            - packages/rndom-*/lib
+            - packages/rndom-redbox/lib
+            - packages/rndom-switch/lib
 
   build_rntester:
     <<: *container_config
