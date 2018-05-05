@@ -32,7 +32,14 @@ class RCTSwitch extends RCTView {
     this.childShadowRoot.appendChild(this.platformSwitch);
   }
 
-  handleChange({ detail: { value } }: { detail: { value: boolean } }) {
+  handleChange(event: {
+    preventDefault: Function,
+    detail: { value: boolean }
+  }) {
+    const {
+      detail: { value }
+    } = event;
+    event.preventDefault();
     if (this.onChange) {
       this.onChange({ value });
     }
