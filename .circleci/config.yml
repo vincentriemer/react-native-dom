@@ -100,6 +100,7 @@ jobs:
           name: Build react-native-dom
           command: cd packages/react-native-dom && yarn compile
       - persist_to_workspace:
+          root: ~/react-native-dom
           paths:
             - packages/react-native-dom/lib
 
@@ -113,6 +114,7 @@ jobs:
           name: Build yoga-dom
           command: cd packages/yoga-dom && yarn compile
       - persist_to_workspace:
+          root: ~/react-native-dom
           paths:
             - packages/yoga-dom/lib
   
