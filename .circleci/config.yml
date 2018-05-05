@@ -135,7 +135,7 @@ jobs:
       - *restore_yoga_dom
       - run:
           name: Build RNTester
-          command: "yarn build:rntester"
+          command: cd packages/react-native-dom && yarn build:rntester
       - save_cache:
           key: *rntester_cache_key
           paths:
