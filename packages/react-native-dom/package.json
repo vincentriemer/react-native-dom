@@ -60,6 +60,7 @@
     "rndom-redbox": "^0.0.10",
     "rndom-switch": "^0.0.10",
     "tinycolor2": "^1.4.1",
+    "wait-port": "^0.2.2",
     "web-animations-js": "^2.3.1",
     "wolfy87-eventemitter": "^5.1.0",
     "yeoman-environment": "^1.5.3",

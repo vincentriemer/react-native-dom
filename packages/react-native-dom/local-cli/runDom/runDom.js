@@ -8,6 +8,7 @@ const http = require("http");
 const path = require("path");
 const opn = require("opn");
 const fetch = require("node-fetch");
+const waitPort = require("wait-port");
 
 /**
  * Indicates whether or not the packager is running. It returns a promise that
@@ -89,20 +90,20 @@ function runDom(config, args, options) {
   // fix up options
   options.root = options.root || process.cwd();
 
-  isPackagerRunning().then((res) => {
-    const isCurrentlyRunning = res === "running";
-    if (!isCurrentlyRunning) {
-      startServerInNewWindow(options.port);
-    }
-
-    const runBrowser = () => opn("http://localhost:8081/dom");
-
-    if (isCurrentlyRunning) {
-      runBrowser();
-    } else {
-      setTimeout(runBrowser, 5000);
-    }
-  });
+  isPackagerRunning()
+    .then((res) => {
+      const isCurrentlyRunning = res === "running";
+      if (!isCurrentlyRunning) {
+        startServerInNewWindow(options.port);
+        return waitPort({
+          host: "localhost",
+          port: options.port
+        });
+      }
+    })
+    .then(() => {
+      opn(`http://localhost:${options.port}/dom`);
+    });
 }
 
 module.exports = {
