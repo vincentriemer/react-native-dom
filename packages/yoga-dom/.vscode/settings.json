@@ -1,0 +1,34 @@
+{
+  "C_Cpp.intelliSenseEngine": "Default",
+  "files.associations": {
+    "Fastfile": "ruby",
+    "*.fixture": "javascript",
+    "*.ejs": "plaintext",
+    "__functional_base": "cpp",
+    "__functional_base_03": "cpp",
+    "__tuple": "cpp",
+    "array": "cpp",
+    "chrono": "cpp",
+    "functional": "cpp",
+    "limits": "cpp",
+    "memory": "cpp",
+    "ratio": "cpp",
+    "tuple": "cpp",
+    "type_traits": "cpp",
+    "utility": "cpp",
+    "__split_buffer": "cpp",
+    "bitset": "cpp",
+    "initializer_list": "cpp",
+    "iterator": "cpp",
+    "string": "cpp",
+    "string_view": "cpp",
+    "vector": "cpp",
+    "ios": "cpp",
+    "typeinfo": "cpp"
+  },
+  "editor.formatOnSave": true,
+  "[cpp]": {
+    "editor.autoIndent": false,
+    "editor.formatOnSave": false
+  }
+}

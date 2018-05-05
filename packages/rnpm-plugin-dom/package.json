@@ -1,0 +1,31 @@
+{
+  "name": "rnpm-plugin-dom",
+  "version": "0.0.10",
+  "description": "rnpm plugin that generates a DOM template project",
+  "keywords": ["react-native", "react-native-dom", "rnpm", "rnpm dom"],
+  "homepage": "https://github.com/vincentriemer/react-native-dom",
+  "bugs": {
+    "url": "https://github.com/vincentriemer/react-native-dom/issues"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vincentriemer/react-native-dom.git"
+  },
+  "scripts": {
+    "compile": "shx echo 'no compilation needed'",
+    "test": "shx echo 'no tests written :('"
+  },
+  "dependencies": {
+    "npm-registry": "^0.1.13",
+    "semver": "^5.5.0",
+    "valid-url": "^1.0.9"
+  },
+  "peerDependencies": {
+    "react-native": ">=0.52.0"
+  },
+  "engines": {
+    "node": ">= 7.0.0"
+  }
+}

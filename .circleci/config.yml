@@ -1,7 +1,7 @@
 aliases:
   container_config: &container_config
     docker:
-      - image: node:8
+      - image: circleci/node:8
     working_directory: ~/react-native-dom
   
   restore_repo: &restore_repo
@@ -12,7 +12,8 @@ aliases:
         - rn-dom-repo
   
   npm_cache_key: &npm_cache_key
-    v1-dependency-npm-{{ checksum "package.json" }}
+    v1-dependency-npm-{{ checksum "yarn.lock" }}
+
   npm_backup_cache_key: &npm_backup_cache_key
     v1-dependency-npm
 
@@ -27,13 +28,29 @@ aliases:
         - *npm_cache_key
         - *npm_backup_cache_key
   
-  lib_cache_key: &lib_cache_key
+  rndom_cache_key: &rndom_cache_key
     rn-dom-lib-{{ .Branch }}-{{ .Revision }}
   
-  restore_lib: &restore_lib
+  restore_rndom: &restore_rndom
     restore_cache:
       keys:
-        - *lib_cache_key
+        - *rndom_cache_key
+  
+  yoga_dom_cache_key: &yoga_dom_cache_key
+    yoga-dom-{{ .Branch }}-{{ .Revision }}
+
+  restore_yoga_dom: &restore_yoga_dom
+    restore_cache:
+      keys:
+        - *yoga_dom_cache_key
+
+  components_cache_key: &components_cache_key
+    rndom-components-{{ .Branch }}-{{ .Revision }}
+
+  restore_components: &restore_components
+    restore_cache:
+      keys:
+        - *components_cache_key
 
   rntester_cache_key: &rntester_cache_key
     rntester-{{ .Branch }}-{{ .Revision }}
@@ -59,68 +76,97 @@ jobs:
     <<: *container_config
     steps:
       - *restore_repo
+      # - *update_gcc
       - checkout
       - *init_submodules
+      - run:
+          name: Download Dependencies
+          command: yarn install --frozen-lockfile
       - save_cache:
           key: rn-dom-repo-{{ .Branch }}-{{ .Revision }}
           paths:
             - .
-
-  node_dependencies:
-    <<: *container_config
-    steps:
-      - *restore_repo
-      - *restore_node_modules
-      - *update_gcc
-      - run:
-          name: Download Dependencies
-          command: yarn install
-      - save_cache:
-          key: *npm_cache_key
-          paths:
-            - ~/react-native-dom/node_modules
   
   unittest:
     <<: *container_config
     steps:
       - *restore_repo
-      - *restore_node_modules
       - run:
           name: Run Unittests
           command: yarn test
   
-  build_lib:
+  build_react_native_dom:
     <<: *container_config
     steps:
       - *restore_repo
-      - *restore_node_modules
       - run:
-          name: Build Library
-          command: yarn build
+          name: Build react-native-dom
+          command: cd packages/react-native-dom && yarn compile
       - save_cache:
-          key: *lib_cache_key
+          key: *rndom_cache_key
           paths:
-            - ~/react-native-dom/lib
+            - packages/react-native-dom/lib
+
+  build_yoga_wasm:
+    machine: true
+    working_directory: ~/react-native-dom
+    steps:
+      - *restore_repo
+      - run:
+          name: Build yoga-dom wasm
+          command: cd packages/yoga-dom && ./build.sh
+      - save_cache:
+          key: yoga-wasm-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - packages/yoga-dom/build
+
+  build_yoga_dom:
+    <<: *container_config
+    steps:
+      - *restore_repo
+      - restore_cache:
+         keys:
+          - yoga-wasm-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Build yoga-dom
+          command: cd packages/yoga-dom && yarn compile:bundle
+      - save_cache:
+          key: *yoga_dom_cache_key
+          paths:
+            - packages/yoga-dom/lib
   
+  build_components:
+    <<: *container_config
+    steps:
+      - *restore_repo
+      - run:
+          name: Build Custom Components
+          command: yarn compile:components
+      - save_cache:
+          key: *components_cache_key
+          paths:
+            - packages/rndom-redbox/lib
+            - packages/rndom-switch/lib
+
   build_rntester:
     <<: *container_config
     steps:
       - *restore_repo
-      - *restore_node_modules
-      - *restore_lib
+      - *restore_rndom
+      - *restore_yoga_dom
+      - *restore_components
       - run:
           name: Build RNTester
-          command: "yarn build:rntester"
+          command: cd packages/react-native-dom && yarn build:rntester
       - save_cache:
           key: *rntester_cache_key
           paths:
-            - ~/react-native-dom/dist
+            - ~/react-native-dom/packages/react-native-dom/dist
   
   deploy_rntester:
     <<: *container_config
     steps:
       - *restore_repo
-      - *restore_node_modules
       - *restore_rntester
       - run:
           name: Install now CLI
@@ -128,7 +174,7 @@ jobs:
       - run:
           name: Deploy RNTester to now.sh
           command: |
-            cd dist
+            cd packages/react-native-dom/dist
             URL=$(now -t ${NOW_TOKEN})
             now alias -t ${NOW_TOKEN} ${URL} rntester.now.sh
 
@@ -137,18 +183,26 @@ workflows:
   build:
     jobs:
       - checkout_repo
-      - node_dependencies:
-          requires:
-            - checkout_repo
       - unittest:
           requires:
-            - node_dependencies
-      - build_lib:
+            - checkout_repo
+      - build_react_native_dom:
           requires:
-            - node_dependencies
+            - checkout_repo
+      - build_components:
+          requires:
+            - checkout_repo
+      - build_yoga_wasm:
+          requires:
+            - checkout_repo
+      - build_yoga_dom:
+          requires:
+            - build_yoga_wasm
       - build_rntester:
           requires:
-            - build_lib
+            - build_components
+            - build_react_native_dom
+            - build_yoga_dom
             - unittest
       - deploy_rntester:
           requires:
@@ -157,11 +211,3 @@ workflows:
             branches:
               only:
                 - master
-      
-
-  
-  
-
-  
-
-       

@@ -14,7 +14,7 @@ git submodule update --init
 yarn
 
 # start the react-native packager
-yarn run start
+yarn run-examples
 ```
 
 Then navigate to `localhost:8081/Examples` and choose which example you would
