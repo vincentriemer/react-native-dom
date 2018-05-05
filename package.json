@@ -22,6 +22,7 @@
     "clean": "shx rm -rf packages/*/lib",
     "precommit": "lint-staged",
     "compile": "lerna run compile --stream",
+    "compile:components": "lerna run compile --scope rndom-* --stream",
     "fmt": "prettier --write 'packages/**/*.js'",
     "release:canary": "lerna publish --canary",
     "run-examples": "cd packages/react-native-dom && yarn run-examples",

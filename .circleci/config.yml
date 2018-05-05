@@ -44,6 +44,14 @@ aliases:
       keys:
         - *yoga_dom_cache_key
 
+  components_cache_key: &components_cache_key
+    yoga-dom-{{ .Branch }}-{{ .Revision }}
+
+  restore_components: &restore_components
+    restore_cache:
+      keys:
+        - *components_cache_key
+
   rntester_cache_key: &rntester_cache_key
     rntester-{{ .Branch }}-{{ .Revision }}
 
@@ -127,12 +135,25 @@ jobs:
           paths:
             - packages/yoga-dom/lib
   
+  build_components:
+    <<: *container_config
+    steps:
+      - *restore_repo
+      - run:
+          name: Build Custom Components
+          command: yarn compile:components
+      - save_cache:
+          key: *components_cache_key
+          paths:
+            - packages/rndom-*/lib
+
   build_rntester:
     <<: *container_config
     steps:
       - *restore_repo
       - *restore_rndom
       - *restore_yoga_dom
+      - *restore_components
       - run:
           name: Build RNTester
           command: cd packages/react-native-dom && yarn build:rntester
@@ -175,6 +196,7 @@ workflows:
             - build_yoga_wasm
       - build_rntester:
           requires:
+            - build_components
             - build_react_native_dom
             - build_yoga_dom
             - unittest
