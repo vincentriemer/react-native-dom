@@ -35,14 +35,6 @@ aliases:
     restore_cache:
       keys:
         - *rndom_cache_key
-  
-  yoga_dom_cache_key: &yoga_dom_cache_key
-    yoga-dom-{{ .Branch }}-{{ .Revision }}
-
-  restore_yoga_dom: &restore_yoga_dom
-    restore_cache:
-      keys:
-        - *yoga_dom_cache_key
 
   components_cache_key: &components_cache_key
     rndom-components-{{ .Branch }}-{{ .Revision }}
@@ -60,23 +52,11 @@ aliases:
       keys:
         - *rntester_cache_key
 
-  update_gcc: &update_gcc
-    run:
-      name: Update GCC
-      command: |
-        echo "deb http://ftp.us.debian.org/debian unstable main contrib non-free" > /etc/apt/sources.list.d/unstable.list
-        apt-get update
-        apt-get install --assume-yes -t unstable gcc-5 g++-5
-        update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5
-        gcc --version
-
 version: 2
 jobs:
   checkout_repo:
     <<: *container_config
     steps:
-      # - *restore_repo
-      # - *update_gcc
       - checkout
       - *init_submodules
       - run:
@@ -106,34 +86,6 @@ jobs:
           key: *rndom_cache_key
           paths:
             - packages/react-native-dom/lib
-
-  build_yoga_wasm:
-    machine: true
-    working_directory: ~/react-native-dom
-    steps:
-      - *restore_repo
-      - run:
-          name: Build yoga-dom wasm
-          command: cd packages/yoga-dom && ./build.sh
-      - save_cache:
-          key: yoga-wasm-{{ .Branch }}-{{ .Revision }}
-          paths:
-            - packages/yoga-dom/build
-
-  build_yoga_dom:
-    <<: *container_config
-    steps:
-      - *restore_repo
-      - restore_cache:
-         keys:
-          - yoga-wasm-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Build yoga-dom
-          command: cd packages/yoga-dom && yarn compile:bundle
-      - save_cache:
-          key: *yoga_dom_cache_key
-          paths:
-            - packages/yoga-dom/lib
   
   build_components:
     <<: *container_config
@@ -153,7 +105,6 @@ jobs:
     steps:
       - *restore_repo
       - *restore_rndom
-      - *restore_yoga_dom
       - *restore_components
       - run:
           name: Build RNTester
@@ -190,17 +141,10 @@ workflows:
       - build_components:
           requires:
             - checkout_repo
-      - build_yoga_wasm:
-          requires:
-            - checkout_repo
-      - build_yoga_dom:
-          requires:
-            - build_yoga_wasm
       - build_rntester:
           requires:
             - build_components
             - build_react_native_dom
-            - build_yoga_dom
             - unittest
       - deploy_rntester:
           requires:
