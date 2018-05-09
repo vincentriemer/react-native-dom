@@ -111,5 +111,10 @@ module.exports = {
   name: "run-dom",
   description: "builds your app and starts it in your default browser",
   func: runDom,
-  options: []
+  options: [
+    {
+      command: "--port",
+      description: "port to run the packager from"
+    }
+  ]
 };
