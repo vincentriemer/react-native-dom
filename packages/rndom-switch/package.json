@@ -18,6 +18,25 @@
     "start": "serve public",
     "test": "shx echo 'no tests written :('"
   },
+  "babel": {
+    "plugins": [
+      [
+        "babel-plugin-transform-builtin-classes",
+        {
+          "globals": ["HTMLElement"]
+        }
+      ],
+      "external-helpers"
+    ],
+    "presets": [
+      [
+        "env",
+        {
+          "modules": false
+        }
+      ]
+    ]
+  },
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-plugin-external-helpers": "^6.22.0",
