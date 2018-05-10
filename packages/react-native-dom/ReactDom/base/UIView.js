@@ -584,7 +584,12 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   removeGestureRecognizer(handler: RCTTouchHandler) {
-    // TODO: Implement
+    // $FlowFixMe
+    this.addEventListener(
+      "pointerdown",
+      handler.pointerBegan,
+      touchListenerOptions
+    );
   }
 }
 
