@@ -5,7 +5,7 @@
 
 // Polyfills
 import "pepjs";
-import "@webcomponents/webcomponentsjs/webcomponents-sd-ce";
+import "@webcomponents/webcomponentsjs/bundles/webcomponents-sd-ce";
 import "web-animations-js/web-animations-next.min";
 
 global.process = global.process || {};

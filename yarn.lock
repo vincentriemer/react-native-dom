@@ -436,9 +436,9 @@
   version "10.0.3"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.0.3.tgz#1f89840c7aac2406cc43a2ecad98fc02a8e130e4"
 
-"@webcomponents/webcomponentsjs@^1.1.1":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@webcomponents/webcomponentsjs/-/webcomponentsjs-1.2.0.tgz#c9e129340c3e4637f5fa6505e968e85face7bd5b"
+"@webcomponents/webcomponentsjs@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@webcomponents/webcomponentsjs/-/webcomponentsjs-2.0.0.tgz#166e7489b9ce66f5c082a3360120cb27505f762f"
 
 JSONStream@^1.0.4:
   version "1.3.2"
