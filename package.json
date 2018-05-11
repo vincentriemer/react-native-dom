@@ -24,7 +24,7 @@
     "compile": "lerna run compile --stream",
     "compile:components": "lerna run compile --scope rndom-* --stream",
     "fmt": "prettier --write 'packages/**/*.js'",
-    "lint": "flow && eslint packages",
+    "lint": "flow check && eslint packages",
     "release:canary": "lerna publish --canary",
     "run-examples": "cd packages/react-native-dom && yarn run-examples",
     "test": "lerna run test"
