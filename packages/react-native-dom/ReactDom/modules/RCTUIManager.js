@@ -3,12 +3,13 @@
  * @flow
  */
 
-import invariant from "Invariant";
+import invariant from "invariant";
+
 import RCTBridge, {
-  RCT_EXPORT_MODULE,
+  RCTFunctionTypeNormal,
   RCT_EXPORT_METHOD,
-  bridgeModuleNameForClass,
-  RCTFunctionTypeNormal
+  RCT_EXPORT_MODULE,
+  bridgeModuleNameForClass
 } from "RCTBridge";
 import UIView from "UIView";
 import RCTView from "RCTView";
@@ -19,11 +20,9 @@ import RCTUIManagerObserverCoordinator from "RCTUIManagerObserverCoordinator";
 import RCTComponentData from "RCTComponentData";
 import CanUse from "CanUse";
 import instrument from "Instrument";
-
 import type { RCTComponent } from "RCTComponent";
 import type { LayoutChange } from "RCTShadowView";
 import type { LayoutAnimationConfig } from "RCTLayoutAnimationManager";
-
 import _RCTShadowView from "RCTShadowView";
 import _RCTRootShadowView from "RCTRootShadowView";
 import _RCTShadowText from "RCTShadowText";

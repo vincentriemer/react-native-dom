@@ -88,6 +88,7 @@
     "prettier": "^1.9.0",
     "react": "^16.3.1",
     "react-native": "~0.55.0",
+    "resolve": "^1.7.1",
     "rimraf": "^2.6.1"
   },
   "peerDependencies": {

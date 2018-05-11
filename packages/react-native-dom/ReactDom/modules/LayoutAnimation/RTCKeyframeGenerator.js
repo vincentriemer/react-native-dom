@@ -5,8 +5,7 @@
 
 import BezierEasing from "bezier-easing";
 import memoize from "fast-memoize";
-
-import invariant from "Invariant";
+import invariant from "invariant";
 
 import type { LayoutAnim } from "RCTLayoutAnimationManager";
 

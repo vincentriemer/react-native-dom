@@ -6,7 +6,6 @@
 import type { Config } from "RCTNativeAnimatedModule";
 import type { RCTAnimationDriver } from "RCTAnimationDriver";
 import type RCTValueAnimatedNode from "RCTValueAnimatedNode";
-
 import { RCTSingleFrameInterval } from "RCTAnimationDriver";
 
 const MAX_DELTA_TIME: number = 0.064;

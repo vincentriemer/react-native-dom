@@ -10,7 +10,6 @@ import RCTTiming from "RCTTiming";
 import RCTTouchHandler from "RCTTouchHandler";
 import CustomElement from "CustomElement";
 import instrument from "Instrument";
-
 import type { NativeModuleImports } from "RCTModule";
 
 function getAvailableSize() {

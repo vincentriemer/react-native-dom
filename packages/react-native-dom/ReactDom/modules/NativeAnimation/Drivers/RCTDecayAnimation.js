@@ -6,7 +6,6 @@
 import type { Config } from "RCTNativeAnimatedModule";
 import type { RCTAnimationDriver } from "RCTAnimationDriver";
 import type RCTValueAnimatedNode from "RCTValueAnimatedNode";
-
 import { RCTSingleFrameInterval } from "RCTAnimationDriver";
 
 class RCTDecayAnimation implements RCTAnimationDriver {

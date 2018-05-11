@@ -3,6 +3,8 @@
  * @flow
  */
 
+import debounce from "debounce";
+
 import type RCTTouchHandler from "RCTTouchHandler";
 import type { RCTComponent } from "RCTComponent";
 import UIBorderView, { ALL_BORDER_PROPS } from "UIBorderView";
@@ -11,7 +13,6 @@ import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 import * as MatrixMath from "MatrixMath";
 import prefixInlineStyles from "prefixInlineStyles";
 import isIOS from "isIOS";
-import debounce from "debounce";
 
 @CustomElement("ui-child-container-view")
 export class UIChildContainerView extends HTMLElement {
@@ -583,7 +584,10 @@ class UIView extends HTMLElement implements RCTComponent {
     );
   }
 
-  removeGestureRecognizer(handler: RCTTouchHandler) {
+  removeGestureRecognizer(
+    handler: RCTTouchHandler,
+    touchListenerOptions: Object | boolean
+  ) {
     // $FlowFixMe
     this.addEventListener(
       "pointerdown",

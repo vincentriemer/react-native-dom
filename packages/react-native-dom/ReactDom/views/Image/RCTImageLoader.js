@@ -4,10 +4,10 @@
  */
 
 import RCTBridge, {
-  RCT_EXPORT_MODULE,
-  RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal,
-  RCTFunctionTypePromise
+  RCTFunctionTypePromise,
+  RCT_EXPORT_METHOD,
+  RCT_EXPORT_MODULE
 } from "RCTBridge";
 
 @RCT_EXPORT_MODULE("RCTImageLoader")
@@ -48,9 +48,8 @@ class RCTImageLoader {
     const existingImage = this.imageCache[url];
     if (existingImage != null) {
       return existingImage;
-    } else {
-      return this.loadImage(url);
     }
+    return this.loadImage(url);
   }
 
   loadImageWithURLRequest(url: string): Promise<Image> {

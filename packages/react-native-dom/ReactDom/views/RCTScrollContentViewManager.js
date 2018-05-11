@@ -6,7 +6,6 @@
 import RCTBridge, { RCT_EXPORT_MODULE } from "RCTBridge";
 import { RCTScrollContentView } from "RCTScrollView";
 import type UIView from "UIView";
-
 import _RCTViewManager from "RCTViewManager";
 
 module.exports = (async () => {

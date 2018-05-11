@@ -4,6 +4,7 @@
  */
 
 import createPrefixer from "inline-style-prefixer/static/createPrefixer";
+
 import staticData from "./static";
 
 const prefixAll = createPrefixer(staticData);

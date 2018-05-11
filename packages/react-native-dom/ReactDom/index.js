@@ -3,33 +3,33 @@
  * @flow
  */
 
-// Polyfills
 import "pepjs";
 import "@webcomponents/webcomponentsjs/bundles/webcomponents-sd-ce";
 import "web-animations-js/web-animations-next.min";
 
-global.process = global.process || {};
-global.process.env = global.process.env || {};
-if (!global.process.env.NODE_ENV) {
-  global.process.env.NODE_ENV = __DEV__ ? "development" : "production";
-}
-
 import RCTRootView from "RCTRootView";
 import bundleFromRoot from "BundleFromRoot";
 import type { NativeModuleImports } from "RCTModule";
-
-import {
-  RCT_EXPORT_MODULE,
-  RCT_EXPORT_METHOD,
+import RCTBridge, {
   RCTFunctionTypeNormal,
   RCTFunctionTypePromise,
-  RCTFunctionTypeSync
+  RCTFunctionTypeSync,
+  RCT_EXPORT_METHOD,
+  RCT_EXPORT_MODULE
 } from "RCTBridge";
 import UIView from "UIView";
 import RCTView from "RCTView";
 import RCTViewManager from "RCTViewManager";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 import CustomElement from "CustomElement";
+import RCTEventDispatcher from "RCTEventDispatcher";
+import _RCTUIManager from "RCTUIManager";
+
+global.process = global.process || {};
+global.process.env = global.process.env || {};
+if (!global.process.env.NODE_ENV) {
+  global.process.env.NODE_ENV = __DEV__ ? "development" : "production";
+}
 
 // Export native modules to provide ability for others to provide their own modules
 export {
@@ -44,10 +44,6 @@ export {
   UIView,
   CustomElement
 };
-
-import RCTEventDispatcher from "RCTEventDispatcher";
-import RCTBridge from "RCTBridge";
-import _RCTUIManager from "RCTUIManager";
 
 type RCTUIManager = $await<typeof _RCTUIManager>;
 

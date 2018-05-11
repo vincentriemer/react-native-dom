@@ -17,7 +17,6 @@ export default function instrument<T>(
     window.performance.mark(endName);
     window.performance.measure(name, startName, endName);
     return result;
-  } else {
-    return instrumentedFunction();
   }
+  return instrumentedFunction();
 }

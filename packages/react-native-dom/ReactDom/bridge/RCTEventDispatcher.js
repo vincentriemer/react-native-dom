@@ -3,12 +3,13 @@
  * @flow
  */
 
+import invariant from "invariant";
+
 import RCTBridge, {
-  RCT_EXPORT_MODULE,
+  RCTFunctionTypeNormal,
   RCT_EXPORT_METHOD,
-  RCTFunctionTypeNormal
+  RCT_EXPORT_MODULE
 } from "RCTBridge";
-import invariant from "Invariant";
 
 export const RCTTextEventType = {
   RCTTextEventTypeFocus: 0,

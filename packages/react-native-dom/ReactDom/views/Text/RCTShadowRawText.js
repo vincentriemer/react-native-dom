@@ -4,6 +4,7 @@
  */
 
 import * as YG from "yoga-dom";
+
 import _RCTShadowView from "RCTShadowView";
 
 export default (async () => {

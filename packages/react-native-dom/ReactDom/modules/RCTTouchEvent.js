@@ -3,9 +3,9 @@
  * @flow
  */
 
-import type { RCTEvent } from "RCTEventDispatcher";
+import invariant from "invariant";
 
-import invariant from "Invariant";
+import type { RCTEvent } from "RCTEventDispatcher";
 import RCTEventDispatcher, {
   normalizeInputEventName
 } from "RCTEventDispatcher";

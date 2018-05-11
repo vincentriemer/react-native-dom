@@ -3,13 +3,13 @@
  * @flow
  */
 
-import invariant from "Invariant";
+import invariant from "invariant";
+
 import RCTBridge, {
-  getPropertyNames,
-  bridgeModuleNameForClass
+  bridgeModuleNameForClass,
+  getPropertyNames
 } from "RCTBridge";
 import RCTUIManager from "RCTUIManager";
-
 import type { RCTComponent } from "RCTComponent";
 import UIView from "UIView";
 import { normalizeInputEventName } from "RCTEventDispatcher";
@@ -17,7 +17,6 @@ import RCTText from "RCTText";
 import RCTRawText from "RCTRawText";
 import type RCTView from "RCTView";
 import RCTTextInput from "RCTTextInput";
-
 import typeof _RCTShadowView from "RCTShadowView";
 import typeof _RCTViewManager from "RCTViewManager";
 

@@ -3,9 +3,10 @@
  * @flow
  */
 
+import invariant from "invariant";
+
 import type RCTAnimatedNode from "RCTAnimatedNode";
 import RCTValueAnimatedNode from "RCTValueAnimatedNode";
-import invariant from "Invariant";
 
 class RCTDiffClampAnimatedNode extends RCTValueAnimatedNode {
   inputNodeTag: number;

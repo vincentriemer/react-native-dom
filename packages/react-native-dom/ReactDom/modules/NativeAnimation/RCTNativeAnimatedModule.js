@@ -3,16 +3,16 @@
  * @flow
  */
 
+import invariant from "invariant";
+
 import type RCTBridge from "RCTBridge";
 import type { RCTEvent } from "RCTEventDispatcher";
 import type RCTValueAnimatedNode from "RCTValueAnimatedNode";
-
-import invariant from "Invariant";
 import RCTNativeAnimatedNodesManager from "RCTNativeAnimatedNodesManager";
 import {
-  RCT_EXPORT_MODULE,
+  RCTFunctionTypeNormal,
   RCT_EXPORT_METHOD,
-  RCTFunctionTypeNormal
+  RCT_EXPORT_MODULE
 } from "RCTBridge";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 

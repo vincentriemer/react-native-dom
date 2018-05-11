@@ -4,9 +4,9 @@
  */
 
 import RCTBridge, {
-  RCT_EXPORT_MODULE,
+  RCTFunctionTypeNormal,
   RCT_EXPORT_METHOD,
-  RCTFunctionTypeNormal
+  RCT_EXPORT_MODULE
 } from "RCTBridge";
 import NotificationCenter from "NotificationCenter";
 import { defaultFontStack } from "RCTSharedTextValues";

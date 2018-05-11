@@ -4,8 +4,8 @@
  */
 
 import * as YG from "yoga-dom";
-import RCTScrollViewLocalData from "RCTScrollViewLocalData";
 
+import RCTScrollViewLocalData from "RCTScrollViewLocalData";
 import _RCTShadowView from "RCTShadowView";
 
 module.exports = (async () => {

@@ -3,18 +3,18 @@
  * @flow
  */
 
-import RCTBridge, {
-  RCT_EXPORT_MODULE,
-  RCT_EXPORT_METHOD,
-  RCTFunctionTypeNormal
-} from "RCTBridge";
 import cuid from "cuid";
 import invariant from "invariant";
 
+import RCTBridge, {
+  RCTFunctionTypeNormal,
+  RCT_EXPORT_METHOD,
+  RCT_EXPORT_MODULE
+} from "RCTBridge";
 import type {
+  RCTHttpRequest,
   RCTNetworkingRequestHandler,
-  RCTNetworkingResponseHandler,
-  RCTHttpRequest
+  RCTNetworkingResponseHandler
 } from "RCTNetworkingNative";
 
 const kBlobURIScheme = "blob";

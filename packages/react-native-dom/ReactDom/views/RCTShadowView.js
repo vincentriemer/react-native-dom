@@ -4,7 +4,7 @@
  */
 
 import * as YG from "yoga-dom";
-import invariant from "Invariant";
+import invariant from "invariant";
 
 import type { RCTComponent } from "RCTComponent";
 
@@ -47,16 +47,14 @@ module.exports = (async () => {
       // Found it: https://github.com/facebook/yoga/blob/5e3ffb39a2acb05d4fe93d04f5ae4058c047f6b1/yoga/Yoga.h#L28
       // return { value: NaN, unit: units.undefined };
       return { value: 0, unit: units.point };
-    } else {
-      if (input === "auto") {
-        return { value: NaN, unit: units.auto };
-      } else {
-        return {
-          value: parseFloat(input),
-          unit: input.endsWith("%") ? units.percent : units.point
-        };
-      }
     }
+    if (input === "auto") {
+      return { value: NaN, unit: units.auto };
+    }
+    return {
+      value: parseFloat(input),
+      unit: input.endsWith("%") ? units.percent : units.point
+    };
   }
 
   function setEnumProp<T: YG.PropEnumMap>(

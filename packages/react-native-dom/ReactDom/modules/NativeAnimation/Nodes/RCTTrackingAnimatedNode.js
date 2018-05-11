@@ -3,8 +3,9 @@
  * @flow
  */
 
+import invariant from "invariant";
+
 import type { Config } from "RCTNativeAnimatedModule";
-import invariant from "Invariant";
 import RCTValueAnimatedNode from "RCTValueAnimatedNode";
 import RCTAnimatedNode from "RCTAnimatedNode";
 

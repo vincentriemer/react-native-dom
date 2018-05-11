@@ -4,9 +4,9 @@
  */
 
 import RCTBridge, {
-  RCT_EXPORT_MODULE,
+  RCTFunctionTypePromise,
   RCT_EXPORT_METHOD,
-  RCTFunctionTypePromise
+  RCT_EXPORT_MODULE
 } from "RCTBridge";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 

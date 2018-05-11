@@ -4,11 +4,10 @@
  */
 
 import RCTBridge, {
-  RCT_EXPORT_MODULE,
+  RCTFunctionTypeNormal,
   RCT_EXPORT_METHOD,
-  RCTFunctionTypeNormal
+  RCT_EXPORT_MODULE
 } from "RCTBridge";
-
 import type RCTEventDispatcher from "RCTEventDispatcher";
 
 @RCT_EXPORT_MODULE("RCTDeviceEventManager")

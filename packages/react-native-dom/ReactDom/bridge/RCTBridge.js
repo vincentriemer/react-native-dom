@@ -2,8 +2,9 @@
  * @providesModule RCTBridge
  * @flow
  */
-import invariant from "Invariant";
 import Yoga, * as YG from "yoga-dom";
+import invariant from "invariant";
+
 import { moduleConfigFactory } from "RCTModuleConfig";
 import NotificationCenter from "NotificationCenter";
 import {
@@ -21,12 +22,11 @@ import type RCTDevSettings from "RCTDevSettings";
 import type RCTNetworking from "RCTNetworkingNative";
 import type RCTBlobManager from "RCTBlobManager";
 import type {
+  NativeModuleImports,
   RCTModule,
-  RCTModuleStatics,
-  NativeModuleImports
+  RCTModuleStatics
 } from "RCTModule";
 import type RCTRedBox from "RCTRedBox";
-
 import typeof _RCTUIManager from "RCTUIManager";
 type RCTUIManager = $Call<$await<_RCTUIManager>>;
 

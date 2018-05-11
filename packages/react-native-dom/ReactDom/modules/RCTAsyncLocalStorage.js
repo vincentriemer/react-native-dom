@@ -3,13 +3,14 @@
  * @flow
  */
 
-import RCTBridge, {
-  RCT_EXPORT_MODULE,
-  RCT_EXPORT_METHOD,
-  RCTFunctionTypeNormal
-} from "RCTBridge";
 import idbKeyval from "idb-keyval";
 import deepmerge from "deepmerge";
+
+import RCTBridge, {
+  RCTFunctionTypeNormal,
+  RCT_EXPORT_METHOD,
+  RCT_EXPORT_MODULE
+} from "RCTBridge";
 
 @RCT_EXPORT_MODULE("RCTAsyncLocalStorage")
 class RCTAsyncLocalStorage {
@@ -45,9 +46,8 @@ class RCTAsyncLocalStorage {
         return idbKeyval.get(key).then((nextValue) => {
           if (nextValue == null || typeof nextValue !== "object") {
             return idbKeyval.set(key, prevValue);
-          } else {
-            return idbKeyval.set(key, deepmerge(prevValue, nextValue));
           }
+          return idbKeyval.set(key, deepmerge(prevValue, nextValue));
         });
       })
     ).then(() => {

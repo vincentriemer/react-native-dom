@@ -1,5 +1,6 @@
 {
   "editor.formatOnSave": true,
   "flow.useNPMPackagedFlow": true,
-  "flow.useLSP": false
+  "flow.useLSP": false,
+  "eslint.enable": true
 }

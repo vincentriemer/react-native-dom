@@ -4,14 +4,13 @@
  */
 import type UIView from "UIView";
 import RCTBridge, {
-  RCT_EXPORT_MODULE,
-  RCT_EXPORT_METHOD,
   RCTFunctionTypeNormal,
-  RCTFunctionTypePromise
+  RCTFunctionTypePromise,
+  RCT_EXPORT_METHOD,
+  RCT_EXPORT_MODULE
 } from "RCTBridge";
 import RCTImageView from "RCTImageView";
 import RCTImageSource from "RCTImageSource";
-
 import _RCTViewManager from "RCTViewManager";
 
 type ImageSourceJson = {

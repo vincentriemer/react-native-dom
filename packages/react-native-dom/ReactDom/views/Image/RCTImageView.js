@@ -4,7 +4,6 @@
  */
 
 import type RCTBridge from "RCTBridge";
-
 import RCTView from "RCTView";
 import RCTImageSource from "RCTImageSource";
 import CustomElement from "CustomElement";

@@ -5,14 +5,12 @@
 
 import type UIView from "UIView";
 import type { WebViewSource } from "RCTWebView";
-
 import RCTBridge, {
-  RCT_EXPORT_MODULE,
+  RCTFunctionTypeNormal,
   RCT_EXPORT_METHOD,
-  RCTFunctionTypeNormal
+  RCT_EXPORT_MODULE
 } from "RCTBridge";
 import RCTWebView from "RCTWebView";
-
 import _RCTViewManager from "RCTViewManager";
 
 module.exports = (async () => {

@@ -4,9 +4,8 @@
  */
 
 import type RCTBridge from "RCTBridge";
-
 import RCTView from "RCTView";
-import { defaultFontStack, defaultFontSize } from "RCTSharedTextValues";
+import { defaultFontSize, defaultFontStack } from "RCTSharedTextValues";
 import CustomElement from "CustomElement";
 
 @CustomElement("rct-text-input")

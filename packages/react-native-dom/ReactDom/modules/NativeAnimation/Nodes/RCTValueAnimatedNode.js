@@ -4,7 +4,6 @@
  */
 
 import type { Config } from "RCTNativeAnimatedModule";
-
 import RCTAnimatedNode from "RCTAnimatedNode";
 
 export interface RCTValueAnimatedNodeObserver {

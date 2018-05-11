@@ -3,16 +3,15 @@
  * @flow
  */
 
-import * as YG from "yoga-dom";
-import guid from "Guid";
-import invariant from "Invariant";
-import {
-  defaultFontStack,
-  defaultFontSize,
-  defaults as TextDefaults
-} from "RCTSharedTextValues";
-
+import invariant from "invariant";
 import _Yoga from "yoga-dom";
+
+import guid from "Guid";
+import {
+  defaults as TextDefaults,
+  defaultFontSize,
+  defaultFontStack
+} from "RCTSharedTextValues";
 import _RCTShadowView from "RCTShadowView";
 import _RCTShadowRawText from "RCTShadowRawText";
 
@@ -87,7 +86,6 @@ module.exports = (async () => {
               this.props[shadowPropName] = "inherit";
             }
             this.markTextDirty();
-            return;
           }
         });
         // $FlowFixMe

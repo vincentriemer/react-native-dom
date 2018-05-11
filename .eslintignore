@@ -1,0 +1,3 @@
+**/*.js
+
+!packages/react-native-dom/ReactDom/**/*.js

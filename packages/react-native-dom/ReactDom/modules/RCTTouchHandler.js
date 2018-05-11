@@ -3,11 +3,10 @@
  * @flow
  */
 
-import type RCTBridge from "RCTBridge";
-
 import detectIt from "detect-it";
+import invariant from "invariant";
 
-import invariant from "Invariant";
+import type RCTBridge from "RCTBridge";
 import UIView, { UIChildContainerView } from "UIView";
 import RCTEventDispatcher from "RCTEventDispatcher";
 import RCTTouchEvent from "RCTTouchEvent";
@@ -104,7 +103,7 @@ class RCTTouchHandler {
 
   detachFromView(view: UIView) {
     this.view = undefined;
-    view.removeGestureRecognizer(this);
+    view.removeGestureRecognizer(this, TOUCH_LISTENER_OPTIONS);
   }
 
   recordNewTouches(touches: Array<UITouch>) {

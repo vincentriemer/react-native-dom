@@ -3,11 +3,12 @@
  * @flow
  */
 
-import invariant from "Invariant";
+import invariant from "invariant";
+
 import RCTBridge, {
-  RCT_EXPORT_MODULE,
+  RCTFunctionTypeNormal,
   RCT_EXPORT_METHOD,
-  RCTFunctionTypeNormal
+  RCT_EXPORT_MODULE
 } from "RCTBridge";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 

@@ -5,7 +5,6 @@
 
 import RCTBridge, { RCT_EXPORT_MODULE } from "RCTBridge";
 import RCTTextInput from "RCTTextInput";
-
 import _RCTViewManager from "RCTViewManager";
 
 module.exports = (async () => {

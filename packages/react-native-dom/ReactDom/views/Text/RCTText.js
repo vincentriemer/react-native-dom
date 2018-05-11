@@ -3,18 +3,18 @@
  * @flow
  */
 
-import type RCTBridge from "RCTBridge";
+import tinycolor from "tinycolor2";
 
+import type RCTBridge from "RCTBridge";
 import RCTView from "RCTView";
 import RCTRawText from "RCTRawText";
 import {
-  defaultFontStack,
+  defaults as TextDefaults,
   defaultFontSize,
-  defaults as TextDefaults
+  defaultFontStack
 } from "RCTSharedTextValues";
 import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
-import tinycolor from "tinycolor2";
 
 // inject default font stylesheet
 (() => {

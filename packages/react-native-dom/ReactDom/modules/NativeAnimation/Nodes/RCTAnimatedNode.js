@@ -3,10 +3,10 @@
  * @flow
  */
 
+import invariant from "invariant";
+
 import type { Config } from "RCTNativeAnimatedModule";
 import type RCTNativeAnimatedNodesManager from "RCTNativeAnimatedNodesManager";
-
-import invariant from "Invariant";
 
 class RCTAnimatedNode {
   nodeTag: number;

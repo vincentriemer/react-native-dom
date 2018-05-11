@@ -2,12 +2,12 @@ function sendMessage(topic, payload) {
   postMessage({ topic, payload });
 }
 
-var Status = undefined;
+let Status = undefined;
 
 function loadBundle(bundle) {
   return new Promise(function(resolve, reject) {
     if (__DEV__) {
-      var xmlHttp = new XMLHttpRequest();
+      let xmlHttp = new XMLHttpRequest();
       xmlHttp.open("GET", bundle, true);
       xmlHttp.setRequestHeader("Accept", "multipart/mixed");
       xmlHttp.onload = function() {
@@ -42,11 +42,11 @@ function loadBundle(bundle) {
 
 function handleError(e) {
   console.warn(e);
-  var xmlhttp = new XMLHttpRequest();
+  let xmlhttp = new XMLHttpRequest();
   xmlhttp.open("GET", bundle, true);
   xmlhttp.onreadystatechange = function() {
     if (xmlhttp.readyState == 4) {
-      var result = JSON.parse(xmlhttp.responseText);
+      let result = JSON.parse(xmlhttp.responseText);
       if (result) {
         if (
           result.type === "UnableToResolveError" ||
@@ -64,8 +64,8 @@ function handleError(e) {
             result.filename = "file:///" + result.filename;
           }
           if (result.errors) {
-            for (var i = 0; i < result.errors.length; i++) {
-              var error = result.errors[i];
+            for (let i = 0; i < result.errors.length; i++) {
+              let error = result.errors[i];
               if (error.filename && error.filename.indexOf(":") <= 2) {
                 error.filename = "file:///" + error.filename;
               }

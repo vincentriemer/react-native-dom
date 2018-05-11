@@ -5,7 +5,6 @@
 
 import RCTBridge, { RCT_EXPORT_MODULE } from "RCTBridge";
 import RCTRawText from "RCTRawText";
-
 import _RCTViewManager from "RCTViewManager";
 import _RCTShadowRawText from "RCTShadowRawText";
 

@@ -3,15 +3,12 @@
  * @flow
  */
 
+import invariant from "invariant";
+
 import type { Config } from "RCTNativeAnimatedModule";
 import type { RCTEvent } from "RCTEventDispatcher";
-
-import invariant from "Invariant";
-
 import type { RCTAnimationDriver } from "RCTAnimationDriver";
 import type { RCTValueAnimatedNodeObserver } from "RCTValueAnimatedNode";
-
-// Nodes
 import RCTAnimatedNode from "RCTAnimatedNode";
 import RCTValueAnimatedNode from "RCTValueAnimatedNode";
 import RCTPropsAnimatedNode from "RCTPropsAnimatedNode";
@@ -23,13 +20,10 @@ import RCTAdditionAnimatedNode from "RCTAdditionAnimatedNode";
 import RCTModuloAnimatedNode from "RCTModuloAnimatedNode";
 import RCTDivisionAnimatedNode from "RCTDivisionAnimatedNode";
 import RCTTrackingAnimatedNode from "RCTTrackingAnimatedNode";
-
-// Drivers
 import RCTEventAnimation from "RCTEventAnimation";
 import RCTFrameAnimation from "RCTFrameAnimation";
 import RCTDecayAnimation from "RCTDecayAnimation";
 import RCTSpringAnimation from "RCTSpringAnimation";
-
 import typeof _RCTUIManager from "RCTUIManager";
 type RCTUIManager = $Call<$await<_RCTUIManager>>;
 
