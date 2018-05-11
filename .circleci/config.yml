@@ -66,6 +66,13 @@ jobs:
           key: rn-dom-repo-{{ .Branch }}-{{ .Revision }}
           paths:
             - .
+  lint:
+    <<: *container_config
+    steps:
+      - *restore_repo
+      - run:
+          name: Run Linters
+          command: yarn lint
   
   unittest:
     <<: *container_config
@@ -135,17 +142,21 @@ workflows:
       - unittest:
           requires:
             - checkout_repo
+      - lint:
+          requires:
+            - checkout_repo
       - build_react_native_dom:
           requires:
-            - checkout_repo
+            - lint
+            - unittest
       - build_components:
           requires:
-            - checkout_repo
+            - lint
+            - unittest
       - build_rntester:
           requires:
             - build_components
             - build_react_native_dom
-            - unittest
       - deploy_rntester:
           requires:
             - build_rntester
