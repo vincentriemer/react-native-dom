@@ -3,16 +3,17 @@
  * @flow
  */
 
+import detectIt from "detect-it";
+import debounce from "debounce";
+import invariant from "invariant";
+
 import RCTView from "RCTView";
 import UIView from "UIView";
 import type RCTBridge from "RCTBridge";
 import CustomElement from "CustomElement";
-import type { RCTEvent } from "RCTEventDispatcher";
-import detectIt from "detect-it";
+import { type RCTEvent } from "RCTEventDispatcher";
 import RCTScrollViewLocalData from "RCTScrollViewLocalData";
-
-import invariant from "Invariant";
-import debounce from "debounce";
+import isIOS from "isIOS";
 import RCTEventDispatcher, {
   normalizeInputEventName
 } from "RCTEventDispatcher";
@@ -20,8 +21,6 @@ import RCTEventDispatcher, {
 const SCROLL_LISTENER_OPTIONS = detectIt.passiveEvents
   ? { passive: true }
   : false;
-
-const SHOULD_CORRECT_SCROLL = !!navigator.platform.match(/iPhone|iPod|iPad/g);
 
 type ScrollEventArgs = [
   number,
@@ -177,6 +176,18 @@ type ChildFrame = {
   height: number
 };
 
+function setScrollPadding(node: HTMLElement) {
+  const { scrollTop, offsetHeight, scrollHeight } = node;
+
+  if (scrollTop <= 0) {
+    node.scrollTop = 1;
+  }
+
+  if (scrollTop + offsetHeight >= scrollHeight) {
+    node.scrollTop = scrollHeight - offsetHeight - 1;
+  }
+}
+
 @CustomElement("rct-scroll-view")
 class RCTScrollView extends RCTView {
   bridge: RCTBridge;
@@ -219,7 +230,19 @@ class RCTScrollView extends RCTView {
     this.addWillChange("transform");
 
     this.addEventListener("scroll", this.handleScroll, SCROLL_LISTENER_OPTIONS);
+
+    if (isIOS) {
+      this.addEventListener(
+        "touchstart",
+        this.onTouchStart,
+        detectIt.passiveEvents ? { passive: false } : false
+      );
+    }
   }
+
+  onTouchStart = () => {
+    setScrollPadding(this);
+  };
 
   hasScrollParent() {
     let currentView = this;
@@ -323,16 +346,6 @@ class RCTScrollView extends RCTView {
     });
 
     return updatedChildFrames;
-  }
-
-  connectedCallback() {
-    if (SHOULD_CORRECT_SCROLL) {
-      if (this._horizontal) {
-        this.scrollLeft = 1;
-      } else {
-        this.scrollTop = 1;
-      }
-    }
   }
 
   boundsDidChange(contentView: RCTView) {
@@ -468,36 +481,6 @@ class RCTScrollView extends RCTView {
       ...eventArgs
     );
     this.bridge.eventDispatcher.sendEvent(momentumScrollEvent);
-
-    this.correctScrollPosition();
-  }
-
-  correctScrollPosition() {
-    const scrollNudge = 1;
-
-    if (SHOULD_CORRECT_SCROLL) {
-      if (!this._horizontal) {
-        const endTopPosition = this.scrollTop + this.contentSize.height;
-        if (this.scrollTop <= 0 && this.scrollTop >= -0.1) {
-          this.scrollTop = scrollNudge;
-        } else if (
-          endTopPosition >= this.scrollHeight &&
-          endTopPosition <= this.scrollHeight + 0.1
-        ) {
-          this.scrollTop = this.scrollTop - scrollNudge;
-        }
-      } else {
-        const endLeftPosition = this.scrollLeft + this.contentSize.width;
-        if (this.scrollLeft <= 0 && this.scrollLeft >= -0.1) {
-          this.scrollLeft = scrollNudge;
-        } else if (
-          endLeftPosition >= this.scrollWidth &&
-          endLeftPosition <= this.scrollWidth + 0.1
-        ) {
-          this.scrollLeft = this.scrollLeft - scrollNudge;
-        }
-      }
-    }
   }
 
   handleScrollTick(...eventArgs: ScrollEventArgs) {
