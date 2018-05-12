@@ -28,10 +28,12 @@ const TEXT_PX_PROPS = ["lineHeight"];
 
 const textMeasurementContainer = document.createElement("div");
 textMeasurementContainer.id = "text-measurement";
+// $FlowFixMe
 Object.assign(textMeasurementContainer.style, {
   visibility: "hidden",
   pointerEvents: "none",
-  contain: "content"
+  contain: "content",
+  webkitTextSizeAdjust: "100%"
 });
 document.body && document.body.appendChild(textMeasurementContainer);
 
