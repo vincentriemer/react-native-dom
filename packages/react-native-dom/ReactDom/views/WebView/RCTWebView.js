@@ -3,6 +3,7 @@
  * @flow
  */
 
+import type { Frame } from "InternalLib";
 import RCTView from "RCTView";
 import type RCTBridge from "RCTBridge";
 import CustomElement from "CustomElement";

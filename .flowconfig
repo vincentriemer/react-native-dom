@@ -1,11 +1,21 @@
 [ignore]
-.*/node_modules/react-native/Libraries/.*
-.*/packages/react-native-dom/Examples/.*
-.*/packages/react-native-dom/Libraries/.*
-.*/packages/react-native-dom/RNTester/.*
-.*/packages/react-native-dom/local-cli/.*
+
+.*/node_modules/fbjs/.*
+
+# We fork some components by platform.
+.*/*[.]android.js
+.*/*[.]dom.js
+
 .*/lib/.*
 .*/dist/.*
+
+.*/Libraries/react-native/React.js
+.*/Libraries/react-native/ReactNative.js
+
+<PROJECT_ROOT>/packages/react-native-dom/Examples/.*
+<PROJECT_ROOT>/packages/react-native-dom/Libraries/.*
+<PROJECT_ROOT>/packages/react-native-dom/RNTester/.*
+<PROJECT_ROOT>/packages/react-native-dom/local-cli/.*
 
 [include]
 ./packages/rndom-redbox/
@@ -13,11 +23,11 @@
 ./packages/rnpm-plugin-dom/
 
 [libs]
-packages/react-native-dom/defs
 packages/react-native-dom/flow-typed
 
 [options]
 module.system.node.resolve_dirname=node_modules
 module.system.node.resolve_dirname=packages/react-native-dom/node_modules
 esproposal.decorators=ignore
+
 module.system=haste

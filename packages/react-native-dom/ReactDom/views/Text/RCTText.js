@@ -5,6 +5,7 @@
 
 import tinycolor from "tinycolor2";
 
+import type { Frame } from "InternalLib";
 import type RCTBridge from "RCTBridge";
 import RCTView from "RCTView";
 import RCTRawText from "RCTRawText";

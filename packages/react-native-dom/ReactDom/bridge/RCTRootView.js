@@ -2,6 +2,8 @@
  * @providesModule RCTRootView
  * @flow
  */
+
+import type { Size } from "InternalLib";
 import RCTBridge from "RCTBridge";
 import UIView from "UIView";
 import NotificationCenter from "NotificationCenter";
@@ -11,6 +13,8 @@ import RCTTouchHandler from "RCTTouchHandler";
 import CustomElement from "CustomElement";
 import instrument from "Instrument";
 import type { NativeModuleImports } from "RCTModule";
+
+declare var __DEV__: boolean;
 
 function getAvailableSize() {
   return {

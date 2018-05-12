@@ -7,6 +7,7 @@ import detectIt from "detect-it";
 import debounce from "debounce";
 import invariant from "invariant";
 
+import type { Frame, Inset, Size, Position } from "InternalLib";
 import RCTView from "RCTView";
 import UIView from "UIView";
 import type RCTBridge from "RCTBridge";

@@ -5,6 +5,7 @@
 
 import _Yoga from "yoga-dom";
 
+import type { Size } from "InternalLib";
 import type { LayoutChange } from "RCTShadowView";
 import _RCTShadowView from "RCTShadowView";
 

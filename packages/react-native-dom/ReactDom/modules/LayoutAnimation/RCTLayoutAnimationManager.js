@@ -4,6 +4,7 @@
  */
 import invariant from "invariant";
 
+import type { Position, Frame } from "InternalLib";
 import type { LayoutChange } from "RCTShadowView";
 import type { KeyframeResult } from "RCTKeyframeGenerator";
 import RCTKeyframeGenerator from "RCTKeyframeGenerator";

@@ -3,6 +3,7 @@
  * @flow
  */
 
+import type { Frame } from "InternalLib";
 import type RCTBridge from "RCTBridge";
 import RCTView from "RCTView";
 import { defaultFontSize, defaultFontStack } from "RCTSharedTextValues";

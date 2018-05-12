@@ -33,6 +33,8 @@ type RCTUIManager = $Call<$await<_RCTUIManager>>;
 export { RCTFunctionTypeNormal, RCTFunctionTypePromise, RCTFunctionTypeSync };
 export type { RCTFunctionType };
 
+declare var __DEV__: boolean;
+
 type ClassInstance = <T>(Class<T>) => T;
 
 type MessagePayload = {

@@ -25,6 +25,8 @@ import CustomElement from "CustomElement";
 import RCTEventDispatcher from "RCTEventDispatcher";
 import _RCTUIManager from "RCTUIManager";
 
+declare var __DEV__: boolean;
+
 global.process = global.process || {};
 global.process.env = global.process.env || {};
 if (!global.process.env.NODE_ENV) {

@@ -5,6 +5,7 @@
 
 import debounce from "debounce";
 
+import type { Frame } from "InternalLib";
 import type RCTTouchHandler from "RCTTouchHandler";
 import type { RCTComponent } from "RCTComponent";
 import UIBorderView, { ALL_BORDER_PROPS } from "UIBorderView";

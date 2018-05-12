@@ -3,6 +3,8 @@
  * @flow
  */
 
+import type { Size } from "InternalLib";
+
 class RCTImageSource {
   request: string;
   size: Size;

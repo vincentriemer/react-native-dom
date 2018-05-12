@@ -2,6 +2,7 @@
  * @providesModule RCTImageViewManager
  * @flow
  */
+import type { Size } from "InternalLib";
 import type UIView from "UIView";
 import RCTBridge, {
   RCTFunctionTypeNormal,

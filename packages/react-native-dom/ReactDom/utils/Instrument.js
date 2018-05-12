@@ -5,6 +5,8 @@
 
 import CanUse from "CanUse";
 
+declare var __DEV__: boolean;
+
 export default function instrument<T>(
   name: string,
   instrumentedFunction: () => T

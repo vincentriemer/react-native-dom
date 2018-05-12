@@ -6,7 +6,10 @@
 import * as YG from "yoga-dom";
 import invariant from "invariant";
 
+import type { Frame } from "InternalLib";
 import type { RCTComponent } from "RCTComponent";
+
+declare var __DEV__: boolean;
 
 const LAYOUT_PROPS = ["top", "left", "width", "height"];
 
