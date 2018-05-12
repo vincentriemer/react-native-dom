@@ -32,7 +32,6 @@ textMeasurementContainer.id = "text-measurement";
 Object.assign(textMeasurementContainer.style, {
   visibility: "hidden",
   pointerEvents: "none",
-  contain: "content",
   webkitTextSizeAdjust: "100%"
 });
 document.body && document.body.appendChild(textMeasurementContainer);
