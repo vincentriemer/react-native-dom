@@ -5,6 +5,7 @@ const fs = require("fs");
 const yeoman = require("yeoman-generator");
 
 const utils = require("../generator-utils");
+const configUpdater = require("./cli-config-updater");
 
 const REACT_NATIVE_PACKAGE_JSON_PATH = () => {
   return path.resolve(
@@ -55,6 +56,19 @@ module.exports = yeoman.Base.extend({
       this.destinationPath(path.join("dom", "index.html")),
       templateVars
     );
+
+    const configPath = this.destinationPath(path.join("rn-cli.config.js"));
+    if (this.fs.exists(configPath)) {
+      try {
+        const configContents = this.fs.read(configPath);
+        const updatedConfigContents = configUpdater(configContents);
+        this.fs.write(configPath, updatedConfigContents);
+      } catch (err) {
+        console.warn("Error updating rn-cli.config.js: ", err.essage);
+      }
+    } else {
+      this.fs.copyTpl(this.templatePath("rn-cli.config.js"), configPath);
+    }
   },
 
   end: function() {
