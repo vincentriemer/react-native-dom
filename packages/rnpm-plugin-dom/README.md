@@ -17,14 +17,15 @@ react-native init [project name]
 ```
 
 Then, `cd` into your project and install `rnpm-plugin-dom` into your
-devDependencies, after which you can initialize your dom project.
+`devDependencies`, after which you can initialize your React Native DOM
+scaffolding with the `react-native dom` command.
 
 ```
 npm install --save-dev rnpm-plugin-dom
 # or
 yarn add --dev rnpm-plugin-dom
 
-# Initialize DOM project
+# Add DOM support to your React Native project
 react-native dom
 ```
 
