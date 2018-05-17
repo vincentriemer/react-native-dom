@@ -1,6 +1,6 @@
 {
   "name": "react-native-dom",
-  "version": "0.0.10",
+  "version": "0.1.0",
   "homepage": "https://github.com/vincentriemer/react-native-dom",
   "bugs": {
     "url": "https://github.com/vincentriemer/react-native-dom/issues"
@@ -62,8 +62,8 @@
     "normalize-css-color": "^1.0.2",
     "opn": "^5.2.0",
     "pepjs": "^0.4.3",
-    "rndom-redbox": "0.0.10",
-    "rndom-switch": "0.0.10",
+    "rndom-redbox": "0.1.0",
+    "rndom-switch": "0.1.0",
     "tinycolor2": "^1.4.1",
     "wait-port": "^0.2.2",
     "web-animations-js": "^2.3.1",
