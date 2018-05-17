@@ -1,4 +1,4 @@
-# React Native DOM &middot; [![CircleCI](https://circleci.com/gh/vincentriemer/react-native-dom.svg?style=shield&circle-token=96448c580730a065cb93c0a10af0f85f6c954166)](https://circleci.com/gh/vincentriemer/react-native-dom) [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
+# React Native DOM &middot; [![CircleCI](https://circleci.com/gh/vincentriemer/react-native-dom.svg?style=shield&circle-token=96448c580730a065cb93c0a10af0f85f6c954166)](https://circleci.com/gh/vincentriemer/react-native-dom) [![npm version](https://badge.fury.io/js/react-native-dom.svg)](https://badge.fury.io/js/react-native-dom) [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
 
 An experimental, comprehensive port of React Native to the web.
 
