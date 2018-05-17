@@ -176,4 +176,4 @@ Then navigate to `localhost:8081/Examples` and choose which example you would
 like to see.
 
 A live deployment of the RNTester project (used primarily for manually testing
-changes) can be found at [rntest.now.sh]()
+changes) can be found at [rntester.now.sh](https://rntester.now.sh)
