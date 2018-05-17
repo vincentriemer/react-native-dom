@@ -129,7 +129,7 @@ deployed to your provider of choice.
 The API for this is going to be overhauled soon with accompanying documentation.
 If you want to see what it currently looks like take a look at some of the built
 in native modules such as
-[AsyncLocalStorage](../blob/master/packages/react-native-dom/ReactDom/modules/RCTAsyncLocalStorage.js)
+[AsyncLocalStorage](../master/packages/react-native-dom/ReactDom/modules/RCTAsyncLocalStorage.js)
 
 ---
 
