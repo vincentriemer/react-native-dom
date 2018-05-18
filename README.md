@@ -166,7 +166,7 @@ commands from the root of the monorepo:
 git submodule update --init
 
 # install dependencies
-yarn
+yarn && yarn compile
 
 # start the react-native packager
 yarn run-examples
