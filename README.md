@@ -122,7 +122,7 @@ deployed to your provider of choice.
 
 ---
 
-## Writting Native Modules/Views
+## Writing Native Modules/Views
 
 ### _Work In Progress_
 
