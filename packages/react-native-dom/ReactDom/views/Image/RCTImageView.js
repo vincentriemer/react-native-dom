@@ -53,6 +53,11 @@ class RCTImageView extends RCTView {
   _blurRadius: ?number;
   _tintColor: ?string;
 
+  _tile: ?boolean; // resizeMode === "repeat"
+  _src: ?string; // Used to set the tile image
+  _imageWidth: ?number; // Used to calculate the tile image's scale factor
+  _imageHeight: ?number; // Used to calculate the tile image's scale factor
+
   constructor(bridge: RCTBridge) {
     super(bridge);
 
@@ -108,6 +113,50 @@ class RCTImageView extends RCTView {
     this.imageElementAlt.style.filter = filterStrings.join(" ");
   }
 
+  updateTile() {
+    let style;
+
+    if (this._tile) {
+      const {
+        frameSize: { width: frameWidth, height: frameHeight },
+        _src: src,
+        _imageWidth: imageWidth,
+        _imageHeight: imageHeight
+      } = this;
+
+      if (!frameWidth || !frameHeight || !imageWidth || !imageHeight || !src) {
+        return;
+      }
+
+      const scaleDownFactor = Math.min(
+        1,
+        frameWidth / imageWidth,
+        frameHeight / imageHeight
+      );
+
+      style = {
+        backgroundImage: `url(${encodeURI(src)})`,
+        backgroundSize: `
+          ${scaleDownFactor * imageWidth}px
+          ${scaleDownFactor * imageHeight}px
+        `,
+        backgroundRepeat: "repeat",
+        backgroundPosition: "0 0",
+        objectPosition: "0 0"
+      };
+    } else {
+      style = {
+        backgroundImage: "",
+        backgroundSize: "",
+        backgroundRepeat: "",
+        backgroundPosition: "",
+        objectPosition: ""
+      };
+    }
+    Object.assign(this.imageElement.style, style);
+    Object.assign(this.imageElementAlt.style, style);
+  }
+
   forceRasterization() {
     const mountedImage = this.mountedImage;
     if (this._tintColor != null && mountedImage != null) {
@@ -132,6 +181,7 @@ class RCTImageView extends RCTView {
       case "cover":
         outputValue = value;
         break;
+      case "repeat":
       case "center":
         outputValue = "scale-down";
         break;
@@ -149,6 +199,9 @@ class RCTImageView extends RCTView {
     Object.assign(this.imageElementAlt.style, {
       objectFit: outputValue
     });
+
+    this._tile = value === "repeat";
+    this.updateTile();
   }
 
   set blurRadius(value: ?number) {
@@ -256,6 +309,9 @@ class RCTImageView extends RCTView {
               : this.imageElement;
           pendingImage.src = image.src;
 
+          this._src = pendingImage.src;
+          // We call updateTile() below so can skip it here
+
           // $FlowFixMe
           if (typeof pendingImage.decode === "function") {
             return pendingImage.decode().then(() => pendingImage);
@@ -263,6 +319,11 @@ class RCTImageView extends RCTView {
           return pendingImage;
         })
         .then((image: HTMLImageElement) => {
+          this._imageWidth = image.width;
+          this._imageHeight = image.height;
+
+          this.updateTile();
+
           this.mountedImage && this.mountedImage.remove();
 
           this.childContainer.appendChild(image);
