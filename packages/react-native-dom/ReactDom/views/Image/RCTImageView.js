@@ -142,7 +142,7 @@ class RCTImageView extends RCTView {
         `,
         backgroundRepeat: "repeat",
         backgroundPosition: "0 0",
-        objectPosition: "0 0"
+        objectPosition: `${-imageWidth - 1}px ${-imageHeight - 1}px`
       };
     } else {
       style = {
