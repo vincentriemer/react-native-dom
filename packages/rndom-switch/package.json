@@ -1,13 +1,15 @@
 {
   "name": "rndom-switch",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "author": {
     "name": "Vincent Riemer",
     "email": "vincentriemer+rndom@gmail.com",
     "url": "https://vincentriemer.com"
   },
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "main": "lib/rndom-switch.js",
   "module": "lib/rndom-switch.m.js",
   "scripts": {
