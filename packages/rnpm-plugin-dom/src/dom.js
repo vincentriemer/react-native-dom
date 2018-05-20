@@ -68,7 +68,7 @@ function getMatchingVersion(version) {
             );
           })
           .catch((error) =>
-            reject(new Error(`Could not find react-native-windows@${version}.`))
+            reject(new Error(`Could not find react-native-dom@${version}.`))
           );
       } else {
         resolve(release.version);
