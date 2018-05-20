@@ -488,4 +488,5 @@ export const RCT_EXPORT_MODULE = (name: string) => (
   target: RCTModuleStatics
 ) => {
   target.__moduleName = name;
+  return target;
 };
