@@ -22,6 +22,13 @@ To see it in action, check out these live demos:
 
 ---
 
+## Why?
+
+For the best introduction to this project, check out
+[my talk at React Europe 2018](https://youtu.be/aOWIJ4Mgb2k) introducing it.
+
+---
+
 ## **WARNING**
 
 This project is still highly experimental and many aspects of it are subject to
