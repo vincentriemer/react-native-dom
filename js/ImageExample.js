@@ -558,7 +558,7 @@ exports.examples = [
                     source={image}
                   />
                 </View>
-                { Platform.OS === 'ios' ?
+                { Platform.OS === 'ios' || Platform.OS === 'dom' ?
                   <View style={styles.leftMargin}>
                     <Text style={[styles.resizeModeText]}>
                       Repeat
