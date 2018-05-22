@@ -349,7 +349,8 @@ module.exports = (async () => {
     "start",
     "end",
     "horizontal",
-    "vertical"
+    "vertical",
+    "flexBasis"
   ]);
   bindNumberProps(RCTShadowView.prototype, [
     "flex",

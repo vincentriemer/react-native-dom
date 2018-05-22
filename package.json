@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",
+    "cz-conventional-changelog": "^2.1.0",
     "eslint": "^4.19.1",
     "eslint-import-resolver-lerna": "^1.0.0",
     "eslint-plugin-import": "^2.11.0",
@@ -43,15 +44,34 @@
     "sort-package-json": "^1.13.0"
   },
   "lint-staged": {
-    "package.json": ["sort-package-json", "git add"],
-    "*.js": ["eslint --fix", "git add"],
-    "*.{js,json,css,md}": ["prettier --write", "git add"]
+    "package.json": [
+      "sort-package-json",
+      "git add"
+    ],
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.{js,json,css,md}": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "resolutions": {
     "react": "^16.3.1"
   },
   "workspaces": {
-    "packages": ["packages/*"],
-    "nohoist": ["**/react-native", "**/react-native/**"]
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/react-native",
+      "**/react-native/**"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
