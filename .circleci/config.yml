@@ -173,6 +173,10 @@ workflows:
           requires:
             - build_components
             - build_react_native_dom
+          filters:
+            branches:
+              only:
+                - master
       - build_rntester:
           requires:
             - build_components
