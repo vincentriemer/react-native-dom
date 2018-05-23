@@ -3,7 +3,12 @@ aliases:
     docker:
       - image: circleci/node:8
     working_directory: ~/react-native-dom
-  
+
+  npm_auth: &npm_auth
+    run:
+      name: Authenticate with registry
+      command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+
   restore_repo: &restore_repo
     restore_cache:
       keys:
@@ -127,6 +132,7 @@ jobs:
       - *restore_repo
       - *restore_rndom
       - *restore_components
+      - *npm_auth
       - run:
           name: Publish Canary Release to NPM
           command: yarn release:canary
