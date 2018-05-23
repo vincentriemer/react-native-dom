@@ -3,5 +3,11 @@
   "packages": ["packages/*"],
   "npmClient": "yarn",
   "version": "0.1.2",
-  "exact": true
+  "exact": true,
+  "command": {
+    "publish": {
+      "message": "chore(release): publish %s",
+      "allowBranch": "master"
+    }
+  }
 }

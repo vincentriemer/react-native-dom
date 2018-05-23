@@ -121,6 +121,16 @@ jobs:
           paths:
             - ~/react-native-dom/packages/react-native-dom/dist
   
+  release_canary:
+    <<: *container_config
+    steps:
+      - *restore_repo
+      - *restore_rndom
+      - *restore_components
+      - run:
+          name: Publish Canary Release to NPM
+          command: yarn release:canary
+  
   deploy_rntester:
     <<: *container_config
     steps:
@@ -153,6 +163,10 @@ workflows:
           requires:
             - lint
             - unittest
+      - release_canary:
+          requires:
+            - build_components
+            - build_react_native_dom
       - build_rntester:
           requires:
             - build_components

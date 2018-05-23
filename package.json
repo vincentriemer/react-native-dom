@@ -25,9 +25,14 @@
     "compile:components": "lerna run compile --scope rndom-* --stream",
     "fmt": "prettier --write 'packages/**/*.js'",
     "lint": "flow check && eslint packages",
-    "release:canary": "lerna publish --canary",
+    "release:canary": "lerna publish --canary --yes --cd-version minor",
     "run-examples": "cd packages/react-native-dom && yarn run-examples",
     "test": "lerna run test"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",
@@ -44,34 +49,15 @@
     "sort-package-json": "^1.13.0"
   },
   "lint-staged": {
-    "package.json": [
-      "sort-package-json",
-      "git add"
-    ],
-    "*.js": [
-      "eslint --fix",
-      "git add"
-    ],
-    "*.{js,json,css,md}": [
-      "prettier --write",
-      "git add"
-    ]
+    "package.json": ["sort-package-json", "git add"],
+    "*.js": ["eslint --fix", "git add"],
+    "*.{js,json,css,md}": ["prettier --write", "git add"]
   },
   "resolutions": {
     "react": "^16.3.1"
   },
   "workspaces": {
-    "packages": [
-      "packages/*"
-    ],
-    "nohoist": [
-      "**/react-native",
-      "**/react-native/**"
-    ]
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
+    "packages": ["packages/*"],
+    "nohoist": ["**/react-native", "**/react-native/**"]
   }
 }
