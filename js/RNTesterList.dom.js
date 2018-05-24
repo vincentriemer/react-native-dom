@@ -61,10 +61,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   //   key: "MaskedViewExample",
   //   module: require("./MaskedViewExample")
   // },
-  // {
-  //   key: "ModalExample",
-  //   module: require("./ModalExample")
-  // },
+  {
+    key: "ModalExample",
+    module: require("./ModalExample")
+  },
   {
     key: "MultiColumnExample",
     module: require("./MultiColumnExample")
@@ -77,10 +77,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   //   key: "NavigatorIOSExample",
   //   module: require("./NavigatorIOSExample")
   // },
-  // {
-  //   key: "PickerExample",
-  //   module: require("./PickerExample")
-  // },
+  {
+    key: "PickerExample",
+    module: require("./PickerExample")
+  },
   // {
   //   key: "PickerIOSExample",
   //   module: require("./PickerIOSExample")
@@ -105,10 +105,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   //   key: "SegmentedControlIOSExample",
   //   module: require("./SegmentedControlIOSExample")
   // },
-  // {
-  //   key: "SliderExample",
-  //   module: require("./SliderExample")
-  // },
+  {
+    key: "SliderExample",
+    module: require("./SliderExample")
+  },
   {
     key: "StatusBarExample",
     module: require("./StatusBarExample")
@@ -129,10 +129,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: "TextExample",
     module: require("./TextExample.ios")
   },
-  // {
-  //   key: "TextInputExample",
-  //   module: require("./TextInputExample.ios")
-  // },
+  {
+    key: "TextInputExample",
+    module: require("./TextInputExample.ios")
+  },
   {
     key: "TouchableExample",
     module: require("./TouchableExample")
@@ -160,10 +160,10 @@ const APIExamples: Array<RNTesterExample> = [
   //   key: "ActionSheetIOSExample",
   //   module: require("./ActionSheetIOSExample")
   // },
-  // {
-  //   key: "AlertExample",
-  //   module: require("./AlertExample").AlertExample
-  // },
+  {
+    key: "AlertExample",
+    module: require("./AlertExample").AlertExample
+  },
   // {
   //   key: "AlertIOSExample",
   //   module: require("./AlertIOSExample")
@@ -188,18 +188,18 @@ const APIExamples: Array<RNTesterExample> = [
     key: "BorderExample",
     module: require("./BorderExample")
   },
-  // {
-  //   key: "BoxShadowExample",
-  //   module: require("./BoxShadowExample")
-  // },
+  {
+    key: "BoxShadowExample",
+    module: require("./BoxShadowExample")
+  },
   // {
   //   key: "CameraRollExample",
   //   module: require("./CameraRollExample")
   // },
-  // {
-  //   key: "ClipboardExample",
-  //   module: require("./ClipboardExample")
-  // },
+  {
+    key: "ClipboardExample",
+    module: require("./ClipboardExample")
+  },
   {
     key: "Dimensions",
     module: require("./DimensionsExample")
@@ -232,10 +232,10 @@ const APIExamples: Array<RNTesterExample> = [
     key: "NetInfoExample",
     module: require("./NetInfoExample")
   },
-  // {
-  //   key: "OrientationChangeExample",
-  //   module: require("./OrientationChangeExample")
-  // },
+  {
+    key: "OrientationChangeExample",
+    module: require("./OrientationChangeExample")
+  },
   {
     key: "PanResponderExample",
     module: require("./PanResponderExample")
@@ -271,7 +271,7 @@ const APIExamples: Array<RNTesterExample> = [
   {
     key: "TransformExample",
     module: require("./TransformExample")
-  }
+  },
   // {
   //   key: "VibrationExample",
   //   module: require("./VibrationExample")
@@ -280,10 +280,10 @@ const APIExamples: Array<RNTesterExample> = [
   //   key: "WebSocketExample",
   //   module: require("./WebSocketExample")
   // },
-  // {
-  //   key: "XHRExample",
-  //   module: require("./XHRExample")
-  // }
+  {
+    key: "XHRExample",
+    module: require("./XHRExample")
+  }
 ];
 
 const Modules = {};
