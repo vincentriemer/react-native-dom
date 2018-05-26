@@ -22,10 +22,9 @@ class RCTRootView extends UIView {
   _reactTag: number;
 
   bridge: RCTBridge;
-  renderRoot: HTMLElement;
   moduleName: string;
   availableSize: Size;
-  parent: Element;
+  parent: HTMLElement;
   uiManager: *;
   timing: RCTTiming;
   ticking: boolean;
@@ -39,7 +38,7 @@ class RCTRootView extends UIView {
   constructor(
     bundle: string,
     moduleName: string,
-    parent: Element,
+    parent: HTMLElement,
     enableHotReload: boolean = false,
     nativeModules: NativeModuleImports
   ) {

@@ -106,7 +106,7 @@ export class RNDomInstance {
   constructor(
     bundle: string,
     moduleName: string,
-    parent: Element,
+    parent: HTMLElement,
     options: RNDomInstanceOptions = {}
   ) {
     const enableHotReload = options.enableHotReload
@@ -117,8 +117,8 @@ export class RNDomInstance {
       ? options.nativeModules
       : [];
 
-    const shouldBundleFromRoot = options.shouldBundleFromRoot
-      ? options.shouldBundleFromRoot
+    const shouldBundleFromRoot = options.bundleFromRoot
+      ? options.bundleFromRoot
       : true;
 
     this.rootView = new RCTRootView(
