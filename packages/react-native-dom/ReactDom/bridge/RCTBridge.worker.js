@@ -23,12 +23,15 @@ function loadBundle(bundle) {
       xmlHttp.onprogress = function(evt) {
         const progressEvents = xmlHttp.response.match(/\{[\S]*\}/g);
         if (progressEvents) {
-          const { done, total } = JSON.parse(
-            progressEvents[progressEvents.length - 1]
-          );
-
-          if (done && total) {
-            sendMessage("updateProgress", { done, total });
+          try {
+            const { done, total } = JSON.parse(
+              progressEvents[progressEvents.length - 1]
+            );
+            if (done && total) {
+              sendMessage("updateProgress", { done, total });
+            }
+          } catch (err) {
+            /* silence parse errors */
           }
         }
       };
