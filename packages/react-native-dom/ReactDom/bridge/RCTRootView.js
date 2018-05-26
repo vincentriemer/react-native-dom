@@ -16,13 +16,6 @@ import type { NativeModuleImports } from "RCTModule";
 
 declare var __DEV__: boolean;
 
-function getAvailableSize() {
-  return {
-    width: window.innerWidth,
-    height: window.innerHeight
-  };
-}
-
 @CustomElement("rct-root-view")
 // $FlowFixMe
 class RCTRootView extends UIView {
@@ -64,7 +57,7 @@ class RCTRootView extends UIView {
     this.updateHostStyle("touchAction", "none");
     this.setAttribute("touch-action", "none");
 
-    const bridge = new RCTBridge(moduleName, bundle, nativeModules);
+    const bridge = new RCTBridge(moduleName, bundle, nativeModules, parent);
     this.initialization = this.initializeBridge(bridge);
   }
 

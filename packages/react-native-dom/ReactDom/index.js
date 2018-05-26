@@ -95,7 +95,8 @@ if (__DEV__) {
 
 type RNDomInstanceOptions = {
   enableHotReload?: boolean,
-  nativeModules?: any[]
+  nativeModules?: any[],
+  bundleFromRoot?: boolean
 };
 
 // React Native Web Entrypoint instance
@@ -116,8 +117,12 @@ export class RNDomInstance {
       ? options.nativeModules
       : [];
 
+    const shouldBundleFromRoot = options.shouldBundleFromRoot
+      ? options.shouldBundleFromRoot
+      : true;
+
     this.rootView = new RCTRootView(
-      bundleFromRoot(bundle),
+      shouldBundleFromRoot ? bundleFromRoot(bundle) : bundle,
       moduleName,
       parent,
       enableHotReload,

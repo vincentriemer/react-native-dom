@@ -33,9 +33,8 @@ class RCTRedBox {
 
     this.domRoot = document.createElement("div");
     this.domRoot.setAttribute("id", "redbox");
-    if (document.documentElement) {
-      document.documentElement.appendChild(this.domRoot);
-    }
+
+    bridge.parent.appendChild(this.domRoot);
   }
 
   dismiss = () => {

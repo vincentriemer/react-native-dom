@@ -157,6 +157,7 @@ export default class RCTBridge {
   moduleName: string;
   bundleLocation: string;
   loading: boolean;
+  parent: HTMLElement;
 
   _uiManager: ?RCTUIManager;
   _eventDispatcher: ?RCTEventDispatcher;
@@ -171,12 +172,14 @@ export default class RCTBridge {
   constructor(
     moduleName: string,
     bundle: string,
-    nativeModules: NativeModuleImports
+    nativeModules: NativeModuleImports,
+    parent: HTMLElement
   ) {
     this.loading = true;
     this.moduleName = moduleName;
     this.bundleLocation = bundle;
     this.nativeModules = nativeModules;
+    this.parent = parent;
 
     const bridgeCodeBlob = new Blob([WORKER_SRC]);
     const worker = new Worker(URL.createObjectURL(bridgeCodeBlob));
