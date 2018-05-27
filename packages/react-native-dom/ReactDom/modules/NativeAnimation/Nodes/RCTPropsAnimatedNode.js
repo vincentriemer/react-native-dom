@@ -85,7 +85,7 @@ class RCTPropsAnimatedNode extends RCTAnimatedNode {
   }
 
   propertyNameForParentTag(parentTag: number): string {
-    for (let [property, tag] in this.config.props) {
+    for (let [property, tag] of Object.entries(this.config.props)) {
       if (tag === parentTag) {
         return property;
       }
