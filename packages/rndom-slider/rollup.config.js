@@ -3,6 +3,7 @@ import resolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
 import babel from "rollup-plugin-babel";
 import uglify from "rollup-plugin-uglify";
+import less from "less";
 
 import pjson from "./package.json";
 
@@ -14,7 +15,21 @@ const baseConfig = {
     svelte({
       // enable run-time checks when not in production
       dev: !production,
-      customElement: true
+      customElement: true,
+      preprocess: {
+        style: ({ filename, content, attributes }) => {
+          if (attributes.type !== "text/less") {
+            return null;
+          }
+
+          return less
+            .render(content, {
+              filename,
+              sourceMap: {}
+            })
+            .then(({ css, map }) => ({ code: css, map }));
+        }
+      }
     }),
 
     // If you have external dependencies installed from
