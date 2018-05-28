@@ -83,7 +83,8 @@ const builtInNativeModules: any[] = [
   import("RCTRedBox"),
   import("RCTWebViewManager"),
   import("RCTNetworkingNative"),
-  import("RCTBlobManager")
+  import("RCTBlobManager"),
+  import("RCTVibration")
 ];
 
 // Development Specific Native Modules
