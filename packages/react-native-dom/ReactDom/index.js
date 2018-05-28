@@ -75,6 +75,7 @@ const builtInNativeModules: any[] = [
   import("RCTWebSocketModule"),
   import("RCTAppState"),
   import("RCTSafeAreaViewManager"),
+  import("RCTSliderManager"),
   import("RCTSwitchManager"),
   import("RCTStatusBarManager"),
   import("RCTDeviceEventManager"),

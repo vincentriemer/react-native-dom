@@ -64,6 +64,7 @@
     "pepjs": "^0.4.3",
     "resize-observer-polyfill": "^1.5.0",
     "rndom-redbox": "0.1.1",
+    "rndom-slider": "0.1.1",
     "rndom-switch": "0.1.1",
     "tinycolor2": "^1.4.1",
     "wait-port": "^0.2.2",
