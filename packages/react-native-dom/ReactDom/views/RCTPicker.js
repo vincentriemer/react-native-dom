@@ -25,7 +25,7 @@ class RCTPicker extends RCTView {
     this._selectedIndex = -1;
 
     // update select element styles
-    this._selectElement.style.fontSize = "14px";
+    this._selectElement.style.fontSize = "16px";
     this._selectElement.style.boxSizing = "border-box";
     this._selectElement.style.width = "100%";
     this._selectElement.style.height = "100%";
