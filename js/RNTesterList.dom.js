@@ -272,10 +272,10 @@ const APIExamples: Array<RNTesterExample> = [
     key: "TransformExample",
     module: require("./TransformExample")
   },
-  // {
-  //   key: "VibrationExample",
-  //   module: require("./VibrationExample")
-  // },
+  {
+    key: "VibrationExample",
+    module: require("./VibrationExample")
+  },
   // {
   //   key: "WebSocketExample",
   //   module: require("./WebSocketExample")
