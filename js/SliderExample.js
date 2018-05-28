@@ -131,7 +131,7 @@ exports.examples = [
   },
   {
     title: 'Custom thumb color',
-    platform: 'android',
+    platforms: ['android', 'dom'],
     render(): React.Element<any> {
       return <SliderExample thumbTintColor={'blue'} />;
     }
