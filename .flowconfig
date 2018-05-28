@@ -20,6 +20,7 @@
 [include]
 ./packages/rndom-redbox/
 ./packages/rndom-switch/
+./packages/rndom-slider/
 ./packages/rnpm-plugin-dom/
 
 [libs]
