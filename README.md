@@ -1,5 +1,4 @@
-# React Native DOM &middot; [![CircleCI](https://circleci.com/gh/vincentriemer/react-native-dom.svg?style=shield&circle-token=96448c580730a065cb93c0a10af0f85f6c954166)](https://circleci.com/gh/vincentriemer/react-native-dom) [![npm version](https://badge.fury.io/js/react-native-dom.svg)](https://badge.fury.io/js/react-native-dom) [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
+# React Native DOM &middot; [![CircleCI](https://circleci.com/gh/vincentriemer/react-native-dom.svg?style=shield&circle-token=96448c580730a065cb93c0a10af0f85f6c954166)](https://circleci.com/gh/vincentriemer/react-native-dom) [![npm version](https://badge.fury.io/js/react-native-dom.svg)](https://badge.fury.io/js/react-native-dom) [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/) [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors)
 
 An experimental, comprehensive port of React Native to the web.
 
@@ -188,12 +187,15 @@ changes) can be found at [rntester.now.sh](https://rntester.now.sh)
 
 ## Contributors
 
-Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)):
+Thanks goes to these wonderful people
+([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
-| [<img src="https://avatars2.githubusercontent.com/u/1398555?v=4" width="100px;"/><br /><sub><b>Vincent Riemer</b></sub>](http://vincentriemer.com)<br />[💻](https://github.com/vincentriemer/react-native-dom/commits?author=vincentriemer "Code") [🐛](https://github.com/vincentriemer/react-native-dom/issues?q=author%3Avincentriemer "Bug reports") [📖](https://github.com/vincentriemer/react-native-dom/commits?author=vincentriemer "Documentation") [💡](#example-vincentriemer "Examples") [🤔](#ideas-vincentriemer "Ideas, Planning, & Feedback") [🚇](#infra-vincentriemer "Infrastructure (Hosting, Build-Tools, etc)") [📦](#platform-vincentriemer "Packaging/porting to new platform") [📢](#talk-vincentriemer "Talks") |
-| :---: |
+| [<img src="https://avatars2.githubusercontent.com/u/1398555?v=4" width="100px;"/><br /><sub><b>Vincent Riemer</b></sub>](http://vincentriemer.com)<br />[💻](https://github.com/vincentriemer/react-native-dom/commits?author=vincentriemer "Code") [🐛](https://github.com/vincentriemer/react-native-dom/issues?q=author%3Avincentriemer "Bug reports") [📖](https://github.com/vincentriemer/react-native-dom/commits?author=vincentriemer "Documentation") [💡](#example-vincentriemer "Examples") [🤔](#ideas-vincentriemer "Ideas, Planning, & Feedback") [🚇](#infra-vincentriemer "Infrastructure (Hosting, Build-Tools, etc)") [📦](#platform-vincentriemer "Packaging/porting to new platform") [📢](#talk-vincentriemer "Talks") | [<img src="https://avatars0.githubusercontent.com/u/8888799?v=4" width="100px;"/><br /><sub><b>Joe Goodall</b></sub>](https://uk.linkedin.com/in/joegoodall)<br />[📖](https://github.com/vincentriemer/react-native-dom/commits?author=joegoodall1 "Documentation") |
+| :---: | :---: |
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind welcome!
+This project follows the
+[all-contributors](https://github.com/kentcdodds/all-contributors)
+specification. Contributions of any kind welcome!
