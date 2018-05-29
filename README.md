@@ -192,7 +192,7 @@ Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
-| [<img src="https://avatars2.githubusercontent.com/u/1398555?v=4" width="100px;"/><br /><sub><b>Vincent Riemer</b></sub>](http://vincentriemer.com)<br />[💻](https://github.com/vincentriemer/react-native-dom/commits?author=vincentriemer "Code") |
+| [<img src="https://avatars2.githubusercontent.com/u/1398555?v=4" width="100px;"/><br /><sub><b>Vincent Riemer</b></sub>](http://vincentriemer.com)<br />[💻](https://github.com/vincentriemer/react-native-dom/commits?author=vincentriemer "Code") [🐛](https://github.com/vincentriemer/react-native-dom/issues?q=author%3Avincentriemer "Bug reports") [📖](https://github.com/vincentriemer/react-native-dom/commits?author=vincentriemer "Documentation") [💡](#example-vincentriemer "Examples") [🤔](#ideas-vincentriemer "Ideas, Planning, & Feedback") [🚇](#infra-vincentriemer "Infrastructure (Hosting, Build-Tools, etc)") [📦](#platform-vincentriemer "Packaging/porting to new platform") [📢](#talk-vincentriemer "Talks") |
 | :---: |
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
