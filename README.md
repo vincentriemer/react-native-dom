@@ -102,6 +102,9 @@ that gets generated from the rnpm plugin).
 # Ensure development-speecific code is stripped from the bundle
 export NODE_ENV=production
 
+# Make the dist directory, or the build command below will fail.
+mkdir -p ./dom/dist
+
 # Build the main thread bundle
 react-native bundle \
   --config $(pwd)/rn-cli.config.js \
