@@ -23,6 +23,8 @@
     "precommit": "lint-staged",
     "compile": "lerna run compile --stream",
     "compile:components": "lerna run compile --scope rndom-* --stream",
+    "contributors:add": "all-contributors add",
+    "contributors:generate": "all-contributors generate",
     "fmt": "prettier --write 'packages/**/*.js'",
     "lint": "flow check && eslint packages",
     "release": "lerna publish --conventional-commits --yes",
@@ -36,6 +38,7 @@
     }
   },
   "devDependencies": {
+    "all-contributors-cli": "^4.11.1",
     "babel-eslint": "^8.2.3",
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^4.19.1",
