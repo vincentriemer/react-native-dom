@@ -1,0 +1,22 @@
+{
+  "projectName": "react-native-dom",
+  "projectOwner": "vincentriemer",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "contributors": [
+    {
+      "login": "vincentriemer",
+      "name": "Vincent Riemer",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1398555?v=4",
+      "profile": "http://vincentriemer.com",
+      "contributions": [
+        "code"
+      ]
+    }
+  ]
+}
