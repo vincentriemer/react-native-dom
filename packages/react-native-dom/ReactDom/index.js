@@ -22,7 +22,7 @@ import RCTView from "RCTView";
 import RCTViewManager from "RCTViewManager";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 import CustomElement from "CustomElement";
-import RCTEventDispatcher from "RCTEventDispatcher";
+import RCTEventDispatcher, { type RCTEvent } from "RCTEventDispatcher";
 import _RCTUIManager from "RCTUIManager";
 
 declare var __DEV__: boolean;
@@ -50,7 +50,7 @@ export {
 type RCTUIManager = $await<typeof _RCTUIManager>;
 
 // Export type definitions useful for native module development
-export type { RCTUIManager, RCTEventDispatcher, RCTBridge };
+export type { RCTUIManager, RCTEventDispatcher, RCTBridge, RCTEvent };
 
 // Register Built-in Native Modules
 const builtInNativeModules: any[] = [
