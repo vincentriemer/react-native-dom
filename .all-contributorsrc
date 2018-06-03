@@ -1,0 +1,57 @@
+{
+  "projectName": "react-native-dom",
+  "projectOwner": "vincentriemer",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "vincentriemer",
+      "name": "Vincent Riemer",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1398555?v=4",
+      "profile": "http://vincentriemer.com",
+      "contributions": [
+        "code",
+        "bug",
+        "doc",
+        "example",
+        "ideas",
+        "infra",
+        "platform",
+        "talk"
+      ]
+    },
+    {
+      "login": "joegoodall1",
+      "name": "Joe Goodall",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/8888799?v=4",
+      "profile": "https://uk.linkedin.com/in/joegoodall",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "frosato-ekino",
+      "name": "François Rosato",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/31624379?v=4",
+      "profile": "https://github.com/frosato-ekino",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "motiz88",
+      "name": "Moti Zilberman",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/2246565?v=4",
+      "profile": "https://github.com/motiz88",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    }
+  ]
+}
