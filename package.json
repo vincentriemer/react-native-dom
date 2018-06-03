@@ -27,7 +27,7 @@
     "contributors:generate": "all-contributors generate",
     "fmt": "prettier --write 'packages/**/*.js'",
     "lint": "flow check && eslint packages",
-    "release": "lerna publish --conventional-commits --yes",
+    "release": "lerna publish --conventional-commits --yes --cd-version-minor",
     "release:canary": "lerna publish --canary --yes --cd-version minor",
     "run-examples": "cd packages/react-native-dom && yarn run-examples",
     "test": "lerna run test"
