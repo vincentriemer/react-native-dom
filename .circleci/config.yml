@@ -111,6 +111,7 @@ jobs:
           paths:
             - packages/rndom-redbox/lib
             - packages/rndom-switch/lib
+            - packages/rndom-slider/lib
 
   build_rntester:
     <<: *container_config

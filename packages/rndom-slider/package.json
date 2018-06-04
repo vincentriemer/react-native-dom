@@ -1,0 +1,39 @@
+{
+  "name": "rndom-slider",
+  "version": "0.1.1",
+  "license": "MIT",
+  "author": {
+    "name": "Vincent Riemer",
+    "email": "vincentriemer+rndom@gmail.com",
+    "url": "https://vincentriemer.com"
+  },
+  "files": ["lib"],
+  "main": "lib/rndom-slider.js",
+  "module": "lib/rndom-slider.m.js",
+  "scripts": {
+    "precompile": "shx rm -rf lib",
+    "compile": "rollup -c",
+    "dev": "serve public & rollup -c -w",
+    "prepublishOnly": "yarn compile",
+    "start": "serve public",
+    "test": "shx echo 'no tests written :('"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-transform-builtin-classes": "^0.6.1",
+    "babel-preset-env": "^1.6.1",
+    "color": "^3.0.0",
+    "less": "^3.0.4",
+    "rollup": "^0.58.1",
+    "rollup-plugin-babel": "^3.0.4",
+    "rollup-plugin-buble": "^0.19.2",
+    "rollup-plugin-commonjs": "^9.1.0",
+    "rollup-plugin-node-resolve": "^3.0.3",
+    "rollup-plugin-svelte": "^4.0.0",
+    "rollup-plugin-uglify": "^3.0.0",
+    "serve": "^6.5.1",
+    "svelte": "^2.0.0"
+  },
+  "umd:main": "lib/rndom-slider.umd.js"
+}
