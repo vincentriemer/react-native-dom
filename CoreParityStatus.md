@@ -48,7 +48,7 @@
 | MaskedViewIOS        |                          | 🚫     | iOS only                                                             |
 | Modal                |                          | ❌     |                                                                      |
 | NavigatorIOS         |                          | 🚫     | iOS only                                                             |
-| Picker               |                          | ❌     |                                                                      |
+| Picker               |                          | ❌     | WIP PR: #46                                                          |
 |                      | onValueChange            | ❌     |                                                                      |
 |                      | enabled                  | ❌     |                                                                      |
 |                      | mode                     | 🚫     | Android only                                                         |
