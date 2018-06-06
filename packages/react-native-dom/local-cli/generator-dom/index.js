@@ -2,7 +2,7 @@
 
 const path = require("path");
 const fs = require("fs");
-const yeoman = require("yeoman-generator");
+const Generator = require("yeoman-generator");
 
 const utils = require("../generator-utils");
 const configUpdater = require("./cli-config-updater");
@@ -16,9 +16,9 @@ const REACT_NATIVE_PACKAGE_JSON_PATH = () => {
   );
 };
 
-module.exports = yeoman.Base.extend({
-  constructor: function() {
-    yeoman.Base.apply(this, arguments);
+module.exports = class extends Generator {
+  constructor(args, opts) {
+    super(args, opts);
 
     this.argument("name", { type: String, required: true });
 
@@ -27,16 +27,16 @@ module.exports = yeoman.Base.extend({
       type: Boolean,
       defaults: false
     });
-  },
+  }
 
-  configuring: function() {
+  configuring() {
     this.fs.copy(
       this.templatePath("_gitignore"),
       this.destinationPath(path.join("dom", ".gitignore"))
     );
-  },
+  }
 
-  writting: function() {
+  writting() {
     const templateVars = { name: this.name };
 
     this.fs.copyTpl(
@@ -69,10 +69,10 @@ module.exports = yeoman.Base.extend({
     } else {
       this.fs.copyTpl(this.templatePath("rn-cli.config.js"), configPath);
     }
-  },
+  }
 
-  end: function() {
+  end() {
     this.log("To run your app on the browser:");
     this.log("    react-native run-dom");
   }
-});
+};

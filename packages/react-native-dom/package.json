@@ -11,12 +11,7 @@
     "email": "vincentriemer+rndom@gmail.com",
     "url": "https://vincentriemer.com"
   },
-  "files": [
-    "lib",
-    "Libraries",
-    "local-cli",
-    "flow-typed"
-  ],
+  "files": ["lib", "Libraries", "local-cli", "flow-typed"],
   "main": "lib/index.js",
   "repository": {
     "type": "git",
@@ -24,9 +19,12 @@
   },
   "scripts": {
     "prebuild:rntester": "rimraf dist && mkdir -p dist",
-    "build:rntester": "yarn run build:rntester:client && yarn run build:rntester:bundle && cp ./RNTester/js/index.html ./dist/index.html",
-    "build:rntester:bundle": "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/RNTesterApp.dom.js --bundle-output ./dist/RNTesterApp.dom.bundle --platform dom --assets-dest ./dist --reset-cache",
-    "build:rntester:client": "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/client.js --bundle-output ./dist/client.bundle --platform dom --reset-cache",
+    "build:rntester":
+      "yarn run build:rntester:client && yarn run build:rntester:bundle && cp ./RNTester/js/index.html ./dist/index.html",
+    "build:rntester:bundle":
+      "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/RNTesterApp.dom.js --bundle-output ./dist/RNTesterApp.dom.bundle --platform dom --assets-dest ./dist --reset-cache",
+    "build:rntester:client":
+      "react-native bundle --config $(pwd)/rn-cli.config.js --dev false --entry-file ./RNTester/js/client.js --bundle-output ./dist/client.bundle --platform dom --reset-cache",
     "precompile": "rimraf lib",
     "compile": "BABEL_ENV=lib babel ReactDom --out-dir lib --source-maps",
     "postcompile": "flow-copy-source ReactDom lib",
@@ -38,16 +36,10 @@
   "jest": {
     "haste": {
       "defaultPlatform": "dom",
-      "providesModuleNodeModules": [
-        "react-native-dom"
-      ],
-      "platforms": [
-        "dom"
-      ]
+      "providesModuleNodeModules": ["react-native-dom"],
+      "platforms": ["dom"]
     },
-    "roots": [
-      "<rootDir>/Libraries/"
-    ]
+    "roots": ["<rootDir>/Libraries/"]
   },
   "dependencies": {
     "@webcomponents/webcomponentsjs": "^2.0.0",
@@ -77,8 +69,8 @@
     "wait-port": "^0.2.2",
     "web-animations-js": "^2.3.1",
     "wolfy87-eventemitter": "^5.1.0",
-    "yeoman-environment": "^1.5.3",
-    "yeoman-generator": "^0.21.2",
+    "yeoman-environment": "^2.2.0",
+    "yeoman-generator": "^2.0.5",
     "yoga-dom": "^0.0.10"
   },
   "devDependencies": {
