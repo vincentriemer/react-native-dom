@@ -166,6 +166,7 @@ module.exports = (async () => {
     _transform: Array<number>;
 
     viewName: string;
+    rootTag: number;
 
     yogaNode: Yoga.Node;
     previousLayout: ?Frame;

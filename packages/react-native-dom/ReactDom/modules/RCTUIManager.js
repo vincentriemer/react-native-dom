@@ -161,15 +161,11 @@ module.exports = (async () => {
       this.requestTick();
     }
 
-    /**
-     * Given a reactTag from a component, find its root view, if possible.
-     * Otherwise, this will give back nil.
-     *
-     * @param reactTag the component tag
-     * @param completion the completion block that will hand over the rootView, if any.
-     *
-     */
-    rootViewForReactTag(reactTag: number, completion: Function) {}
+    rootTagForReactTag(reactTag: number): number {
+      let view: ?RCTShadowView = this.shadowViewRegistry.get(reactTag);
+      invariant(view, `No shadow view found with tag ${reactTag}`);
+      return view.rootTag;
+    }
 
     viewNameForReactTag(reactTag: number): string {
       const shadowView = this.shadowViewRegistry.get(reactTag);
@@ -430,6 +426,7 @@ module.exports = (async () => {
       // register shadow view
       const shadowView = componentData.createShadowView(reactTag);
       if (shadowView != null) {
+        shadowView.rootTag = rootTag;
         shadowView.viewName = viewName;
         componentData.setPropsForShadowView(props, shadowView);
         this.shadowViewRegistry.set(reactTag, shadowView);
