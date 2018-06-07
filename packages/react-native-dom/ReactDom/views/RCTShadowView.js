@@ -20,7 +20,7 @@ export type LayoutChange = {
   nextMeasurement: Frame
 };
 
-module.exports = (async () => {
+async function loadAsync() {
   const Yoga: YG.Module = (await require("yoga-dom"): any);
 
   function propAlias(
@@ -374,4 +374,8 @@ module.exports = (async () => {
   });
 
   return RCTShadowView;
-})();
+}
+
+export type RCTShadowView = ExtractAsyncModule<typeof loadAsync>;
+
+module.exports = loadAsync();

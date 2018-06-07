@@ -10,6 +10,7 @@ import "web-animations-js/web-animations-next.min";
 import RCTRootView from "RCTRootView";
 import bundleFromRoot from "BundleFromRoot";
 import type { NativeModuleImports } from "RCTModule";
+import type { RCTUIManager as _RCTUIManager } from "RCTUIManager";
 import RCTBridge, {
   RCTFunctionTypeNormal,
   RCTFunctionTypePromise,
@@ -23,7 +24,6 @@ import RCTViewManager from "RCTViewManager";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 import CustomElement from "CustomElement";
 import RCTEventDispatcher, { type RCTEvent } from "RCTEventDispatcher";
-import _RCTUIManager from "RCTUIManager";
 
 declare var __DEV__: boolean;
 
@@ -44,13 +44,13 @@ export {
   RCTViewManager,
   RCTEventEmitter,
   UIView,
-  CustomElement
+  CustomElement,
+  RCTRootView
 };
 
-type RCTUIManager = $await<typeof _RCTUIManager>;
-
 // Export type definitions useful for native module development
-export type { RCTUIManager, RCTEventDispatcher, RCTBridge, RCTEvent };
+export type { RCTEventDispatcher, RCTBridge, RCTEvent };
+export type RCTUIManager = _RCTUIManager;
 
 // Register Built-in Native Modules
 const builtInNativeModules: any[] = [

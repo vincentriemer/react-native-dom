@@ -23,7 +23,7 @@ import instrument from "Instrument";
 import type { RCTComponent } from "RCTComponent";
 import type { LayoutChange } from "RCTShadowView";
 import type { LayoutAnimationConfig } from "RCTLayoutAnimationManager";
-import _RCTShadowView from "RCTShadowView";
+import type { RCTShadowView } from "RCTShadowView";
 import _RCTRootShadowView from "RCTRootShadowView";
 import _RCTShadowText from "RCTShadowText";
 
@@ -32,8 +32,7 @@ type Size = { width: number, height: number };
 
 let rootTagCounter = 0;
 
-module.exports = (async () => {
-  const RCTShadowView = await _RCTShadowView;
+async function loadAsync() {
   const RCTRootShadowView = await _RCTRootShadowView;
   const RCTShadowText = await _RCTShadowText;
 
@@ -767,4 +766,8 @@ module.exports = (async () => {
   }
 
   return RCTUIManager;
-})();
+}
+
+export type RCTUIManager = ExtractAsyncModule<typeof loadAsync>;
+
+module.exports = loadAsync();
