@@ -42,9 +42,9 @@
     "roots": ["<rootDir>/Libraries/"]
   },
   "dependencies": {
+    "@babel/runtime": "^7.0.0-beta.51",
     "@webcomponents/webcomponentsjs": "^2.0.0",
     "babel-generator": "^6.26.1",
-    "babel-runtime": "^6.26.0",
     "babel-template": "^6.26.0",
     "babel-traverse": "^6.26.0",
     "babel-types": "^6.26.0",
@@ -74,18 +74,18 @@
     "yoga-dom": "^0.0.10"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-core": "^6.24.1",
+    "@babel/cli": "^7.0.0-beta.51",
+    "@babel/core": "^7.0.0-beta.51",
+    "@babel/plugin-proposal-class-properties": "^7.0.0-beta.51",
+    "@babel/plugin-proposal-decorators": "^7.0.0-beta.51",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.51",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.51",
+    "@babel/plugin-transform-runtime": "^7.0.0-beta.51",
+    "@babel/preset-flow": "^7.0.0-beta.51",
     "babel-jest": "^20.0.3",
     "babel-plugin-preval": "^1.3.2",
-    "babel-plugin-syntax-trailing-function-commas": "^6.22.0",
     "babel-plugin-transform-builtin-classes": "^0.6.1",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-plugin-transform-inline-environment-variables": "^0.1.1",
-    "babel-plugin-transform-object-rest-spread": "^6.23.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-flow": "^6.23.0",
     "flow-bin": "^0.70.0",
     "flow-copy-source": "^1.3.0",
     "flow-typed": "^2.2.3",
@@ -93,12 +93,12 @@
     "lint-staged": "^6.0.0",
     "prettier": "^1.9.0",
     "react": "^16.3.1",
-    "react-native": "~0.55.0",
+    "react-native": "0.56.0-rc.1",
     "resolve": "^1.7.1",
     "rimraf": "^2.6.1"
   },
   "peerDependencies": {
-    "react-native": "~0.55.0"
+    "react-native": "0.56.0-rc.1"
   },
   "rnpm": {
     "plugin": "./local-cli/index.js"

@@ -1,13 +1,13 @@
 {
   "sourceMaps": "inline",
-  "presets": ["flow", "react-native"],
+  "presets": ["@babel/flow", "react-native"],
   "plugins": [
-    "syntax-trailing-function-commas",
-    "transform-object-rest-spread",
-    "transform-decorators-legacy",
-    "transform-class-properties",
+    "@babel/plugin-syntax-dynamic-import",
+    "@babel/plugin-proposal-object-rest-spread",
+    ["@babel/plugin-proposal-decorators", { "legacy": true }],
+    "@babel/plugin-proposal-class-properties",
     [
-      "transform-runtime",
+      "@babel/plugin-transform-runtime",
       {
         "helpers": true,
         "polyfill": false,
@@ -26,7 +26,7 @@
   ],
   "env": {
     "lib": {
-      "presets": ["flow"]
+      "presets": ["@babel/flow"]
     }
   }
 }
