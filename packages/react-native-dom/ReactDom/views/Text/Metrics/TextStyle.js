@@ -21,7 +21,7 @@ export class TextStyle {
 
   styleID: number;
 
-  constructor(style: TextStyleObj) {
+  constructor(style: Object) {
     this.styleID = 0;
 
     this.reset();
@@ -40,7 +40,7 @@ export class TextStyle {
   _breakWords: boolean;
 
   get breakWords() {
-    return this._breakWords;
+    return this._breakWords || TextStyle.DefaultTextStyle.breakWords;
   }
 
   set breakWords(breakWords: boolean) {
@@ -53,7 +53,7 @@ export class TextStyle {
   _fontFamily: string;
 
   get fontFamily() {
-    return this._fontFamily;
+    return this._fontFamily || TextStyle.DefaultTextStyle.fontFamily;
   }
 
   set fontFamily(fontFamily: string) {
@@ -66,7 +66,7 @@ export class TextStyle {
   _fontSize: number;
 
   get fontSize() {
-    return this._fontSize;
+    return this._fontSize || TextStyle.DefaultTextStyle.fontSize;
   }
 
   set fontSize(fontSize: number) {
@@ -79,7 +79,7 @@ export class TextStyle {
   _fontStyle: string;
 
   get fontStyle() {
-    return this._fontStyle;
+    return this._fontStyle || TextStyle.DefaultTextStyle.fontStyle;
   }
 
   set fontStyle(fontStyle: string) {
@@ -92,7 +92,7 @@ export class TextStyle {
   _fontVariant: string;
 
   get fontVariant() {
-    return this._fontVariant;
+    return this._fontVariant || TextStyle.DefaultTextStyle.fontVariant;
   }
 
   set fontVariant(fontVariant: string) {
@@ -105,7 +105,7 @@ export class TextStyle {
   _fontWeight: string;
 
   get fontWeight() {
-    return this._fontWeight;
+    return this._fontWeight || TextStyle.DefaultTextStyle.fontWeight;
   }
 
   set fontWeight(fontWeight: string) {
@@ -118,7 +118,7 @@ export class TextStyle {
   _letterSpacing: number;
 
   get letterSpacing() {
-    return this._letterSpacing;
+    return this._letterSpacing || TextStyle.DefaultTextStyle.letterSpacing;
   }
 
   set letterSpacing(letterSpacing: number) {
@@ -131,7 +131,9 @@ export class TextStyle {
   _lineHeight: number;
 
   get lineHeight() {
-    return this._lineHeight;
+    return this._lineHeight === -1
+      ? Math.ceil(this.fontSize * 1.2)
+      : this._lineHeight;
   }
 
   set lineHeight(lineHeight: number) {
@@ -143,7 +145,7 @@ export class TextStyle {
   _whiteSpace: string;
 
   get whiteSpace() {
-    return this._whiteSpace;
+    return this._whiteSpace || TextStyle.DefaultTextStyle.whiteSpace;
   }
 
   set whiteSpace(whiteSpace: string) {
@@ -156,7 +158,7 @@ export class TextStyle {
   _wordWrap: boolean;
 
   get wordWrap() {
-    return this._wordWrap;
+    return this._wordWrap || TextStyle.DefaultTextStyle.wordWrap;
   }
 
   set wordWrap(wordWrap: boolean) {
@@ -169,7 +171,7 @@ export class TextStyle {
   _wordWrapWidth: number;
 
   get wordWrapWidth() {
-    return this._wordWrapWidth;
+    return this._wordWrapWidth || TextStyle.DefaultTextStyle.wordWrapWidth;
   }
 
   set wordWrapWidth(wordWrapWidth: number) {

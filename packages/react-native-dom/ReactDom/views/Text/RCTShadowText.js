@@ -16,6 +16,23 @@ import {
 import _RCTShadowView from "RCTShadowView";
 import _RCTShadowRawText from "RCTShadowRawText";
 
+import { TextMetrics } from "./Metrics/TextMetrics";
+import { TextStyle } from "./Metrics/TextStyle";
+
+TextStyle.DefaultTextStyle = {
+  breakWords: false,
+  fontFamily: TextDefaults.fontFamily,
+  fontSize: defaultFontSize,
+  fontStyle: "normal",
+  fontVariant: "normal",
+  fontWeight: "normal",
+  lineHeight: -1,
+  letterSpacing: 0,
+  whiteSpace: "pre",
+  wordWrap: false,
+  wordWrapWidth: Infinity
+};
+
 const TEXT_SHADOW_STYLE_PROPS = [
   "fontFamily",
   "fontSize",
@@ -25,7 +42,7 @@ const TEXT_SHADOW_STYLE_PROPS = [
   "letterSpacing"
 ];
 
-const TEXT_PX_PROPS = ["lineHeight"];
+const TEXT_PX_PROPS = [];
 
 const textMeasurementContainer = document.createElement("div");
 textMeasurementContainer.id = "text-measurement";
@@ -47,6 +64,19 @@ Object.assign(canvasMesurement.style, {
 });
 document.body && document.body.appendChild(canvasMesurement);
 const measureContext = canvasMesurement.getContext("2d");
+TextMetrics._canvas = canvasMesurement;
+TextMetrics._context = measureContext;
+
+const textPropsToTextStyle = (props) => {
+  const style = Object.keys(props).reduce((acc, key) => {
+    if (props[key] && props[key] !== "inherit") {
+      return { ...acc, [key]: props[key] };
+    }
+    return acc;
+  }, {});
+
+  return new TextStyle(style);
+};
 
 module.exports = (async () => {
   const { Constants } = await _Yoga;
@@ -90,13 +120,7 @@ module.exports = (async () => {
           get: () => this.props[shadowPropName],
           set: (value) => {
             if (value != null) {
-              this.props[shadowPropName] = TEXT_PX_PROPS.includes(
-                shadowPropName
-              )
-                ? `${value}px`
-                : value;
-            } else {
-              this.props[shadowPropName] = "inherit";
+              this.props[shadowPropName] = value;
             }
             this.markTextDirty();
           }
@@ -151,90 +175,20 @@ module.exports = (async () => {
     }
 
     measureFast(text: string, style: Object, maxWidth?: number) {
-      const resolveStyleValue = (prop, value) => {
-        if (typeof value === "number") return `${value}px`;
-        if (typeof value === "string") {
-          if (value === "inherit") {
-            return TextDefaults[prop] !== "inherit"
-              ? TextDefaults[prop]
-              : undefined;
-          }
-          return value;
-        }
-      };
+      const textStyle = textPropsToTextStyle(style);
 
-      const resolvedStyle = {};
-      Object.keys(style).forEach((key) => {
-        resolvedStyle[key] = resolveStyleValue(key, style[key]);
-      });
-
-      // split newlines that already exist in the string
-      const initialLines = text.split("\n");
-
-      if (maxWidth == null) {
-        const measurement = measureText({
-          canvas: canvasMesurement,
-          text: initialLines,
-          ...resolvedStyle
-        });
-        return measurement;
-      } else if (maxWidth != null) {
-        measureContext.font = `${resolvedStyle.fontStyle} ${
-          resolvedStyle.fontWeight
-        } ${resolvedStyle.fontSize}px/${resolvedStyle.lineHeight} ${
-          resolvedStyle.fontFamily
-        }`;
-
-        let brokenLines = [];
-        initialLines.forEach((initialLine) => {
-          let words = initialLine.split(" ");
-          let line = "";
-          let lineCount = 0;
-          let i;
-          let test;
-          let metrics;
-
-          for (i = 0; i < words.length; i++) {
-            test = words[i];
-            metrics = measureContext.measureText(test);
-            invariant(maxWidth, "");
-            while (metrics.width > maxWidth) {
-              // Determine how much of the word will fit
-              test = test.substring(0, test.length - 1);
-              metrics = measureContext.measureText(test);
-            }
-            if (words[i] != test) {
-              words.splice(i + 1, 0, words[i].substr(test.length));
-              words[i] = test;
-            }
-
-            test = line + words[i] + " ";
-            metrics = measureContext.measureText(test);
-
-            if (metrics.width > maxWidth && i > 0) {
-              brokenLines.push(line);
-              line = words[i] + " ";
-              lineCount++;
-            } else {
-              line = test;
-            }
-          }
-
-          brokenLines.push(line);
-        });
-
-        if (brokenLines.length === 0) {
-          brokenLines.push(text);
-        }
-
-        const measurement = measureText({
-          canvas: canvasMesurement,
-          text: brokenLines,
-          ...resolvedStyle
-        });
-
-        return measurement;
+      if (maxWidth != null) {
+        textStyle.wordWrap = true;
+        textStyle.wordWrapWidth = maxWidth;
       }
+
+      const measurement = TextMetrics.measureText(
+        text,
+        textStyle,
+        maxWidth != null
+      );
+
+      return measurement;
     }
 
     /**
@@ -255,7 +209,6 @@ module.exports = (async () => {
       this.clearTestDomElement();
 
       const canBeFast =
-        this.props.letterSpacing === "inherit" &&
         this.textChildren.length === 1 &&
         this.textChildren[0] instanceof RCTShadowRawText;
 
@@ -279,10 +232,9 @@ module.exports = (async () => {
             this.props,
             maxWidth
           );
-          invariant(measurement, "");
           return {
-            width: measurement.width.value,
-            height: measurement.height.value
+            width: measurement.width,
+            height: measurement.height
           };
         }
         return {
