@@ -5,7 +5,6 @@
 
 import invariant from "invariant";
 import _Yoga from "yoga-dom";
-import measureText from "measure-text";
 
 import guid from "Guid";
 import {

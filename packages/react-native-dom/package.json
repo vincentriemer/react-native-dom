@@ -58,7 +58,6 @@
     "idb-keyval": "^2.3.0",
     "inline-style-prefixer": "^3.0.8",
     "invariant": "^2.2.2",
-    "measure-text": "^0.0.4",
     "node-fetch": "^1.7.3",
     "normalize-css-color": "^1.0.2",
     "opn": "^5.2.0",
