@@ -111,7 +111,6 @@ module.exports = (async () => {
       this.props = {};
       this.textChildren = [];
       this.textDirty = true;
-      this.numberOfLines = 0;
 
       TEXT_SHADOW_STYLE_PROPS.forEach((shadowPropName: string) => {
         Object.defineProperty(this, shadowPropName, {
@@ -184,6 +183,7 @@ module.exports = (async () => {
       const measurement = TextMetrics.measureText(
         text,
         textStyle,
+        this.numberOfLines,
         maxWidth != null
       );
 

@@ -72,6 +72,7 @@ export class TextMetrics {
   static measureText(
     text: string,
     style: TextStyle,
+    numberOfLines?: number = Infinity,
     wordWrap?: boolean,
     canvas?: HTMLCanvasElement = TextMetrics._canvas
   ) {
@@ -103,7 +104,7 @@ export class TextMetrics {
     const lineHeight = style.lineHeight;
     let height =
       Math.max(lineHeight, fontProperties.fontSize) +
-      (lines.length - 1) * lineHeight;
+      Math.min(numberOfLines - 1, lines.length - 1) * lineHeight;
 
     return new TextMetrics(
       text,
