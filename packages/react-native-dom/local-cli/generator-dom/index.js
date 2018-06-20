@@ -64,7 +64,7 @@ module.exports = class extends Generator {
         const updatedConfigContents = configUpdater(configContents);
         this.fs.write(configPath, updatedConfigContents);
       } catch (err) {
-        console.warn("Error updating rn-cli.config.js: ", err.essage);
+        console.warn("Error updating rn-cli.config.js: ", err.message);
       }
     } else {
       this.fs.copyTpl(this.templatePath("rn-cli.config.js"), configPath);
