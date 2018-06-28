@@ -89,9 +89,9 @@ const builtInNativeModules: any[] = [
 
 // Development Specific Native Modules
 if (__DEV__) {
-  builtInNativeModules.push(require("RCTDevLoadingView"));
-  builtInNativeModules.push(require("RCTDevSettings"));
-  builtInNativeModules.push(require("RCTDevMenu"));
+  builtInNativeModules.push(import("RCTDevLoadingView"));
+  builtInNativeModules.push(import("RCTDevSettings"));
+  builtInNativeModules.push(import("RCTDevMenu"));
 }
 
 type RNDomInstanceOptions = {

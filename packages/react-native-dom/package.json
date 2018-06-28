@@ -93,12 +93,12 @@
     "lint-staged": "^6.0.0",
     "prettier": "^1.9.0",
     "react": "^16.3.1",
-    "react-native": "0.56.0-rc.1",
+    "react-native": "0.56.0-rc.3",
     "resolve": "^1.7.1",
     "rimraf": "^2.6.1"
   },
   "peerDependencies": {
-    "react-native": "0.56.0-rc.1"
+    "react-native": "0.56.0-rc.3"
   },
   "rnpm": {
     "plugin": "./local-cli/index.js"

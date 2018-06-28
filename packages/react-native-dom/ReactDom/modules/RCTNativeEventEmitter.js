@@ -8,7 +8,7 @@ import invariant from "invariant";
 import RCTBridge, { RCTFunctionTypeNormal, RCT_EXPORT_METHOD } from "RCTBridge";
 import NotificationCenter from "NotificationCenter";
 
-class RCTEventEmitter {
+class RCTNativeEventEmitter {
   bridge: RCTBridge;
   listenerCount: number = 0;
   _supportedMethods: ?Array<string>;
@@ -29,7 +29,7 @@ class RCTEventEmitter {
         `explicitly synthesized the bridge in ${
           this.constructor.name
         }, even though it's inherited ` +
-        "from RCTEventEmitter."
+        "from RCTNativeEventEmitter."
     );
 
     // TODO: Add debug check for supportedEvents
@@ -86,4 +86,4 @@ class RCTEventEmitter {
   }
 }
 
-export default RCTEventEmitter;
+export default RCTNativeEventEmitter;

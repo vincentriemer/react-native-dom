@@ -6603,9 +6603,9 @@ react-devtools-core@^3.2.2:
     shell-quote "^1.6.1"
     ws "^3.3.1"
 
-react-native@0.56.0-rc.1:
-  version "0.56.0-rc.1"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.56.0-rc.1.tgz#7a04f90a6d0b43b9860dc9cb4d990d6749444f1f"
+react-native@0.56.0-rc.3:
+  version "0.56.0-rc.3"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.56.0-rc.3.tgz#934a33d108948641cf434180afdb21c8ebb5cfc5"
   dependencies:
     absolute-path "^0.0.0"
     art "^0.10.0"
