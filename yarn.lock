@@ -8359,6 +8359,6 @@ yeoman-generator@^2.0.5:
     through2 "^2.0.0"
     yeoman-environment "^2.0.5"
 
-yoga-dom@^0.0.10:
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/yoga-dom/-/yoga-dom-0.0.10.tgz#4ff3eafb42262b54c43ced8c46fb6ba308bff094"
+yoga-dom@0.0.12:
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/yoga-dom/-/yoga-dom-0.0.12.tgz#18a2cd53f5c9afc0061b9f6afeeafb9ac04bf4f5"
