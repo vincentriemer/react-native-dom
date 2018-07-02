@@ -66,6 +66,7 @@ waitPort({ host: "localhost", port: 8081 })
     packagerProcess.kill();
 
     shell.echo("Sucesfully passed smoke test!");
+    shell.exit(0);
   })
   .catch((err) => {
     console.error(err);
