@@ -19,6 +19,7 @@ To see it in action, check out these live demos:
 
 * [Movies Demo](https://rndom-movie-demo.now.sh)
 * [RNTester (component playground used for manual testing)](https://rntester.now.sh)
+* [Expanding Grid Item Demo](https://github.com/vincentriemer/rndom-expanding-grid-item-demo)
 
 ---
 
