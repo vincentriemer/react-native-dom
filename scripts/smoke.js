@@ -14,7 +14,7 @@ function guardedExec(command, message) {
   }
 }
 
-shell.rm("-rf", "/tmp/SmokeTest");
+shell.rm("-rf", `/tmp/${APP_NAME}`);
 shell.cd("/tmp");
 
 // Install React Native CLI
