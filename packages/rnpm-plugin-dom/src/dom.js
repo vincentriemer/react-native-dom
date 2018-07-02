@@ -165,14 +165,15 @@ module.exports = function dom(config, args, options) {
   const name = args[0] ? args[0] : getReactNativeAppName();
   const includeCanary = options.includeCanary ? options.includeCanary : false;
   const version = options.domVersion;
+  const exact = options.exact;
 
   getInstallPackage(version, includeCanary)
     .then((versionToInstall) => {
       const rnDomPackage = `${packageToInstall}@${versionToInstall}`;
       console.log(`Installing ${rnDomPackage}...`);
       const pkgmgr = isGlobalCliUsingYarn(process.cwd())
-        ? "yarn add"
-        : "npm install --save";
+        ? "yarn add" + (exact ? " --exact" : "")
+        : "npm install" + (exact ? " --save-exact" : " --save");
 
       const execOptions = options.verbose ? { stdio: "inherit" } : {};
       execSync(`${pkgmgr} ${rnDomPackage}`, execOptions);

@@ -9,6 +9,10 @@ module.exports = [
         description: "The version of react-native-dom to use"
       },
       {
+        command: "--exact",
+        description: "Install react-native-dom at an exact version"
+      },
+      {
         command: "--verbose",
         description: "Enables logging",
         default: false
