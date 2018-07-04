@@ -166,7 +166,8 @@ class UIView extends HTMLElement implements RCTComponent {
         contain: "size layout style",
         boxSizing: "border-box",
         userSelect: "inherit",
-        overflow: "visible"
+        overflow: "visible",
+        touchAction: "manipulation"
       })
     );
 

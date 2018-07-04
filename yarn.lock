@@ -871,9 +871,13 @@ acorn@^4.0.4:
   version "4.0.13"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-4.0.13.tgz#105495ae5361d697bd195c825192e1ad7f253787"
 
-acorn@^5.0.0, acorn@^5.0.3, acorn@^5.4.1, acorn@^5.5.0:
+acorn@^5.0.0, acorn@^5.0.3, acorn@^5.4.1:
   version "5.5.3"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.5.3.tgz#f473dd47e0277a08e28e9bec5aeeb04751f0b8c9"
+
+acorn@^5.5.0:
+  version "5.7.1"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.7.1.tgz#f095829297706a7c9776958c0afc8930a9b9d9d8"
 
 add-stream@^1.0.0:
   version "1.0.0"
@@ -3199,8 +3203,8 @@ eslint-module-utils@^2.2.0:
     pkg-dir "^1.0.0"
 
 eslint-plugin-import@^2.11.0:
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.11.0.tgz#15aeea37a67499d848e8e981806d4627b5503816"
+  version "2.13.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.13.0.tgz#df24f241175e312d91662dc91ca84064caec14ed"
   dependencies:
     contains-path "^0.1.0"
     debug "^2.6.8"
@@ -3214,8 +3218,8 @@ eslint-plugin-import@^2.11.0:
     resolve "^1.6.0"
 
 eslint-plugin-prettier@^2.6.0:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-2.6.0.tgz#33e4e228bdb06142d03c560ce04ec23f6c767dd7"
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-2.6.1.tgz#de902b4a66b7bca24296429a59a1cc04020ccbbd"
   dependencies:
     fast-diff "^1.1.1"
     jest-docblock "^21.0.0"
@@ -3967,7 +3971,11 @@ global@^4.3.0:
     min-document "^2.19.0"
     process "~0.5.1"
 
-globals@^11.0.1, globals@^11.1.0:
+globals@^11.0.1:
+  version "11.7.0"
+  resolved "https://registry.yarnpkg.com/globals/-/globals-11.7.0.tgz#a583faa43055b1aca771914bf68258e2fc125673"
+
+globals@^11.1.0:
   version "11.5.0"
   resolved "https://registry.yarnpkg.com/globals/-/globals-11.5.0.tgz#6bc840de6771173b191f13d3a9c94d441ee92642"
 
@@ -4986,9 +4994,16 @@ js-tokens@^3.0.0, js-tokens@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
 
-js-yaml@^3.7.0, js-yaml@^3.9.0, js-yaml@^3.9.1:
+js-yaml@^3.7.0, js-yaml@^3.9.0:
   version "3.11.0"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.11.0.tgz#597c1a8bd57152f26d622ce4117851a51f5ebaef"
+  dependencies:
+    argparse "^1.0.7"
+    esprima "^4.0.0"
+
+js-yaml@^3.9.1:
+  version "3.12.0"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.12.0.tgz#eaed656ec8344f10f527c6bfa1b6e2244de167d1"
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
@@ -7311,7 +7326,7 @@ shelljs@^0.7.3:
     interpret "^1.0.0"
     rechoir "^0.6.2"
 
-shelljs@^0.8.0:
+shelljs@^0.8.0, shelljs@^0.8.2:
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/shelljs/-/shelljs-0.8.2.tgz#345b7df7763f4c2340d584abb532c5f752ca9e35"
   dependencies:
@@ -8544,6 +8559,6 @@ yeoman-generator@^2.0.5:
     through2 "^2.0.0"
     yeoman-environment "^2.0.5"
 
-yoga-dom@^0.0.10:
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/yoga-dom/-/yoga-dom-0.0.10.tgz#4ff3eafb42262b54c43ced8c46fb6ba308bff094"
+yoga-dom@0.0.12:
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/yoga-dom/-/yoga-dom-0.0.12.tgz#18a2cd53f5c9afc0061b9f6afeeafb9ac04bf4f5"

@@ -137,6 +137,14 @@ jobs:
           name: Publish Canary Release to NPM
           command: yarn release:canary
   
+  smoke_test:
+    <<: *container_config
+    steps:
+      - *restore_repo
+      - run:
+          name: Run project initialization smoke test
+          command: yarn test:smoke
+  
   deploy_rntester:
     <<: *container_config
     steps:
@@ -173,6 +181,13 @@ workflows:
           requires:
             - build_components
             - build_react_native_dom
+          filters:
+            branches:
+              only:
+                - master
+      - smoke_test:
+          requires:
+            - release_canary
           filters:
             branches:
               only:

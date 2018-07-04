@@ -30,7 +30,8 @@
     "release": "lerna publish --conventional-commits --yes --cd-version-minor",
     "release:canary": "lerna publish --canary --yes --cd-version minor",
     "run-examples": "cd packages/react-native-dom && yarn run-examples",
-    "test": "lerna run test"
+    "test": "lerna run test",
+    "test:smoke": "node scripts/smoke.js"
   },
   "config": {
     "commitizen": {
@@ -49,8 +50,10 @@
     "husky": "^0.14.3",
     "lerna": "^2.4.0",
     "prettier": "^1.12.1",
+    "shelljs": "^0.8.2",
     "shx": "^0.2.2",
-    "sort-package-json": "^1.13.0"
+    "sort-package-json": "^1.13.0",
+    "wait-port": "^0.2.2"
   },
   "lint-staged": {
     "package.json": ["sort-package-json", "git add"],

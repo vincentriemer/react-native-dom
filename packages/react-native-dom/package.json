@@ -71,7 +71,7 @@
     "wolfy87-eventemitter": "^5.1.0",
     "yeoman-environment": "^2.2.0",
     "yeoman-generator": "^2.0.5",
-    "yoga-dom": "^0.0.10"
+    "yoga-dom": "0.0.12"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.51",

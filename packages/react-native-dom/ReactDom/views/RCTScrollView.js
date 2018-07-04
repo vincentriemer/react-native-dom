@@ -349,6 +349,10 @@ class RCTScrollView extends RCTView {
     return updatedChildFrames;
   }
 
+  connectedCallback() {
+    this.correctScrollPosition();
+  }
+
   boundsDidChange(contentView: RCTView) {
     this.coalescingKey++;
     const childFrames = this.calculateChildFramesData();
@@ -482,6 +486,35 @@ class RCTScrollView extends RCTView {
       ...eventArgs
     );
     this.bridge.eventDispatcher.sendEvent(momentumScrollEvent);
+    this.correctScrollPosition();
+  }
+
+  correctScrollPosition() {
+    const scrollNudge = 1;
+
+    if (isIOS) {
+      if (!this._horizontal) {
+        const endTopPosition = this.scrollTop + this.contentSize.height;
+        if (this.scrollTop <= 0 && this.scrollTop >= -0.1) {
+          this.scrollTop = scrollNudge;
+        } else if (
+          endTopPosition >= this.scrollHeight &&
+          endTopPosition <= this.scrollHeight + 0.1
+        ) {
+          this.scrollTop = this.scrollTop - scrollNudge;
+        }
+      } else {
+        const endLeftPosition = this.scrollLeft + this.contentSize.width;
+        if (this.scrollLeft <= 0 && this.scrollLeft >= -0.1) {
+          this.scrollLeft = scrollNudge;
+        } else if (
+          endLeftPosition >= this.scrollWidth &&
+          endLeftPosition <= this.scrollWidth + 0.1
+        ) {
+          this.scrollLeft = this.scrollLeft - scrollNudge;
+        }
+      }
+    }
   }
 
   handleScrollTick(...eventArgs: ScrollEventArgs) {

@@ -3,12 +3,13 @@
  * @flow
  */
 
+import Switch from "rndom-switch";
+
 import type { Frame } from "InternalLib";
 import RCTView from "RCTView";
 import type RCTBridge from "RCTBridge";
 import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
-import Switch from "rndom-switch";
 
 @CustomElement("rct-switch")
 class RCTSwitch extends RCTView {
