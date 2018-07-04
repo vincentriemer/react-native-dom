@@ -166,9 +166,6 @@ workflows:
       - unittest:
           requires:
             - checkout_repo
-      - lint:
-          requires:
-            - checkout_repo
       - build_react_native_dom:
           requires:
             - lint
@@ -177,8 +174,12 @@ workflows:
           requires:
             - lint
             - unittest
+      - lint:
+          requires:
+            - build_components
       - release_canary:
           requires:
+            - lint
             - build_components
             - build_react_native_dom
           filters:
@@ -194,6 +195,7 @@ workflows:
                 - master
       - build_rntester:
           requires:
+            - lint
             - build_components
             - build_react_native_dom
       - deploy_rntester:
