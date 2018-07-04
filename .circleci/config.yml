@@ -168,11 +168,9 @@ workflows:
             - checkout_repo
       - build_react_native_dom:
           requires:
-            - lint
             - unittest
       - build_components:
           requires:
-            - lint
             - unittest
       - lint:
           requires:
