@@ -31,8 +31,15 @@ module.exports = {
   },
   settings: {
     "import/resolver": {
-      "eslint-import-resolver-lerna": {
-        packages: path.resolve(__dirname, "packages")
+      [path.resolve(
+        __dirname,
+        "./packages/react-native-dom/scripts/eslint-module-resolver-haste"
+      )]: {},
+      node: {
+        paths: [
+          path.resolve(__dirname, "node_modules"),
+          path.resolve(__dirname, "./packages/react-native-dom/node_modules")
+        ]
       }
     }
   }
