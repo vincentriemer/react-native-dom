@@ -5,6 +5,7 @@
 
 import invariant from "invariant";
 
+import RCTUIManagerObserverCoordinator from "RCTUIManagerObserverCoordinator";
 import RCTBridge, {
   RCTFunctionTypeNormal,
   RCT_EXPORT_METHOD,
@@ -16,7 +17,6 @@ import RCTView from "RCTView";
 import RCTRootView from "RCTRootView";
 import RCTDeviceInfo from "RCTDeviceInfo";
 import RCTLayoutAnimationManager from "RCTLayoutAnimationManager";
-import RCTUIManagerObserverCoordinator from "RCTUIManagerObserverCoordinator";
 import RCTComponentData from "RCTComponentData";
 import CanUse from "CanUse";
 import instrument from "Instrument";

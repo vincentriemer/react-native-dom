@@ -10,14 +10,11 @@ import NotificationCenter from "NotificationCenter";
 import RCTDeviceInfo from "RCTDeviceInfo";
 import RCTTiming from "RCTTiming";
 import RCTTouchHandler from "RCTTouchHandler";
-import CustomElement from "CustomElement";
 import instrument from "Instrument";
 import type { NativeModuleImports } from "RCTModule";
 
 declare var __DEV__: boolean;
 
-@CustomElement("rct-root-view")
-// $FlowFixMe
 class RCTRootView extends UIView {
   _reactTag: number;
 
@@ -173,5 +170,7 @@ class RCTRootView extends UIView {
     this.requestTick();
   }
 }
+
+customElements.define("rct-root-view", RCTRootView);
 
 export default RCTRootView;

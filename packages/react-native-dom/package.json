@@ -42,8 +42,8 @@
     "roots": ["<rootDir>/Libraries/"]
   },
   "dependencies": {
-    "@babel/runtime": "^7.0.0-beta.51",
-    "@webcomponents/webcomponentsjs": "^2.0.0",
+    "@babel/runtime": "7.0.0-beta.47",
+    "@webcomponents/webcomponentsjs": "^2.0.2",
     "babel-generator": "^6.26.1",
     "babel-template": "^6.26.0",
     "babel-traverse": "^6.26.0",
@@ -74,17 +74,18 @@
     "yoga-dom": "0.0.12"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.51",
-    "@babel/core": "^7.0.0-beta.51",
-    "@babel/plugin-proposal-class-properties": "^7.0.0-beta.51",
-    "@babel/plugin-proposal-decorators": "^7.0.0-beta.51",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.51",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.51",
-    "@babel/plugin-transform-runtime": "^7.0.0-beta.51",
-    "@babel/preset-flow": "^7.0.0-beta.51",
+    "@babel/cli": "7.0.0-beta.47",
+    "@babel/core": "7.0.0-beta.47",
+    "@babel/plugin-proposal-class-properties": "7.0.0-beta.47",
+    "@babel/plugin-proposal-decorators": "7.0.0-beta.47",
+    "@babel/plugin-proposal-object-rest-spread": "7.0.0-beta.47",
+    "@babel/plugin-syntax-dynamic-import": "7.0.0-beta.47",
+    "@babel/plugin-transform-classes": "7.0.0-beta.35",
+    "@babel/plugin-transform-runtime": "7.0.0-beta.47",
+    "@babel/preset-flow": "7.0.0-beta.47",
     "babel-jest": "^20.0.3",
     "babel-plugin-preval": "^1.3.2",
-    "babel-plugin-transform-builtin-classes": "^0.6.1",
+    "babel-plugin-transform-builtin-classes": "0.6.1",
     "babel-plugin-transform-inline-environment-variables": "^0.1.1",
     "flow-bin": "^0.70.0",
     "flow-copy-source": "^1.3.0",
@@ -92,13 +93,13 @@
     "jest": "^20.0.4",
     "lint-staged": "^6.0.0",
     "prettier": "^1.9.0",
-    "react": "^16.3.1",
-    "react-native": "0.56.0-rc.3",
+    "react": "^16.4.1",
+    "react-native": "~0.56.0",
     "resolve": "^1.7.1",
     "rimraf": "^2.6.1"
   },
   "peerDependencies": {
-    "react-native": "0.56.0-rc.3"
+    "react-native": "~0.56.0"
   },
   "rnpm": {
     "plugin": "./local-cli/index.js"

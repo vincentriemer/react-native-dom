@@ -1,7 +1,4 @@
-/**
- * @providesModule InternalLib
- * @flow
- */
+/** @flow */
 
 export type Frame = {
   top: number,

@@ -28,20 +28,16 @@ function buildModuleMap(opts) {
       return;
     }
     if (stat.isFile()) {
-      let fileName = file;
+      let fileName = (/^(.*)\.js$/.exec(file) || [])[1];
       if (!fileName) {
         return;
       }
-      // const m = /^(.*)\.(\w+)$/.exec(fileName);
-      // if (m && ["ios", "android", "native", "dom"].indexOf(m[2]) >= 0) {
-      //   fileName = m[1];
-      // }
-      const content = fs.readFileSync(file, "utf-8");
-      const moduleName = (/\* @providesModule ([\w.-]+)/.exec(content) ||
-        [])[1];
-      if (!moduleName) {
-        return;
+      const m = /^(.*)\.(\w+)$/.exec(fileName);
+      if (m && ["ios", "android", "native", "dom"].indexOf(m[2]) >= 0) {
+        fileName = m[1];
       }
+      const content = fs.readFileSync(file, "utf-8");
+      const moduleName = fileName.replace(/^.*[\\\/]/, "");
       if (hasteMap[moduleName] && hasteMap[moduleName] !== fileName) {
         throw new Error(
           "Duplicate haste module: " +
@@ -52,7 +48,7 @@ function buildModuleMap(opts) {
             hasteMap[moduleName]
         );
       }
-      hasteMap[moduleName] = fileName;
+      hasteMap[moduleName] = file;
     }
   };
 

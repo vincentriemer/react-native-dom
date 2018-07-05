@@ -7,7 +7,7 @@ import RCTBridge, { RCT_EXPORT_METHOD, RCT_EXPORT_MODULE } from "RCTBridge";
 import UIView from "UIView";
 import { ALL_BORDER_PROPS } from "UIBorderView";
 import RCTView from "RCTView";
-import type { HitSlop } from "UIView";
+import type { HitSlop } from "UIHitSlopView";
 import _RCTShadowView from "RCTShadowView";
 
 type PropDef = {

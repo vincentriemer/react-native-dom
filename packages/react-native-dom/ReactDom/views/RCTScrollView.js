@@ -134,7 +134,7 @@ class RCTScrollEvent implements RCTEvent {
 }
 
 @CustomElement("rct-scroll-content-view")
-export class RCTScrollContentView extends RCTView {
+class RCTScrollContentView extends RCTView {
   constructor(bridge: RCTBridge) {
     super(bridge);
     this.updateHostStyle({
@@ -546,3 +546,4 @@ class RCTScrollView extends RCTView {
 }
 
 export default RCTScrollView;
+export { RCTScrollContentView };

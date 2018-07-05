@@ -7,7 +7,8 @@ import detectIt from "detect-it";
 import invariant from "invariant";
 
 import type RCTBridge from "RCTBridge";
-import UIView, { UIChildContainerView } from "UIView";
+import UIView from "UIView";
+import UIChildContainerView from "UIChildContainerView";
 import RCTEventDispatcher from "RCTEventDispatcher";
 import RCTTouchEvent from "RCTTouchEvent";
 import isIOS from "isIOS";

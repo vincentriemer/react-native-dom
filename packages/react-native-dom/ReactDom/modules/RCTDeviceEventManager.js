@@ -11,7 +11,7 @@ import RCTBridge, {
 import type RCTEventDispatcher from "RCTEventDispatcher";
 
 @RCT_EXPORT_MODULE("RCTDeviceEventManager")
-export default class RCTDeviceEventManager {
+class RCTDeviceEventManager {
   dispatcher: RCTEventDispatcher;
   shouldBlockHistory = true;
 
@@ -41,3 +41,5 @@ export default class RCTDeviceEventManager {
     window.history.go(-2);
   }
 }
+
+export default RCTDeviceEventManager;

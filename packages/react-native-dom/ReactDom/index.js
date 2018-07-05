@@ -54,44 +54,44 @@ export type RCTUIManager = _RCTUIManager;
 
 // Register Built-in Native Modules
 const builtInNativeModules: any[] = [
-  import("RCTSourceCode"),
-  import("RCTEventDispatcher"),
-  import("RCTDeviceInfo"),
-  import("RCTPlatform"),
-  import("RCTTiming"),
-  import("RCTUIManager"),
-  import("RCTViewManager"),
-  import("RCTTextManager"),
-  import("RCTRawTextManager"),
-  import("RCTScrollViewManager"),
-  import("RCTScrollContentViewManager"),
-  import("RCTNativeAnimatedModule"),
-  import("RCTAsyncLocalStorage"),
-  import("RCTImageViewManager"),
-  import("RCTLinkingManager"),
-  import("RCTTextInputManager"),
-  import("RCTImageLoader"),
-  import("RCTActivityIndicatorViewManager"),
-  import("RCTWebSocketModule"),
-  import("RCTAppState"),
-  import("RCTSafeAreaViewManager"),
-  import("RCTSwitchManager"),
-  import("RCTStatusBarManager"),
-  import("RCTDeviceEventManager"),
-  import("RCTKeyboardObserver"),
-  import("RCTExceptionsManager"),
-  import("RCTRedBox"),
-  import("RCTWebViewManager"),
-  import("RCTNetworkingNative"),
-  import("RCTBlobManager"),
-  import("RCTVibration")
+  require("RCTSourceCode"),
+  require("RCTEventDispatcher"),
+  require("RCTDeviceInfo"),
+  require("RCTPlatform"),
+  require("RCTTiming"),
+  require("RCTUIManager"),
+  require("RCTViewManager"),
+  require("RCTTextManager"),
+  require("RCTRawTextManager"),
+  require("RCTScrollViewManager"),
+  require("RCTScrollContentViewManager"),
+  require("RCTNativeAnimatedModule"),
+  require("RCTAsyncLocalStorage"),
+  require("RCTImageViewManager"),
+  require("RCTLinkingManager"),
+  require("RCTTextInputManager"),
+  require("RCTImageLoader"),
+  require("RCTActivityIndicatorViewManager"),
+  require("RCTWebSocketModule"),
+  require("RCTAppState"),
+  require("RCTSafeAreaViewManager"),
+  require("RCTSwitchManager"),
+  require("RCTStatusBarManager"),
+  require("RCTDeviceEventManager"),
+  require("RCTKeyboardObserver"),
+  require("RCTExceptionsManager"),
+  require("RCTRedBox"),
+  require("RCTWebViewManager"),
+  require("RCTNetworkingNative"),
+  require("RCTBlobManager"),
+  require("RCTVibration")
 ];
 
 // Development Specific Native Modules
 if (__DEV__) {
-  builtInNativeModules.push(import("RCTDevLoadingView"));
-  builtInNativeModules.push(import("RCTDevSettings"));
-  builtInNativeModules.push(import("RCTDevMenu"));
+  builtInNativeModules.push(require("RCTDevLoadingView"));
+  builtInNativeModules.push(require("RCTDevSettings"));
+  builtInNativeModules.push(require("RCTDevMenu"));
 }
 
 type RNDomInstanceOptions = {

@@ -61,7 +61,7 @@ function parseHttpHeaders(httpHeaders: ?string) {
 let requestIdCounter = 0;
 
 @RCT_EXPORT_MODULE("RCTNetworking")
-export default class RCTNetworkingNative extends RCTEventEmitter {
+class RCTNetworkingNative extends RCTEventEmitter {
   requestStore: { [id: number]: RCTHttpRequest } = {};
 
   requestHandlers: RCTNetworkingRequestHandler[];
@@ -240,3 +240,5 @@ export default class RCTNetworkingNative extends RCTEventEmitter {
     }
   }
 }
+
+export default RCTNetworkingNative;

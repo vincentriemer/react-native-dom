@@ -4,7 +4,6 @@
  */
 
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
-import CustomElement from "CustomElement";
 
 const BORDER_STYLE_PROPS = [
   "borderStyle",
@@ -45,7 +44,6 @@ export const ALL_BORDER_PROPS: string[] = [].concat(
   BORDER_RADIUS_PROPS
 );
 
-@CustomElement("ui-border-view")
 class UIBorderView extends HTMLElement {
   constructor() {
     super();
@@ -129,5 +127,7 @@ class UIBorderView extends HTMLElement {
     }
   }
 }
+
+customElements.define("ui-border-view", UIBorderView);
 
 export default UIBorderView;
