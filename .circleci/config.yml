@@ -75,6 +75,7 @@ jobs:
     <<: *container_config
     steps:
       - *restore_repo
+      - *restore_components
       - run:
           name: Run Linters
           command: yarn lint
