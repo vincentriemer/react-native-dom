@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTBridge
- * @flow
- */
+/** @flow */
 import Yoga, * as YG from "yoga-dom";
 import invariant from "invariant";
 

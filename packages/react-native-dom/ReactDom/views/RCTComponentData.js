@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTComponentData
- * @flow
- */
+/** @flow */
 
 import invariant from "invariant";
 

@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTAsyncLocalStorage
- * @flow
- */
+/** @flow */
 
 import idbKeyval from "idb-keyval";
 import deepmerge from "deepmerge";

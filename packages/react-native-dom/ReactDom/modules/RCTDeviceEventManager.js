@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTDeviceEventManager
- * @flow
- */
+/** @flow */
 
 import RCTBridge, {
   RCTFunctionTypeNormal,

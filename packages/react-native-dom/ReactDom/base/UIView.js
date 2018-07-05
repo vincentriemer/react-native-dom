@@ -1,7 +1,4 @@
-/**
- * @providesModule UIView
- * @flow
- */
+/** @flow */
 
 import debounce from "debounce";
 

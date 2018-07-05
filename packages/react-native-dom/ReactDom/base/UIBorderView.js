@@ -1,7 +1,4 @@
-/**
- * @providesModule UIBorderView
- * @flow
- */
+/** @flow */
 
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 

@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTShadowText
- * @flow
- */
+/** @flow */
 
 import invariant from "invariant";
 import _Yoga from "yoga-dom";

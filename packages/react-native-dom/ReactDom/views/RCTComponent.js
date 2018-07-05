@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTComponent
- * @flow
- */
+/** @flow */
 export interface RCTComponent {
   reactTag: number;
 

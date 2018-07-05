@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTTouchHandler
- * @flow
- */
+/** @flow */
 
 import detectIt from "detect-it";
 import invariant from "invariant";

@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTRootShadowView
- * @flow
- */
+/** @flow */
 
 import _Yoga from "yoga-dom";
 

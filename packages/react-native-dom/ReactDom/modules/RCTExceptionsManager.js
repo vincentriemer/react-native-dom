@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTExceptionsManager
- * @flow
- */
+/** @flow */
 
 import RCTBridge, {
   RCTFunctionTypeNormal,

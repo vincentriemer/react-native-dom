@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTDiffClampAnimatedNode
- * @flow
- */
+/** @flow */
 
 import invariant from "invariant";
 

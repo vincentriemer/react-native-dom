@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTWebSocketModule
- * @flow
- */
+/** @flow */
 
 import invariant from "invariant";
 

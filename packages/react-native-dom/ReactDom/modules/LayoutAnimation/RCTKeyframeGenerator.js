@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTKeyframeGenerator
- * @flow
- */
+/** @flow */
 
 import BezierEasing from "bezier-easing";
 import memoize from "fast-memoize";

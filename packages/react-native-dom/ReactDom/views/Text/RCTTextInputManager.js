@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTTextInputManager
- * @flow
- */
+/** @flow */
 
 import RCTBridge, { RCT_EXPORT_MODULE } from "RCTBridge";
 import RCTTextInput from "RCTTextInput";

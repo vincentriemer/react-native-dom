@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTNetworkingNative
- * @flow
- */
+/** @flow */
 
 import RCTBridge, {
   RCTFunctionTypeNormal,

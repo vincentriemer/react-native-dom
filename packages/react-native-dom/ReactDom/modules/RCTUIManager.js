@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTUIManager
- * @flow
- */
+/** @flow */
 
 import invariant from "invariant";
 

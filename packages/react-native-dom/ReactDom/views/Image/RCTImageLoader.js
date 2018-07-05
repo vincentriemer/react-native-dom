@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTImageLoader
- * @flow
- */
+/** @flow */
 
 import type { Size } from "InternalLib";
 import RCTBridge, {

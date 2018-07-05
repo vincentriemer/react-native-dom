@@ -1,7 +1,4 @@
-/**
- * @providesModule Guid
- * @flow
- */
+/** @flow */
 
 export default function guid() {
   function s4() {

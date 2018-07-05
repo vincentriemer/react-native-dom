@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTRawText
- * @flow
- */
+/** @flow */
 import type RCTBridge from "RCTBridge";
 import RCTView from "RCTView";
 import CustomElement from "CustomElement";

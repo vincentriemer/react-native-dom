@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTLayoutAnimationManager
- * @flow
- */
+/** @flow */
 import invariant from "invariant";
 
 import * as MatrixMath from "NativeMatrixMath";

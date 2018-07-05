@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTModuleConfig
- * @flow
- */
+/** @flow */
 
 export type ModuleConfig = [
   string /* name */,

@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTScrollView
- * @flow
- */
+/** @flow */
 
 import detectIt from "detect-it";
 import debounce from "debounce";

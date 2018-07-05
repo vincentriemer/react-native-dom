@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTEventDispatcher
- * @flow
- */
+/** @flow */
 
 import invariant from "invariant";
 

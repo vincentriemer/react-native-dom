@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTKeyboardObserver
- * @flow
- */
+/** @flow */
 
 import RCTBridge, { RCT_EXPORT_MODULE } from "RCTBridge";
 import RCTEventEmitter from "RCTNativeEventEmitter";

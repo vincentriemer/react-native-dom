@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTSwitch
- * @flow
- */
+/** @flow */
 
 import Switch from "rndom-switch";
 

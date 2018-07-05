@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTNativeEventEmitter
- * @flow
- */
+/** @flow */
 
 import invariant from "invariant";
 

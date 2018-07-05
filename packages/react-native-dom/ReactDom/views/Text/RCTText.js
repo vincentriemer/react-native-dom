@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTText
- * @flow
- */
+/** @flow */
 
 import tinycolor from "tinycolor2";
 

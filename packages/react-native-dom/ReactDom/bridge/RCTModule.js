@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTModule
- * @flow
- */
+/** @flow */
 
 import type RCTBridge from "RCTBridge";
 

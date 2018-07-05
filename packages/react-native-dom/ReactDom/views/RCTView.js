@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTView
- * @flow
- */
+/** @flow */
 import type { Frame } from "InternalLib";
 import UIView from "UIView";
 import type RCTBridge from "RCTBridge";

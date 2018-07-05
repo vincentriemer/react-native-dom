@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTLinkingManager
- * @flow
- */
+/** @flow */
 
 import RCTBridge, {
   RCTFunctionTypePromise,

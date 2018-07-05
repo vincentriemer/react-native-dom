@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTScrollContentViewManager
- * @flow
- */
+/** @flow */
 
 import RCTBridge, { RCT_EXPORT_MODULE } from "RCTBridge";
 import { RCTScrollContentView } from "RCTScrollView";

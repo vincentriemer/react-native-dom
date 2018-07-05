@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTRawTextManager
- * @flow
- */
+/** @flow */
 
 import RCTBridge, { RCT_EXPORT_MODULE } from "RCTBridge";
 import RCTRawText from "RCTRawText";

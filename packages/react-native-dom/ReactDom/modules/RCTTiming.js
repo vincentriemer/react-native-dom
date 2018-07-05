@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTTiming
- * @flow
- */
+/** @flow */
 
 import RCTBridge, {
   RCTFunctionTypeNormal,

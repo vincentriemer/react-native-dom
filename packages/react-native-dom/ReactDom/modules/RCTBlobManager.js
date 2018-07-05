@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTBlobManager
- * @flow
- */
+/** @flow */
 
 import cuid from "cuid";
 import invariant from "invariant";

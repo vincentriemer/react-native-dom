@@ -1,7 +1,4 @@
-/**
- * @providesModule ReactDom
- * @flow
- */
+/** @flow */
 
 import "pepjs";
 import "@webcomponents/webcomponentsjs/bundles/webcomponents-sd-ce";

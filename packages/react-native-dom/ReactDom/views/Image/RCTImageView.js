@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTImageView
- * @flow
- */
+/** @flow */
 
 import type { Frame, Size } from "InternalLib";
 import type RCTBridge from "RCTBridge";

@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTImageSource
- * @flow
- */
+/** @flow */
 
 import type { Size } from "InternalLib";
 

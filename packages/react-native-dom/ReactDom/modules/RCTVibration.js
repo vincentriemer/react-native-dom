@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTVibration
- * @flow
- */
+/** @flow */
 
 import RCTBridge, {
   RCTFunctionTypeNormal,

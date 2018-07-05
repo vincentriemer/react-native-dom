@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTStatusBarManager
- * @flow
- */
+/** @flow */
 
 import RCTBridge, {
   RCTFunctionTypeNormal,

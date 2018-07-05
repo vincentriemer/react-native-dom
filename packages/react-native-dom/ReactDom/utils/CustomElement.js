@@ -1,7 +1,4 @@
-/**
- * @providesModule CustomElement
- * @flow
- */
+/** @flow */
 
 export default function CustomElement(name: string) {
   return function<T: Function>(target: T): T {

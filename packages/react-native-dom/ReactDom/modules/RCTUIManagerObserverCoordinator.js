@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTUIManagerObserverCoordinator
- * @flow
- */
+/** @flow */
 
 import memoize from "fast-memoize";
 

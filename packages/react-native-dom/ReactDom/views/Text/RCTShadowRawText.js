@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTShadowRawText
- * @flow
- */
+/** @flow */
 
 import * as YG from "yoga-dom";
 

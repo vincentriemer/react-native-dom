@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTScrollViewManager
- * @flow
- */
+/** @flow */
 
 import invariant from "invariant";
 

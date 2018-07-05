@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTAppState
- * @flow
- */
+/** @flow */
 
 import RCTBridge, {
   RCTFunctionTypeNormal,

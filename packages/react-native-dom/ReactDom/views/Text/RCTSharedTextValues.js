@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTSharedTextValues
- * @flow
- */
+/** @flow */
 
 export const defaultFontStack = `-apple-system, system-ui, BlinkMacSystemFont, 
     "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", 

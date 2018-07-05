@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTDivisionAnimatedNode
- * @flow
- */
+/** @flow */
 
 import RCTValueAnimatedNode from "RCTValueAnimatedNode";
 

@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTSpringAnimation
- * @flow
- */
+/** @flow */
 
 import type { Config } from "RCTNativeAnimatedModule";
 import type { RCTAnimationDriver } from "RCTAnimationDriver";

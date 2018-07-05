@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTWebView
- * @flow
- */
+/** @flow */
 
 import type { Frame } from "InternalLib";
 import RCTView from "RCTView";

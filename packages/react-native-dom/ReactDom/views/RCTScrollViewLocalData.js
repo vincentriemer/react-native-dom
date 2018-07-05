@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTScrollViewLocalData
- * @flow
- */
+/** @flow */
 
 export default class RCTScrollViewLocalData {
   scrollOffsetX: number;

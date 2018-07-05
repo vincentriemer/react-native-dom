@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTViewManager
- * @flow
- */
+/** @flow */
 
 import RCTBridge, { RCT_EXPORT_METHOD, RCT_EXPORT_MODULE } from "RCTBridge";
 import UIView from "UIView";

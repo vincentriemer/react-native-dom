@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTDevLoadingView
- * @flow
- */
+/** @flow */
 
 import RCTBridge, {
   RCTFunctionTypeNormal,

@@ -1,7 +1,4 @@
-/**
- * @providesModule Instrument
- * @flow
- */
+/** @flow */
 
 import CanUse from "CanUse";
 

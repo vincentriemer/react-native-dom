@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTDeviceInfo
- * @flow
- */
+/** @flow */
 
 import ResizeObserver from "resize-observer-polyfill";
 

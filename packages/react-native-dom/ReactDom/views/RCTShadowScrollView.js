@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTShadowScrollView
- * @flow
- */
+/** @flow */
 
 import * as YG from "yoga-dom";
 

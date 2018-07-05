@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTWebViewManager
- * @flow
- */
+/** @flow */
 
 import type UIView from "UIView";
 import type { WebViewSource } from "RCTWebView";

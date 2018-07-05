@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTAnimationUtils
- * @flow
- */
+/** @flow */
 
 export const EXTRAPOLATE_TYPE_IDENTITY = "identity";
 export const EXTRAPOLATE_TYPE_CLAMP = "clamp";

@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTSafeAreaViewManager
- * @flow
- */
+/** @flow */
 
 import { RCT_EXPORT_MODULE } from "RCTBridge";
 import type UIView from "UIView";

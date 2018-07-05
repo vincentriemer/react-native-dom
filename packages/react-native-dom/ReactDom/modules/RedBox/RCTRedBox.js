@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTRedBox
- * @flow
- */
+/** @flow */
 
 import RedBox from "rndom-redbox";
 

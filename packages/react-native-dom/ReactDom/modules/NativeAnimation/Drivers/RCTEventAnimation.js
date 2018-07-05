@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTEventAnimation
- * @flow
- */
+/** @flow */
 
 import type RCTValueAnimatedNode from "RCTValueAnimatedNode";
 import type { RCTEvent } from "RCTEventDispatcher";

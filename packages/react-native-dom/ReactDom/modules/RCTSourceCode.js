@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTSourceCode
- * @flow
- */
+/** @flow */
 
 import RCTBridge, { RCT_EXPORT_MODULE } from "RCTBridge";
 

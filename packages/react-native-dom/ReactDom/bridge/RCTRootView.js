@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTRootView
- * @flow
- */
+/** @flow */
 
 import type { Size } from "InternalLib";
 import RCTBridge from "RCTBridge";
