@@ -8,7 +8,6 @@ import type { Frame, Inset, Size, Position } from "InternalLib";
 import RCTView from "RCTView";
 import UIView from "UIView";
 import type RCTBridge from "RCTBridge";
-import CustomElement from "CustomElement";
 import { type RCTEvent } from "RCTEventDispatcher";
 import RCTScrollViewLocalData from "RCTScrollViewLocalData";
 import isIOS from "isIOS";
@@ -130,7 +129,6 @@ class RCTScrollEvent implements RCTEvent {
   }
 }
 
-@CustomElement("rct-scroll-content-view")
 class RCTScrollContentView extends RCTView {
   constructor(bridge: RCTBridge) {
     super(bridge);
@@ -186,9 +184,9 @@ function setScrollPadding(node: HTMLElement) {
   }
 }
 
-@CustomElement("rct-scroll-view")
+customElements.define("rct-scroll-content-view", RCTScrollContentView);
+
 class RCTScrollView extends RCTView {
-  bridge: RCTBridge;
   manager: *;
 
   isScrolling: boolean;
@@ -541,6 +539,8 @@ class RCTScrollView extends RCTView {
     this.updateHostStyle("cursor", "auto");
   }
 }
+
+customElements.define("rct-scroll-view", RCTScrollView);
 
 export default RCTScrollView;
 export { RCTScrollContentView };

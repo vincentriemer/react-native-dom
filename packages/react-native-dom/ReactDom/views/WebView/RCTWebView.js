@@ -3,7 +3,6 @@
 import type { Frame } from "InternalLib";
 import RCTView from "RCTView";
 import type RCTBridge from "RCTBridge";
-import CustomElement from "CustomElement";
 import prefixInlineStyles from "prefixInlineStyles";
 
 export type WebViewSource = {
@@ -11,7 +10,6 @@ export type WebViewSource = {
   html?: string
 };
 
-@CustomElement("rct-web-view")
 class RCTWebView extends RCTView {
   iframeElement: HTMLIFrameElement;
 
@@ -83,5 +81,7 @@ class RCTWebView extends RCTView {
     }
   }
 }
+
+customElements.define("rct-web-view", RCTWebView);
 
 export default RCTWebView;

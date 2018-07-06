@@ -1,9 +1,7 @@
 /** @flow */
 import type RCTBridge from "RCTBridge";
 import RCTView from "RCTView";
-import CustomElement from "CustomElement";
 
-@CustomElement("rct-raw-text")
 class RCTRawText extends RCTView {
   _text: string;
 
@@ -35,5 +33,7 @@ class RCTRawText extends RCTView {
     this.innerText = value;
   }
 }
+
+customElements.define("rct-raw-text", RCTRawText);
 
 export default RCTRawText;

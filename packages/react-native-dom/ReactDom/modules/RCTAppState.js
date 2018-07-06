@@ -1,10 +1,6 @@
 /** @flow */
 
-import RCTBridge, {
-  RCTFunctionTypeNormal,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import type RCTBridge from "RCTBridge";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 
 let hidden, visibilityChange;
@@ -22,8 +18,9 @@ if (typeof document.hidden !== "undefined") {
   visibilityChange = "webkitvisibilitychange";
 }
 
-@RCT_EXPORT_MODULE("RCTAppState")
 class RCTAppState extends RCTEventEmitter {
+  static moduleName = "RCTAppState";
+
   startObserving() {
     document.addEventListener(
       visibilityChange,
@@ -68,8 +65,7 @@ class RCTAppState extends RCTEventEmitter {
     });
   };
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  getCurrentAppState(callbackId: number) {
+  $getCurrentAppState(callbackId: number) {
     this.bridge.callbackFromId(callbackId)({
       app_state: this.currentBackgroundState()
     });

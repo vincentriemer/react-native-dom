@@ -1,32 +1,24 @@
 /** @flow */
 
-import RCTBridge, {
-  RCTFunctionTypePromise,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import type RCTBridge from "RCTBridge";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 
-const initialURL = location.href;
-
-@RCT_EXPORT_MODULE("RCTLinkingManager")
 class RCTLinkingManager extends RCTEventEmitter {
+  static moduleName = "RCTLinkingManager";
+
   // TODO: URL Events
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypePromise)
-  openURL(url: string, resolveId: number, rejectId: number) {
+  async $$openURL(url: string) {
     window.location = new URL(url, window.location).toString();
-    this.bridge.callbackFromId(resolveId)(true);
+    return true;
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypePromise)
-  canOpenURL(url: string, resolveId: number, rejectId: number) {
-    this.bridge.callbackFromId(resolveId)(true);
+  async $$canOpenURL(url: string) {
+    return true;
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypePromise)
-  getInitialURL(resolveId: number, rejectId: number) {
-    this.bridge.callbackFromId(resolveId)(initialURL);
+  async $$getInitialURL() {
+    return location.href;
   }
 }
 

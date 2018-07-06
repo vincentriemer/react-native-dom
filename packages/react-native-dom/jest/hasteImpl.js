@@ -61,7 +61,6 @@ const haste = {
 };
 
 function isHastePath(filePath /*: string*/) /*: bool*/ {
-  console.log(filePath);
   if (!filePath.endsWith(".js") && !filePath.endsWith(".js.flow")) {
     return false;
   }

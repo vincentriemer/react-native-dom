@@ -1,5 +1,5 @@
 /** @flow */
-import Yoga, * as YG from "yoga-dom";
+import type { Exports as YogaExports } from "yoga-dom";
 import invariant from "invariant";
 
 import { moduleConfigFactory } from "RCTModuleConfig";
@@ -9,7 +9,6 @@ import {
   RCTFunctionTypePromise,
   RCTFunctionTypeSync
 } from "RCTBridgeMethod";
-import type { ModuleConfig } from "RCTModuleConfig";
 import type { RCTFunctionType } from "RCTBridgeMethod";
 import type RCTEventDispatcher from "RCTEventDispatcher";
 import type RCTImageLoader from "RCTImageLoader";
@@ -18,11 +17,11 @@ import type RCTDevLoadingView from "RCTDevLoadingView";
 import type RCTDevSettings from "RCTDevSettings";
 import type RCTNetworking from "RCTNetworkingNative";
 import type RCTBlobManager from "RCTBlobManager";
-import type {
-  NativeModuleImports,
-  RCTModule,
-  RCTModuleStatics
+import type RCTModule, {
+  ModuleDescription,
+  NativeModuleImports
 } from "RCTModule";
+import { bridgeModuleNameForClass } from "RCTModule";
 import type RCTRedBox from "RCTRedBox";
 import typeof _RCTUIManager from "RCTUIManager";
 type RCTUIManager = $Call<$await<_RCTUIManager>>;
@@ -90,52 +89,6 @@ export function getPropertyNames(obj: ?Object): Array<string> {
   );
 }
 
-export function bridgeModuleNameForClass(cls: RCTModuleStatics): string {
-  let name = cls.__moduleName;
-
-  if (name != null) {
-    if (name.startsWith("RK")) {
-      name = name.substring(2);
-    } else if (name.startsWith("RCT")) {
-      name = name.substring(3);
-    }
-    return name;
-  }
-
-  return "";
-}
-
-function generateModuleConfig(name: string, bridgeModule: RCTModule) {
-  const methodNames = [...new Set(getPropertyNames(bridgeModule))].filter(
-    (methodName) => methodName.startsWith("__rct_export__")
-  );
-
-  const constants = bridgeModule.constantsToExport
-    ? bridgeModule.constantsToExport()
-    : undefined;
-
-  const allMethods = [];
-  const promiseMethods = [];
-  const syncMethods = [];
-
-  methodNames.forEach((rctName) => {
-    if (bridgeModule[rctName]) {
-      const [methodName, methodType] = bridgeModule[rctName].call(bridgeModule);
-      allMethods.push(methodName);
-
-      if (methodType === RCTFunctionTypePromise) {
-        promiseMethods.push(allMethods.length - 1);
-      }
-
-      if (methodType === RCTFunctionTypeSync) {
-        syncMethods.push(allMethods.length - 1);
-      }
-    }
-  });
-
-  return [name, constants, allMethods, promiseMethods, syncMethods];
-}
-
 type ModuleData = {
   name: string,
   methods: string[],
@@ -147,14 +100,15 @@ export default class RCTBridge {
 
   modulesByName: { [name: string]: RCTModule } = {};
   moduleClasses: Array<Class<RCTModule>> = [];
-  moduleConfigs: Array<ModuleConfig> = [];
+  moduleConfigs: Array<ModuleDescription> = [];
   bundleFinishedLoading: ?() => void;
   messages: Array<NativeCall> = [];
-  moduleDataForName: { [name: string]: ModuleData } = {};
   moduleName: string;
   bundleLocation: string;
   loading: boolean;
   parent: HTMLElement;
+
+  Yoga: YogaExports;
 
   _uiManager: ?RCTUIManager;
   _eventDispatcher: ?RCTEventDispatcher;
@@ -183,8 +137,7 @@ export default class RCTBridge {
     this.setThread(worker);
   }
 
-  moduleForClass(cls: RCTModuleStatics): RCTModule {
-    invariant(cls.__moduleName, "Class does not seem to be exported");
+  moduleForClass(cls: Class<RCTModule>): RCTModule {
     return this.modulesByName[bridgeModuleNameForClass(cls)];
   }
 
@@ -207,26 +160,29 @@ export default class RCTBridge {
     const moduleConfig = this.moduleConfigs[moduleId];
 
     invariant(moduleConfig, `No such module with id: ${moduleId}`);
-    const [name, , functions] = moduleConfig;
+    const [name, , , promiseMethods] = moduleConfig;
 
-    invariant(functions, `Module ${name} has no methods to call`);
-    const functionName = functions[methodId];
-
-    invariant(
-      functionName,
-      `No such function in module ${name} with id ${methodId}`
-    );
     const nativeModule = this.modulesByName[name];
-
     invariant(nativeModule, `No such module with name ${name}`);
-    invariant(
-      nativeModule[functionName],
-      `No such method ${functionName} on module ${name}`
-    );
 
     // console.log("JS -> Native", name, functionName, params);
 
-    nativeModule[functionName].apply(nativeModule, params);
+    const nativeMethod = nativeModule.functionMap[methodId];
+
+    if (promiseMethods.includes(methodId)) {
+      const [resolveId, rejectId] = params.splice(-2, 2);
+      Promise.resolve(nativeMethod.apply(nativeModule, params))
+        .then((res) => {
+          res = JSON.parse(JSON.stringify(res));
+          this.callbackFromId(resolveId)(res);
+        })
+        .catch((err) => {
+          err = JSON.parse(JSON.stringify(err));
+          this.callbackFromId(rejectId)(err);
+        });
+    } else {
+      nativeModule.functionMap[methodId].apply(nativeModule, params);
+    }
   }
 
   onMessage(message: any) {
@@ -273,7 +229,9 @@ export default class RCTBridge {
 
     // resolve default exports from es modules
     this.moduleClasses = this.moduleClasses.map((maybeModule) => {
-      return maybeModule.__esModule ? (maybeModule: any).default : maybeModule;
+      return (maybeModule: any).default != null
+        ? (maybeModule: any).default
+        : maybeModule;
     });
 
     this.moduleClasses.forEach((moduleClass: Class<RCTModule>) => {
@@ -283,53 +241,13 @@ export default class RCTBridge {
     });
   };
 
-  generateModuleConfig(name: string, bridgeModule: RCTModule): ModuleConfig {
-    const methodNames = [...new Set(getPropertyNames(bridgeModule))].filter(
-      (methodName) => methodName.startsWith("__rct_export__")
-    );
-
-    const constants = bridgeModule.constantsToExport
-      ? bridgeModule.constantsToExport()
-      : undefined;
-
-    const allMethods = [];
-    const promiseMethods = [];
-    const syncMethods = [];
-
-    methodNames.forEach((rctName) => {
-      if (bridgeModule[rctName]) {
-        const [methodName, methodType] = bridgeModule[rctName].call(
-          bridgeModule
-        );
-        allMethods.push(methodName);
-
-        if (methodType === RCTFunctionTypePromise) {
-          promiseMethods.push(allMethods.length - 1);
-        }
-
-        if (methodType === RCTFunctionTypeSync) {
-          syncMethods.push(allMethods.length - 1);
-        }
-      }
-    });
-
-    this.moduleDataForName[name] = {
-      name,
-      constants: constants || {},
-      methods: allMethods
-    };
-
-    const moduleConfig = moduleConfigFactory(
-      name,
-      constants,
-      allMethods,
-      promiseMethods,
-      syncMethods
-    );
-
-    this.moduleConfigs.push(moduleConfig);
-
-    return [name, constants, allMethods, promiseMethods, syncMethods];
+  generateModuleConfig(
+    name: string,
+    bridgeModule: RCTModule
+  ): ModuleDescription {
+    const moduleDescription = bridgeModule._describe();
+    this.moduleConfigs.push(moduleDescription);
+    return moduleDescription;
   }
 
   loadBridgeConfig() {
@@ -341,12 +259,14 @@ export default class RCTBridge {
   }
 
   getInitialModuleConfig = () => {
-    const remoteModuleConfig: ModuleConfig[] = Object.keys(
-      this.modulesByName
-    ).map((moduleName) => {
+    const remoteModuleConfig: ModuleDescription[] = [];
+
+    for (let moduleName in this.modulesByName) {
       const bridgeModule = this.modulesByName[moduleName];
-      return this.generateModuleConfig(moduleName, bridgeModule);
-    });
+      const description = this.generateModuleConfig(moduleName, bridgeModule);
+      remoteModuleConfig.push(description);
+    }
+
     return { remoteModuleConfig };
   };
 
@@ -470,23 +390,3 @@ export default class RCTBridge {
     return this.messages.length !== 0;
   }
 }
-
-export function RCT_EXPORT_METHOD(type: RCTFunctionType) {
-  return (target: any, key: any, descriptor: any) => {
-    if (typeof descriptor.value === "function") {
-      Object.defineProperty(target, `__rct_export__${key}`, {
-        ...descriptor,
-        value: () => [key, type]
-      });
-    }
-
-    return descriptor;
-  };
-}
-
-export const RCT_EXPORT_MODULE = (name: string) => (
-  target: RCTModuleStatics
-) => {
-  target.__moduleName = name;
-  return target;
-};

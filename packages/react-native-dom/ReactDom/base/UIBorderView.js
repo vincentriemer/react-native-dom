@@ -2,20 +2,16 @@
 
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 
-const BORDER_STYLE_PROPS = [
-  "borderStyle",
-  "borderTopStyle",
-  "borderBottomStyle",
-  "borderLeftStyle",
-  "borderRightStyle"
-];
+const BORDER_STYLE_PROPS = ["borderStyle"];
 
 const BORDER_WIDTH_PROPS = [
   "borderWidth",
   "borderTopWidth",
   "borderBottomWidth",
   "borderLeftWidth",
-  "borderRightWidth"
+  "borderRightWidth",
+  "borderStartWidth",
+  "borderEndWidth"
 ];
 
 const BORDER_COLOR_PROPS = [
@@ -23,16 +19,30 @@ const BORDER_COLOR_PROPS = [
   "borderTopColor",
   "borderBottomColor",
   "borderLeftColor",
-  "borderRightColor"
+  "borderRightColor",
+  "borderEndColor",
+  "borderStartColor"
 ];
 
 const BORDER_RADIUS_PROPS = [
   "borderRadius",
   "borderTopLeftRadius",
   "borderTopRightRadius",
+  "borderTopStartRadius",
+  "borderTopEndRadius",
   "borderBottomLeftRadius",
-  "borderBottomRightRadius"
+  "borderBottomRightRadius",
+  "borderBottomStartRadius",
+  "borderBottomEndRadius"
 ];
+
+export const BORDER_NUMBER_PROPS: string[] = [].concat(
+  BORDER_WIDTH_PROPS,
+  BORDER_RADIUS_PROPS,
+  BORDER_WIDTH_PROPS
+);
+
+export { BORDER_COLOR_PROPS };
 
 export const ALL_BORDER_PROPS: string[] = [].concat(
   BORDER_STYLE_PROPS,
@@ -77,10 +87,8 @@ class UIBorderView extends HTMLElement {
       Object.defineProperty(this, propName, {
         configurable: true,
         set: (value) => {
-          const [a, r, g, b] = ColorArrayFromHexARGB(value);
-          const stringValue = `rgba(${r},${g},${b},${a})`;
           // $FlowFixMe
-          this.style[propName] = stringValue;
+          this.style[propName] = value;
         }
       });
     });

@@ -1,18 +1,17 @@
 /** @flow */
 
-import RCTBridge, {
-  RCTFunctionTypeNormal,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import RCTModule from "RCTModule";
+import type RCTBridge from "RCTBridge";
 import type RCTEventDispatcher from "RCTEventDispatcher";
 
-@RCT_EXPORT_MODULE("RCTDeviceEventManager")
-class RCTDeviceEventManager {
+class RCTDeviceEventManager extends RCTModule {
+  static moduleName = "RCTDeviceEventManager";
+
   dispatcher: RCTEventDispatcher;
   shouldBlockHistory = true;
 
   constructor(bridge: RCTBridge) {
+    super(bridge);
     this.dispatcher = bridge.eventDispatcher;
     this.setupBackHandler();
   }
@@ -32,8 +31,7 @@ class RCTDeviceEventManager {
     }
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  invokeDefaultBackPressHandler() {
+  $invokeDefaultBackPressHandler() {
     this.shouldBlockHistory = false;
     window.history.go(-2);
   }

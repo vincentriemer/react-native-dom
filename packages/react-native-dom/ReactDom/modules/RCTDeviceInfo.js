@@ -2,11 +2,12 @@
 
 import ResizeObserver from "resize-observer-polyfill";
 
-import RCTBridge, { RCT_EXPORT_METHOD, RCT_EXPORT_MODULE } from "RCTBridge";
+import type RCTBridge from "RCTBridge";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 
-@RCT_EXPORT_MODULE("RCTDeviceInfo")
 class RCTDeviceInfo extends RCTEventEmitter {
+  static moduleName = "RCTDeviceInfo";
+
   didUpdateDimensions = () => {
     this.sendEventWithName("didUpdateDimensions", this.exportedDimensions());
   };

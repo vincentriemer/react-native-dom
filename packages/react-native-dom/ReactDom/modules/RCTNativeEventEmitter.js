@@ -2,21 +2,19 @@
 
 import invariant from "invariant";
 
-import RCTBridge, { RCTFunctionTypeNormal, RCT_EXPORT_METHOD } from "RCTBridge";
+import RCTModule from "RCTModule";
+import type RCTBridge from "RCTBridge";
 import NotificationCenter from "NotificationCenter";
 
-class RCTNativeEventEmitter {
-  bridge: RCTBridge;
-  listenerCount: number = 0;
-  _supportedMethods: ?Array<string>;
+class RCTNativeEventEmitter extends RCTModule {
+  _listenerCount: number = 0;
 
-  constructor(bridge: RCTBridge, supportedMethods: ?Array<string>) {
-    this.bridge = bridge;
-    this._supportedMethods = supportedMethods;
+  constructor(bridge: RCTBridge) {
+    super(bridge);
   }
 
-  supportedMethods(): ?Array<string> {
-    return this._supportedMethods;
+  supportedMethods(): Array<string> {
+    return [];
   }
 
   sendEventWithName(eventName: string, body: any) {
@@ -31,7 +29,7 @@ class RCTNativeEventEmitter {
 
     // TODO: Add debug check for supportedEvents
 
-    if (this.listenerCount > 0) {
+    if (this._listenerCount > 0) {
       this.bridge.enqueueJSCall(
         "RCTDeviceEventEmitter",
         "emit",
@@ -44,14 +42,17 @@ class RCTNativeEventEmitter {
   }
 
   startObserving() {
-    /* Does Nothing */
+    /* To be overriden by subclass */
   }
 
   stopObserving() {
-    /* Does Nothing */
+    /* To be overriden by subclass */
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
+  $addListener(eventName: string) {
+    this.addListener(eventName);
+  }
+
   addListener(eventName: string, callback: ?(body: any) => void) {
     // TODO: Add debug check for supportedEvents
 
@@ -59,8 +60,8 @@ class RCTNativeEventEmitter {
       NotificationCenter.addListener(eventName, callback);
     }
 
-    this.listenerCount++;
-    if (this.listenerCount === 1) {
+    this._listenerCount++;
+    if (this._listenerCount === 1) {
       this.startObserving();
     }
   }
@@ -69,15 +70,14 @@ class RCTNativeEventEmitter {
     if (callback != null) {
       NotificationCenter.removeListener(eventName, callback);
     }
-    this.removeListeners(1);
+    this.$removeListeners(1);
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  removeListeners(count: number) {
+  $removeListeners(count: number) {
     // TODO: Add debug check for supportedEvents
 
-    this.listenerCount = Math.max(this.listenerCount - count, 0);
-    if (this.listenerCount === 0) {
+    this._listenerCount = Math.max(this._listenerCount - count, 0);
+    if (this._listenerCount === 0) {
       this.stopObserving();
     }
   }

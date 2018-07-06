@@ -1,5 +1,7 @@
 /** @flow */
 
+import Yoga from "yoga-dom";
+
 import type { Size } from "InternalLib";
 import RCTBridge from "RCTBridge";
 import UIView from "UIView";
@@ -58,6 +60,8 @@ class RCTRootView extends UIView {
     this.bridge = bridge;
     this.bridge.bundleFinishedLoading = this.bundleFinishedLoading.bind(this);
 
+    const yoga = await Yoga;
+    this.bridge.Yoga = yoga;
     await this.bridge.initializeModules();
 
     const deviceInfoModule: RCTDeviceInfo = (this.bridge.modulesByName[

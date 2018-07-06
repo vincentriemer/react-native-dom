@@ -202,7 +202,8 @@ declare module "yoga-dom" {
       nowrap: WrapNoWrap,
       wrap: WrapWrap,
       "wrap-reverse": WrapWrapReverse
-    }
+    },
+    undefinedValue: any
   };
 
   declare type YogaConstants = YogaPropConstants & {
@@ -222,7 +223,7 @@ declare module "yoga-dom" {
     }
   };
 
-  declare type Exports = {
+  declare export type Exports = {
     Node: typeof YogaNode,
     Config: typeof YogaConfig,
     Constants: YogaConstants

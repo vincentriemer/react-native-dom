@@ -28,7 +28,6 @@ packages/react-native-dom/flow-typed
 [options]
 module.system.node.resolve_dirname=node_modules
 module.system.node.resolve_dirname=packages/react-native-dom/node_modules
-esproposal.decorators=ignore
 
 module.system=haste
 module.system.haste.use_name_reducers=true

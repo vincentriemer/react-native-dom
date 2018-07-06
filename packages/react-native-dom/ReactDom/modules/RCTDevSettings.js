@@ -1,35 +1,30 @@
 /** @flow */
 
-import RCTBridge, {
-  RCTFunctionTypeNormal,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import RCTModule from "RCTModule";
+import type RCTBridge from "RCTBridge";
 import { defaultFontStack } from "RCTSharedTextValues";
 
 type DevSettings = {
   isInspectorShown: boolean
 };
 
-@RCT_EXPORT_MODULE("RCTDevSettings")
-class RCTDevSettings {
-  bridge: RCTBridge;
+class RCTDevSettings extends RCTModule {
+  static moduleName = "RCTDevSettings";
+
   settings: DevSettings;
 
   constructor(bridge: RCTBridge) {
-    this.bridge = bridge;
+    super(bridge);
     this.settings = {
       isInspectorShown: false
     };
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  reload() {
+  $reload() {
     location.reload();
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  toggleElementInspector() {
+  $toggleElementInspector() {
     const value = this.settings.isInspectorShown;
     this.settings.isInspectorShown = !value;
 

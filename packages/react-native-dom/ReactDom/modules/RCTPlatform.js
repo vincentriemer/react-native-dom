@@ -1,16 +1,18 @@
 /** @flow */
-import { RCT_EXPORT_MODULE } from "RCTBridge";
+
+import RCTModule from "RCTModule";
 
 const supportsTouchForceChange = "ontouchforcechange" in window.document;
 
-@RCT_EXPORT_MODULE("RCTPlatformConstants")
-class RCTPlatformConstants {
+class RCTPlatformConstants extends RCTModule {
+  static moduleName = "RCTPlatformConstants";
+
   constantsToExport() {
     return {
       forceTouchAvailable: supportsTouchForceChange,
       reactNativeVersion: {
         major: 0,
-        minor: 55,
+        minor: 56,
         patch: 0
       }
     };

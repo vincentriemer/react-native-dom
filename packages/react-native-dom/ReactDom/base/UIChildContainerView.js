@@ -23,6 +23,6 @@ class UIChildContainerView extends HTMLElement {
   }
 }
 
-customElements.define("ui-child-containerView", UIChildContainerView);
+customElements.define("ui-child-container-view", UIChildContainerView);
 
 export default UIChildContainerView;

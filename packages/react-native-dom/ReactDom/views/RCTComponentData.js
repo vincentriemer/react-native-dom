@@ -2,10 +2,8 @@
 
 import invariant from "invariant";
 
-import RCTBridge, {
-  bridgeModuleNameForClass,
-  getPropertyNames
-} from "RCTBridge";
+import RCTBridge, { getPropertyNames } from "RCTBridge";
+import { bridgeModuleNameForClass } from "RCTModule";
 import RCTUIManager from "RCTUIManager";
 import type { RCTComponent } from "RCTComponent";
 import UIView from "UIView";
@@ -14,11 +12,9 @@ import RCTText from "RCTText";
 import RCTRawText from "RCTRawText";
 import type RCTView from "RCTView";
 import RCTTextInput from "RCTTextInput";
-import typeof _RCTShadowView from "RCTShadowView";
-import typeof _RCTViewManager from "RCTViewManager";
-
-type RCTViewManager = $Call<$await<_RCTViewManager>>;
-type RCTShadowView = $Call<$await<_RCTShadowView>>;
+import type RCTShadowView from "RCTShadowView";
+import type RCTViewManager from "RCTViewManager";
+import type { PropDefType } from "RCTPropDescription";
 
 type Props = { [string]: any };
 
@@ -34,7 +30,7 @@ type RCTPropBlock = (view: RCTComponent, { [string]: any }) => void;
 type RCTPropBlockDictionary = { [string]: RCTPropBlock };
 
 function moduleNameForClass(cls: Class<RCTViewManager>) {
-  let name = cls.__moduleName;
+  let name = cls.moduleName;
   if (name != null) {
     if (name.startsWith("RK")) {
       name = `RCT${name.substring(2)}`;
@@ -51,7 +47,6 @@ class RCTComponentData {
   managerClass: Class<RCTViewManager>;
   name: string;
   _manager: ?RCTViewManager;
-  viewConfig: { [string]: any };
   bridge: RCTBridge;
   _propConfig: ?Object;
   _shadowPropConfig: ?Object;
@@ -88,19 +83,21 @@ class RCTComponentData {
       }
     }
 
-    this.manager.__props.forEach(({ name, type, exported }) => {
-      if (exported) {
-        if (type === "RCTBubblingEventBlock") {
-          bubblingEvents.push(normalizeInputEventName(name));
-          propTypes[name] = "BOOL";
-        } else if (type === "RCTDirectEventBlock") {
-          directEvents.push(normalizeInputEventName(name));
-          propTypes[name] = "BOOL";
-        } else {
-          propTypes[name] = type;
+    this.manager
+      .describeProps()
+      .viewProps.forEach(({ name, type, nativeOnly }) => {
+        if (!nativeOnly) {
+          if (type === "RCTBubblingEventBlock") {
+            bubblingEvents.push(normalizeInputEventName(name));
+            propTypes[name] = "BOOL";
+          } else if (type === "RCTDirectEventBlock") {
+            directEvents.push(normalizeInputEventName(name));
+            propTypes[name] = "BOOL";
+          } else {
+            propTypes[name] = type;
+          }
         }
-      }
-    });
+      });
 
     return {
       propTypes,
@@ -111,7 +108,7 @@ class RCTComponentData {
   }
 
   generatePropConfig(
-    rawPropConfig: Array<any>
+    rawPropConfig: Array<PropDefType>
   ): { [string]: { type: string, setter: Function } } {
     return rawPropConfig.reduce(
       (propConfig, raw) => ({
@@ -131,7 +128,9 @@ class RCTComponentData {
 
   get propConfig(): { [string]: { type: string, setter: Function } } {
     if (this._propConfig == null) {
-      this._propConfig = this.generatePropConfig(this.manager.__props);
+      this._propConfig = this.generatePropConfig(
+        this.manager.describeProps().viewProps
+      );
     }
 
     return this._propConfig;
@@ -140,7 +139,7 @@ class RCTComponentData {
   get shadowPropConfig(): { [string]: { type: string, setter: Function } } {
     if (this._shadowPropConfig == null) {
       this._shadowPropConfig = this.generatePropConfig(
-        this.manager.__shadowProps
+        this.manager.describeProps().shadowProps
       );
     }
 

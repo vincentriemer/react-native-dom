@@ -1,14 +1,10 @@
 /** @flow */
 
-import RCTBridge, { RCT_EXPORT_MODULE } from "RCTBridge";
+import RCTModule from "RCTModule";
+import type RCTBridge from "RCTBridge";
 
-@RCT_EXPORT_MODULE("RCTSourceCode")
-class RCTSourceCode {
-  bridge: RCTBridge;
-
-  constructor(bridge: RCTBridge) {
-    this.bridge = bridge;
-  }
+class RCTSourceCode extends RCTModule {
+  static moduleName = "RCTSourceCode";
 
   constantsToExport() {
     const bundleURL = this.bridge.bundleLocation;

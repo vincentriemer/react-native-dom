@@ -11,7 +11,6 @@ import {
   defaultFontSize,
   defaultFontStack
 } from "RCTSharedTextValues";
-import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 
 // inject default font stylesheet
@@ -29,7 +28,6 @@ import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
   document.head && document.head.appendChild(styleElement);
 })();
 
-@CustomElement("rct-text")
 class RCTText extends RCTView {
   _selectable: boolean;
   _disabled: boolean;
@@ -132,8 +130,8 @@ class RCTText extends RCTView {
     return this._selectable;
   }
 
-  set textAlign(value: string) {
-    this.style.textAlign = value;
+  set textAlign(value: ?string) {
+    this.style.textAlign = value ? value : "inherit";
   }
 
   updatePointerEvents() {
@@ -196,11 +194,9 @@ class RCTText extends RCTView {
     );
   }
 
-  set textDecorationColor(value: ?number) {
+  set textDecorationColor(value: ?string) {
     if (value != null) {
-      const [a, r, g, b] = ColorArrayFromHexARGB(value);
-      const stringValue = `rgba(${r},${g},${b},${a})`;
-      this.updateChildContainerStyle("textDecorationColor", stringValue);
+      this.updateChildContainerStyle("textDecorationColor", value);
     } else {
       this.updateChildContainerStyle("textDecorationColor", "currentcolor");
     }
@@ -236,5 +232,7 @@ class RCTText extends RCTView {
     }
   }
 }
+
+customElements.define("rct-text", RCTText);
 
 export default RCTText;

@@ -3,9 +3,7 @@ import type { Frame } from "InternalLib";
 import UIView from "UIView";
 import type RCTBridge from "RCTBridge";
 import RCTEventEmitter from "RCTNativeEventEmitter";
-import CustomElement from "CustomElement";
 
-@CustomElement("rct-view")
 class RCTView extends UIView {
   bridge: RCTBridge;
   onLayout: ?Function;
@@ -39,5 +37,7 @@ class RCTView extends UIView {
   //   this.tabIndex = 0;
   // }
 }
+
+customElements.define("rct-view", RCTView);
 
 export default RCTView;

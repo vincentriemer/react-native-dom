@@ -4,9 +4,7 @@ import type { Frame } from "InternalLib";
 import type RCTBridge from "RCTBridge";
 import RCTView from "RCTView";
 import { defaultFontSize, defaultFontStack } from "RCTSharedTextValues";
-import CustomElement from "CustomElement";
 
-@CustomElement("rct-text-input")
 class RCTTextInput extends RCTView {
   inputElement: HTMLInputElement;
 
@@ -94,5 +92,7 @@ class RCTTextInput extends RCTView {
     this.style.fontWeight = value;
   }
 }
+
+customElements.define("rct-text-input", RCTTextInput);
 
 export default RCTTextInput;

@@ -1,7 +1,6 @@
 /** @flow */
 import RCTView from "RCTView";
 import type RCTBridge from "RCTBridge";
-import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 
 // adapted from https://github.com/necolas/react-native-web/blob/master/src/components/ActivityIndicator/index.js
@@ -12,7 +11,6 @@ const INDICATOR_SVG = `
 </svg>
 `;
 
-@CustomElement("rct-activity-indicator-view")
 class RCTActivityIndicatorView extends RCTView {
   // $FlowFixMe - WAAPI not included in FlowType Defs
   animation: Animation;
@@ -71,14 +69,8 @@ class RCTActivityIndicatorView extends RCTView {
     }
   }
 
-  set color(value: number | string) {
-    if (typeof value === "number") {
-      const [a, r, g, b] = ColorArrayFromHexARGB(value);
-      const stringValue = `rgba(${r},${g},${b},${a})`;
-      this.style.color = stringValue;
-    } else {
-      this.style.color = value;
-    }
+  set color(value: string) {
+    this.style.color = value;
   }
 
   set animating(value: boolean) {
@@ -91,5 +83,7 @@ class RCTActivityIndicatorView extends RCTView {
     this.updateView();
   }
 }
+
+customElements.define("rct-activity-indicator-view", RCTActivityIndicatorView);
 
 export default RCTActivityIndicatorView;

@@ -1,37 +1,31 @@
 /** @flow */
 
-import RCTBridge, { RCT_EXPORT_MODULE } from "RCTBridge";
+import type RCTBridge from "RCTBridge";
 import RCTRawText from "RCTRawText";
-import _RCTViewManager from "RCTViewManager";
-import _RCTShadowRawText from "RCTShadowRawText";
+import RCTViewManager from "RCTViewManager";
+import RCTShadowRawText from "RCTShadowRawText";
+import RCTPropTypes from "RCTPropTypes";
 
-module.exports = (async () => {
-  const [RCTViewManager, RCTShadowRawText] = await Promise.all([
-    _RCTViewManager,
-    _RCTShadowRawText
-  ]);
+class RCTRawTextManager extends RCTViewManager {
+  static moduleName = "RCTRawTextManager";
 
-  const {
-    RCT_EXPORT_SHADOW_PROP,
-    RCT_EXPORT_VIEW_PROP,
-    RCT_EXPORT_MIRRORED_PROP
-  } = RCTViewManager;
-
-  @RCT_EXPORT_MODULE("RCTRawTextManager")
-  class RCTRawTextManager extends RCTViewManager {
-    view(): RCTRawText {
-      return new RCTRawText(this.bridge);
-    }
-
-    shadowView(): RCTShadowRawText {
-      return new RCTShadowRawText();
-    }
-
-    @RCT_EXPORT_MIRRORED_PROP("text", "string", false)
-    setText(view: any, value: string) {
-      view.text = value;
-    }
+  view(): RCTRawText {
+    return new RCTRawText(this.bridge);
   }
 
-  return RCTRawTextManager;
-})();
+  shadowView(): RCTShadowRawText {
+    return new RCTShadowRawText(this.bridge);
+  }
+
+  describeProps() {
+    return super
+      .describeProps()
+      .addMirroredProp("text", RCTPropTypes.string, this.setText);
+  }
+
+  setText(view: RCTRawText, value: ?string) {
+    view.text = value ? value : "";
+  }
+}
+
+export default RCTRawTextManager;

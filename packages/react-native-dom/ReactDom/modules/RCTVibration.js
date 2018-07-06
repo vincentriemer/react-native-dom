@@ -1,17 +1,14 @@
 /** @flow */
 
-import RCTBridge, {
-  RCTFunctionTypeNormal,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import RCTModule from "RCTModule";
+import type RCTBridge from "RCTBridge";
 
-@RCT_EXPORT_MODULE("RCTVibration")
-class RCTVibration {
+class RCTVibration extends RCTModule {
+  static moduleName = "RCTVibration";
+
   _intervalHandle: IntervalID;
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  vibrateByPattern(pattern: Array<number>, repeat: boolean = false) {
+  $vibrateByPattern(pattern: Array<number>, repeat: boolean = false) {
     if (!navigator.vibrate) {
       return;
     }
@@ -28,8 +25,7 @@ class RCTVibration {
     }
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  vibrate(duration: number) {
+  $vibrate(duration: number) {
     if (!navigator.vibrate) {
       return;
     }
@@ -37,9 +33,8 @@ class RCTVibration {
     clearInterval(this._intervalHandle);
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  cancel() {
-    this.vibrate(0);
+  $cancel() {
+    this.$vibrate(0);
   }
 }
 

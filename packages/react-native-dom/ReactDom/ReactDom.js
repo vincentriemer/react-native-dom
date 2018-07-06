@@ -7,19 +7,12 @@ import "web-animations-js/web-animations-next.min";
 import RCTRootView from "RCTRootView";
 import bundleFromRoot from "BundleFromRoot";
 import type { NativeModuleImports } from "RCTModule";
-import type { RCTUIManager as _RCTUIManager } from "RCTUIManager";
-import RCTBridge, {
-  RCTFunctionTypeNormal,
-  RCTFunctionTypePromise,
-  RCTFunctionTypeSync,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import type RCTUIManager from "RCTUIManager";
+import RCTBridge from "RCTBridge";
 import UIView from "UIView";
 import RCTView from "RCTView";
 import RCTViewManager from "RCTViewManager";
 import RCTEventEmitter from "RCTNativeEventEmitter";
-import CustomElement from "CustomElement";
 import RCTEventDispatcher, { type RCTEvent } from "RCTEventDispatcher";
 
 declare var __DEV__: boolean;
@@ -31,23 +24,10 @@ if (!global.process.env.NODE_ENV) {
 }
 
 // Export native modules to provide ability for others to provide their own modules
-export {
-  RCT_EXPORT_MODULE,
-  RCT_EXPORT_METHOD,
-  RCTFunctionTypeNormal,
-  RCTFunctionTypePromise,
-  RCTFunctionTypeSync,
-  RCTView,
-  RCTViewManager,
-  RCTEventEmitter,
-  UIView,
-  CustomElement,
-  RCTRootView
-};
+export { RCTView, RCTViewManager, RCTEventEmitter, UIView, RCTRootView };
 
 // Export type definitions useful for native module development
-export type { RCTEventDispatcher, RCTBridge, RCTEvent };
-export type RCTUIManager = _RCTUIManager;
+export type { RCTEventDispatcher, RCTBridge, RCTEvent, RCTUIManager };
 
 // Register Built-in Native Modules
 const builtInNativeModules: any[] = [

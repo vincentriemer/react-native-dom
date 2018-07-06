@@ -1,10 +1,6 @@
 /** @flow */
 
-import RCTBridge, {
-  RCTFunctionTypeNormal,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import type RCTBridge from "RCTBridge";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 
 type DataTypeString = { string: string };
@@ -57,24 +53,29 @@ function parseHttpHeaders(httpHeaders: ?string) {
 
 let requestIdCounter = 0;
 
-@RCT_EXPORT_MODULE("RCTNetworking")
 class RCTNetworkingNative extends RCTEventEmitter {
+  static moduleName = "RCTNetworking";
+
   requestStore: { [id: number]: RCTHttpRequest } = {};
 
   requestHandlers: RCTNetworkingRequestHandler[];
   responseHandlers: RCTNetworkingResponseHandler[];
 
   constructor(bridge: RCTBridge) {
-    super(bridge, [
+    super(bridge);
+    this.requestHandlers = [];
+    this.responseHandlers = [];
+  }
+
+  supportedMethods() {
+    return [
       "didCompleteNetworkResponse",
       "didReceiveNetworkResponse",
       "didSendNetworkData",
       "didReceiveNetworkIncrementalData",
       "didReceiveNetworkDataProgress",
       "didReceiveNetworkData"
-    ]);
-    this.requestHandlers = [];
-    this.responseHandlers = [];
+    ];
   }
 
   sendData(request: RCTHttpRequest, responseType: string) {
@@ -136,8 +137,7 @@ class RCTNetworkingNative extends RCTEventEmitter {
     // TODO: Implement
   };
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  sendRequest(query: RCTRequest, callbackId: number) {
+  $sendRequest(query: RCTRequest, callbackId: number) {
     const {
       data,
       method,
@@ -193,26 +193,14 @@ class RCTNetworkingNative extends RCTEventEmitter {
     this.bridge.callbackFromId(callbackId)(requestId);
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  abortRequest(requestId: number) {
+  $abortRequest(requestId: number) {
     // TODO: Implement
     console.log("abortRequest", requestId);
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  clearCookies(callbackId: number) {
+  $clearCookies(callbackId: number) {
     // TODO: Implement
-    console.log("clearCookies", callbackId);
-  }
-
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  addListener(eventName: string, callback: ?(body: any) => void) {
-    super.addListener(eventName, callback);
-  }
-
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  removeListeners(count: number) {
-    super.removeListeners(count);
+    console.log("clearCookies");
   }
 
   addRequestHandler(handler: RCTNetworkingRequestHandler) {

@@ -1,10 +1,7 @@
 /** @flow */
 
-import RCTBridge, {
-  RCTFunctionTypeNormal,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import RCTModule from "RCTModule";
+import type RCTBridge from "RCTBridge";
 
 type Timer = {
   callbackId: number,
@@ -19,22 +16,22 @@ function now() {
   return window.performance ? performance.now() : Date.now();
 }
 
-@RCT_EXPORT_MODULE("RCTTiming")
-class RCTTiming {
-  bridge: RCTBridge;
+class RCTTiming extends RCTModule {
+  static moduleName = "RCTTiming";
+
   timers: { [callbackId: string]: Timer };
   sendIdleEvents: boolean;
   targetFrameDuration: number;
 
   constructor(bridge: RCTBridge) {
-    this.bridge = bridge;
+    super(bridge);
+
     this.timers = {};
     this.sendIdleEvents = false;
     this.targetFrameDuration = 1000.0 / 60.0; // 60fps
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  createTimer(
+  $createTimer(
     callbackId: number,
     duration: number,
     jsSchedulingTime: number,
@@ -66,13 +63,11 @@ class RCTTiming {
     }
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  deleteTimer(callbackId: number) {
+  $deleteTimer(callbackId: number) {
     delete this.timers[String(callbackId)];
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  setSendIdleEvents(sendIdle: boolean) {
+  $setSendIdleEvents(sendIdle: boolean) {
     this.sendIdleEvents = sendIdle;
   }
 

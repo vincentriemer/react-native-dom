@@ -3,11 +3,8 @@
 import cuid from "cuid";
 import invariant from "invariant";
 
-import RCTBridge, {
-  RCTFunctionTypeNormal,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import RCTModule from "RCTModule";
+import type RCTBridge from "RCTBridge";
 import type {
   RCTHttpRequest,
   RCTNetworkingRequestHandler,
@@ -16,14 +13,14 @@ import type {
 
 const kBlobURIScheme = "blob";
 
-@RCT_EXPORT_MODULE("BlobModule")
-class RCTBlobManager
+class RCTBlobManager extends RCTModule
   implements RCTNetworkingRequestHandler, RCTNetworkingResponseHandler {
-  bridge: RCTBridge;
+  static moduleName = "RCTBlobManager";
+
   blobs: { [key: string]: Blob };
 
   constructor(bridge: RCTBridge) {
-    this.bridge = bridge;
+    super(bridge);
     this.blobs = {};
   }
 
@@ -70,14 +67,12 @@ class RCTBlobManager
     return data;
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  addNetworkingHandler() {
+  $addNetworkingHandler() {
     this.bridge.networking.addRequestHandler(this);
     this.bridge.networking.addResponseHandler(this);
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  release(blobId: string) {
+  $release(blobId: string) {
     delete this.blobs[blobId];
   }
 
