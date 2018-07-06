@@ -69,26 +69,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: "MultiColumnExample",
     module: require("./MultiColumnExample")
   },
-  // {
-  //   key: "NavigatorIOSColorsExample",
-  //   module: require("./NavigatorIOSColorsExample")
-  // },
-  // {
-  //   key: "NavigatorIOSExample",
-  //   module: require("./NavigatorIOSExample")
-  // },
   {
     key: "PickerExample",
     module: require("./PickerExample")
   },
-  // {
-  //   key: "PickerIOSExample",
-  //   module: require("./PickerIOSExample")
-  // },
-  // {
-  //   key: "ProgressViewIOSExample",
-  //   module: require("./ProgressViewIOSExample")
-  // },
   // {
   //   key: "RefreshControlExample",
   //   module: require("./RefreshControlExample")
@@ -114,6 +98,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     module: require("./StatusBarExample")
   },
   {
+    key: 'SwipeableFlatListExample',
+    module: require('./SwipeableFlatListExample'),
+  },
+  {
     key: "SwipeableListViewExample",
     module: require("./SwipeableListViewExample")
   },
@@ -127,11 +115,11 @@ const ComponentExamples: Array<RNTesterExample> = [
   // },
   {
     key: "TextExample",
-    module: require("./TextExample.ios")
+    module: require("./TextExample.dom")
   },
   {
     key: "TextInputExample",
-    module: require("./TextInputExample.ios")
+    module: require("./TextInputExample.dom")
   },
   {
     key: "TouchableExample",
