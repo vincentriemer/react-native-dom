@@ -24,7 +24,7 @@ class RCTRawTextManager extends RCTViewManager {
   }
 
   setText(view: RCTRawText, value: ?string) {
-    view.text = value ? value : "";
+    view.text = value ?? "";
   }
 }
 

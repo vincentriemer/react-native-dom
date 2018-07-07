@@ -2,8 +2,6 @@
 
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 
-const BORDER_STYLE_PROPS = ["borderStyle"];
-
 const BORDER_WIDTH_PROPS = [
   "borderWidth",
   "borderTopWidth",
@@ -36,6 +34,8 @@ const BORDER_RADIUS_PROPS = [
   "borderBottomEndRadius"
 ];
 
+export const BORDER_STYLE_PROPS = ["borderStyle"];
+
 export const BORDER_NUMBER_PROPS: string[] = [].concat(
   BORDER_WIDTH_PROPS,
   BORDER_RADIUS_PROPS,
@@ -51,7 +51,48 @@ export const ALL_BORDER_PROPS: string[] = [].concat(
   BORDER_RADIUS_PROPS
 );
 
+const DEFAULT_PROPS = {
+  borderStyle: "solid",
+  borderWidth: 0,
+  borderColor: "black",
+  borderRadius: 0
+};
+
 class UIBorderView extends HTMLElement {
+  rawProps = {
+    // style
+    borderStyle: undefined,
+
+    // width
+    borderWidth: undefined,
+    borderTopWidth: undefined,
+    borderBottomWidth: undefined,
+    borderLeftWidth: undefined,
+    borderRightWidth: undefined,
+    borderStartWidth: undefined,
+    borderEndWidth: undefined,
+
+    // color
+    borderColor: undefined,
+    borderTopColor: undefined,
+    borderBottomColor: undefined,
+    borderLeftColor: undefined,
+    borderRightColor: undefined,
+    borderEndColor: undefined,
+    borderStartColor: undefined,
+
+    // radius
+    borderRadius: undefined,
+    borderTopLeftRadius: undefined,
+    borderTopRightRadius: undefined,
+    borderTopStartRadius: undefined,
+    borderTopEndRadius: undefined,
+    borderBottomLeftRadius: undefined,
+    borderBottomRightRadius: undefined,
+    borderBottomStartRadius: undefined,
+    borderBottomEndRadius: undefined
+  };
+
   constructor() {
     super();
 
@@ -67,41 +108,6 @@ class UIBorderView extends HTMLElement {
       overflow: "hidden",
       contain: "strict"
     });
-
-    BORDER_STYLE_PROPS.forEach((propName) => {
-      Object.defineProperty(this, propName, {
-        configurable: true,
-        set: (value) => {
-          if (value == null) {
-            // $FlowFixMe
-            this.style[propName] = "solid";
-          } else {
-            // $FlowFixMe
-            this.style[propName] = value;
-          }
-        }
-      });
-    });
-
-    BORDER_COLOR_PROPS.forEach((propName) => {
-      Object.defineProperty(this, propName, {
-        configurable: true,
-        set: (value) => {
-          // $FlowFixMe
-          this.style[propName] = value;
-        }
-      });
-    });
-
-    [].concat(BORDER_WIDTH_PROPS, BORDER_RADIUS_PROPS).forEach((propName) => {
-      Object.defineProperty(this, propName, {
-        configurable: true,
-        set: (value) => {
-          // $FlowFixMe
-          this.style[propName] = `${value}px`;
-        }
-      });
-    });
   }
 
   updateDimensions(width: number, height: number) {
@@ -109,29 +115,73 @@ class UIBorderView extends HTMLElement {
     this.style.height = `${height}px`;
   }
 
-  // property shorthands
-  set borderColor(value: number) {
-    const [a, r, g, b] = ColorArrayFromHexARGB(value);
-    const stringValue = `rgba(${r},${g},${b},${a})`;
-    this.style.borderColor = stringValue;
-  }
+  render() {
+    // TODO: start & end props
 
-  set borderRadius(value: number) {
-    this.style.borderRadius = `${value}px`;
-  }
+    const rp = this.rawProps;
 
-  set borderWidth(value: number) {
-    this.style.borderWidth = `${value}px`;
-  }
+    const borderStyle = rp.borderStyle ?? DEFAULT_PROPS.borderStyle;
 
-  set borderStyle(value: string) {
-    if (value == null) {
-      this.style.borderStyle = "solid";
-    } else {
-      this.style.borderStyle = value;
-    }
+    const borderTopWidth =
+      rp.borderWidth ?? rp.borderTopWidth ?? DEFAULT_PROPS.borderWidth;
+    const borderBottomWidth =
+      rp.borderWidth ?? rp.borderBottomWidth ?? DEFAULT_PROPS.borderWidth;
+    const borderLeftWidth =
+      rp.borderWidth ?? rp.borderLeftWidth ?? DEFAULT_PROPS.borderWidth;
+    const borderRightWidth =
+      rp.borderWidth ?? rp.borderRightWidth ?? DEFAULT_PROPS.borderWidth;
+
+    const borderTopColor =
+      rp.borderColor ?? rp.borderTopColor ?? DEFAULT_PROPS.borderColor;
+    const borderBottomColor =
+      rp.borderColor ?? rp.borderBottomColor ?? DEFAULT_PROPS.borderColor;
+    const borderLeftColor =
+      rp.borderColor ?? rp.borderLeftColor ?? DEFAULT_PROPS.borderColor;
+    const borderRightColor =
+      rp.borderColor ?? rp.borderRightColor ?? DEFAULT_PROPS.borderColor;
+
+    const borderTopLeftRadius =
+      rp.borderRadius ?? rp.borderTopLeftRadius ?? DEFAULT_PROPS.borderRadius;
+    const borderTopRightRadius =
+      rp.borderRadius ?? rp.borderTopRightRadius ?? DEFAULT_PROPS.borderRadius;
+    const borderBottomLeftRadius =
+      rp.borderRadius ??
+      rp.borderBottomLeftRadius ??
+      DEFAULT_PROPS.borderRadius;
+    const borderBottomRightRadius =
+      rp.borderRadius ??
+      rp.borderBottomRightRadius ??
+      DEFAULT_PROPS.borderRadius;
+
+    const newStyle = {
+      borderStyle,
+      borderTopWidth: `${borderTopWidth}px`,
+      borderBottomWidth: `${borderBottomWidth}px`,
+      borderLeftWidth: `${borderLeftWidth}px`,
+      borderRightWidth: `${borderRightWidth}px`,
+      borderTopColor,
+      borderBottomColor,
+      borderLeftColor,
+      borderRightColor,
+      borderTopLeftRadius: `${borderTopLeftRadius}px`,
+      borderTopRightRadius: `${borderTopRightRadius}px`,
+      borderBottomLeftRadius: `${borderBottomLeftRadius}px`,
+      borderBottomRightRadius: `${borderBottomRightRadius}px`
+    };
+
+    Object.assign(this.style, newStyle);
   }
 }
+
+ALL_BORDER_PROPS.forEach((propName) => {
+  Object.defineProperty(UIBorderView.prototype, propName, {
+    confugurable: true,
+    set(value) {
+      this.rawProps[propName] = value;
+      this.render();
+    }
+  });
+});
 
 customElements.define("ui-border-view", UIBorderView);
 

@@ -57,11 +57,11 @@ class RCTTextManager extends RCTViewManager {
   }
 
   setSelectable(view: RCTText, value: ?boolean) {
-    view.selectable = value != null ? value : false;
+    view.selectable = value ?? false;
   }
 
   setColor(view: RCTText, value: ?string) {
-    view.color = value ? value : "black";
+    view.color = value ?? "black";
   }
 
   setTextAlign(view: RCTText, value: ?string) {

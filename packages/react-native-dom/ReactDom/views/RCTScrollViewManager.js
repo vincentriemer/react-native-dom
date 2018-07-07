@@ -31,7 +31,7 @@ class RCTScrollViewManager extends RCTViewManager {
     view.scrollEventThrottle = value != null ? value : 0;
   }
 
-  $getContentSize(reactTag: number, cb: Function) {
+  $getContentSize(reactTag: number, callbackId: number) {
     this.bridge.uiManager.addUIBlock((_, viewRegistry: Map<number, UIView>) => {
       const view = viewRegistry.get(reactTag);
       invariant(
@@ -45,7 +45,7 @@ class RCTScrollViewManager extends RCTViewManager {
         `Cannot find coresponding RCTScrollContentView for RCTScrollView with tag ${reactTag}`
       );
 
-      cb({
+      this.bridge.callbackFromId(callbackId)({
         width: contentView.width,
         height: contentView.height
       });

@@ -303,7 +303,7 @@ class RCTUIManager extends RCTModule {
     });
   }
 
-  async $measureInWindow(reactTag: number, callback: Function) {
+  async $measureInWindow(reactTag: number, callbackId: number) {
     // const result = await this.measure(reactTag);
     // invariant(result, `No measurement available for view ${reactTag}`);
 
@@ -314,7 +314,7 @@ class RCTUIManager extends RCTModule {
     const { left, top, width, height } = view.getBoundingClientRect();
 
     // const { globalX, globalY, width, height } = result;
-    callback(left, top, width, height);
+    this.bridge.callbackFromId(callbackId)(left, top, width, height);
   }
 
   $setJSResponder(reactTag: number) {

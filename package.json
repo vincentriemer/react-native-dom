@@ -8,15 +8,24 @@
   "bugs": {
     "url": "https://github.com/vincentriemer/react-native-dom/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vincentriemer/react-native-dom.git"
+  },
   "license": "MIT",
   "author": {
     "name": "Vincent Riemer",
     "email": "vincentriemer+rndom@gmail.com",
     "url": "https://vincentriemer.com"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vincentriemer/react-native-dom.git"
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/react-native",
+      "**/react-native/**"
+    ]
   },
   "scripts": {
     "clean": "shx rm -rf packages/*/lib",
@@ -42,7 +51,7 @@
     "all-contributors-cli": "^4.11.1",
     "babel-eslint": "^8.2.3",
     "cz-conventional-changelog": "^2.1.0",
-    "eslint": "^4.19.1",
+    "eslint": "^5.0.1",
     "eslint-import-resolver-lerna": "^1.0.0",
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-prettier": "^2.6.0",
@@ -55,11 +64,6 @@
     "sort-package-json": "^1.13.0",
     "wait-port": "^0.2.2"
   },
-  "lint-staged": {
-    "package.json": ["sort-package-json", "git add"],
-    "*.js": ["eslint --fix", "git add"],
-    "*.{js,json,css,md}": ["prettier --write", "git add"]
-  },
   "resolutions": {
     "**/@babel/core": "7.0.0-beta.51",
     "**/@babel/generator": "7.0.0-beta.51",
@@ -67,6 +71,7 @@
     "**/@babel/plugin-external-helpers": "7.0.0-beta.51",
     "**/@babel/plugin-proposal-class-properties": "7.0.0-beta.51",
     "**/@babel/plugin-proposal-object-rest-spread": "7.0.0-beta.51",
+    "**/@babel/plugin-proposal-optional-chaining": "7.0.0-beta.51",
     "**/@babel/plugin-syntax-dynamic-import": "7.0.0-beta.51",
     "**/@babel/plugin-syntax-nullish-coalescing-operator": "7.0.0-beta.51",
     "**/@babel/plugin-transform-arrow-functions": "7.0.0-beta.51",
@@ -89,18 +94,27 @@
     "**/@babel/plugin-transform-regenerator": "7.0.0-beta.51",
     "**/@babel/plugin-transform-shorthand-properties": "7.0.0-beta.51",
     "**/@babel/plugin-transform-spread": "7.0.0-beta.51",
+    "**/@babel/plugin-transform-sticky-regex": "7.0.0-beta.51",
     "**/@babel/plugin-transform-template-literals": "7.0.0-beta.51",
     "**/@babel/plugin-transform-unicode-regex": "7.0.0-beta.51",
     "**/@babel/register": "7.0.0-beta.51",
+    "**/@babel/runtime": "7.0.0-beta.51",
     "**/@babel/template": "7.0.0-beta.51",
     "**/@babel/traverse": "7.0.0-beta.51",
-    "**/@babel/types": "7.0.0-beta.51",
-    "**/@babel/plugin-proposal-optional-chaining": "7.0.0-beta.51",
-    "**/@babel/plugin-transform-sticky-regex": "7.0.0-beta.51",
-    "**/@babel/runtime": "7.0.0-beta.51"
+    "**/@babel/types": "7.0.0-beta.51"
   },
-  "workspaces": {
-    "packages": ["packages/*"],
-    "nohoist": ["**/react-native", "**/react-native/**"]
+  "lint-staged": {
+    "package.json": [
+      "sort-package-json",
+      "git add"
+    ],
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.{js,json,css,md}": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }

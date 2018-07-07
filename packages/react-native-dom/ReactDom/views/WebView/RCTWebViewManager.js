@@ -24,11 +24,11 @@ class RCTWebViewManager extends RCTViewManager {
   }
 
   setSource(view: RCTWebView, value: ?WebViewSource) {
-    view.source = value ? value : {};
+    view.source = value ?? {};
   }
 
   setScrollEnabled(view: RCTWebView, value: ?boolean) {
-    view.scrollEnabled = value != null ? value : false;
+    view.scrollEnabled = value ?? false;
   }
 
   $goBack(reactTag: number) {

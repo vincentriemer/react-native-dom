@@ -6,7 +6,11 @@ import UIView from "UIView";
 import RCTPropTypes from "RCTPropTypes";
 import RCTPropDescription from "RCTPropDescription";
 import MatrixMath from "NativeMatrixMath";
-import { BORDER_NUMBER_PROPS, BORDER_COLOR_PROPS } from "UIBorderView";
+import {
+  BORDER_NUMBER_PROPS,
+  BORDER_COLOR_PROPS,
+  BORDER_STYLE_PROPS
+} from "UIBorderView";
 import RCTView from "RCTView";
 import type { HitSlop } from "UIHitSlopView";
 import RCTShadowView from "RCTShadowView";
@@ -77,7 +81,6 @@ function eventSetter(view: RCTView, propName: string) {
   return (json: Object) => {
     const mutableEvent = { ...json };
     mutableEvent.target = view.reactTag;
-    console.log(view);
     view.bridge.eventDispatcher.sendInputEvent(propName, mutableEvent);
   };
 }
@@ -104,6 +107,13 @@ class RCTViewManager extends RCTModule {
     );
 
     // Add Border View Props
+    propDescription = propDescription.addStringProp(
+      "borderStyle",
+      (view: any, value) => {
+        view.borderStyle = value;
+      }
+    );
+
     propDescription = BORDER_NUMBER_PROPS.reduce(
       (desc, name) =>
         desc.addNumberProp(name, (view: any, value) => {
@@ -159,63 +169,63 @@ class RCTViewManager extends RCTModule {
   }
 
   setBackgroundColor(view: RCTView, value: ?string) {
-    view.backgroundColor = value ? value : "transparent";
+    view.backgroundColor = value ?? "transparent";
   }
 
   setOpacity(view: RCTView, value: ?number) {
-    view.opacity = value != null ? value : 1;
+    view.opacity = value ?? 1;
   }
 
   setTransform(view: RCTView, value: ?Array<number>) {
-    view.transform = value ? value : MatrixMath.createIdentityMatrix();
+    view.transform = value;
   }
 
   setAnimatedTransform(view: RCTView, value: ?Array<Object>) {
-    view.animatedTransform = value ? value : [];
+    view.animatedTransform = value;
   }
 
   setTouchable(view: RCTView, value: ?boolean) {
-    view.touchable = value != null ? value : false;
+    view.touchable = value ?? false;
   }
 
   setDisabled(view: RCTView, value: ?boolean) {
-    view.disabled = value != null ? value : false;
+    view.disabled = value ?? false;
   }
 
   setPointerEvents(view: RCTView, value: ?string) {
-    view.pointerEvents = value ? value : "auto";
+    view.pointerEvents = value ?? "auto";
   }
 
   setHitSlop(view: RCTView, value: ?HitSlop) {
-    view.hitSlop = value ? value : undefined;
+    view.hitSlop = value ?? undefined;
   }
 
   setBackfaceVisibility(view: RCTView, value: ?string) {
-    view.backfaceVisibility = value ? value : "visible";
+    view.backfaceVisibility = value ?? "visible";
   }
 
   setOverflow(view: RCTView, value: ?string) {
-    view.overflow = value ? value : "visible";
+    view.overflow = value ?? "visible";
   }
 
   setZIndex(view: RCTView, value: ?number) {
-    view.zIndex = value != null ? value : 0;
+    view.zIndex = value ?? 0;
   }
 
   setShadowColor(view: RCTView, value: ?number) {
-    view.shadowColor = value ? value : 0;
+    view.shadowColor = value ?? 0;
   }
 
   setShadowOffset(view: RCTView, value: ?Object) {
-    view.shadowOffset = value ? value : { height: 0, width: 0 };
+    view.shadowOffset = value ?? { height: 0, width: 0 };
   }
 
   setShadowOpacity(view: RCTView, value: ?number) {
-    view.shadowOpacity = value != null ? value : 0;
+    view.shadowOpacity = value ?? 0;
   }
 
   setShadowRadius(view: RCTView, radius: ?number) {
-    view.shadowRadius = radius != null ? radius : 1;
+    view.shadowRadius = radius ?? 1;
   }
 }
 

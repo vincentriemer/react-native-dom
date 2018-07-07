@@ -20,19 +20,16 @@ class RCTActivityIndicatorViewManager extends RCTViewManager {
       .addBooleanProp("hidesWhenStopped", this.setHidesWhenStopped);
   }
 
-  // @RCT_EXPORT_VIEW_PROP("animating", "boolean")
   setAnimating(view: RCTActivityIndicatorView, value: ?boolean) {
-    view.animating = !!value;
+    view.animating = value ?? true;
   }
 
-  // @RCT_EXPORT_VIEW_PROP("color", "color")
   setColor(view: RCTActivityIndicatorView, value: ?string) {
-    view.color = value ? value : "rgb(25, 118, 210)";
+    view.color = value ?? "rgb(25, 118, 210)";
   }
 
-  // @RCT_EXPORT_VIEW_PROP("hidesWhenStopped", "boolean")
   setHidesWhenStopped(view: RCTActivityIndicatorView, value: ?boolean) {
-    view.hidesWhenStopped = !!value;
+    view.hidesWhenStopped = value ?? false;
   }
 }
 

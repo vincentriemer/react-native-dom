@@ -25,35 +25,35 @@ class RCTTextInputManager extends RCTViewManager {
   }
 
   setPadding(view: RCTTextInput, value: ?number) {
-    view.padding = value != null ? value : 0;
+    view.padding = value ?? 0;
   }
 
   setPaddingLeft(view: RCTTextInput, value: ?number) {
-    view.paddingLeft = value != null ? value : 0;
+    view.paddingLeft = value ?? 0;
   }
 
   setPaddingRight(view: RCTTextInput, value: ?number) {
-    view.paddingRight = value != null ? value : 0;
+    view.paddingRight = value ?? 0;
   }
 
   setPaddingTop(view: RCTTextInput, value: ?number) {
-    view.paddingTop = value != null ? value : 0;
+    view.paddingTop = value ?? 0;
   }
 
   setPaddingBottom(view: RCTTextInput, value: ?number) {
-    view.paddingBottom = value != null ? value : 0;
+    view.paddingBottom = value ?? 0;
   }
 
   setPaddingHorizontal(view: RCTTextInput, value: ?number) {
-    view.paddingHorizontal = value != null ? value : 0;
+    view.paddingHorizontal = value ?? 0;
   }
 
   setPaddingVertical(view: RCTTextInput, value: ?number) {
-    view.paddingVertical = value != null ? value : 0;
+    view.paddingVertical = value ?? 0;
   }
 
   setFontSize(view: RCTTextInput, value: ?number) {
-    view.fontSize = value != null ? value : 0;
+    view.fontSize = value ?? 0;
   }
 }
 
