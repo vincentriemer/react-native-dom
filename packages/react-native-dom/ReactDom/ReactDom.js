@@ -31,6 +31,7 @@ export type { RCTEventDispatcher, RCTBridge, RCTEvent, RCTUIManager };
 
 // Register Built-in Native Modules
 const builtInNativeModules: any[] = [
+  require("RCTHistory"),
   require("RCTSourceCode"),
   require("RCTEventDispatcher"),
   require("RCTDeviceInfo"),
@@ -61,7 +62,8 @@ const builtInNativeModules: any[] = [
   require("RCTWebViewManager"),
   require("RCTNetworkingNative"),
   require("RCTBlobManager"),
-  require("RCTVibration")
+  require("RCTVibration"),
+  require("RCTI18nManager")
 ];
 
 // Development Specific Native Modules
@@ -74,7 +76,9 @@ if (__DEV__) {
 type RNDomInstanceOptions = {
   enableHotReload?: boolean,
   nativeModules?: any[],
-  bundleFromRoot?: boolean
+  bundleFromRoot?: boolean,
+  urlScheme?: string,
+  basename?: string
 };
 
 // React Native Web Entrypoint instance
@@ -87,23 +91,19 @@ export class RNDomInstance {
     parent: HTMLElement,
     options: RNDomInstanceOptions = {}
   ) {
-    const enableHotReload = options.enableHotReload
-      ? options.enableHotReload
-      : false;
-
-    const userNativeModules = options.nativeModules
-      ? options.nativeModules
-      : [];
-
-    const shouldBundleFromRoot = options.bundleFromRoot
-      ? options.bundleFromRoot
-      : true;
+    const enableHotReload = options.enableHotReload ?? false;
+    const userNativeModules = options.nativeModules ?? [];
+    const shouldBundleFromRoot = options.bundleFromRoot ?? true;
+    const urlScheme = options.urlScheme ?? moduleName.toLowerCase();
+    const basename = options.basename ?? "";
 
     this.rootView = new RCTRootView(
       shouldBundleFromRoot ? bundleFromRoot(bundle) : bundle,
       moduleName,
       parent,
       enableHotReload,
+      urlScheme,
+      basename,
       (builtInNativeModules.concat(userNativeModules): NativeModuleImports)
     );
   }
