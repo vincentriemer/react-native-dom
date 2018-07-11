@@ -19,7 +19,8 @@
     "lib",
     "Libraries",
     "local-cli",
-    "flow-typed"
+    "flow-typed",
+    "jest"
   ],
   "main": "lib/ReactDom.js",
   "scripts": {
@@ -63,6 +64,7 @@
     "deepmerge": "^1.5.0",
     "detect-it": "^3.0.0",
     "fast-memoize": "^2.2.7",
+    "history": "^4.7.2",
     "idb-keyval": "^2.3.0",
     "inline-style-prefixer": "^3.0.8",
     "invariant": "^2.2.2",
@@ -70,9 +72,11 @@
     "normalize-css-color": "^1.0.2",
     "opn": "^5.2.0",
     "pepjs": "^0.4.3",
+    "query-string": "^6.1.0",
     "resize-observer-polyfill": "^1.5.0",
     "rndom-redbox": "0.1.1",
     "rndom-switch": "0.1.1",
+    "rtl-detect": "^1.0.2",
     "tinycolor2": "^1.4.1",
     "wait-port": "^0.2.2",
     "web-animations-js": "^2.3.1",
