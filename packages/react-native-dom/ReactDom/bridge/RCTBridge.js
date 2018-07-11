@@ -107,6 +107,8 @@ export default class RCTBridge {
   bundleLocation: string;
   loading: boolean;
   parent: HTMLElement;
+  urlScheme: string;
+  basename: string;
 
   Yoga: YogaExports;
 
@@ -124,13 +126,17 @@ export default class RCTBridge {
     moduleName: string,
     bundle: string,
     nativeModules: NativeModuleImports,
-    parent: HTMLElement
+    parent: HTMLElement,
+    urlScheme: string,
+    basename: string
   ) {
     this.loading = true;
     this.moduleName = moduleName;
     this.bundleLocation = bundle;
     this.nativeModules = nativeModules;
     this.parent = parent;
+    this.urlScheme = urlScheme;
+    this.basename = basename;
 
     const bridgeCodeBlob = new Blob([WORKER_SRC]);
     const worker = new Worker(URL.createObjectURL(bridgeCodeBlob));
@@ -301,6 +307,12 @@ export default class RCTBridge {
     return (...args: Array<any>) => {
       this.enqueueJSCallback(id, args);
     };
+  }
+
+  getModuleByName<T>(name: string): T {
+    const module: any = this.modulesByName[name];
+    invariant(module, `No such module found with name '${name}'`);
+    return module;
   }
 
   get uiManager(): RCTUIManager {

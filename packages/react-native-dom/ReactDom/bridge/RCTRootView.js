@@ -10,6 +10,8 @@ import RCTDeviceInfo from "RCTDeviceInfo";
 import RCTTiming from "RCTTiming";
 import RCTTouchHandler from "RCTTouchHandler";
 import instrument from "Instrument";
+import { DIRECTION_CHANGE_EVENT } from "RCTI18nManager";
+import type RCTI18nManager from "RCTI18nManager";
 import type { NativeModuleImports } from "RCTModule";
 
 declare var __DEV__: boolean;
@@ -36,6 +38,8 @@ class RCTRootView extends UIView {
     moduleName: string,
     parent: HTMLElement,
     enableHotReload: boolean = false,
+    urlScheme: string,
+    basename: string,
     nativeModules: NativeModuleImports
   ) {
     super();
@@ -52,7 +56,14 @@ class RCTRootView extends UIView {
     this.updateHostStyle("touchAction", "none");
     this.setAttribute("touch-action", "none");
 
-    const bridge = new RCTBridge(moduleName, bundle, nativeModules, parent);
+    const bridge = new RCTBridge(
+      moduleName,
+      bundle,
+      nativeModules,
+      parent,
+      urlScheme,
+      basename
+    );
     this.initialization = this.initializeBridge(bridge);
   }
 
@@ -91,6 +102,16 @@ class RCTRootView extends UIView {
     });
 
     this.ticking = false;
+
+    const i18nModule: RCTI18nManager = (this.bridge.modulesByName[
+      "I18nManager"
+    ]: any);
+
+    this.direction = i18nModule.direction;
+
+    NotificationCenter.addListener(DIRECTION_CHANGE_EVENT, ({ direction }) => {
+      this.direction = direction;
+    });
   }
 
   get reactTag(): number {

@@ -88,7 +88,10 @@ class UIView extends HTMLElement implements RCTComponent {
         boxSizing: "border-box",
         userSelect: "inherit",
         overflow: "visible",
-        touchAction: "manipulation"
+        touchAction: "manipulation",
+        unicodeBidi: "embed",
+        top: "0",
+        left: "0"
       })
     );
 
@@ -468,6 +471,22 @@ class UIView extends HTMLElement implements RCTComponent {
       this.removeChild(this.hitSlopView);
       this.hitSlopView = undefined;
     }
+  }
+
+  // RTL ================================================
+
+  set direction(value: ?string) {
+    let resolvedValue;
+    switch (value) {
+      case "ltr":
+      case "rtl":
+        resolvedValue = value;
+        break;
+      default:
+        resolvedValue = "auto";
+        break;
+    }
+    this.style.direction = resolvedValue;
   }
 
   insertReactSubviewAtIndex(subview: UIView, index: number) {

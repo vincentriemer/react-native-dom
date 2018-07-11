@@ -21,6 +21,7 @@ export type LayoutChange = {
 class RCTShadowView implements RCTComponent {
   _backgroundColor: string;
   _transform: Array<number>;
+  _direction: any;
 
   viewName: string;
   rootTag: number;
@@ -49,6 +50,30 @@ class RCTShadowView implements RCTComponent {
   }
 
   set localData(value: any) {}
+
+  set direction(value: string) {
+    const constants = this.bridge.Yoga.Constants;
+
+    let yogaValue;
+    switch (value) {
+      case "ltr":
+        yogaValue = constants.direction.ltr;
+        break;
+      case "rtl":
+        yogaValue = constants.direction.rtl;
+        break;
+      default:
+        yogaValue = constants.direction.inherit;
+        break;
+    }
+
+    this._direction = yogaValue;
+    this.yogaNode["direction"] = yogaValue;
+  }
+
+  get direction() {
+    return this._direction;
+  }
 
   get hasNewLayout(): boolean {
     return this.yogaNode.hasNewLayout;

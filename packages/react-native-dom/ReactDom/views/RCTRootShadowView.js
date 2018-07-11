@@ -5,6 +5,9 @@ import * as Yoga from "yoga-dom";
 import type RCTBridge from "RCTBridge";
 import type { Size } from "InternalLib";
 import type { LayoutChange } from "RCTShadowView";
+import NotificationCenter from "NotificationCenter";
+import { DIRECTION_CHANGE_EVENT } from "RCTI18nManager";
+import type RCTI18nManager from "RCTI18nManager";
 import RCTShadowView from "RCTShadowView";
 
 class RCTRootShadowView extends RCTShadowView {
@@ -21,6 +24,15 @@ class RCTRootShadowView extends RCTShadowView {
     this.yogaNode = this.bridge.Yoga.Node.createWithConfig(this.yogaConfig);
 
     this.availableSize = { width: Infinity, height: Infinity };
+
+    const i18nModule: RCTI18nManager = (this.bridge.modulesByName[
+      "I18nManager"
+    ]: any);
+
+    this.direction = i18nModule.direction;
+    NotificationCenter.addListener(DIRECTION_CHANGE_EVENT, ({ direction }) => {
+      this.direction = direction;
+    });
   }
 
   updateAvailableSize(size: Size) {
@@ -35,7 +47,7 @@ class RCTRootShadowView extends RCTShadowView {
 
   recalculateLayout(): Array<LayoutChange> {
     const { width, height } = this.availableSize;
-    this.yogaNode.calculateLayout(width, height);
+    this.yogaNode.calculateLayout(width, height, this.direction);
 
     const layoutChanges = this.getLayoutChanges({
       top: 0,
