@@ -12,6 +12,23 @@ import RCTShadowView from "RCTShadowView";
 import RCTShadowRawText from "RCTShadowRawText";
 import type RCTBridge from "RCTBridge";
 
+import { TextMetrics } from "./Metrics/TextMetrics";
+import { TextStyle } from "./Metrics/TextStyle";
+
+TextStyle.DefaultTextStyle = {
+  breakWords: false,
+  fontFamily: TextDefaults.fontFamily,
+  fontSize: defaultFontSize,
+  fontStyle: "normal",
+  fontVariant: "normal",
+  fontWeight: "normal",
+  lineHeight: -1,
+  letterSpacing: 0,
+  whiteSpace: "pre",
+  wordWrap: false,
+  wordWrapWidth: Infinity
+};
+
 const TEXT_SHADOW_STYLE_PROPS = [
   "fontFamily",
   "fontSize",
@@ -21,7 +38,7 @@ const TEXT_SHADOW_STYLE_PROPS = [
   "letterSpacing"
 ];
 
-const TEXT_PX_PROPS = ["lineHeight"];
+const TEXT_PX_PROPS = [];
 
 const textMeasurementContainer = document.createElement("div");
 textMeasurementContainer.id = "text-measurement";
@@ -32,6 +49,30 @@ Object.assign(textMeasurementContainer.style, {
   webkitTextSizeAdjust: "100%"
 });
 document.body && document.body.appendChild(textMeasurementContainer);
+
+const canvasMesurement = document.createElement("canvas");
+canvasMesurement.id = "canvas-measurement";
+// $FlowFixMe
+Object.assign(canvasMesurement.style, {
+  position: "absolute",
+  visibility: "hidden",
+  pointerEvents: "none"
+});
+document.body && document.body.appendChild(canvasMesurement);
+const measureContext = canvasMesurement.getContext("2d");
+TextMetrics._canvas = canvasMesurement;
+TextMetrics._context = measureContext;
+
+const textPropsToTextStyle = (props) => {
+  const style = Object.keys(props).reduce((acc, key) => {
+    if (props[key] && props[key] !== "inherit") {
+      return { ...acc, [key]: props[key] };
+    }
+    return acc;
+  }, {});
+
+  return new TextStyle(style);
+};
 
 class RCTShadowText extends RCTShadowView {
   previousWidth: number;
@@ -62,7 +103,6 @@ class RCTShadowText extends RCTShadowView {
     this.props = {};
     this.textChildren = [];
     this.textDirty = true;
-    this.numberOfLines = 0;
 
     TEXT_SHADOW_STYLE_PROPS.forEach((shadowPropName: string) => {
       Object.defineProperty(this, shadowPropName, {
@@ -70,11 +110,7 @@ class RCTShadowText extends RCTShadowView {
         get: () => this.props[shadowPropName],
         set: (value) => {
           if (value != null) {
-            this.props[shadowPropName] = TEXT_PX_PROPS.includes(shadowPropName)
-              ? `${value}px`
-              : value;
-          } else {
-            this.props[shadowPropName] = "inherit";
+            this.props[shadowPropName] = value;
           }
           this.markTextDirty();
         }
@@ -128,6 +164,24 @@ class RCTShadowText extends RCTShadowView {
     }
   }
 
+  measureFast(text: string, style: Object, maxWidth?: number) {
+    const textStyle = textPropsToTextStyle(style);
+
+    if (maxWidth != null) {
+      textStyle.wordWrap = true;
+      textStyle.wordWrapWidth = maxWidth;
+    }
+
+    const measurement = TextMetrics.measureText(
+      text,
+      textStyle,
+      this.numberOfLines,
+      maxWidth != null
+    );
+
+    return measurement;
+  }
+
   /**
    * Measure the dimensions of the text associated
    * callback for css-layout
@@ -145,9 +199,46 @@ class RCTShadowText extends RCTShadowView {
   ): { width: number, height: number } {
     this.clearTestDomElement();
 
+    const { Constants } = this.bridge.Yoga;
+
+    const canBeFast =
+      this.textChildren.length === 1 &&
+      this.textChildren[0] instanceof RCTShadowRawText;
+
+    if (canBeFast) {
+      if (
+        widthMeasureMode !== Constants.measureMode.exactly ||
+        heightMeasureMode !== Constants.measureMode.exactly
+      ) {
+        let maxWidth;
+        if (widthMeasureMode !== Constants.measureMode.undefined) {
+          maxWidth = width;
+        }
+
+        const textChild = this.textChildren[0];
+        invariant(
+          textChild instanceof RCTShadowRawText,
+          `Simple text must have a raw text child`
+        );
+        const measurement = this.measureFast(
+          textChild.text,
+          this.props,
+          maxWidth
+        );
+
+        return {
+          width: measurement.width,
+          height: measurement.height
+        };
+      }
+      return {
+        width: width || 0,
+        height: height || 0
+      };
+    }
+
     const whiteSpace = this.numberOfLines === 1 ? "nowrap" : "pre-wrap";
 
-    const { Constants } = this.bridge.Yoga;
     if (
       widthMeasureMode !== Constants.measureMode.exactly ||
       heightMeasureMode !== Constants.measureMode.exactly
@@ -198,7 +289,15 @@ class RCTShadowText extends RCTShadowView {
     }
 
     const spanWrapper = document.createElement("span");
-    Object.assign(spanWrapper.style, this.props);
+
+    // Line height is stored as a number (assumed px units)
+    // so we need to explicitly set it to its string equivalent value
+    const resolvedProps = {
+      ...this.props,
+      lineHeight: `${this.props.lineHeight}px`
+    };
+
+    Object.assign(spanWrapper.style, resolvedProps);
 
     this.textChildren.forEach((child) => {
       if (child instanceof RCTShadowRawText && child.text.length) {
