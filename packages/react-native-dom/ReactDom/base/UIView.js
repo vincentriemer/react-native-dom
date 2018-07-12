@@ -473,7 +473,7 @@ class UIView extends HTMLElement implements RCTComponent {
     }
   }
 
-  // RTL ================================================
+  // Direction ================================================
 
   set direction(value: ?string) {
     let resolvedValue;

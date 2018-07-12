@@ -146,6 +146,7 @@ class RCTViewManager extends RCTModule {
       .addNumberProp("shadowOpacity", this.setShadowOpacity)
       .addNumberProp("shadowRadius", this.setShadowRadius)
       .addProp("hitSlop", "EdgeInsetsProp", this.setHitSlop, false)
+      .addStringProp("direction", this.setDirection)
       .addDirectEvent("onLayout");
   }
 
@@ -226,6 +227,10 @@ class RCTViewManager extends RCTModule {
 
   setShadowRadius(view: RCTView, radius: ?number) {
     view.shadowRadius = radius ?? 1;
+  }
+
+  setDirection(view: RCTView, direction: ?string) {
+    view.direction = direction ?? "auto";
   }
 }
 
