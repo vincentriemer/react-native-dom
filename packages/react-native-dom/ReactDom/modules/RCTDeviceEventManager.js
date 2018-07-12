@@ -19,13 +19,13 @@ class RCTDeviceEventManager extends RCTModule {
   }
 
   // TODO: Determine if this is necessary or not
-  // setupBackHandler() {
-  //   this.history.listen((location, action) => {
-  //     if (action === "POP") {
-  //       this.dispatcher.sendDeviceEvent("hardwareBackPress");
-  //     }
-  //   });
-  // }
+  setupBackHandler() {
+    //   this.history.listen((location, action) => {
+    //     if (action === "POP") {
+    //       this.dispatcher.sendDeviceEvent("hardwareBackPress");
+    //     }
+    //   });
+  }
 
   $invokeDefaultBackPressHandler() {
     this.history.$goBack();
