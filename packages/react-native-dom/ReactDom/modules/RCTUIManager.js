@@ -369,7 +369,7 @@ async function loadAsync() {
     }
 
     prependUIBlock(block: ?UIBlock) {
-      if (!block) {
+      if (block == null) {
         return;
       }
       block.call(null, this, this.viewRegistry);
