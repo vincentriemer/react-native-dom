@@ -127,7 +127,7 @@ const getInstallPackage = function(version, includeCanary) {
       }
 
       throw new Error(
-        `No version of 'react-native-dom' found that satisfies a peer dependency on 'react-native@${reactNativeVersion}'`
+        `No version of 'react-native-dom' found that satisfies a peer dependency on 'react-native@${reactNativeVersion}', 'react-native-dom' doesn't currently support 'react-native@${reactNativeVersion}', you have to downgrade your react-native version`
       );
     });
   }
