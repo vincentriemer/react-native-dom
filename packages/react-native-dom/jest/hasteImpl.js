@@ -11,11 +11,11 @@
 
 const path = require("path");
 
-const ROOT = path.join(__dirname, "..");
+const ROOT = path.join(__dirname, "..") + path.sep;
 
 const BLACKLISTED_PATTERNS /*: Array<RegExp>*/ = [
   /.*\/__(mocks|tests)__\/.*/,
-  /.*\/Libraries\/Animated\/src\/polyfills\/.*/ /* MODIFIED */
+  /.*\/Libraries\/Animated\/src\/polyfills\/.*/
 ];
 
 const WHITELISTED_PREFIXES /*: Array<string>*/ = [
@@ -23,9 +23,7 @@ const WHITELISTED_PREFIXES /*: Array<string>*/ = [
   "Libraries",
   "ReactAndroid",
   "RNTester",
-  /* ADDED: RNDom uses @providesModule for the native thread for productivity reasons */
   "ReactDom",
-  /* ADDED: without this react-native's haste modules won't be included in RNDom's compilation */
   "node_modules/react-native/Libraries"
 ];
 
@@ -34,7 +32,6 @@ const NAME_REDUCERS /*: Array<[RegExp, string]>*/ = [
   [/^(?:.*\/)?([a-zA-Z0-9$_.-]+)$/, "$1"],
   // strip .js/.js.flow suffix
   [/^(.*)\.js(\.flow)?$/, "$1"],
-  /* MODIFIED: The `dom` prefix needs to be stripped or else it won't be stored in the haste map with the proper module name */
   [/^(.*)\.(android|ios|native|web|dom)$/, "$1"]
 ];
 
