@@ -5,7 +5,9 @@ const blacklist = require("metro-config/src/defaults/blacklist");
 const defaultPolyfills = require("react-native/rn-get-polyfills");
 
 var config = {
-  hasteImplModulePath: require.resolve("./jest/hasteImpl"),
+  resolver: {
+    hasteImplModulePath: require.resolve("./jest/hasteImpl"),
+  },
   getProjectRoots() {
     return [
       path.resolve(__dirname),
