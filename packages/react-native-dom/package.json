@@ -111,6 +111,14 @@
     "react-native": "~0.57.0"
   },
   "rnpm": {
+    "haste": {
+      "providesModuleNodeModules": [
+        "react-native-dom"
+      ],
+      "platforms": [
+        "dom"
+      ]
+    },
     "plugin": "./local-cli/index.js",
     "platform": "./local-cli/platform.js"
   }
