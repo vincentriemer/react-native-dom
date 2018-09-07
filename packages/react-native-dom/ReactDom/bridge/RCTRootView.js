@@ -10,6 +10,7 @@ import RCTDeviceInfo from "RCTDeviceInfo";
 import RCTTiming from "RCTTiming";
 import RCTTouchHandler from "RCTTouchHandler";
 import instrument from "Instrument";
+import type { Frame } from "InternalLib";
 import { DIRECTION_CHANGE_EVENT } from "RCTI18nManager";
 import type RCTI18nManager from "RCTI18nManager";
 import type { NativeModuleImports } from "RCTModule";
@@ -98,7 +99,7 @@ class RCTRootView extends UIView {
       WebkitTapHighlightColor: "transparent",
       userSelect: "none",
       overflow: "hidden",
-      position: "fixed"
+      position: "absolute"
     });
 
     this.ticking = false;
@@ -116,7 +117,8 @@ class RCTRootView extends UIView {
 
   get reactTag(): number {
     if (!this._reactTag) {
-      this._reactTag = this.uiManager.allocateRootTag;
+      const reactTag = this.uiManager.allocateRootTag;
+      super.reactTag = reactTag;
       this.uiManager.registerRootView(this);
     }
     return this._reactTag;

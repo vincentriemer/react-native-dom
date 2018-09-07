@@ -194,8 +194,8 @@ class RCTLayoutAnimationManager {
         duration: duration,
         layout,
         origin: {
-          x: -1 * layout.width / 2,
-          y: -1 * layout.height / 2
+          x: (-1 * layout.width) / 2,
+          y: (-1 * layout.height) / 2
         }
       }
     ];

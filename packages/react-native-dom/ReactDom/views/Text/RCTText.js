@@ -37,6 +37,8 @@ class RCTText extends RCTView {
   constructor(bridge: RCTBridge) {
     super(bridge);
 
+    this.pointerEvents = "box-none";
+
     this.updateHostStyle({
       position: "static",
       display: "inline",
@@ -101,17 +103,6 @@ class RCTText extends RCTView {
     this.updateChildContainerStyle({
       display: "inline-block"
     });
-
-    if (this.onLayout) {
-      this.onLayout({
-        layout: {
-          x: value.left,
-          y: value.top,
-          width: value.width,
-          height: value.height
-        }
-      });
-    }
   }
 
   set accessible(value: boolean) {
@@ -119,7 +110,13 @@ class RCTText extends RCTView {
   }
 
   set fontFamily(value: ?string) {
-    this.style.fontFamily = value ? value : "inherit";
+    value = value ? value : "inherit";
+    if (value.indexOf("System") > -1) {
+      const stack = value.split(/\s*,\s*/);
+      stack[stack.indexOf("System")] = TextDefaults.fontFamily;
+      value = stack.join(", ");
+    }
+    this.style.fontFamily = value;
   }
 
   set fontSize(value: ?number) {
@@ -135,10 +132,10 @@ class RCTText extends RCTView {
   }
 
   updatePointerEvents() {
-    this.style.pointerEvents =
+    this.pointerEvents =
       (this._selectable || this._touchable) && !this._disabled
         ? "auto"
-        : "none";
+        : "box-none";
   }
 
   set disabled(value: boolean) {

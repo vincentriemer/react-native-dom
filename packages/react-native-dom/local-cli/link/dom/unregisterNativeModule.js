@@ -1,11 +1,15 @@
+const getDependencyConfig = require("./getDependencyConfig");
+const updateVendorModule = require("./updateVendorModuleFile");
+const updateDependencyConfig = require("./updateDependencyConfig");
+
 module.exports = function unregisterNativeDomModule(
   name,
   domConfig,
   projectConfig
 ) {
-  console.log("unregisterNativeDomModule ===============");
-  console.log("name: ", name);
-  console.log("domConfig: ", domConfig);
-  console.log("projectConfig: ", projectConfig);
-  console.log("");
+  const depConfig = getDependencyConfig(projectConfig.depConfigPath);
+  delete depConfig[name];
+
+  updateDependencyConfig(depConfig, projectConfig.depConfigPath);
+  updateVendorModule(depConfig, projectConfig.vendorModulePath);
 };

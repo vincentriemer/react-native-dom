@@ -8,6 +8,8 @@ class RCTRawText extends RCTView {
   constructor(bridge: RCTBridge) {
     super(bridge);
 
+    this.pointerEvents = "box-none";
+
     this.updateHostStyle({
       position: "static",
       display: "inline",
@@ -22,6 +24,10 @@ class RCTRawText extends RCTView {
     this.style.MozOsxFontSmoothing = "grayscale";
 
     this._text = "";
+  }
+
+  isVirtual() {
+    return true;
   }
 
   get text(): string {

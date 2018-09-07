@@ -110,6 +110,15 @@ class RCTShadowText extends RCTShadowView {
         get: () => this.props[shadowPropName],
         set: (value) => {
           if (value != null) {
+            if (
+              shadowPropName === "fontFamily" &&
+              value.indexOf("System") > -1
+            ) {
+              // Handle 'System' font
+              const stack = value.split(/\s*,\s*/);
+              stack[stack.indexOf("System")] = TextDefaults.fontFamily;
+              value = stack.join(", ");
+            }
             this.props[shadowPropName] = value;
           }
           this.markTextDirty();
@@ -118,6 +127,10 @@ class RCTShadowText extends RCTShadowView {
       // $FlowFixMe
       this[shadowPropName] = null;
     });
+  }
+
+  isVirtual() {
+    return true;
   }
 
   get numberOfLines(): number {

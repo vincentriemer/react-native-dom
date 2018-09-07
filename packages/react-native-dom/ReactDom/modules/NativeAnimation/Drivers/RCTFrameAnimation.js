@@ -13,7 +13,7 @@ class RCTFrameAnimation implements RCTAnimationDriver {
   animationHasFinished: boolean;
 
   animationStartTime: number;
-  animationCurrentTIme: number;
+  animationCurrentTime: number;
 
   frames: number[];
   toValue: number;
@@ -42,7 +42,8 @@ class RCTFrameAnimation implements RCTAnimationDriver {
   }
 
   startAnimation() {
-    this.animationStartTime = this.animationCurrentTIme = -1;
+    this.animationStartTime = -1;
+    this.animationCurrentTime = -1;
     this.animationHasBegun = true;
   }
 
@@ -66,11 +67,11 @@ class RCTFrameAnimation implements RCTAnimationDriver {
     }
 
     if (this.animationStartTime === -1) {
-      this.animationStartTime = this.animationCurrentTIme = currentTime;
+      this.animationStartTime = this.animationCurrentTime = currentTime;
     }
 
-    this.animationCurrentTIme = currentTime;
-    const currentDuration = this.animationCurrentTIme - this.animationStartTime;
+    this.animationCurrentTime = currentTime;
+    const currentDuration = this.animationCurrentTime - this.animationStartTime;
 
     // Determine how many frames have passed since last update.
     // Get index of frames that surround the current interval

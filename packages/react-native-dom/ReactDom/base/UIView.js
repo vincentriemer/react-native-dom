@@ -17,6 +17,8 @@ type WillChangeRegistry = {
   [key: string]: number
 };
 
+declare var __DEV__: boolean;
+
 (() => {
   const styleElement = document.createElement("style");
   styleElement.innerHTML = `
@@ -80,6 +82,8 @@ class UIView extends HTMLElement implements RCTComponent {
     this.backgroundColor = "rgba(0,0,0,0)";
 
     this._willChangeRegistry = {};
+
+    this.pointerEvents = "auto";
 
     Object.assign(
       this.style,
@@ -161,6 +165,9 @@ class UIView extends HTMLElement implements RCTComponent {
 
   set reactTag(value: number) {
     this._reactTag = value;
+    if (__DEV__) {
+      this.setAttribute("rct-tag", `${value}`);
+    }
   }
 
   get frame(): Frame {
@@ -282,6 +289,8 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   set opacity(value: number) {
+    if (this._opacity === value) return;
+
     if (!this.isAnimatingOpacity && this._opacity != null) {
       this.addWillChange("opacity");
       this.isAnimatingOpacity = true;
@@ -294,8 +303,10 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   handleEndedAnimatedOpacity = debounce(() => {
-    this.removeWillChange("opacity");
-    this.isAnimatingOpacity = false;
+    if (this.isAnimatingOpacity) {
+      this.removeWillChange("opacity");
+      this.isAnimatingOpacity = false;
+    }
   }, 200);
 
   get transform(): number[] {
@@ -358,6 +369,8 @@ class UIView extends HTMLElement implements RCTComponent {
       });
     });
 
+    if (transformString === this._animatedTransform) return;
+
     if (!this.isAnimatingTransform) {
       this.addWillChange("transform");
       this.isAnimatingTransform = true;
@@ -370,9 +383,11 @@ class UIView extends HTMLElement implements RCTComponent {
   }
 
   handleEndedAnimatedTransform = debounce(() => {
-    this.removeWillChange("transform");
-    this.isAnimatingTransform = false;
-  }, 100);
+    if (this.isAnimatingTransform) {
+      this.removeWillChange("transform");
+      this.isAnimatingTransform = false;
+    }
+  }, 200);
 
   get borderChild(): UIBorderView {
     if (!this.borderView) {

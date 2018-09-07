@@ -86,7 +86,7 @@ function computeDerivedSpringCurveOptions(
       const a = exponentialDecay - velocity;
       const b = angularFrequency(undampedFrequency, dampingRatio);
       const c = Math.exp(-currentDisplacement);
-      return epsilon - a / b * c;
+      return epsilon - (a / b) * c;
     };
     derivative = (undampedFrequency: number) => {
       const exponentialDecay = undampedFrequency * dampingRatio;
@@ -97,7 +97,7 @@ function computeDerivedSpringCurveOptions(
       const f = Math.exp(-currentDisplacement);
       const g = angularFrequency(Math.pow(undampedFrequency, 2), dampingRatio);
       const factor = -envelope(undampedFrequency) + epsilon > 0 ? -1 : 1;
-      return factor * ((d - e) * f) / g;
+      return (factor * ((d - e) * f)) / g;
     };
   } else {
     envelope = (undampedFrequency: number) => {
@@ -141,8 +141,8 @@ class Integrator {
     const c = this.evaluateStateWithDerivative(state, dt * 0.5, b);
     const d = this.evaluateStateWithDerivative(state, dt, c);
 
-    const dxdt = 1.0 / 6.0 * (a.dx + 2.0 * (b.dx + c.dx) + d.dx);
-    const dvdt = 1.0 / 6.0 * (a.dv + 2.0 * (b.dv + c.dv) + d.dv);
+    const dxdt = (1.0 / 6.0) * (a.dx + 2.0 * (b.dx + c.dx) + d.dx);
+    const dvdt = (1.0 / 6.0) * (a.dv + 2.0 * (b.dv + c.dv) + d.dv);
 
     state.x = state.x + dxdt * dt;
     state.v = state.v + dvdt * dt;

@@ -15,6 +15,8 @@ import RCTEventDispatcher, {
   normalizeInputEventName
 } from "RCTEventDispatcher";
 
+const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
 const SCROLL_LISTENER_OPTIONS = detectIt.passiveEvents
   ? { passive: true }
   : false;
@@ -139,8 +141,10 @@ class RCTScrollContentView extends RCTView {
       contain: "layout style"
     });
 
-    // vastly improves scrolling performance (especially on sfarai)
-    this.addWillChange("transform");
+    // vastly improves scrolling performance (especially on Safari)
+    if (isSafari) {
+      this.addWillChange("transform");
+    }
   }
 
   set frame(value: Frame) {
@@ -223,7 +227,9 @@ class RCTScrollView extends RCTView {
     this._overflow = "scroll";
     this._scrollEnabled = true;
 
-    this.addWillChange("transform");
+    if (isSafari) {
+      this.addWillChange("transform");
+    }
 
     this.addEventListener("scroll", this.handleScroll, SCROLL_LISTENER_OPTIONS);
 
@@ -231,7 +237,7 @@ class RCTScrollView extends RCTView {
       this.addEventListener(
         "touchstart",
         this.onTouchStart,
-        detectIt.passiveEvents ? { passive: false } : false
+        detectIt.passiveEvents ? { passive: true } : false
       );
     }
   }

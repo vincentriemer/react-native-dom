@@ -11,6 +11,7 @@ import type RCTUIManager from "RCTUIManager";
 import RCTBridge from "RCTBridge";
 import UIView from "UIView";
 import RCTView from "RCTView";
+import RCTModule from "RCTModule";
 import RCTViewManager from "RCTViewManager";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 import RCTEventDispatcher, { type RCTEvent } from "RCTEventDispatcher";
@@ -24,7 +25,14 @@ if (!global.process.env.NODE_ENV) {
 }
 
 // Export native modules to provide ability for others to provide their own modules
-export { RCTView, RCTViewManager, RCTEventEmitter, UIView, RCTRootView };
+export {
+  RCTView,
+  RCTViewManager,
+  RCTEventEmitter,
+  UIView,
+  RCTRootView,
+  RCTModule
+};
 
 // Export type definitions useful for native module development
 export type { RCTEventDispatcher, RCTBridge, RCTEvent, RCTUIManager };

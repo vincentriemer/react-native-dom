@@ -4,7 +4,7 @@ import invariant from "invariant";
 
 import RCTBridge, { getPropertyNames } from "RCTBridge";
 import { bridgeModuleNameForClass } from "RCTModule";
-import RCTUIManager from "RCTUIManager";
+import type RCTUIManager from "RCTUIManager";
 import type { RCTComponent } from "RCTComponent";
 import UIView from "UIView";
 import { normalizeInputEventName } from "RCTEventDispatcher";
@@ -83,9 +83,11 @@ class RCTComponentData {
       }
     }
 
-    this.manager
-      .describeProps()
-      .viewProps.forEach(({ name, type, nativeOnly }) => {
+    const propDescription = this.manager.describeProps();
+
+    propDescription.viewProps
+      .concat(propDescription.shadowProps)
+      .forEach(({ name, type, nativeOnly }) => {
         if (!nativeOnly) {
           if (type === "RCTBubblingEventBlock") {
             bubblingEvents.push(normalizeInputEventName(name));

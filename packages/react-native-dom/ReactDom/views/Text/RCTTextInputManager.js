@@ -21,7 +21,13 @@ class RCTTextInputManager extends RCTViewManager {
       .addNumberProp("paddingBottom", this.setPaddingBottom)
       .addNumberProp("paddingHorizontal", this.setPaddingHorizontal)
       .addNumberProp("paddingVertical", this.setPaddingVertical)
-      .addNumberProp("fontSize", this.setFontSize);
+      .addNumberProp("fontSize", this.setFontSize)
+      .addBooleanProp("blurOnSubmit", this.setBlurOnSubmit)
+      .addBubblingEvent("onChange");
+  }
+
+  setBlurOnSubmit(view: RCTTextInput, value: ?boolean) {
+    view.blurOnSubmit = value ?? true;
   }
 
   setPadding(view: RCTTextInput, value: ?number) {

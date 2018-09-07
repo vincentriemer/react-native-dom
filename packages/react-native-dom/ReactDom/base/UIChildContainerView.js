@@ -12,7 +12,8 @@ class UIChildContainerView extends HTMLElement {
         top: "0",
         left: "0",
         userSelect: "inherit",
-        transformOrigin: "top left"
+        transformOrigin: "top left",
+        pointerEvents: "unset"
       })
     );
   }

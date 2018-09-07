@@ -6,31 +6,30 @@ import RCTEventEmitter from "RCTNativeEventEmitter";
 
 class RCTView extends UIView {
   bridge: RCTBridge;
-  onLayout: ?Function;
 
   constructor(bridge: RCTBridge) {
     super();
     this.bridge = bridge;
   }
 
-  get frame(): Frame {
-    return super.frame;
-  }
+  // get frame(): Frame {
+  //   return super.frame;
+  // }
 
-  set frame(value: Frame) {
-    super.frame = value;
+  // set frame(value: Frame) {
+  //   super.frame = value;
 
-    if (this.onLayout) {
-      this.onLayout({
-        layout: {
-          x: value.left,
-          y: value.top,
-          width: value.width,
-          height: value.height
-        }
-      });
-    }
-  }
+  //   if (this.onLayout) {
+  //     this.onLayout({
+  //       layout: {
+  //         x: value.left,
+  //         y: value.top,
+  //         width: value.width,
+  //         height: value.height
+  //       }
+  //     });
+  //   }
+  // }
 
   // TODO: Renable when I have a plan for focus styling
   // set accessible(value: boolean) {

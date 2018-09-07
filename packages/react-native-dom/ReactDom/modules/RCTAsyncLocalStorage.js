@@ -1,6 +1,6 @@
 /** @flow */
 
-import idbKeyval from "idb-keyval";
+import * as idbKeyval from "idb-keyval";
 import deepmerge from "deepmerge";
 
 import RCTModule from "RCTModule";

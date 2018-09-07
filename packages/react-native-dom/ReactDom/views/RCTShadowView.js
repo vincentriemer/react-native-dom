@@ -18,6 +18,59 @@ export type LayoutChange = {
   nextMeasurement: Frame
 };
 
+export const LAYOUT_ONLY_PROPS = [
+  "alignSelf",
+  "alignItems",
+  "collapsable",
+  "flex",
+  "flexBasis",
+  "flexDirection",
+  "flexGrow",
+  "flexShrink",
+  "flexWrap",
+  "justifyContent",
+  "alignContent",
+  "display",
+
+  /* position */
+  "right",
+  "top",
+  "bottom",
+  "left",
+  "start",
+  "end",
+
+  /* dimensions */
+  "width",
+  "height",
+  "minWidth",
+  "maxWidth",
+  "minHeight",
+  "maxHeight",
+
+  /* margins */
+  "margin",
+  "marginVertical",
+  "marginHorizontal",
+  "marginLeft",
+  "marginRight",
+  "marginTop",
+  "marginBottom",
+  "marginStop",
+  "marginEnd",
+
+  /* paddings */
+  "padding",
+  "paddingVertical",
+  "paddingHorizontal",
+  "paddingLeft",
+  "paddingRight",
+  "paddingTop",
+  "paddingBottom",
+  "paddingStart",
+  "paddingEnd"
+];
+
 class RCTShadowView implements RCTComponent {
   _backgroundColor: string;
   _transform: Array<number>;
@@ -36,10 +89,18 @@ class RCTShadowView implements RCTComponent {
   reactSubviews: Array<RCTShadowView> = [];
   reactSuperview: ?RCTShadowView;
 
+  // layout-only nodes
+  isLayoutOnly: boolean = false;
+  totalNativeChildren: number = 0;
+  nativeParent: ?RCTShadowView;
+  nativeChildren: ?(RCTShadowView[]);
+
   measurement: ?Frame;
 
   width: number;
   height: number;
+
+  onLayout: ?Function;
 
   constructor(bridge: RCTBridge) {
     this.bridge = bridge;
@@ -47,6 +108,10 @@ class RCTShadowView implements RCTComponent {
 
     this.previousLayout = undefined;
     this.measurement = undefined;
+  }
+
+  isVirtual() {
+    return false;
   }
 
   set localData(value: any) {}
@@ -150,6 +215,17 @@ class RCTShadowView implements RCTComponent {
         nextMeasurement
       });
 
+      if (this.onLayout) {
+        this.onLayout({
+          layout: {
+            x: newLayout.left,
+            y: newLayout.top,
+            width: newLayout.width,
+            height: newLayout.height
+          }
+        });
+      }
+
       this.previousLayout = newLayout;
     }
 
@@ -167,12 +243,50 @@ class RCTShadowView implements RCTComponent {
     subview.reactSuperview = this;
     this.reactSubviews.splice(index, 0, subview);
     this.yogaNode.insertChild(subview.yogaNode, index);
+
+    const increase = subview.isLayoutOnly ? subview.totalNativeChildren : 1;
+    this.totalNativeChildren += increase;
+
+    this.updateNativeChildrenCountInParent(increase);
   }
 
   removeReactSubview(subview: RCTShadowView) {
     subview.reactSuperview = undefined;
     this.reactSubviews = this.reactSubviews.filter((s) => s !== subview);
     this.yogaNode.removeChild(subview.yogaNode);
+
+    const decrease = subview.isLayoutOnly ? subview.totalNativeChildren : 1;
+    this.totalNativeChildren -= decrease;
+    this.updateNativeChildrenCountInParent(-decrease);
+  }
+
+  removeAllNativeChildren() {
+    this.nativeChildren = null;
+    this.totalNativeChildren = 0;
+  }
+
+  addNativeChildAt(child: RCTShadowView, index: number) {
+    invariant(!this.isLayoutOnly, "Cannot add native child to layoutOnly node");
+    invariant(
+      !child.isLayoutOnly,
+      "Cannot add layout only child as a native child"
+    );
+
+    if (this.nativeChildren == null) {
+      this.nativeChildren = [];
+    }
+
+    this.nativeChildren.splice(index, 0, child);
+    child.nativeParent = this;
+  }
+
+  removeNativeChild(child: RCTShadowView) {
+    invariant(
+      this.nativeChildren,
+      "Cannot remove native child from node which has no native children"
+    );
+    this.nativeChildren = this.nativeChildren.filter((c) => c !== child);
+    child.nativeParent = null;
   }
 
   purge() {
@@ -205,6 +319,39 @@ class RCTShadowView implements RCTComponent {
       }
     }
     return this.reactTag;
+  }
+
+  updateNativeChildrenCountInParent(delta: number) {
+    if (this.isLayoutOnly) {
+      let parent = this.reactSuperview;
+      while (parent != null) {
+        parent.totalNativeChildren += delta;
+        if (!parent.isLayoutOnly) {
+          break;
+        }
+        parent = parent.reactSuperview;
+      }
+    }
+  }
+
+  getNativeOffsetForChild(child: RCTShadowView): number {
+    let index = 0;
+    let found = false;
+
+    for (let i = 0; i < this.reactSubviews.length; i++) {
+      const current = this.reactSubviews[i];
+      if (child === current) {
+        found = true;
+        break;
+      }
+      index += current.isLayoutOnly ? current.totalNativeChildren : 1;
+    }
+    if (!found) {
+      throw new Error(
+        `Child ${child.reactTag} was not a child of ${this.reactTag}`
+      );
+    }
+    return index;
   }
 }
 

@@ -80,7 +80,6 @@ class RCTEventDispatcher extends RCTModule {
     this.eventQueue = [];
     this.eventsDispatchScheduled = false;
     this.observers = new Set();
-    return this;
   }
 
   sendDeviceEvent(name: string, body: ?Object) {
@@ -107,7 +106,7 @@ class RCTEventDispatcher extends RCTModule {
     type: number,
     reactTag: number,
     text: string,
-    key: string,
+    key: ?string,
     eventCount: number
   ) {
     const events = [

@@ -84,10 +84,6 @@ class RCTImageView extends RCTView {
     this.imageElement.addEventListener("load", () => {
       this.forceRasterization();
     });
-
-    if (isIOS) {
-      this.addWillChange("transform");
-    }
   }
 
   updateFilter() {

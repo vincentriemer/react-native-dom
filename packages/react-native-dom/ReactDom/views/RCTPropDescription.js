@@ -125,6 +125,17 @@ class RCTPropDescription {
     return this.addProp(name, RCTPropTypes.object, setter, nativeOnly);
   }
 
+  addDirectShadowEvent(name: string) {
+    const setter = eventSetter(name);
+    this.shadowProps.push({
+      name,
+      type: RCTPropTypes.directEvent,
+      setter,
+      nativeOnly: false
+    });
+    return this;
+  }
+
   addDirectEvent(name: string, nativeOnly: boolean = false) {
     const setter = eventSetter(name);
     return this.addProp(name, RCTPropTypes.directEvent, setter, nativeOnly);

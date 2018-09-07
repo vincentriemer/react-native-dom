@@ -147,7 +147,8 @@ class RCTViewManager extends RCTModule {
       .addNumberProp("shadowRadius", this.setShadowRadius)
       .addProp("hitSlop", "EdgeInsetsProp", this.setHitSlop, false)
       .addStringProp("direction", this.setDirection)
-      .addDirectEvent("onLayout");
+      .addMirroredProp("collapsable", RCTPropTypes.bool, () => {})
+      .addDirectShadowEvent("onLayout");
   }
 
   customBubblingEventTypes(): Array<string> {

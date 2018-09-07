@@ -116,7 +116,7 @@ class RCTSpringAnimation implements RCTAnimationDriver {
       position =
         this.toValue -
         envelope *
-          ((v0 + zeta * omega0 * x0) / omega1 * Math.sin(omega1 * this._t) +
+          (((v0 + zeta * omega0 * x0) / omega1) * Math.sin(omega1 * this._t) +
             x0 * Math.cos(omega1 * this._t));
       // This looks crazy -- it's actually just the derivative of the
       // oscillation function
@@ -124,7 +124,7 @@ class RCTSpringAnimation implements RCTAnimationDriver {
         zeta *
           omega0 *
           envelope *
-          (Math.sin(omega1 * this._t) * (v0 + zeta * omega0 * x0) / omega1 +
+          ((Math.sin(omega1 * this._t) * (v0 + zeta * omega0 * x0)) / omega1 +
             x0 * Math.cos(omega1 * this._t)) -
         envelope *
           (Math.cos(omega1 * this._t) * (v0 + zeta * omega0 * x0) -

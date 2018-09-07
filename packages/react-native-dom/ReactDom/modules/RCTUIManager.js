@@ -5,6 +5,7 @@ import invariant from "invariant";
 import RCTUIManagerObserverCoordinator from "RCTUIManagerObserverCoordinator";
 import RCTModule, { bridgeModuleNameForClass } from "RCTModule";
 import type RCTBridge from "RCTBridge";
+import { type Frame } from "InternalLib";
 import UIView from "UIView";
 import RCTView from "RCTView";
 import RCTRootView from "RCTRootView";
@@ -19,6 +20,7 @@ import type { LayoutAnimationConfig } from "RCTLayoutAnimationManager";
 import RCTShadowView from "RCTShadowView";
 import RCTRootShadowView from "RCTRootShadowView";
 import RCTShadowText from "RCTShadowText";
+import RCTNativeViewHierarchyOptimizer from "RCTNativeViewHierarchyOptimizer";
 
 // type ShadowView = any;
 type Size = { width: number, height: number };
@@ -37,6 +39,7 @@ class RCTUIManager extends RCTModule {
   jsResponder: ?UIView;
   layoutAnimationManager: RCTLayoutAnimationManager;
   observerCoordinator: RCTUIManagerObserverCoordinator;
+  nativeViewHierarchyOptimizer: RCTNativeViewHierarchyOptimizer;
 
   pendingUIBlocks: Array<UIBlock> = [];
 
@@ -60,6 +63,9 @@ class RCTUIManager extends RCTModule {
 
     this.layoutAnimationManager = new RCTLayoutAnimationManager(this);
     this.observerCoordinator = new RCTUIManagerObserverCoordinator();
+    this.nativeViewHierarchyOptimizer = new RCTNativeViewHierarchyOptimizer(
+      this
+    );
 
     invariant(this.bridge, "Bridge must be set");
     const deviceInfoModule: RCTDeviceInfo = (this.bridge.modulesByName[
@@ -109,6 +115,7 @@ class RCTUIManager extends RCTModule {
     shadowView.availableSize = availableSize;
     shadowView.reactTag = reactTag;
     shadowView.viewName = rootView.constructor.name;
+    shadowView.isLayoutOnly = false;
 
     const pixelRatio = this.bridge.deviceInfo.getDevicePixelRatio();
     shadowView.updatePointScaleFactor(pixelRatio);
@@ -117,21 +124,15 @@ class RCTUIManager extends RCTModule {
     this.rootViewTags.add(reactTag);
   }
 
-  /**
-   * Set the available size (`availableSize` property) for a root view.
-   * This might be used in response to changes in external layout constraints.
-   * This value will be directly trasmitted to layout engine and defines how big viewport is;
-   * this value does not affect root node size style properties.
-   * Can be considered as something similar to `setSize:forView:` but applicable only for root view.
-   */
   setAvailableSize(size: Size, scale: number, rootView: RCTRootView): void {
-    this.pendingUIBlocks.push(() => {
-      const reactTag = rootView.reactTag;
-      const rootShadowView = this.shadowViewRegistry.get(reactTag);
-      if (rootShadowView && rootShadowView instanceof RCTRootShadowView)
-        rootShadowView.updateAvailableSize(size) &&
-          rootShadowView.updatePointScaleFactor(scale);
-    });
+    rootView.width = size.width;
+    rootView.height = size.height;
+
+    const reactTag = rootView.reactTag;
+    const rootShadowView = this.shadowViewRegistry.get(reactTag);
+    if (rootShadowView && rootShadowView instanceof RCTRootShadowView)
+      rootShadowView.updateAvailableSize(size) &&
+        rootShadowView.updatePointScaleFactor(scale);
   }
 
   setLocalDataForView(localData: any, view: UIView) {
@@ -160,13 +161,6 @@ class RCTUIManager extends RCTModule {
   }
 
   purgeView(reactTag: number) {
-    const shadowView = this.shadowViewRegistry.get(reactTag);
-    if (shadowView) {
-      !this.layoutAnimationManager.isPending() &&
-        this.shadowViewRegistry.delete(reactTag);
-      shadowView.purge();
-    }
-
     if (this.layoutAnimationManager.isPending()) {
       const view = this.viewRegistry.get(reactTag);
       if (view && view.reactSuperview) {
@@ -250,12 +244,17 @@ class RCTUIManager extends RCTModule {
   applyLayoutChanges(layoutChanges: LayoutChange[]) {
     layoutChanges.forEach((layoutChange) => {
       const { reactTag, layout } = layoutChange;
-      this.addUIBlock((uiManager, viewRegistry) => {
-        const view = viewRegistry.get(reactTag);
-        invariant(view, `View with reactTag ${reactTag} does not exist`);
-        view.frame = layout;
-      });
+      const shadowView = this.shadowViewRegistry.get(reactTag);
+      invariant(shadowView, `View with reactTag ${reactTag} does not exist`);
+      this.nativeViewHierarchyOptimizer.handleUpdateLayout(shadowView);
     });
+    this.nativeViewHierarchyOptimizer.onBatchComplete();
+  }
+
+  updateLayout(reactTag: number, layout: Frame) {
+    const view = this.viewRegistry.get(reactTag);
+    invariant(view, `View with reactTag ${reactTag} does not exist`);
+    view.frame = layout;
   }
 
   measure(reactTag: number) {
@@ -369,11 +368,28 @@ class RCTUIManager extends RCTModule {
       this.shadowViewRegistry
     );
 
-    this.addUIBlock(
-      (uiManager: RCTUIManager, viewRegistry: Map<number, UIView>) => {
-        RCTUIManager.RCTSetChildren(containerTag, reactTags, viewRegistry);
-      }
-    );
+    const nodeToManage = this.shadowViewRegistry.get(containerTag);
+    invariant(nodeToManage, `No such ShadowView with tag ${containerTag}`);
+
+    if (!nodeToManage.isVirtual()) {
+      this.nativeViewHierarchyOptimizer.handleSetChildren(
+        nodeToManage,
+        reactTags
+      );
+    } else {
+      RCTUIManager.RCTSetChildren(containerTag, reactTags, this.viewRegistry);
+    }
+
+    // TODO: Remove
+    // this.addUIBlock(
+    //   (uiManager: RCTUIManager, viewRegistry: Map<number, UIView>) => {
+    //     RCTUIManager.RCTSetChildren(containerTag, reactTags, viewRegistry);
+    //   }
+    // );
+  }
+
+  setChildren(containerTag: number, reactTags: Array<number>) {
+    RCTUIManager.RCTSetChildren(containerTag, reactTags, this.viewRegistry);
   }
 
   static RCTSetChildren(
@@ -412,21 +428,43 @@ class RCTUIManager extends RCTModule {
       this.shadowViewRegistry.set(reactTag, shadowView);
     }
 
+    if (!shadowView.isVirtual()) {
+      this.nativeViewHierarchyOptimizer.handleCreateView(shadowView, props);
+    } else {
+      this.createView(reactTag, viewName, props);
+    }
+
     // Shadow view is the source of truth for background color this is a little
     // bit counter-intuitive if people try to set background color when setting up
     // the view, but it's the only way that makes sense given our threading model
-    const backgroundColor = shadowView.backgroundColor;
+    // TODO: remove
+    // const backgroundColor = shadowView.backgroundColor;
 
+    // TODO: move to createView
     // Dispatch view creation directly to the main thread instead of adding to
     // UIBlocks array. This way, it doesn't get deferred until after layout.
+    // const view = componentData.createView(reactTag);
+    // if (view != null) {
+    //   componentData.setPropsForView(props, view);
+
+    // if (typeof view.setBackgroundColor === "function") {
+    //   view.setBackgroundColor(backgroundColor);
+    // }
+
+    // this.viewRegistry.set(reactTag, view);
+    // }
+  }
+
+  createView(reactTag: number, viewName: string, props: ?Object) {
+    const componentData = this.componentDataByName.get(viewName);
+    invariant(
+      componentData,
+      `No component found for view with name ${viewName}`
+    );
+
     const view = componentData.createView(reactTag);
     if (view != null) {
-      componentData.setPropsForView(props, view);
-
-      // if (typeof view.setBackgroundColor === "function") {
-      //   view.setBackgroundColor(backgroundColor);
-      // }
-
+      props && componentData.setPropsForView(props, view);
       this.viewRegistry.set(reactTag, view);
     }
   }
@@ -441,7 +479,20 @@ class RCTUIManager extends RCTModule {
     const shadowView = this.shadowViewRegistry.get(reactTag);
     if (shadowView) {
       componentData.setPropsForShadowView(updatedProps, shadowView);
+      this.nativeViewHierarchyOptimizer.handleUpdateView(
+        shadowView,
+        viewName,
+        updatedProps
+      );
     }
+  }
+
+  updateView(reactTag: number, viewName: string, updatedProps: Object) {
+    const componentData = this.componentDataByName.get(viewName);
+    invariant(
+      componentData,
+      `No component found for view with name ${viewName}`
+    );
 
     const view = this.viewRegistry.get(reactTag);
     if (view) {
@@ -529,10 +580,9 @@ class RCTUIManager extends RCTModule {
     addAtIndices: Array<number>,
     removeFrom: Array<number>
   ) {
-    const viewToManage = this.viewRegistry.get(tag);
     const shadowViewToManage = this.shadowViewRegistry.get(tag);
 
-    if (!viewToManage || !shadowViewToManage) return;
+    if (!shadowViewToManage) return;
 
     // determine counts with checks for null
     const numToMove = !moveFrom ? 0 : moveFrom.length;
@@ -547,7 +597,8 @@ class RCTUIManager extends RCTModule {
     if (moveFrom && moveTo) {
       for (let i = 0; i < moveFrom.length; i++) {
         const moveFromIndex = moveFrom[i];
-        const tagToMove = viewToManage.reactSubviews[moveFromIndex].reactTag;
+        const tagToMove =
+          shadowViewToManage.reactSubviews[moveFromIndex].reactTag;
         viewsToAdd[i] = {
           tag: tagToMove,
           index: moveTo[i]
@@ -573,9 +624,9 @@ class RCTUIManager extends RCTModule {
     if (removeFrom) {
       for (let i = 0; i < removeFrom.length; i++) {
         const indexToRemove = removeFrom[i];
-        if (viewToManage.reactSubviews[indexToRemove]) {
+        if (shadowViewToManage.reactSubviews[indexToRemove]) {
           const tagToRemove =
-            viewToManage.reactSubviews[indexToRemove].reactTag;
+            shadowViewToManage.reactSubviews[indexToRemove].reactTag;
           indicesToRemove[numToMove + i] = indexToRemove;
           tagsToRemove[numToMove + i] = tagToRemove;
           tagsToDelete[i] = tagToRemove;
@@ -618,12 +669,13 @@ class RCTUIManager extends RCTModule {
         }
       }
 
-      if (!this.layoutAnimationManager.isPending()) {
-        this.addUIBlock((uiManager, viewRegistry) => {
-          const subView = viewToManage.reactSubviews[childIndex];
-          viewToManage.removeReactSubview(subView);
-        });
-      }
+      // TODO: Remove
+      // if (!this.layoutAnimationManager.isPending()) {
+      //   this.addUIBlock((uiManager, viewRegistry) => {
+      //     const subView = viewToManage.reactSubviews[childIndex];
+      //     viewToManage.removeReactSubview(subView);
+      //   });
+      // }
     }
 
     // add the new children
@@ -635,18 +687,74 @@ class RCTUIManager extends RCTModule {
         shadowViewToManage.insertReactSubviewAtIndex(shadowSubView, indexToAdd);
       }
 
-      this.addUIBlock((uiManager, viewRegistry) => {
-        const subView = viewRegistry.get(tagToAdd);
-        invariant(
-          subView,
-          `Attempted to insert subview with tag ${tagToAdd} that does not exist`
-        );
-        viewToManage.insertReactSubviewAtIndex(subView, indexToAdd);
-      });
+      // TODO: Remove
+      // this.addUIBlock((uiManager, viewRegistry) => {
+      //   const subView = viewRegistry.get(tagToAdd);
+      //   invariant(
+      //     subView,
+      //     `Attempted to insert subview with tag ${tagToAdd} that does not exist`
+      //   );
+      //   viewToManage.insertReactSubviewAtIndex(subView, indexToAdd);
+      // });
+    }
+
+    if (!shadowViewToManage.isVirtual()) {
+      this.nativeViewHierarchyOptimizer.handleManageChildren(
+        shadowViewToManage,
+        indicesToRemove,
+        tagsToRemove,
+        viewsToAdd,
+        tagsToDelete
+      );
+    } else {
+      this.manageChildren(tag, indicesToRemove, viewsToAdd, tagsToDelete);
     }
 
     for (let i = 0; i < tagsToDelete.length; i++) {
-      this.purgeView(tagsToDelete[i]);
+      const reactTag = tagsToDelete[i];
+      const shadowView = this.shadowViewRegistry.get(tagsToDelete[i]);
+      if (shadowView) {
+        !this.layoutAnimationManager.isPending() &&
+          this.shadowViewRegistry.delete(reactTag);
+        shadowView.purge();
+      }
+    }
+  }
+
+  manageChildren(
+    tag: number,
+    indicesToRemove: ?(number[]),
+    viewsToAdd: ?({ tag: number, index: number }[]),
+    tagsToDelete: ?(number[])
+  ) {
+    const viewToManage = this.viewRegistry.get(tag);
+    invariant(viewToManage, `No such view found with tag ${tag}`);
+
+    if (indicesToRemove != null) {
+      for (let i = indicesToRemove.length - 1; i >= 0; i--) {
+        const indexToRemove = indicesToRemove[i];
+        const viewToRemove = viewToManage.reactSubviews[indexToRemove];
+        if (viewToRemove) {
+          viewToManage.removeReactSubview(viewToRemove);
+        }
+      }
+    }
+
+    if (viewsToAdd != null) {
+      for (let i = 0; i < viewsToAdd.length; i++) {
+        const viewAtIndex = viewsToAdd[i];
+        const viewToAdd = this.viewRegistry.get(viewAtIndex.tag);
+        if (viewToAdd != null) {
+          viewToManage.insertReactSubviewAtIndex(viewToAdd, viewAtIndex.index);
+        }
+      }
+    }
+
+    if (tagsToDelete != null) {
+      for (let i = 0; i < tagsToDelete.length; i++) {
+        const tagToDelete = tagsToDelete[i];
+        this.purgeView(tagToDelete);
+      }
     }
   }
 
@@ -674,9 +782,27 @@ class RCTUIManager extends RCTModule {
     manager.functionMap[commandID].apply(manager, args);
   }
 
-  $focus(reactTag: number) {}
+  $focus(reactTag: number) {
+    const viewToFocus = this.viewRegistry.get(reactTag);
+    invariant(viewToFocus, `No view found with react tag: ${reactTag}`);
 
-  $blur(reactTag: number) {}
+    if (typeof viewToFocus.focus === "function") {
+      viewToFocus.focus();
+    } else {
+      console.warn(`View with tag '${reactTag}' cannot be focused`);
+    }
+  }
+
+  $blur(reactTag: number) {
+    const viewToBlur = this.viewRegistry.get(reactTag);
+    invariant(viewToBlur, `No view found with react tag: ${reactTag}`);
+
+    if (typeof viewToBlur.blur === "function") {
+      viewToBlur.blur();
+    } else {
+      console.warn(`View with tag '${reactTag}' cannot be blurred`);
+    }
+  }
 
   constantsToExport() {
     const constants = {};

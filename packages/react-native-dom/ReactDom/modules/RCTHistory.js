@@ -1,9 +1,9 @@
 /** @flow */
 
 import createHistory, {
-  type BrowserHistory,
-  type BrowserLocation
-} from "history/createBrowserHistory";
+  type HashHistory,
+  type HashLocation
+} from "history/createHashHistory";
 import queryString from "query-string";
 
 import RCTEventEmitter from "RCTNativeEventEmitter";
@@ -13,13 +13,14 @@ import type RCTBridge from "RCTBridge";
 class RCTHistory extends RCTEventEmitter {
   static moduleName = "RCTHistory";
 
-  history: BrowserHistory;
+  history: HashHistory;
   unlisten: ?Function;
 
   constructor(bridge: RCTBridge) {
     super(bridge);
     this.history = createHistory({
-      basename: bridge.basename
+      basename: bridge.basename,
+      hashType: "slash"
     });
   }
 
@@ -31,7 +32,7 @@ class RCTHistory extends RCTEventEmitter {
     this.unlisten && this.unlisten();
   }
 
-  handleHistoryChange = (location: BrowserLocation) => {
+  handleHistoryChange = (location: HashHistory) => {
     this.sendEventWithName("history", { location });
   };
 
