@@ -52,6 +52,7 @@ class RCTImageView extends RCTView {
   _src: ?string; // Used to set the tile image
   _imageWidth: ?number; // Used to calculate the tile image's scale factor
   _imageHeight: ?number; // Used to calculate the tile image's scale factor
+  _needsReload: boolean = false; // Whether the latest change of props requires the image to be reloaded
 
   constructor(bridge: RCTBridge) {
     super(bridge);
@@ -220,6 +221,9 @@ class RCTImageView extends RCTView {
   }
 
   set frame(value: Frame) {
+    const prevWidth = this.width;
+    const prevHeight = this.height;
+
     super.frame = value;
 
     const { width, height } = value;
@@ -233,7 +237,9 @@ class RCTImageView extends RCTView {
       height: `${height}px`
     });
 
-    this.reloadImage();
+    if (prevWidth !== width || prevHeight !== height) {
+      this.reloadImage();
+    }
   }
 
   hasMultipleSources(): boolean {
