@@ -11,7 +11,7 @@ type NodeIndexPair = {
   index: number
 };
 
-const ENABLED = true;
+const ENABLED = false;
 
 class RCTNativeViewHierarchyOptimizer {
   manager: UIManager;
