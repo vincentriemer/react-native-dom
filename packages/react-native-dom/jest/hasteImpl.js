@@ -11,11 +11,15 @@
 
 const path = require("path");
 
-const ROOT = path.join(__dirname, "..") + path.sep;
+const ROOTS = [
+  path.join(__dirname, "..", "node_modules/react-native") + path.sep,
+  path.join(__dirname, "..") + path.sep
+];
 
 const BLACKLISTED_PATTERNS /*: Array<RegExp>*/ = [
-  /.*\/__(mocks|tests)__\/.*/,
-  /.*\/Libraries\/Animated\/src\/polyfills\/.*/
+  /.*[\\\/]__(mocks|tests)__[\\\/].*/,
+  /^Libraries[\\\/]Animated[\\\/]src[\\\/]polyfills[\\\/].*/,
+  /^Libraries[\\\/]Renderer[\\\/]fb[\\\/].*/
 ];
 
 const WHITELISTED_PREFIXES /*: Array<string>*/ = [
@@ -23,16 +27,16 @@ const WHITELISTED_PREFIXES /*: Array<string>*/ = [
   "Libraries",
   "ReactAndroid",
   "RNTester",
-  "ReactDom",
-  "node_modules/react-native/Libraries"
+  "ReactDom"
 ];
 
 const NAME_REDUCERS /*: Array<[RegExp, string]>*/ = [
   // extract basename
-  [/^(?:.*\/)?([a-zA-Z0-9$_.-]+)$/, "$1"],
+  [/^(?:.*[\\\/])?([a-zA-Z0-9$_.-]+)$/, "$1"],
   // strip .js/.js.flow suffix
   [/^(.*)\.js(\.flow)?$/, "$1"],
-  [/^(.*)\.(android|ios|native|web|dom)$/, "$1"]
+  // strip platform suffix
+  [/^(.*)\.(android|ios|native|dom)$/, "$1"]
 ];
 
 const haste = {
@@ -41,9 +45,9 @@ const haste = {
    *                       filePath is not a haste module
    */
   getHasteName(
-    filePath /*: string*/,
-    sourceCode /* : ?string*/
-  ) /*: (string | void)*/ {
+    filePath /*: string */,
+    sourceCode /*: ?string */
+  ) /*: string | void */ {
     if (!isHastePath(filePath)) {
       return undefined;
     }
@@ -57,16 +61,18 @@ const haste = {
   }
 };
 
-function isHastePath(filePath /*: string*/) /*: bool*/ {
+function isHastePath(filePath /*: string */) /*: boolean */ {
   if (!filePath.endsWith(".js") && !filePath.endsWith(".js.flow")) {
     return false;
   }
 
-  if (!filePath.startsWith(ROOT)) {
+  const root = ROOTS.find((r) => filePath.startsWith(r));
+  if (!root) {
     return false;
   }
 
-  filePath = filePath.substr(ROOT.length + 1);
+  filePath = filePath.substr(root.length);
+  console.log(filePath);
   if (BLACKLISTED_PATTERNS.some((pattern) => pattern.test(filePath))) {
     return false;
   }

@@ -8,7 +8,6 @@
       "@babel/plugin-transform-runtime",
       {
         "helpers": true,
-        "polyfill": false,
         "regenerator": true
       }
     ],

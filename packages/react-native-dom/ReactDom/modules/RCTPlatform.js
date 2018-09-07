@@ -12,8 +12,9 @@ class RCTPlatformConstants extends RCTModule {
       forceTouchAvailable: supportsTouchForceChange,
       reactNativeVersion: {
         major: 0,
-        minor: 0,
-        patch: 0
+        minor: 57,
+        patch: 0,
+        prerelease: "rc.4"
       }
     };
   }
