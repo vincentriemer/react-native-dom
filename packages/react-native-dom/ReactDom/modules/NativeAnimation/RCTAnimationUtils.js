@@ -55,7 +55,7 @@ export function RCTInterpolateValue(
 
   return (
     outputMin +
-    (value - inputMin) * (outputMax - outputMin) / (inputMax - inputMin)
+    ((value - inputMin) * (outputMax - outputMin)) / (inputMax - inputMin)
   );
 }
 

@@ -81,8 +81,7 @@ class RCTDecayAnimation implements RCTAnimationDriver {
 
     const value =
       this.fromValue +
-      this.velocity /
-        (1 - this.deceleration) *
+      (this.velocity / (1 - this.deceleration)) *
         (1 -
           Math.exp(
             -(1 - this.deceleration) * (currentTime - this.frameStartTime)

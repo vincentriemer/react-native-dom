@@ -712,7 +712,7 @@ var MatrixMath = {
         0,
         0,
         MatrixMath.roundTo3Places(
-          Math.atan2(row[0][1], row[0][0]) * 180 / Math.PI
+          (Math.atan2(row[0][1], row[0][0]) * 180) / Math.PI
         )
       ];
     } else {
