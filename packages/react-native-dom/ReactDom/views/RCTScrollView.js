@@ -228,7 +228,7 @@ class RCTScrollView extends RCTView {
     this._scrollEnabled = true;
 
     if (isSafari) {
-      this.addWillChange("transform");
+      this.updateChildContainerStyle("willChange", "transform");
     }
 
     this.addEventListener("scroll", this.handleScroll, SCROLL_LISTENER_OPTIONS);
@@ -310,7 +310,7 @@ class RCTScrollView extends RCTView {
       styleUpdate.overflowY = "hidden";
     }
 
-    this.updateHostStyle(styleUpdate);
+    this.updateChildContainerStyle(styleUpdate);
   }
 
   calculateChildFramesData() {
