@@ -96,6 +96,7 @@
     "babel-jest": "^23.6.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-plugin-preval": "^1.3.2",
+    "babel-plugin-module-resolver": "^3.1.1",
     "metro-react-native-babel-preset": "0.45.1",
     "babel-plugin-transform-inline-environment-variables": "^0.1.1",
     "flow-bin": "^0.70.0",
