@@ -1,4 +1,5 @@
 import { RNDomInstance } from "react-native-dom";
+import { name as appName } from "../app.json";
 
 // Path to RN Bundle Entrypoint ================================================
 const rnBundlePath = "./entry.bundle?platform=dom&dev=true";
@@ -12,7 +13,7 @@ const ReactNativeDomOptions = {
 // App Initialization ============================================================
 const app = new RNDomInstance(
   rnBundlePath,
-  "<%= name %>",
+  appName,
   document.body,
   ReactNativeDomOptions
 );
