@@ -13,8 +13,7 @@ class RCTPlatformConstants extends RCTModule {
       reactNativeVersion: {
         major: 0,
         minor: 57,
-        patch: 0,
-        prerelease: "rc.4"
+        patch: 0
       }
     };
   }
