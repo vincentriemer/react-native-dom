@@ -270,16 +270,32 @@ class UIView extends HTMLElement implements RCTComponent {
     }
   }
 
+  _prevPointerEvents: ?string;
+  updateDerivedPointerEvents() {
+    if (this._prevPointerEvents != null) {
+      this.classList.remove(this._prevPointerEvents);
+    }
+
+    const nextValue = (() => {
+      if (this._touchable) {
+        if (
+          this._pointerEvents != null &&
+          ["none", "box-none", "box-only"].includes(this._pointerEvents)
+        ) {
+          return `pe-${this._pointerEvents}`;
+        }
+        return `pe-auto`;
+      }
+      return `pe-box-none`;
+    })();
+
+    this.classList.add(nextValue);
+    this._prevPointerEvents = nextValue;
+  }
+
   set pointerEvents(value: string) {
-    if (this._pointerEvents != null) {
-      this.classList.remove(`pe-${this._pointerEvents}`);
-    }
-
-    if (["auto", "none", "box-none", "box-only"].includes(value)) {
-      this.classList.add(`pe-${value}`);
-    }
-
     this._pointerEvents = value;
+    this.updateDerivedPointerEvents();
   }
 
   isAnimatingOpacity = false;
@@ -415,6 +431,7 @@ class UIView extends HTMLElement implements RCTComponent {
     if (this.hitSlopView) {
       this.hitSlopView.touchable = value;
     }
+    this.updateDerivedPointerEvents();
     this.updateCursor();
   }
 

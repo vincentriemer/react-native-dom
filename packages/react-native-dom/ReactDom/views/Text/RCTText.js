@@ -37,7 +37,7 @@ class RCTText extends RCTView {
   constructor(bridge: RCTBridge) {
     super(bridge);
 
-    this.pointerEvents = "box-none";
+    this.pointerEvents = "auto";
 
     this.updateHostStyle({
       position: "static",
@@ -140,6 +140,7 @@ class RCTText extends RCTView {
 
   set disabled(value: boolean) {
     this.updatePointerEvents();
+    this.updateDerivedTouchable();
   }
 
   set isHighlighted(value: ?boolean) {
@@ -156,6 +157,13 @@ class RCTText extends RCTView {
       this.touchable = false;
     }
     this.updatePointerEvents();
+    this.updateDerivedTouchable();
+  }
+
+  updateDerivedTouchable() {
+    this._touchable =
+      (this._isHighlighted != null || this._selectable) && !this._disabled;
+    this.updateDerivedPointerEvents();
   }
 
   set selectable(value: boolean) {
@@ -163,6 +171,7 @@ class RCTText extends RCTView {
 
     this.updateHostStyle("userSelect", value ? "text" : "none");
     this.updatePointerEvents();
+    this.updateDerivedTouchable();
   }
 
   set fontWeight(value: ?string) {

@@ -542,6 +542,8 @@ class RCTScrollView extends RCTView {
 
   set touchable(value: boolean) {
     // super.touchable = value;
+    this._touchable = value;
+    this.updateDerivedPointerEvents();
     this.updateHostStyle("cursor", "auto");
   }
 }
