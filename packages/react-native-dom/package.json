@@ -82,7 +82,7 @@
     "wolfy87-eventemitter": "^5.1.0",
     "yeoman-environment": "^2.2.0",
     "yeoman-generator": "^2.0.5",
-    "yoga-dom": "0.0.13"
+    "yoga-dom": "0.0.14"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0",
@@ -105,7 +105,7 @@
     "jest": "^23.6.0",
     "lint-staged": "^6.0.0",
     "prettier": "^1.9.0",
-    "react": "^16.4.1",
+    "react": "^16.5.0",
     "react-native": "~0.57.0",
     "resolve": "^1.7.1",
     "rimraf": "^2.6.1"

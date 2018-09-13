@@ -7954,7 +7954,7 @@ react-vis@^1.10.4:
     prop-types "^15.5.8"
     react-motion "^0.5.2"
 
-react@16.4.1, react@^16.4.1:
+react@16.4.1:
   version "16.4.1"
   resolved "https://registry.yarnpkg.com/react/-/react-16.4.1.tgz#de51ba5764b5dbcd1f9079037b862bd26b82fe32"
   dependencies:
@@ -7962,6 +7962,15 @@ react@16.4.1, react@^16.4.1:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     prop-types "^15.6.0"
+
+react@^16.5.0:
+  version "16.5.0"
+  resolved "https://registry.yarnpkg.com/react/-/react-16.5.0.tgz#f2c1e754bf9751a549d9c6d9aca41905beb56575"
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
+    schedule "^0.3.0"
 
 read-chunk@^2.1.0:
   version "2.1.0"
@@ -10030,6 +10039,6 @@ yeoman-generator@^2.0.5:
     through2 "^2.0.0"
     yeoman-environment "^2.0.5"
 
-yoga-dom@0.0.13:
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/yoga-dom/-/yoga-dom-0.0.13.tgz#dcfe3d6ba7415d2b91931b2945b0fae216f06868"
+yoga-dom@0.0.14:
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/yoga-dom/-/yoga-dom-0.0.14.tgz#7d5ce7d1be8188ed73414a56448550c2d4a6eb77"
