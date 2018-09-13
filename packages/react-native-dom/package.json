@@ -47,7 +47,8 @@
       ]
     },
     "roots": [
-      "<rootDir>/Libraries/"
+      "<rootDir>/Libraries/",
+      "<rootDir>/ReactDom/"
     ]
   },
   "dependencies": {
@@ -92,7 +93,7 @@
     "@babel/plugin-syntax-dynamic-import": "^7.0.0",
     "@babel/plugin-transform-runtime": "^7.0.0",
     "@babel/preset-flow": "^7.0.0",
-    "babel-jest": "^23.4.2",
+    "babel-jest": "^23.6.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-plugin-preval": "^1.3.2",
     "metro-react-native-babel-preset": "0.45.1",
@@ -100,7 +101,7 @@
     "flow-bin": "^0.70.0",
     "flow-copy-source": "^1.3.0",
     "flow-typed": "^2.2.3",
-    "jest": "^23.5.0",
+    "jest": "^23.6.0",
     "lint-staged": "^6.0.0",
     "prettier": "^1.9.0",
     "react": "^16.4.1",
