@@ -1,26 +1,20 @@
-/**
- * @providesModule RCTNativeAnimatedModule
- * @flow
- */
+/** @flow */
 
 import invariant from "invariant";
 
+import RCTModule from "RCTModule";
 import type RCTBridge from "RCTBridge";
 import type { RCTEvent } from "RCTEventDispatcher";
 import type RCTValueAnimatedNode from "RCTValueAnimatedNode";
 import RCTNativeAnimatedNodesManager from "RCTNativeAnimatedNodesManager";
-import {
-  RCTFunctionTypeNormal,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 
 export type Config = Object;
 type AnimatedOperation = (nodesManager: RCTNativeAnimatedNodesManager) => void;
 
-@RCT_EXPORT_MODULE("RCTNativeAnimatedModule")
 class RCTNativeAnimatedModule extends RCTEventEmitter {
+  static moduleName = "RCTNativeAnimatedModule";
+
   bridge: RCTBridge;
 
   nodesManager: RCTNativeAnimatedNodesManager;
@@ -42,29 +36,25 @@ class RCTNativeAnimatedModule extends RCTEventEmitter {
     this.bridge.uiManager.observerCoordinator.addObserver(this);
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  createAnimatedNode(tag: number, config: Config) {
+  $createAnimatedNode(tag: number, config: Config) {
     this.addOperationBlock((nodesManager) => {
       nodesManager.createAnimatedNode(tag, config);
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  connectAnimatedNodes(parentTag: number, childTag: number) {
+  $connectAnimatedNodes(parentTag: number, childTag: number) {
     this.addOperationBlock((nodesManager) => {
       nodesManager.connectAnimatedNodes(parentTag, childTag);
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  disconnectAnimatedNodes(parentTag: number, childTag: number) {
+  $disconnectAnimatedNodes(parentTag: number, childTag: number) {
     this.addOperationBlock((nodesManager) => {
       nodesManager.disconnectAnimatedNodes(parentTag, childTag);
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  startAnimatingNode(
+  $startAnimatingNode(
     animationId: number,
     nodeTag: number,
     config: Config,
@@ -81,43 +71,37 @@ class RCTNativeAnimatedModule extends RCTEventEmitter {
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  stopAnimation(animationId: number) {
+  $stopAnimation(animationId: number) {
     this.addOperationBlock((nodesManager) => {
       nodesManager.stopAnimation(animationId);
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  setAnimatedNodeValue(nodeTag: number, value: number) {
+  $setAnimatedNodeValue(nodeTag: number, value: number) {
     this.addOperationBlock((nodesManager) => {
       nodesManager.setAnimatedNodeValue(nodeTag, value);
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  setAnimatedNodeOffset(nodeTag: number, offset: number) {
+  $setAnimatedNodeOffset(nodeTag: number, offset: number) {
     this.addOperationBlock((nodesManager) => {
       nodesManager.setAnimatedNodeOffset(nodeTag, offset);
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  flattenAnimatedNodeOffset(nodeTag: number) {
+  $flattenAnimatedNodeOffset(nodeTag: number) {
     this.addOperationBlock((nodesManager) => {
       nodesManager.flattenAnimatedNodeOffset(nodeTag);
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  extractAnimatedNodeOffset(nodeTag: number) {
+  $extractAnimatedNodeOffset(nodeTag: number) {
     this.addOperationBlock((nodesManager) => {
       nodesManager.extractAnimatedNodeOffset(nodeTag);
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  connectAnimatedNodeToView(nodeTag: number, viewTag: number) {
+  $connectAnimatedNodeToView(nodeTag: number, viewTag: number) {
     const viewName = this.bridge.uiManager.viewNameForReactTag(viewTag);
     invariant(viewName, `No such viewName for react tag ${viewTag}`);
     this.addOperationBlock((nodesManager) => {
@@ -125,8 +109,7 @@ class RCTNativeAnimatedModule extends RCTEventEmitter {
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  disconnectAnimatedNodeFromView(nodeTag: number, viewTag: number) {
+  $disconnectAnimatedNodeFromView(nodeTag: number, viewTag: number) {
     // Disconnecting a view also restores its default values so we have to make
     // sure this happens before views get updated with their new props. This is
     // why we enqueue this on the pre-operations queue.
@@ -135,15 +118,13 @@ class RCTNativeAnimatedModule extends RCTEventEmitter {
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  dropAnimatedNode(tag: number) {
+  $dropAnimatedNode(tag: number) {
     this.addOperationBlock((nodesManager) => {
       nodesManager.dropAnimatedNode(tag);
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  startListeningToAnimatedNodeValue(tag: number) {
+  $startListeningToAnimatedNodeValue(tag: number) {
     const valueObserver = this;
     this.addOperationBlock((nodesManager) => {
       this.addListener("onAnimatedValueUpdate");
@@ -151,16 +132,14 @@ class RCTNativeAnimatedModule extends RCTEventEmitter {
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  stopListeningToAnimatedNodeValue(tag: number) {
+  $stopListeningToAnimatedNodeValue(tag: number) {
     this.addOperationBlock((nodesManager) => {
       this.removeListener("onAnimatedValueUpdate");
       nodesManager.stopListeningToAnimatedNodeValue(tag);
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  addAnimatedEventToView(
+  $addAnimatedEventToView(
     viewTag: number,
     eventName: string,
     eventMapping: Object
@@ -170,8 +149,7 @@ class RCTNativeAnimatedModule extends RCTEventEmitter {
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  removeAnimatedEventFromView(
+  $removeAnimatedEventFromView(
     viewTag: number,
     eventName: string,
     animatedNodeTag: number

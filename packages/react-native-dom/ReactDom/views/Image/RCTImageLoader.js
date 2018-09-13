@@ -1,24 +1,16 @@
-/**
- * @providesModule RCTImageLoader
- * @flow
- */
+/** @flow */
 
 import type { Size } from "InternalLib";
-import RCTBridge, {
-  RCTFunctionTypeNormal,
-  RCTFunctionTypePromise,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import type RCTBridge from "RCTBridge";
+import RCTModule from "RCTModule";
 
-@RCT_EXPORT_MODULE("RCTImageLoader")
-class RCTImageLoader {
-  bridge: RCTBridge;
+class RCTImageLoader extends RCTModule {
+  static moduleName = "RCTImageLoader";
 
   imageCache: { [cacheKey: string]: Promise<Image> };
 
   constructor(bridge: RCTBridge) {
-    this.bridge = bridge;
+    super(bridge);
     this.imageCache = {};
   }
 
@@ -27,7 +19,10 @@ class RCTImageLoader {
       const image = new Image();
 
       // skip loading on data uris
-      if (url.startsWith("data:")) return resolve(image);
+      if (url.startsWith("data:")) {
+        image.src = url;
+        return resolve(image);
+      }
 
       if (url.startsWith("blob:")) {
         const blob = this.bridge.blobManager.resolveURL(url);

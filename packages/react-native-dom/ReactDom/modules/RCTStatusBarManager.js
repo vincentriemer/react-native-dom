@@ -1,44 +1,28 @@
-/**
- * @providesModule RCTStatusBarManager
- * @flow
- */
+/** @flow */
 
-import RCTBridge, {
-  RCTFunctionTypeNormal,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import type RCTBridge from "RCTBridge";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 
-@RCT_EXPORT_MODULE("RCTStatusBarManager")
 class RCTStatusBarManager extends RCTEventEmitter {
-  constructor(bridge: RCTBridge) {
-    super(bridge);
-  }
+  static moduleName = "RCTStatusBarManager";
 
   supportedEvents() {
     return ["statusBarFrameDidChange", "statusBarFrameWillChange"];
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  getHeight(callbackId: number) {
-    this.bridge.callbackFromId(callbackId)({
-      height: 0
-    });
+  $getHeight(callbackId: number) {
+    this.bridge.callbackFromId(callbackId)({ height: 0 });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  setStyle() {
+  $setStyle() {
     /* no-op */
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  setHidden() {
+  $setHidden() {
     /* no-op */
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  setNetworkActivityIndicatorVisible() {
+  $setNetworkActivityIndicatorVisible() {
     /* no-op */
   }
 

@@ -1,29 +1,16 @@
-/**
- * @providesModule RCTAsyncLocalStorage
- * @flow
- */
+/** @flow */
 
-import idbKeyval from "idb-keyval";
+import * as idbKeyval from "idb-keyval";
 import deepmerge from "deepmerge";
 
-import RCTBridge, {
-  RCTFunctionTypeNormal,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import RCTModule from "RCTModule";
+import type RCTBridge from "RCTBridge";
 
-@RCT_EXPORT_MODULE("RCTAsyncLocalStorage")
-class RCTAsyncLocalStorage {
-  bridge: RCTBridge;
+class RCTAsyncLocalStorage extends RCTModule {
+  static moduleName = "RCTAsyncLocalStorage";
 
-  constructor(bridge: RCTBridge) {
-    this.bridge = bridge;
-  }
-
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  multiGet(keys: string[], callbackId: number) {
+  $multiGet(keys: string[], callbackId: number) {
     const callback = this.bridge.callbackFromId(callbackId);
-
     Promise.all(
       keys.map((key) => {
         return idbKeyval.get(key);
@@ -37,10 +24,8 @@ class RCTAsyncLocalStorage {
       });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  multiMerge(kvPairs: [string, any][], callbackId: number) {
+  $multiMerge(kvPairs: [string, any][], callbackId: number) {
     const callback = this.bridge.callbackFromId(callbackId);
-
     Promise.all(
       kvPairs.map(([key, prevValue]) => {
         return idbKeyval.get(key).then((nextValue) => {
@@ -55,10 +40,8 @@ class RCTAsyncLocalStorage {
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  multiSet(kvPairs: [string, any][], callbackId: number) {
+  $multiSet(kvPairs: [string, any][], callbackId: number) {
     const callback = this.bridge.callbackFromId(callbackId);
-
     Promise.all(
       kvPairs.map(([key, value]) => {
         return idbKeyval.set(key, value);
@@ -68,10 +51,8 @@ class RCTAsyncLocalStorage {
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  multiRemove(keys: string[], callbackId: number) {
+  $multiRemove(keys: string[], callbackId: number) {
     const callback = this.bridge.callbackFromId(callbackId);
-
     Promise.all(
       keys.map((key) => {
         return idbKeyval.delete(key);
@@ -81,8 +62,7 @@ class RCTAsyncLocalStorage {
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  async getAllKeys(callbackId: number) {
+  async $getAllKeys(callbackId: number) {
     const callback = this.bridge.callbackFromId(callbackId);
     try {
       const keys = await idbKeyval.keys();
@@ -92,8 +72,7 @@ class RCTAsyncLocalStorage {
     }
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  async clear(callbackId: number) {
+  async $clear(callbackId: number) {
     const callback = this.bridge.callbackFromId(callbackId);
     try {
       await idbKeyval.clear();

@@ -1,13 +1,7 @@
-/**
- * @providesModule RCTExceptionsManager
- * @flow
- */
+/** @flow */
 
-import RCTBridge, {
-  RCTFunctionTypeNormal,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import RCTModule from "RCTModule";
+import type RCTBridge from "RCTBridge";
 
 export type StackEntry = {
   file: string,
@@ -16,16 +10,10 @@ export type StackEntry = {
   column: number
 };
 
-@RCT_EXPORT_MODULE("RCTExceptionsManager")
-class RCTExceptionsManager {
-  bridge: RCTBridge;
+class RCTExceptionsManager extends RCTModule {
+  static moduleName = "RCTExceptionsManager";
 
-  constructor(bridge: RCTBridge) {
-    this.bridge = bridge;
-  }
-
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  reportSoftException(
+  $reportSoftException(
     message: string,
     stack: StackEntry[],
     exceptionId: number
@@ -33,8 +21,7 @@ class RCTExceptionsManager {
     this.bridge.redBox.showErrorMessage(message, stack);
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  reportFatalException(
+  $reportFatalException(
     message: string,
     stack: StackEntry[],
     exceptionId: number
@@ -42,8 +29,7 @@ class RCTExceptionsManager {
     this.bridge.redBox.showErrorMessage(message, stack);
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  updateExceptionMessage(
+  $updateExceptionMessage(
     message: string,
     stack: StackEntry[],
     exceptionId: number
@@ -51,9 +37,8 @@ class RCTExceptionsManager {
     this.bridge.redBox.updateError(message, stack);
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  reportUnhandledException(message: string, stack: StackEntry[]) {
-    this.reportFatalException(message, stack, -1);
+  $reportUnhandledException(message: string, stack: StackEntry[]) {
+    this.$reportFatalException(message, stack, -1);
   }
 }
 

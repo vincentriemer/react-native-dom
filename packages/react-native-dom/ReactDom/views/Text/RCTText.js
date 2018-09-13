@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTText
- * @flow
- */
+/** @flow */
 
 import tinycolor from "tinycolor2";
 
@@ -14,7 +11,6 @@ import {
   defaultFontSize,
   defaultFontStack
 } from "RCTSharedTextValues";
-import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 
 // inject default font stylesheet
@@ -32,7 +28,6 @@ import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
   document.head && document.head.appendChild(styleElement);
 })();
 
-@CustomElement("rct-text")
 class RCTText extends RCTView {
   _selectable: boolean;
   _disabled: boolean;
@@ -41,6 +36,8 @@ class RCTText extends RCTView {
 
   constructor(bridge: RCTBridge) {
     super(bridge);
+
+    this.pointerEvents = "box-none";
 
     this.updateHostStyle({
       position: "static",
@@ -106,17 +103,6 @@ class RCTText extends RCTView {
     this.updateChildContainerStyle({
       display: "inline-block"
     });
-
-    if (this.onLayout) {
-      this.onLayout({
-        layout: {
-          x: value.left,
-          y: value.top,
-          width: value.width,
-          height: value.height
-        }
-      });
-    }
   }
 
   set accessible(value: boolean) {
@@ -124,7 +110,13 @@ class RCTText extends RCTView {
   }
 
   set fontFamily(value: ?string) {
-    this.style.fontFamily = value ? value : "inherit";
+    value = value ? value : "inherit";
+    if (value.indexOf("System") > -1) {
+      const stack = value.split(/\s*,\s*/);
+      stack[stack.indexOf("System")] = TextDefaults.fontFamily;
+      value = stack.join(", ");
+    }
+    this.style.fontFamily = value;
   }
 
   set fontSize(value: ?number) {
@@ -135,15 +127,15 @@ class RCTText extends RCTView {
     return this._selectable;
   }
 
-  set textAlign(value: string) {
-    this.style.textAlign = value;
+  set textAlign(value: ?string) {
+    this.style.textAlign = value ? value : "inherit";
   }
 
   updatePointerEvents() {
-    this.style.pointerEvents =
+    this.pointerEvents =
       (this._selectable || this._touchable) && !this._disabled
         ? "auto"
-        : "none";
+        : "box-none";
   }
 
   set disabled(value: boolean) {
@@ -199,11 +191,9 @@ class RCTText extends RCTView {
     );
   }
 
-  set textDecorationColor(value: ?number) {
+  set textDecorationColor(value: ?string) {
     if (value != null) {
-      const [a, r, g, b] = ColorArrayFromHexARGB(value);
-      const stringValue = `rgba(${r},${g},${b},${a})`;
-      this.updateChildContainerStyle("textDecorationColor", stringValue);
+      this.updateChildContainerStyle("textDecorationColor", value);
     } else {
       this.updateChildContainerStyle("textDecorationColor", "currentcolor");
     }
@@ -239,5 +229,7 @@ class RCTText extends RCTView {
     }
   }
 }
+
+customElements.define("rct-text", RCTText);
 
 export default RCTText;

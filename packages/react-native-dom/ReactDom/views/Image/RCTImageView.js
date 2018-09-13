@@ -1,13 +1,9 @@
-/**
- * @providesModule RCTImageView
- * @flow
- */
+/** @flow */
 
 import type { Frame, Size } from "InternalLib";
 import type RCTBridge from "RCTBridge";
 import RCTView from "RCTView";
 import RCTImageSource from "RCTImageSource";
-import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 import prefixInlineStyles from "prefixInlineStyles";
 import isIOS from "isIOS";
@@ -34,7 +30,6 @@ const onLoadParamsForSource = (source: RCTImageSource) => ({
 
 let idCounter = 0;
 
-@CustomElement("rct-image-view")
 class RCTImageView extends RCTView {
   _imageSources: RCTImageSource[];
   imageElement: HTMLImageElement;
@@ -57,6 +52,7 @@ class RCTImageView extends RCTView {
   _src: ?string; // Used to set the tile image
   _imageWidth: ?number; // Used to calculate the tile image's scale factor
   _imageHeight: ?number; // Used to calculate the tile image's scale factor
+  _needsReload: boolean = false; // Whether the latest change of props requires the image to be reloaded
 
   constructor(bridge: RCTBridge) {
     super(bridge);
@@ -84,15 +80,11 @@ class RCTImageView extends RCTView {
     // this.imageElement.setAttribute("decoding", "async");
     // this.childContainer.appendChild(this.imageElement);
 
-    this.resizeMode = "stretch";
+    this.resizeMode = undefined;
 
     this.imageElement.addEventListener("load", () => {
       this.forceRasterization();
     });
-
-    if (isIOS) {
-      this.addWillChange("transform");
-    }
   }
 
   updateFilter() {
@@ -174,7 +166,9 @@ class RCTImageView extends RCTView {
     this.reloadImage();
   }
 
-  set resizeMode(value: string) {
+  set resizeMode(value: ?string) {
+    value = value || "stretch";
+
     let outputValue: string = "";
     switch (value) {
       case "contain":
@@ -209,14 +203,8 @@ class RCTImageView extends RCTView {
     this.updateFilter();
   }
 
-  set tintColor(value: ?number) {
-    if (typeof value === "number") {
-      const [a, r, g, b] = ColorArrayFromHexARGB(value);
-      const stringValue = `rgba(${r},${g},${b},${a})`;
-      this._tintColor = stringValue;
-    } else {
-      this._tintColor = value;
-    }
+  set tintColor(value: ?string) {
+    this._tintColor = value;
     this.svgFilter.innerHTML = this._tintColor
       ? tintColorSVG(this._tintColor, this.filterId)
       : "";
@@ -233,6 +221,9 @@ class RCTImageView extends RCTView {
   }
 
   set frame(value: Frame) {
+    const prevWidth = this.width;
+    const prevHeight = this.height;
+
     super.frame = value;
 
     const { width, height } = value;
@@ -246,7 +237,9 @@ class RCTImageView extends RCTView {
       height: `${height}px`
     });
 
-    this.reloadImage();
+    if (prevWidth !== width || prevHeight !== height) {
+      this.reloadImage();
+    }
   }
 
   hasMultipleSources(): boolean {
@@ -312,8 +305,11 @@ class RCTImageView extends RCTView {
           this._src = pendingImage.src;
           // We call updateTile() below so can skip it here
 
-          // $FlowFixMe
-          if (typeof pendingImage.decode === "function") {
+          if (
+            !pendingImage.src.startsWith("data:") &&
+            // $FlowFixMe
+            typeof pendingImage.decode === "function"
+          ) {
             return pendingImage.decode().then(() => pendingImage);
           }
           return pendingImage;
@@ -349,7 +345,7 @@ class RCTImageView extends RCTView {
             this.reactTag,
             "topError",
             {
-              error: err.message
+              error: err
             }
           ]);
         })
@@ -366,5 +362,7 @@ class RCTImageView extends RCTView {
     }
   }
 }
+
+customElements.define("rct-image-view", RCTImageView);
 
 export default RCTImageView;

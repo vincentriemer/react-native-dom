@@ -1,0 +1,154 @@
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.homeContainer {
+  background-color: $backgroundColor;
+  overflow: hidden;
+}
+
+.homeContainer .homeWrapper .projectLogo {
+  margin-right: -10px;
+  opacity: 0.1;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  right: 0;
+  padding: 0;
+}
+
+.homeContainer .homeWrapper .projectLogo img {
+  max-height: unset;
+  max-width: unset;
+  display: block;
+  position: absolute;
+  top: 10%;
+  width: 40%;
+  height: auto;
+}
+
+.homeContainer .homeWrapper {
+  padding-top: 4em;
+  padding-bottom: 4em;
+}
+
+.homeContainer h2 {
+  color: $tintColor;
+  font-size: 45px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.homeContainer h2 small {
+  color: $textInvert;
+  font-weight: 200;
+  padding-top: 15px;
+  margin-top: 0px;
+  letter-spacing: 0.01em;
+}
+
+.homeContainer .button {
+  color: $textInvert;
+  font-size: 16px;
+  background-color: $tintColor;
+  border: none;
+  transition: background 0.3s, color 0.3s, border 0.3s;
+  padding: 10px 25px;
+  text-transform: unset;
+}
+
+.homeContainer .button:hover {
+  background-color: white;
+  color: black;
+}
+
+.productShowcaseSection h2 {
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.fixedHeaderContainer header .headerTitleWithLogo,
+.fixedHeaderContainer header img {
+  color: $tintColor;
+  font-size: 16px;
+  fill: $tintColor;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.navigationSlider .slidingNav ul li a {
+  color: #ffffff;
+}
+
+.fixedHeaderContainer header img {
+  height: 25px;
+}
+
+.logo {
+  display: block !important;
+}
+
+.mainContainer:not(.blogContainer) {
+  padding-bottom: 0;
+}
+
+.mainContainer:not(.blogContainer) .wrapper .post,
+.blogContainer .posts,
+.blogContainer .lonePost {
+  padding-bottom: 40px;
+}
+
+footer.nav-footer {
+  background-color: $backgroundColor;
+  clear: left;
+}
+
+.blog-recent {
+  margin-bottom: 20px;
+}
+
+.blog-recent > a {
+  float: unset;
+}
+
+.exampleContent {
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.exampleContent h2 {
+  margin-top: 0;
+}
+
+@media only screen and (min-device-width: 360px) and (max-device-width: 736px) {
+  footer .sitemap .nav-home {
+    padding-left: 0;
+    margin-bottom: 10px;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .exampleContent {
+    max-width: 42em;
+    margin-right: 40px;
+  }
+}
+
+@media only screen and (max-width: 1023px) {
+}
+
+@media only screen and (min-width: 1400px) {
+}
+
+@media only screen and (min-width: 1500px) {
+  .homeContainer .homeWrapper .projectLogo {
+    width: 90%;
+  }
+
+  .homeContainer .homeWrapper .projectLogo img {
+    right: -5%;
+  }
+}

@@ -6,9 +6,9 @@ declare module "rndom-switch" {
     value: boolean;
     width: number;
     height: number;
-    tintColor: string;
-    onTintColor: string;
-    thumbTintColor: string;
+    tintColor: ?string;
+    onTintColor: ?string;
+    thumbTintColor: ?string;
 
     addEventListener(
       type: string,

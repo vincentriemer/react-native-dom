@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTNativeAnimatedNodesManager
- * @flow
- */
+/** @flow */
 
 import invariant from "invariant";
 

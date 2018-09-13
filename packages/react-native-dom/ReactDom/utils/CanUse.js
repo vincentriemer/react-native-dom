@@ -1,7 +1,4 @@
-/**
- * @providesModule CanUse
- * @flow
- */
+/** @flow */
 
 export default {
   matchMedia: typeof window.matchMedia === "function",

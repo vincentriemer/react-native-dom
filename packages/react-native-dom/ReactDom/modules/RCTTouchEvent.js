@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTTouchEvent
- * @flow
- */
+/** @flow */
 
 import invariant from "invariant";
 

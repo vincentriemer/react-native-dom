@@ -1,20 +1,14 @@
-/**
- * @providesModule RCTDevLoadingView
- * @flow
- */
+/** @flow */
 
-import RCTBridge, {
-  RCTFunctionTypeNormal,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import type RCTBridge from "RCTBridge";
+import RCTModule from "RCTModule";
 import NotificationCenter from "NotificationCenter";
 import { defaultFontStack } from "RCTSharedTextValues";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 
-@RCT_EXPORT_MODULE("RCTDevLoadingView")
-class RCTDevLoadingView {
-  bridge: RCTBridge;
+class RCTDevLoadingView extends RCTModule {
+  static moduleName = "RCTDevLoadingView";
+
   hidden: boolean;
   color: string;
   backgroundColor: string;
@@ -22,13 +16,13 @@ class RCTDevLoadingView {
   view: HTMLDivElement;
 
   constructor(bridge: RCTBridge) {
-    this.bridge = bridge;
+    super(bridge);
 
     this.initView();
 
     NotificationCenter.addListener(
       "RCTJavaScriptDidLoadNotification",
-      this.hide.bind(this)
+      this.$hide.bind(this)
     );
 
     if (this.bridge.loading) {
@@ -66,8 +60,7 @@ class RCTDevLoadingView {
     });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  showMessage(
+  $showMessage(
     message: string,
     color: string | number,
     backgroundColor: string | number
@@ -94,9 +87,7 @@ class RCTDevLoadingView {
     this.updateView();
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  hide() {
-    // console.log("DevLoadingView.hide");
+  $hide() {
     this.hidden = true;
     this.updateView();
   }
@@ -104,17 +95,17 @@ class RCTDevLoadingView {
   updateProgress({ done, total }: { done: number, total: number }) {
     const color = "white";
     const backgroundColor = "#005900";
-    const message = `Loading ${(done / total * 100).toFixed(
+    const message = `Loading ${((done / total) * 100).toFixed(
       0
     )}% (${done}/${total})`;
-    this.showMessage(message, color, backgroundColor);
+    this.$showMessage(message, color, backgroundColor);
   }
 
   showWithURL(url: URL) {
     const color = "white";
     const backgroundColor = "#005900";
     const message = `Loading from ${url.href}...`;
-    this.showMessage(message, color, backgroundColor);
+    this.$showMessage(message, color, backgroundColor);
   }
 }
 

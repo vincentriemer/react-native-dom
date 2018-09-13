@@ -1,7 +1,5 @@
-/**
- * @providesModule RCTComponent
- * @flow
- */
+/** @flow */
+
 export interface RCTComponent {
   reactTag: number;
 
@@ -12,6 +10,7 @@ export interface RCTComponent {
     subview: $Subtype<RCTComponent>,
     index: number
   ): void;
+
   removeReactSubview(subview: $Subtype<RCTComponent>): void;
 
   purge(): void;

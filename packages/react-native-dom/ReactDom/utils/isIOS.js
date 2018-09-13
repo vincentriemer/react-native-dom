@@ -1,7 +1,4 @@
-/**
- * @providesModule isIOS
- * @flow
- */
+/** @flow */
 
 const isIOS =
   !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform);

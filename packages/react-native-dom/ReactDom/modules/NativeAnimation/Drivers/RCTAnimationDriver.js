@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTAnimationDriver
- * @flow
- */
+/** @flow */
 
 import type RCTValueAnimatedNode from "RCTValueAnimatedNode";
 import type RCTNativeAnimatedNodesManager from "RCTNativeAnimatedNodesManager";

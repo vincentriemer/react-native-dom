@@ -1,11 +1,9 @@
-/**
- * @providesModule RCTShadowView
- * @flow
- */
+/** @flow */
 
 import * as YG from "yoga-dom";
 import invariant from "invariant";
 
+import type RCTBridge from "RCTBridge";
 import type { Frame } from "InternalLib";
 import type { RCTComponent } from "RCTComponent";
 
@@ -20,7 +18,346 @@ export type LayoutChange = {
   nextMeasurement: Frame
 };
 
-async function loadAsync() {
+export const LAYOUT_ONLY_PROPS = [
+  "alignSelf",
+  "alignItems",
+  "collapsable",
+  "flex",
+  "flexBasis",
+  "flexDirection",
+  "flexGrow",
+  "flexShrink",
+  "flexWrap",
+  "justifyContent",
+  "alignContent",
+  "display",
+
+  /* position */
+  "right",
+  "top",
+  "bottom",
+  "left",
+  "start",
+  "end",
+
+  /* dimensions */
+  "width",
+  "height",
+  "minWidth",
+  "maxWidth",
+  "minHeight",
+  "maxHeight",
+
+  /* margins */
+  "margin",
+  "marginVertical",
+  "marginHorizontal",
+  "marginLeft",
+  "marginRight",
+  "marginTop",
+  "marginBottom",
+  "marginStop",
+  "marginEnd",
+
+  /* paddings */
+  "padding",
+  "paddingVertical",
+  "paddingHorizontal",
+  "paddingLeft",
+  "paddingRight",
+  "paddingTop",
+  "paddingBottom",
+  "paddingStart",
+  "paddingEnd"
+];
+
+class RCTShadowView implements RCTComponent {
+  _backgroundColor: string;
+  _transform: Array<number>;
+  _direction: any;
+
+  viewName: string;
+  rootTag: number;
+  bridge: RCTBridge;
+
+  yogaNode: YG.Node;
+  previousLayout: ?Frame;
+  isNewView: boolean;
+  isHidden: boolean;
+
+  reactTag: number;
+  reactSubviews: Array<RCTShadowView> = [];
+  reactSuperview: ?RCTShadowView;
+
+  // layout-only nodes
+  isLayoutOnly: boolean = false;
+  totalNativeChildren: number = 0;
+  nativeParent: ?RCTShadowView;
+  nativeChildren: ?(RCTShadowView[]);
+
+  measurement: ?Frame;
+
+  width: number;
+  height: number;
+
+  onLayout: ?Function;
+
+  constructor(bridge: RCTBridge) {
+    this.bridge = bridge;
+    this.yogaNode = new bridge.Yoga.Node();
+
+    this.previousLayout = undefined;
+    this.measurement = undefined;
+  }
+
+  isVirtual() {
+    return false;
+  }
+
+  set localData(value: any) {}
+
+  set direction(value: string) {
+    const constants = this.bridge.Yoga.Constants;
+
+    let yogaValue;
+    switch (value) {
+      case "ltr":
+        yogaValue = constants.direction.ltr;
+        break;
+      case "rtl":
+        yogaValue = constants.direction.rtl;
+        break;
+      default:
+        yogaValue = constants.direction.inherit;
+        break;
+    }
+
+    this._direction = yogaValue;
+    this.yogaNode["direction"] = yogaValue;
+  }
+
+  get direction() {
+    return this._direction;
+  }
+
+  get hasNewLayout(): boolean {
+    return this.yogaNode.hasNewLayout;
+  }
+
+  get isDirty(): boolean {
+    return this.yogaNode.isDirty();
+  }
+
+  get backgroundColor(): string {
+    return this._backgroundColor;
+  }
+
+  set backgroundColor(value: string) {
+    this._backgroundColor = value;
+  }
+
+  measureGlobal() {
+    let globalX = 0,
+      globalY = 0;
+
+    let currentView = this;
+    while (currentView) {
+      const layout = currentView.previousLayout;
+      if (layout) {
+        globalX += layout.left;
+        globalY += layout.top;
+
+        if (currentView.hasOwnProperty("scrollOffset")) {
+          globalX -= (currentView: any).scrollOffset.left;
+          globalY -= (currentView: any).scrollOffset.top;
+        }
+
+        currentView = currentView.reactSuperview;
+      } else {
+        currentView = null;
+      }
+    }
+
+    return { globalX, globalY };
+  }
+
+  getLayoutChanges(previousPosition: {
+    top: number,
+    left: number
+  }): Array<LayoutChange> {
+    if (!this.yogaNode.hasNewLayout && !!this.previousLayout) return [];
+    this.yogaNode.hasNewLayout = false;
+
+    let layoutChanges = [];
+
+    const newLayout = this.yogaNode.getComputedLayout();
+
+    const currentPosition = {
+      top: previousPosition.top + newLayout.top,
+      left: previousPosition.left + newLayout.left
+    };
+
+    const previousMeasurement = this.measurement
+      ? { ...this.measurement }
+      : null;
+
+    const nextMeasurement = {
+      ...currentPosition,
+      width: newLayout.width,
+      height: newLayout.height
+    };
+
+    if (JSON.stringify(newLayout) !== JSON.stringify(this.previousLayout)) {
+      layoutChanges.push({
+        reactTag: this.reactTag,
+        layout: newLayout,
+        previousMeasurement,
+        nextMeasurement
+      });
+
+      if (this.onLayout) {
+        this.onLayout({
+          layout: {
+            x: newLayout.left,
+            y: newLayout.top,
+            width: newLayout.width,
+            height: newLayout.height
+          }
+        });
+      }
+
+      this.previousLayout = newLayout;
+    }
+
+    this.reactSubviews.forEach((subView) => {
+      layoutChanges = layoutChanges.concat(
+        subView.getLayoutChanges(currentPosition)
+      );
+    });
+
+    this.measurement = { ...nextMeasurement };
+    return layoutChanges;
+  }
+
+  insertReactSubviewAtIndex(subview: RCTShadowView, index: number) {
+    subview.reactSuperview = this;
+    this.reactSubviews.splice(index, 0, subview);
+    this.yogaNode.insertChild(subview.yogaNode, index);
+
+    const increase = subview.isLayoutOnly ? subview.totalNativeChildren : 1;
+    this.totalNativeChildren += increase;
+
+    this.updateNativeChildrenCountInParent(increase);
+  }
+
+  removeReactSubview(subview: RCTShadowView) {
+    subview.reactSuperview = undefined;
+    this.reactSubviews = this.reactSubviews.filter((s) => s !== subview);
+    this.yogaNode.removeChild(subview.yogaNode);
+
+    const decrease = subview.isLayoutOnly ? subview.totalNativeChildren : 1;
+    this.totalNativeChildren -= decrease;
+    this.updateNativeChildrenCountInParent(-decrease);
+  }
+
+  removeAllNativeChildren() {
+    this.nativeChildren = null;
+    this.totalNativeChildren = 0;
+  }
+
+  addNativeChildAt(child: RCTShadowView, index: number) {
+    invariant(!this.isLayoutOnly, "Cannot add native child to layoutOnly node");
+    invariant(
+      !child.isLayoutOnly,
+      "Cannot add layout only child as a native child"
+    );
+
+    if (this.nativeChildren == null) {
+      this.nativeChildren = [];
+    }
+
+    this.nativeChildren.splice(index, 0, child);
+    child.nativeParent = this;
+  }
+
+  removeNativeChild(child: RCTShadowView) {
+    invariant(
+      this.nativeChildren,
+      "Cannot remove native child from node which has no native children"
+    );
+    this.nativeChildren = this.nativeChildren.filter((c) => c !== child);
+    child.nativeParent = null;
+  }
+
+  purge() {
+    this.reactSubviews.forEach((subView) => subView.purge());
+    this.yogaNode.free();
+  }
+
+  // TODO: Implement ===========================================
+  didSetProps(changedProps: Array<string>) {}
+  didUpdateReactSubviews() {}
+
+  frameContainsPoint(frame: Frame, point: { x: number, y: number }) {
+    return (
+      frame.left <= point.x &&
+      point.x <= frame.left + frame.width &&
+      frame.top <= point.y &&
+      point.y <= frame.top + frame.height
+    );
+  }
+
+  reactTagAtPoint(point: { x: number, y: number }): number {
+    for (const shadowView of this.reactSubviews) {
+      const prevLayout = shadowView.previousLayout;
+      if (prevLayout && this.frameContainsPoint(prevLayout, point)) {
+        let relativePoint = { ...point };
+        const origin = { x: prevLayout.left, y: prevLayout.top };
+        relativePoint.x -= origin.x;
+        relativePoint.y -= origin.y;
+        return shadowView.reactTagAtPoint(relativePoint);
+      }
+    }
+    return this.reactTag;
+  }
+
+  updateNativeChildrenCountInParent(delta: number) {
+    if (this.isLayoutOnly) {
+      let parent = this.reactSuperview;
+      while (parent != null) {
+        parent.totalNativeChildren += delta;
+        if (!parent.isLayoutOnly) {
+          break;
+        }
+        parent = parent.reactSuperview;
+      }
+    }
+  }
+
+  getNativeOffsetForChild(child: RCTShadowView): number {
+    let index = 0;
+    let found = false;
+
+    for (let i = 0; i < this.reactSubviews.length; i++) {
+      const current = this.reactSubviews[i];
+      if (child === current) {
+        found = true;
+        break;
+      }
+      index += current.isLayoutOnly ? current.totalNativeChildren : 1;
+    }
+    if (!found) {
+      throw new Error(
+        `Child ${child.reactTag} was not a child of ${this.reactTag}`
+      );
+    }
+    return index;
+  }
+}
+
+// this is SUUUUPER hacky but I'm faily confident that this
+// should be run before any shadow views are created/used
+(async () => {
   const Yoga: YG.Module = (await require("yoga-dom"): any);
 
   function propAlias(
@@ -46,13 +383,10 @@ async function loadAsync() {
     if (typeof input === "number") {
       return { value: input, unit: units.point };
     } else if (input == null) {
-      // TODO: Figure out why this isn't unsetting the value in Yoga
-      // Found it: https://github.com/facebook/yoga/blob/5e3ffb39a2acb05d4fe93d04f5ae4058c047f6b1/yoga/Yoga.h#L28
-      // return { value: NaN, unit: units.undefined };
-      return { value: 0, unit: units.point };
+      return { value: Yoga.Constants.undefinedValue, unit: units.point };
     }
     if (input === "auto") {
-      return { value: NaN, unit: units.auto };
+      return { value: Yoga.Constants.undefinedValue, unit: units.auto };
     }
     return {
       value: parseFloat(input),
@@ -67,7 +401,7 @@ async function loadAsync() {
     value: ?string
   ) {
     if (value == null) {
-      yogaNode[propName] = NaN;
+      yogaNode[propName] = Yoga.Constants.undefinedValue;
     } else {
       const enumValue = enumMap[value];
       if (enumValue != null) {
@@ -102,10 +436,10 @@ async function loadAsync() {
     propDefs.forEach((propName) => {
       Object.defineProperty(instance, propName, {
         configurable: true,
-        get: function() {
+        get() {
           return this.yogaNode[propName];
         },
-        set: function(value: string | number) {
+        set(value: string | number) {
           this.yogaNode[propName] = convertToYogaValue(
             value,
             Yoga.Constants.unit
@@ -126,7 +460,7 @@ async function loadAsync() {
           return this.yogaNode[propName];
         },
         set: function(value: ?number) {
-          if (value == null) value = NaN;
+          if (value == null) value = Yoga.Constants.undefinedValue;
           this.yogaNode[propName] = value;
         }
       });
@@ -159,169 +493,6 @@ async function loadAsync() {
         EDGES.map((edge) => `${propName}${edge}`).concat([propName])
       );
     });
-  }
-
-  class RCTShadowView implements RCTComponent {
-    _backgroundColor: string;
-    _transform: Array<number>;
-
-    viewName: string;
-    rootTag: number;
-
-    yogaNode: Yoga.Node;
-    previousLayout: ?Frame;
-    isNewView: boolean;
-    isHidden: boolean;
-
-    reactTag: number;
-    reactSubviews: Array<RCTShadowView> = [];
-    reactSuperview: ?RCTShadowView;
-
-    measurement: ?Frame;
-
-    width: number;
-    height: number;
-
-    constructor() {
-      this.yogaNode = new Yoga.Node();
-
-      this.previousLayout = undefined;
-      this.measurement = undefined;
-    }
-
-    set localData(value: any) {}
-
-    get hasNewLayout(): boolean {
-      return this.yogaNode.hasNewLayout;
-    }
-
-    get isDirty(): boolean {
-      return this.yogaNode.isDirty();
-    }
-
-    get backgroundColor(): string {
-      return this._backgroundColor;
-    }
-
-    set backgroundColor(value: string) {
-      this._backgroundColor = value;
-    }
-
-    measureGlobal() {
-      let globalX = 0,
-        globalY = 0;
-
-      let currentView = this;
-      while (currentView) {
-        const layout = currentView.previousLayout;
-        if (layout) {
-          globalX += layout.left;
-          globalY += layout.top;
-
-          if (currentView.hasOwnProperty("scrollOffset")) {
-            globalX -= (currentView: any).scrollOffset.left;
-            globalY -= (currentView: any).scrollOffset.top;
-          }
-
-          currentView = currentView.reactSuperview;
-        } else {
-          currentView = null;
-        }
-      }
-
-      return { globalX, globalY };
-    }
-
-    getLayoutChanges(previousPosition: {
-      top: number,
-      left: number
-    }): Array<LayoutChange> {
-      if (!this.yogaNode.hasNewLayout && !!this.previousLayout) return [];
-      this.yogaNode.hasNewLayout = false;
-
-      let layoutChanges = [];
-
-      const newLayout = this.yogaNode.getComputedLayout();
-
-      const currentPosition = {
-        top: previousPosition.top + newLayout.top,
-        left: previousPosition.left + newLayout.left
-      };
-
-      const previousMeasurement = this.measurement
-        ? { ...this.measurement }
-        : null;
-
-      const nextMeasurement = {
-        ...currentPosition,
-        width: newLayout.width,
-        height: newLayout.height
-      };
-
-      if (JSON.stringify(newLayout) !== JSON.stringify(this.previousLayout)) {
-        layoutChanges.push({
-          reactTag: this.reactTag,
-          layout: newLayout,
-          previousMeasurement,
-          nextMeasurement
-        });
-
-        this.previousLayout = newLayout;
-      }
-
-      this.reactSubviews.forEach((subView) => {
-        layoutChanges = layoutChanges.concat(
-          subView.getLayoutChanges(currentPosition)
-        );
-      });
-
-      this.measurement = { ...nextMeasurement };
-      return layoutChanges;
-    }
-
-    insertReactSubviewAtIndex(subview: RCTShadowView, index: number) {
-      subview.reactSuperview = this;
-      this.reactSubviews.splice(index, 0, subview);
-      this.yogaNode.insertChild(subview.yogaNode, index);
-    }
-
-    removeReactSubview(subview: RCTShadowView) {
-      subview.reactSuperview = undefined;
-      this.reactSubviews = this.reactSubviews.filter((s) => s !== subview);
-      this.yogaNode.removeChild(subview.yogaNode);
-    }
-
-    purge() {
-      this.reactSubviews.forEach((subView) => subView.purge());
-      this.yogaNode.free();
-    }
-
-    // TODO: Implement ===========================================
-    didSetProps(changedProps: Array<string>) {}
-    didUpdateReactSubviews() {}
-
-    frameContainsPoint(frame: Frame, point: { x: number, y: number }) {
-      return (
-        frame.left <= point.x &&
-        point.x <= frame.left + frame.width &&
-        frame.top <= point.y &&
-        point.y <= frame.top + frame.height
-      );
-    }
-
-    reactTagAtPoint(point: { x: number, y: number }): number {
-      for (const shadowView of this.reactSubviews) {
-        const prevLayout = shadowView.previousLayout;
-        if (prevLayout && this.frameContainsPoint(prevLayout, point)) {
-          let relativePoint = { ...point };
-          const origin = { x: prevLayout.left, y: prevLayout.top };
-          relativePoint.x -= origin.x;
-          relativePoint.y -= origin.y;
-          return shadowView.reactTagAtPoint(relativePoint);
-        }
-      }
-      return this.reactTag;
-    }
   }
 
   bindEnumProps(RCTShadowView.prototype, [
@@ -372,10 +543,6 @@ async function loadAsync() {
   ].forEach((propName) => {
     propAlias(RCTShadowView.prototype, propName + "Width", propName);
   });
+})();
 
-  return RCTShadowView;
-}
-
-export type RCTShadowView = ExtractAsyncModule<typeof loadAsync>;
-
-module.exports = loadAsync();
+export default RCTShadowView;

@@ -1,13 +1,11 @@
-/**
- * @providesModule RCTTouchHandler
- * @flow
- */
+/** @flow */
 
 import detectIt from "detect-it";
 import invariant from "invariant";
 
 import type RCTBridge from "RCTBridge";
-import UIView, { UIChildContainerView } from "UIView";
+import UIView from "UIView";
+import UIChildContainerView from "UIChildContainerView";
 import RCTEventDispatcher from "RCTEventDispatcher";
 import RCTTouchEvent from "RCTTouchEvent";
 import isIOS from "isIOS";
@@ -36,7 +34,7 @@ type ReactTouch = {
 let mouseTouchCounter = 1;
 
 const TOUCH_LISTENER_OPTIONS = detectIt.passiveEvents
-  ? { passive: false, capture: false }
+  ? { passive: true, capture: false }
   : false;
 
 function getFirstParentUIView(target: any) {

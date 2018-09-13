@@ -1,23 +1,33 @@
-/**
- * @providesModule RCTTextInput
- * @flow
- */
+/** @flow */
 
 import type { Frame } from "InternalLib";
 import type RCTBridge from "RCTBridge";
+import type RCTEventDispatcher from "RCTEventDispatcher";
+import { RCTTextEventType } from "RCTEventDispatcher";
 import RCTView from "RCTView";
 import { defaultFontSize, defaultFontStack } from "RCTSharedTextValues";
-import CustomElement from "CustomElement";
 
-@CustomElement("rct-text-input")
 class RCTTextInput extends RCTView {
   inputElement: HTMLInputElement;
+  eventDispatcher: RCTEventDispatcher;
+
+  nativeEventCount: number = 0;
+
+  onChange: ?Function;
+  isFocused: boolean = false;
+  blurOnSubmit: boolean = true;
 
   constructor(bridge: RCTBridge) {
     super(bridge);
 
+    this.eventDispatcher = bridge.getModuleByName("EventDispatcher");
+
     this.inputElement = document.createElement("input");
     this.inputElement.type = "text";
+
+    this.inputElement.addEventListener("focus", this.handleFocus);
+    this.inputElement.addEventListener("blur", this.handleBlur);
+    this.inputElement.addEventListener("input", this.handleChange);
 
     Object.assign(this.inputElement.style, {
       fontFamily: defaultFontStack,
@@ -30,6 +40,73 @@ class RCTTextInput extends RCTView {
     shadowRoot.appendChild(this.inputElement);
     shadowRoot.appendChild(document.createElement("slot"));
   }
+
+  handleFocus = () => {
+    this.eventDispatcher.sendTextEvent(
+      RCTTextEventType.RCTTextEventTypeFocus,
+      this.reactTag,
+      this.inputElement.value,
+      null,
+      this.nativeEventCount
+    );
+  };
+
+  handleBlur = () => {
+    this.eventDispatcher.sendTextEvent(
+      RCTTextEventType.RCTTextEventTypeEnd,
+      this.reactTag,
+      this.inputElement.value,
+      null,
+      this.nativeEventCount
+    );
+
+    this.eventDispatcher.sendTextEvent(
+      RCTTextEventType.RCTTextEventTypeBlur,
+      this.reactTag,
+      this.inputElement.value,
+      null,
+      this.nativeEventCount
+    );
+  };
+
+  handleChange = () => {
+    this.nativeEventCount++;
+
+    if (this.onChange) {
+      this.onChange({
+        text: this.inputElement.value,
+        target: this.reactTag,
+        eventCount: this.nativeEventCount
+      });
+    }
+  };
+
+  focus() {
+    this.inputElement.addEventListener("keyup", this.handleSubmit);
+    this.inputElement.focus();
+  }
+
+  blur() {
+    this.inputElement.removeEventListener("keyup", this.handleSubmit);
+    this.inputElement.blur();
+  }
+
+  handleSubmit = (event: KeyboardEvent) => {
+    event.preventDefault();
+    if (event.keyCode === 13) {
+      this.eventDispatcher.sendTextEvent(
+        RCTTextEventType.RCTTextEventTypeSubmit,
+        this.reactTag,
+        this.inputElement.value,
+        null,
+        this.nativeEventCount
+      );
+
+      if (this.blurOnSubmit) {
+        this.blur();
+      }
+    }
+  };
 
   set borderRadius(value: number) {
     // $FlowFixMe
@@ -97,5 +174,7 @@ class RCTTextInput extends RCTView {
     this.style.fontWeight = value;
   }
 }
+
+customElements.define("rct-text-input", RCTTextInput);
 
 export default RCTTextInput;

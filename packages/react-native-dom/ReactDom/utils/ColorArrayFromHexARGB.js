@@ -1,7 +1,4 @@
-/**
- * @providesModule ColorArrayFromHexARGB
- * @flow
- */
+/** @flow */
 
 export default function(hex: number) {
   hex = Math.floor(hex);

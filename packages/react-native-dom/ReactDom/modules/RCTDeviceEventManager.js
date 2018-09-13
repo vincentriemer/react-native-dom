@@ -1,43 +1,35 @@
-/**
- * @providesModule RCTDeviceEventManager
- * @flow
- */
+/** @flow */
 
-import RCTBridge, {
-  RCTFunctionTypeNormal,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import RCTModule from "RCTModule";
+import type RCTBridge from "RCTBridge";
 import type RCTEventDispatcher from "RCTEventDispatcher";
+import type RCTHistory from "RCTHistory";
 
-@RCT_EXPORT_MODULE("RCTDeviceEventManager")
-export default class RCTDeviceEventManager {
+class RCTDeviceEventManager extends RCTModule {
+  static moduleName = "RCTDeviceEventManager";
+
   dispatcher: RCTEventDispatcher;
-  shouldBlockHistory = true;
+  history: RCTHistory;
 
   constructor(bridge: RCTBridge) {
+    super(bridge);
     this.dispatcher = bridge.eventDispatcher;
+    this.history = bridge.getModuleByName("History");
     this.setupBackHandler();
   }
 
+  // TODO: Determine if this is necessary or not
   setupBackHandler() {
-    if (typeof history.pushState === "function") {
-      // $FlowFixMe
-      history.pushState("BackHandler", null, null);
-
-      window.onpopstate = () => {
-        if (this.shouldBlockHistory) {
-          // $FlowFixMe
-          history.pushState("BackHandler", null, null);
-          this.dispatcher.sendDeviceEvent("hardwareBackPress");
-        }
-      };
-    }
+    //   this.history.listen((location, action) => {
+    //     if (action === "POP") {
+    //       this.dispatcher.sendDeviceEvent("hardwareBackPress");
+    //     }
+    //   });
   }
 
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  invokeDefaultBackPressHandler() {
-    this.shouldBlockHistory = false;
-    window.history.go(-2);
+  $invokeDefaultBackPressHandler() {
+    this.history.$goBack();
   }
 }
+
+export default RCTDeviceEventManager;

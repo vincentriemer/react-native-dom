@@ -1,93 +1,69 @@
-/**
- * @providesModule RCTWebViewManager
- * @flow
- */
+/** @flow */
 
 import type UIView from "UIView";
 import type { WebViewSource } from "RCTWebView";
-import RCTBridge, {
-  RCTFunctionTypeNormal,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import type RCTBridge from "RCTBridge";
 import RCTWebView from "RCTWebView";
-import _RCTViewManager from "RCTViewManager";
+import RCTViewManager from "RCTViewManager";
 
-module.exports = (async () => {
-  const RCTViewManager = await _RCTViewManager;
-  const { RCT_EXPORT_VIEW_PROP } = RCTViewManager;
+class RCTWebViewManager extends RCTViewManager {
+  static moduleName = "RCTWebViewManager";
 
-  @RCT_EXPORT_MODULE("RCTWebViewManager")
-  class RCTWebViewManager extends RCTViewManager {
-    view(): UIView {
-      return new RCTWebView(this.bridge);
-    }
-
-    @RCT_EXPORT_VIEW_PROP("onLoadingStart", "RCTDirectEventBlock")
-    bindLoadingStart(view: RCTWebView, value: Function) {
-      view.loadStart = value;
-    }
-
-    @RCT_EXPORT_VIEW_PROP("onLoadingFinish", "RCTDirectEventBlock")
-    bindLoadingFinish(view: RCTWebView, value: Function) {
-      view.loadFinish = value;
-    }
-
-    @RCT_EXPORT_VIEW_PROP("onLoadingError", "RCTDirectEventBlock")
-    bindLoadingError(view: RCTWebView, value: Function) {
-      view.loadError = value;
-    }
-
-    @RCT_EXPORT_VIEW_PROP("source", "object")
-    setSource(view: RCTWebView, value: WebViewSource = {}) {
-      view.source = value;
-    }
-
-    @RCT_EXPORT_VIEW_PROP("scrollEnabled", "bool")
-    setScrollEnabled(view: RCTWebView, value: boolean = true) {
-      view.scrollEnabled = value;
-    }
-
-    @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-    goBack(reactTag: number) {
-      // NO-OP
-    }
-
-    @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-    goForward(reactTag: number) {
-      // NO-OP
-    }
-
-    @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-    reload(reactTag: number) {
-      this.bridge.uiManager.addUIBlock((_, viewRegistry) => {
-        const view: ?RCTWebView = viewRegistry.get(reactTag);
-        if (view && view instanceof RCTWebView) {
-          view.iframeElement.src += "";
-        }
-      });
-    }
-
-    @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-    stopLoading(reactTag: number) {
-      this.bridge.uiManager.addUIBlock((_, viewRegistry) => {
-        const view: ?RCTWebView = viewRegistry.get(reactTag);
-        if (view && view instanceof RCTWebView) {
-          view.source = {};
-        }
-      });
-    }
-
-    @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-    injectJavaScript(reactTag: number, script: string) {
-      // NO-OP
-    }
-
-    @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-    postMessage(reactTag: number, message: string) {
-      // NO-OP
-    }
+  view(): UIView {
+    return new RCTWebView(this.bridge);
   }
 
-  return RCTWebViewManager;
-})();
+  describeProps() {
+    return super
+      .describeProps()
+      .addDirectEvent("onLoadingStart")
+      .addDirectEvent("onLoadingFinish")
+      .addDirectEvent("onLoadingError")
+      .addObjectProp("source", this.setSource)
+      .addBooleanProp("scrollEnabled", this.setScrollEnabled);
+  }
+
+  setSource(view: RCTWebView, value: ?WebViewSource) {
+    view.source = value ?? {};
+  }
+
+  setScrollEnabled(view: RCTWebView, value: ?boolean) {
+    view.scrollEnabled = value ?? false;
+  }
+
+  $goBack(reactTag: number) {
+    // NO-OP
+  }
+
+  $goForward(reactTag: number) {
+    // NO-OP
+  }
+
+  $reload(reactTag: number) {
+    this.bridge.uiManager.addUIBlock((_, viewRegistry) => {
+      const view: ?RCTWebView = viewRegistry.get(reactTag);
+      if (view && view instanceof RCTWebView) {
+        view.iframeElement.src += "";
+      }
+    });
+  }
+
+  $stopLoading(reactTag: number) {
+    this.bridge.uiManager.addUIBlock((_, viewRegistry) => {
+      const view: ?RCTWebView = viewRegistry.get(reactTag);
+      if (view && view instanceof RCTWebView) {
+        view.source = {};
+      }
+    });
+  }
+
+  $injectJavaScript(reactTag: number, script: string) {
+    // NO-OP
+  }
+
+  $postMessage(reactTag: number, message: string) {
+    // NO-OP
+  }
+}
+
+export default RCTWebViewManager;

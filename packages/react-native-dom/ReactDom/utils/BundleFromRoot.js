@@ -1,7 +1,4 @@
-/**
- * @providesModule BundleFromRoot
- * @flow
- */
+/** @flow */
 
 export default function bundleFromRoot(root: string): string {
   let path = location.pathname;

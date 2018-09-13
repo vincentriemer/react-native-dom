@@ -1,57 +1,47 @@
-/**
- * @providesModule RCTSwitchManager
- * @flow
- */
+/** @flow */
 
-import RCTBridge, {
-  RCTFunctionTypeNormal,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import type RCTBridge from "RCTBridge";
 import RCTSwitch from "RCTSwitch";
 import type UIView from "UIView";
-import _RCTViewManager from "RCTViewManager";
+import RCTViewManager from "RCTViewManager";
 
-module.exports = (async () => {
-  const RCTViewManager = await _RCTViewManager;
-  const { RCT_EXPORT_VIEW_PROP } = RCTViewManager;
+class RCTSwitchManager extends RCTViewManager {
+  static moduleName = "RCTSwitchManager";
 
-  @RCT_EXPORT_MODULE("RCTSwitchManager")
-  class RCTSwitchManager extends RCTViewManager {
-    view(): UIView {
-      return new RCTSwitch(this.bridge);
-    }
-
-    @RCT_EXPORT_VIEW_PROP("value", "boolean")
-    setValue(view: RCTSwitch, value: boolean) {
-      view.value = value;
-    }
-
-    @RCT_EXPORT_VIEW_PROP("disabled", "boolean")
-    setDisabledSwitch(view: RCTSwitch, value: boolean) {
-      view.disabled = value;
-    }
-
-    @RCT_EXPORT_VIEW_PROP("onChange", "RCTBubblingEventBlock")
-    setOnChange(view: RCTSwitch, value: Function) {
-      view.onChange = value;
-    }
-
-    @RCT_EXPORT_VIEW_PROP("onTintColor", "color")
-    setOnTintColor(view: RCTSwitch, value: string) {
-      view.onTintColor = value;
-    }
-
-    @RCT_EXPORT_VIEW_PROP("tintColor", "color")
-    setTintColor(view: RCTSwitch, value: string) {
-      view.tintColor = value;
-    }
-
-    @RCT_EXPORT_VIEW_PROP("thumbTintColor", "color")
-    setThumbTintColor(view: RCTSwitch, value: string) {
-      view.thumbTintColor = value;
-    }
+  view(): UIView {
+    return new RCTSwitch(this.bridge);
   }
 
-  return RCTSwitchManager;
-})();
+  describeProps() {
+    return super
+      .describeProps()
+      .addBooleanProp("value", this.setValue)
+      .addBooleanProp("disabled", this.setDisabledSwitch)
+      .addBubblingEvent("onChange")
+      .addColorProp("onTintColor", this.setOnTintColor)
+      .addColorProp("tintColor", this.setTintColor)
+      .addColorProp("thumbTintColor", this.setThumbTintColor);
+  }
+
+  setValue(view: RCTSwitch, value: ?boolean) {
+    view.value = value;
+  }
+
+  setDisabledSwitch(view: RCTSwitch, value: ?boolean) {
+    view.disabled = value;
+  }
+
+  setOnTintColor(view: RCTSwitch, value: ?string) {
+    view.onTintColor = value;
+  }
+
+  setTintColor(view: RCTSwitch, value: ?string) {
+    view.tintColor = value;
+  }
+
+  setThumbTintColor(view: RCTSwitch, value: ?string) {
+    view.thumbTintColor = value;
+  }
+}
+
+export default RCTSwitchManager;

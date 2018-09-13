@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTTrackingAnimatedNode
- * @flow
- */
+/** @flow */
 
 import invariant from "invariant";
 

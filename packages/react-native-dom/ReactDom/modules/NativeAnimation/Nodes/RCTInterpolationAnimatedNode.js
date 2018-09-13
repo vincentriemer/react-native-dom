@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTInterpolationAnimatedNode
- * @flow
- */
+/** @flow */
 
 import type { Config } from "RCTNativeAnimatedModule";
 import type RCTAnimatedNode from "RCTAnimatedNode";

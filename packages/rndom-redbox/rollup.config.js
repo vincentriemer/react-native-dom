@@ -2,7 +2,7 @@ import svelte from "rollup-plugin-svelte";
 import resolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
 import babel from "rollup-plugin-babel";
-import uglify from "rollup-plugin-uglify";
+import { terser } from "rollup-plugin-terser";
 
 import pjson from "./package.json";
 
@@ -27,8 +27,19 @@ const baseConfig = {
 
     // If we're building for production (npm run build
     // instead of npm run dev), transpile and minify
-    production && babel({ exclude: "node_modules/**" }),
-    production && uglify()
+    production &&
+      babel({
+        exclude: "node_modules/**",
+        runtimeHelpers: true,
+        presets: [
+          [
+            "module:metro-react-native-babel-preset",
+            { disableImportExportTransform: true }
+          ]
+        ],
+        plugins: ["@babel/transform-runtime"]
+      }),
+    production && terser()
   ]
 };
 

@@ -1,17 +1,14 @@
-/**
- * @providesModule RCTRawText
- * @flow
- */
+/** @flow */
 import type RCTBridge from "RCTBridge";
 import RCTView from "RCTView";
-import CustomElement from "CustomElement";
 
-@CustomElement("rct-raw-text")
 class RCTRawText extends RCTView {
   _text: string;
 
   constructor(bridge: RCTBridge) {
     super(bridge);
+
+    this.pointerEvents = "box-none";
 
     this.updateHostStyle({
       position: "static",
@@ -29,6 +26,10 @@ class RCTRawText extends RCTView {
     this._text = "";
   }
 
+  isVirtual() {
+    return true;
+  }
+
   get text(): string {
     return this._text;
   }
@@ -38,5 +39,7 @@ class RCTRawText extends RCTView {
     this.innerText = value;
   }
 }
+
+customElements.define("rct-raw-text", RCTRawText);
 
 export default RCTRawText;

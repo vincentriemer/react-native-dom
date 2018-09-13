@@ -1,20 +1,13 @@
-/**
- * @providesModule RCTWebSocketModule
- * @flow
- */
+/** @flow */
 
 import invariant from "invariant";
 
-import RCTBridge, {
-  RCTFunctionTypeNormal,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import type RCTBridge from "RCTBridge";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 
-@RCT_EXPORT_MODULE("RCTWebSocketModule")
 class RCTWebSocketModule extends RCTEventEmitter {
-  bridge: RCTBridge;
+  static moduleName = "RCTWebSocketModule";
+
   sockets: { [id: string]: WebSocket };
 
   constructor(bridge: RCTBridge) {
@@ -30,8 +23,7 @@ class RCTWebSocketModule extends RCTEventEmitter {
    * @param options - currently unused
    * @param socketId - ID used to represent this connection in React
    */
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  connect(
+  $connect(
     url: string,
     protocols: string | Array<string>,
     options: any,
@@ -119,8 +111,7 @@ class RCTWebSocketModule extends RCTEventEmitter {
    * @param data - data from react
    * @param socketId - React socket id
    */
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  send(data: string, socketId: number) {
+  $send(data: string, socketId: number) {
     this._send(data, socketId);
   }
 
@@ -130,8 +121,7 @@ class RCTWebSocketModule extends RCTEventEmitter {
    * @param data - data from react
    * @param socketId - React socket id
    */
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  sendBinary(data: string, socketId: number) {
+  $sendBinary(data: string, socketId: number) {
     const chars = atob(data);
     const array = new Uint8Array(chars.length);
     for (let i = 0; i < chars.length; i++) {
@@ -146,8 +136,7 @@ class RCTWebSocketModule extends RCTEventEmitter {
    * "Cannot send a ping. Browser WebSocket APIs are not capable of sending specific opcodes"
    * @param socketId - React socket id
    */
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  ping(socketId: number) {
+  $ping(socketId: number) {
     throw new Error(
       "Cannot send a ping. Browser WebSocket APIs are not capable of sending specific opcodes"
     );
@@ -161,8 +150,7 @@ class RCTWebSocketModule extends RCTEventEmitter {
    * @param reason - reason distributed to WebSocket close, maybe undefined
    * @param socketId - React socket id or maybe undefined in which codeorID contains the socket
    */
-  @RCT_EXPORT_METHOD(RCTFunctionTypeNormal)
-  close(codeOrId: number, reason: void | string, socketId: void | number) {
+  $close(codeOrId: number, reason: void | string, socketId: void | number) {
     let id;
     if (typeof reason !== "undefined" && typeof socketId !== "undefined") {
       id = String(socketId);

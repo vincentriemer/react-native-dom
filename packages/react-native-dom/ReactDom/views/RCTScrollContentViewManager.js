@@ -1,22 +1,16 @@
-/**
- * @providesModule RCTScrollContentViewManager
- * @flow
- */
+/** @flow */
 
-import RCTBridge, { RCT_EXPORT_MODULE } from "RCTBridge";
+import RCTBridge from "RCTBridge";
 import { RCTScrollContentView } from "RCTScrollView";
 import type UIView from "UIView";
-import _RCTViewManager from "RCTViewManager";
+import RCTViewManager from "RCTViewManager";
 
-module.exports = (async () => {
-  const RCTViewManager = await _RCTViewManager;
+class RCTScrollContentViewManager extends RCTViewManager {
+  static moduleName = "RCTScrollContentViewManager";
 
-  @RCT_EXPORT_MODULE("RCTScrollContentViewManager")
-  class RCTScrollContentViewManager extends RCTViewManager {
-    view(): UIView {
-      return new RCTScrollContentView(this.bridge);
-    }
+  view(): UIView {
+    return new RCTScrollContentView(this.bridge);
   }
+}
 
-  return RCTScrollContentViewManager;
-})();
+export default RCTScrollContentViewManager;

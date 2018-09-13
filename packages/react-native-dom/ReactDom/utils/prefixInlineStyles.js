@@ -1,7 +1,4 @@
-/**
- * @providesModule prefixInlineStyles
- * @flow
- */
+/** @flow */
 
 import createPrefixer from "inline-style-prefixer/static/createPrefixer";
 

@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTAnimationUtils
- * @flow
- */
+/** @flow */
 
 export const EXTRAPOLATE_TYPE_IDENTITY = "identity";
 export const EXTRAPOLATE_TYPE_CLAMP = "clamp";
@@ -58,7 +55,7 @@ export function RCTInterpolateValue(
 
   return (
     outputMin +
-    (value - inputMin) * (outputMax - outputMin) / (inputMax - inputMin)
+    ((value - inputMin) * (outputMax - outputMin)) / (inputMax - inputMin)
   );
 }
 

@@ -1,15 +1,13 @@
-/**
- * @providesModule RCTDevMenu
- * @flow
- */
+/** @flow */
 
-import RCTBridge, { RCT_EXPORT_MODULE } from "RCTBridge";
+import RCTModule from "RCTModule";
+import type RCTBridge from "RCTBridge";
 
-@RCT_EXPORT_MODULE("RCTDevMenu")
-class RCTDevMenu {
-  bridge: RCTBridge;
+class RCTDevMenu extends RCTModule {
+  static moduleName = "RCTDevMenu";
 
   constructor(bridge: RCTBridge) {
+    super(bridge);
     this.bridge = bridge;
     document.addEventListener("keydown", this.handleKeyPress.bind(this));
   }
@@ -18,7 +16,7 @@ class RCTDevMenu {
     // toggling the inspector
     if (event.metaKey && event.key === "i") {
       event.preventDefault();
-      this.bridge.devSettings.toggleElementInspector();
+      this.bridge.devSettings.$toggleElementInspector();
     }
   }
 }

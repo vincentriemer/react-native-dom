@@ -28,6 +28,20 @@ packages/react-native-dom/flow-typed
 [options]
 module.system.node.resolve_dirname=node_modules
 module.system.node.resolve_dirname=packages/react-native-dom/node_modules
-esproposal.decorators=ignore
 
 module.system=haste
+module.system.haste.use_name_reducers=true
+
+# keep the following in sync with server/haste/hasteImpl.js
+# get basename
+module.system.haste.name_reducers='^.*/\([a-zA-Z0-9$_.-]+\.js\(\.flow\)?\)$' -> '\1'
+# strip .js or .js.flow suffix
+module.system.haste.name_reducers='^\(.*\)\.js\(\.flow\)?$' -> '\1'
+# strip .dom suffix
+module.system.haste.name_reducers='^\(.*\)\.dom$' -> '\1'
+module.system.haste.paths.whitelist=<PROJECT_ROOT>/packages/react-native-dom/Libraries/.*
+module.system.haste.paths.whitelist=<PROJECT_ROOT>/packages/react-native-dom/RNTester/.*
+module.system.haste.paths.whitelist=<PROJECT_ROOT>/packages/react-native-dom/ReactDom/.*
+
+[version]
+^0.75.0

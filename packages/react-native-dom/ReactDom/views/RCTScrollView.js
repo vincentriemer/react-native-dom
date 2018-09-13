@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTScrollView
- * @flow
- */
+/** @flow */
 
 import detectIt from "detect-it";
 import debounce from "debounce";
@@ -11,13 +8,14 @@ import type { Frame, Inset, Size, Position } from "InternalLib";
 import RCTView from "RCTView";
 import UIView from "UIView";
 import type RCTBridge from "RCTBridge";
-import CustomElement from "CustomElement";
 import { type RCTEvent } from "RCTEventDispatcher";
 import RCTScrollViewLocalData from "RCTScrollViewLocalData";
 import isIOS from "isIOS";
 import RCTEventDispatcher, {
   normalizeInputEventName
 } from "RCTEventDispatcher";
+
+const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
 const SCROLL_LISTENER_OPTIONS = detectIt.passiveEvents
   ? { passive: true }
@@ -133,8 +131,7 @@ class RCTScrollEvent implements RCTEvent {
   }
 }
 
-@CustomElement("rct-scroll-content-view")
-export class RCTScrollContentView extends RCTView {
+class RCTScrollContentView extends RCTView {
   constructor(bridge: RCTBridge) {
     super(bridge);
     this.updateHostStyle({
@@ -144,8 +141,10 @@ export class RCTScrollContentView extends RCTView {
       contain: "layout style"
     });
 
-    // vastly improves scrolling performance (especially on sfarai)
-    this.addWillChange("transform");
+    // vastly improves scrolling performance (especially on Safari)
+    if (isSafari) {
+      this.addWillChange("transform");
+    }
   }
 
   set frame(value: Frame) {
@@ -189,9 +188,9 @@ function setScrollPadding(node: HTMLElement) {
   }
 }
 
-@CustomElement("rct-scroll-view")
+customElements.define("rct-scroll-content-view", RCTScrollContentView);
+
 class RCTScrollView extends RCTView {
-  bridge: RCTBridge;
   manager: *;
 
   isScrolling: boolean;
@@ -228,7 +227,9 @@ class RCTScrollView extends RCTView {
     this._overflow = "scroll";
     this._scrollEnabled = true;
 
-    this.addWillChange("transform");
+    if (isSafari) {
+      this.addWillChange("transform");
+    }
 
     this.addEventListener("scroll", this.handleScroll, SCROLL_LISTENER_OPTIONS);
 
@@ -236,7 +237,7 @@ class RCTScrollView extends RCTView {
       this.addEventListener(
         "touchstart",
         this.onTouchStart,
-        detectIt.passiveEvents ? { passive: false } : false
+        detectIt.passiveEvents ? { passive: true } : false
       );
     }
   }
@@ -545,4 +546,7 @@ class RCTScrollView extends RCTView {
   }
 }
 
+customElements.define("rct-scroll-view", RCTScrollView);
+
 export default RCTScrollView;
+export { RCTScrollContentView };

@@ -1,22 +1,13 @@
-/**
- * @providesModule RCTModuleConfig
- * @flow
- */
+/** @flow */
 
-export type ModuleConfig = [
-  string /* name */,
-  ?Object /* constants */,
-  ?Array<string> /* functions */,
-  ?Array<number> /* promise method IDs */,
-  ?Array<number> /* sync method IDs */
-];
+import type { ModuleDescription, Constants } from "RCTModule";
 
 export function moduleConfigFactory(
   name: string,
-  constants: ?Object,
-  functions: ?Array<string>,
-  promiseMethodIDs: ?Array<number>,
-  syncMethodIDs: ?Array<number>
-): ModuleConfig {
+  constants: Constants,
+  functions: Array<string>,
+  promiseMethodIDs: Array<number>,
+  syncMethodIDs: Array<number>
+): ModuleDescription {
   return [name, constants, functions, promiseMethodIDs, syncMethodIDs];
 }

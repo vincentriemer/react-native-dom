@@ -1,12 +1,10 @@
-/**
- * @providesModule RCTKeyboardObserver
- * @flow
- */
+/** @flow */
 
-import RCTBridge, { RCT_EXPORT_MODULE } from "RCTBridge";
+import type RCTBridge from "RCTBridge";
 import RCTEventEmitter from "RCTNativeEventEmitter";
 
-@RCT_EXPORT_MODULE("RCTKeyboardObserver")
-class RCTKeyboardObserver extends RCTEventEmitter {}
+class RCTKeyboardObserver extends RCTEventEmitter {
+  static moduleName = "RCTKeyboardObserver";
+}
 
 export default RCTKeyboardObserver;

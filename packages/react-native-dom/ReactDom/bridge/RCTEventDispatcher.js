@@ -1,15 +1,9 @@
-/**
- * @providesModule RCTEventDispatcher
- * @flow
- */
+/** @flow */
 
 import invariant from "invariant";
 
-import RCTBridge, {
-  RCTFunctionTypeNormal,
-  RCT_EXPORT_METHOD,
-  RCT_EXPORT_MODULE
-} from "RCTBridge";
+import RCTModule from "RCTModule";
+import type RCTBridge from "RCTBridge";
 
 export const RCTTextEventType = {
   RCTTextEventTypeFocus: 0,
@@ -62,9 +56,9 @@ function stringToHash(input: string): number {
   return hash;
 }
 
-@RCT_EXPORT_MODULE("RCTEventDispatcher")
-class RCTEventDispatcher {
-  bridge: RCTBridge;
+class RCTEventDispatcher extends RCTModule {
+  static moduleName = "RCTEventDispatcher";
+
   events: { [number]: RCTEvent };
   eventQueue: Array<number>;
   // queueLock ??
@@ -81,12 +75,11 @@ class RCTEventDispatcher {
   }
 
   constructor(bridge: RCTBridge) {
-    this.bridge = bridge;
+    super(bridge);
     this.events = {};
     this.eventQueue = [];
     this.eventsDispatchScheduled = false;
     this.observers = new Set();
-    return this;
   }
 
   sendDeviceEvent(name: string, body: ?Object) {
@@ -113,7 +106,7 @@ class RCTEventDispatcher {
     type: number,
     reactTag: number,
     text: string,
-    key: string,
+    key: ?string,
     eventCount: number
   ) {
     const events = [

@@ -1,17 +1,12 @@
-/**
- * @providesModule RCTSwitch
- * @flow
- */
+/** @flow */
 
 import Switch from "rndom-switch";
 
 import type { Frame } from "InternalLib";
 import RCTView from "RCTView";
 import type RCTBridge from "RCTBridge";
-import CustomElement from "CustomElement";
 import ColorArrayFromHexARGB from "ColorArrayFromHexARGB";
 
-@CustomElement("rct-switch")
 class RCTSwitch extends RCTView {
   bridge: RCTBridge;
   onChange: ?(payload: { value: boolean }) => void;
@@ -58,26 +53,28 @@ class RCTSwitch extends RCTView {
     this.platformSwitch.height = height;
   }
 
-  set disabled(value: boolean = false) {
-    super.disabled = value;
-    this.platformSwitch.disabled = value;
+  set disabled(value: ?boolean) {
+    super.disabled = !!value;
+    this.platformSwitch.disabled = !!value;
   }
 
-  set value(value: boolean = false) {
-    this.platformSwitch.value = value;
+  set value(value: ?boolean) {
+    this.platformSwitch.value = !!value;
   }
 
-  set tintColor(value: string) {
+  set tintColor(value: ?string) {
     this.platformSwitch.tintColor = value;
   }
 
-  set onTintColor(value: string) {
+  set onTintColor(value: ?string) {
     this.platformSwitch.onTintColor = value;
   }
 
-  set thumbTintColor(value: string) {
+  set thumbTintColor(value: ?string) {
     this.platformSwitch.thumbTintColor = value;
   }
 }
+
+customElements.define("rct-switch", RCTSwitch);
 
 export default RCTSwitch;

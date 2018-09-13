@@ -1,7 +1,4 @@
-/**
- * @providesModule RCTBridgeMethod
- * @flow
- */
+/** @flow */
 import type RCTBridge from "RCTBridge";
 
 export const RCTFunctionTypeNormal = "async";

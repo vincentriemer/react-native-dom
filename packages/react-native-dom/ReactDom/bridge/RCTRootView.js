@@ -1,7 +1,6 @@
-/**
- * @providesModule RCTRootView
- * @flow
- */
+/** @flow */
+
+import Yoga from "yoga-dom";
 
 import type { Size } from "InternalLib";
 import RCTBridge from "RCTBridge";
@@ -10,14 +9,14 @@ import NotificationCenter from "NotificationCenter";
 import RCTDeviceInfo from "RCTDeviceInfo";
 import RCTTiming from "RCTTiming";
 import RCTTouchHandler from "RCTTouchHandler";
-import CustomElement from "CustomElement";
 import instrument from "Instrument";
+import type { Frame } from "InternalLib";
+import { DIRECTION_CHANGE_EVENT } from "RCTI18nManager";
+import type RCTI18nManager from "RCTI18nManager";
 import type { NativeModuleImports } from "RCTModule";
 
 declare var __DEV__: boolean;
 
-@CustomElement("rct-root-view")
-// $FlowFixMe
 class RCTRootView extends UIView {
   _reactTag: number;
 
@@ -40,6 +39,8 @@ class RCTRootView extends UIView {
     moduleName: string,
     parent: HTMLElement,
     enableHotReload: boolean = false,
+    urlScheme: string,
+    basename: string,
     nativeModules: NativeModuleImports
   ) {
     super();
@@ -56,7 +57,14 @@ class RCTRootView extends UIView {
     this.updateHostStyle("touchAction", "none");
     this.setAttribute("touch-action", "none");
 
-    const bridge = new RCTBridge(moduleName, bundle, nativeModules, parent);
+    const bridge = new RCTBridge(
+      moduleName,
+      bundle,
+      nativeModules,
+      parent,
+      urlScheme,
+      basename
+    );
     this.initialization = this.initializeBridge(bridge);
   }
 
@@ -64,6 +72,8 @@ class RCTRootView extends UIView {
     this.bridge = bridge;
     this.bridge.bundleFinishedLoading = this.bundleFinishedLoading.bind(this);
 
+    const yoga = await Yoga;
+    this.bridge.Yoga = yoga;
     await this.bridge.initializeModules();
 
     const deviceInfoModule: RCTDeviceInfo = (this.bridge.modulesByName[
@@ -89,15 +99,26 @@ class RCTRootView extends UIView {
       WebkitTapHighlightColor: "transparent",
       userSelect: "none",
       overflow: "hidden",
-      position: "fixed"
+      position: "absolute"
     });
 
     this.ticking = false;
+
+    const i18nModule: RCTI18nManager = (this.bridge.modulesByName[
+      "I18nManager"
+    ]: any);
+
+    this.direction = i18nModule.direction;
+
+    NotificationCenter.addListener(DIRECTION_CHANGE_EVENT, ({ direction }) => {
+      this.direction = direction;
+    });
   }
 
   get reactTag(): number {
     if (!this._reactTag) {
-      this._reactTag = this.uiManager.allocateRootTag;
+      const reactTag = this.uiManager.allocateRootTag;
+      super.reactTag = reactTag;
       this.uiManager.registerRootView(this);
     }
     return this._reactTag;
@@ -173,5 +194,7 @@ class RCTRootView extends UIView {
     this.requestTick();
   }
 }
+
+customElements.define("rct-root-view", RCTRootView);
 
 export default RCTRootView;
