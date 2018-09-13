@@ -20,20 +20,21 @@
     "start": "serve public",
     "test": "shx echo 'no tests written :('"
   },
+  "dependencies": {
+    "@babel/runtime": "^7.0.0"
+  },
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-plugin-external-helpers": "^6.22.0",
-    "babel-plugin-transform-builtin-classes": "^0.6.1",
-    "babel-preset-env": "^1.6.1",
-    "rollup": "^0.58.1",
-    "rollup-plugin-babel": "^3.0.4",
-    "rollup-plugin-buble": "^0.19.2",
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-transform-runtime": "^7.0.0",
+    "metro-react-native-babel-preset": "^0.45.2",
+    "rollup": "^0.65.2",
+    "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.1.0",
     "rollup-plugin-node-resolve": "^3.0.3",
-    "rollup-plugin-svelte": "^4.0.0",
-    "rollup-plugin-uglify": "^3.0.0",
+    "rollup-plugin-svelte": "^4.3.0",
+    "rollup-plugin-terser": "^2.0.2",
     "serve": "^6.5.1",
-    "svelte": "^2.0.0"
+    "svelte": "^2.13.4"
   },
   "umd:main": "lib/rndom-switch.umd.js"
 }
