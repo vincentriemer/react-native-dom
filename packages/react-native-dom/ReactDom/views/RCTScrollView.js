@@ -212,6 +212,7 @@ class RCTScrollView extends RCTView {
     this.manager = bridge.uiManager;
 
     this.updateHostStyle("contain", "strict");
+    this.updateChildContainerStyle("contain", "style size");
 
     if (!this.hasScrollParent()) {
       this.updateHostStyle("overscrollBehavior", "contain");
@@ -228,7 +229,7 @@ class RCTScrollView extends RCTView {
     this._scrollEnabled = true;
 
     if (isSafari) {
-      this.updateChildContainerStyle("willChange", "transform");
+      this.addWillChange("transform");
     }
 
     this.addEventListener("scroll", this.handleScroll, SCROLL_LISTENER_OPTIONS);
@@ -310,7 +311,7 @@ class RCTScrollView extends RCTView {
       styleUpdate.overflowY = "hidden";
     }
 
-    this.updateChildContainerStyle(styleUpdate);
+    this.updateHostStyle(styleUpdate);
   }
 
   calculateChildFramesData() {
