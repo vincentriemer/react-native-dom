@@ -96,6 +96,7 @@ class RCTShadowView implements RCTComponent {
   nativeChildren: ?(RCTShadowView[]);
 
   measurement: ?Frame;
+  prevMeasurement: ?Frame;
 
   width: number;
   height: number;
@@ -235,6 +236,7 @@ class RCTShadowView implements RCTComponent {
       );
     });
 
+    this.prevMeasurement = previousMeasurement;
     this.measurement = { ...nextMeasurement };
     return layoutChanges;
   }

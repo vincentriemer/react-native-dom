@@ -194,11 +194,7 @@ class RCTUIManager extends RCTModule {
           rootShadowView.recalculateLayout()
         );
 
-        if (this.layoutAnimationManager.isPending()) {
-          this.layoutAnimationManager.addLayoutChanges(layoutChanges);
-        } else {
-          this.applyLayoutChanges(layoutChanges);
-        }
+        this.applyLayoutChanges(layoutChanges);
       }
     });
 
@@ -252,9 +248,27 @@ class RCTUIManager extends RCTModule {
   }
 
   updateLayout(reactTag: number, layout: Frame) {
-    const view = this.viewRegistry.get(reactTag);
-    invariant(view, `View with reactTag ${reactTag} does not exist`);
-    view.frame = layout;
+    if (this.layoutAnimationManager.isPending()) {
+      const shadowView = this.shadowViewRegistry.get(reactTag);
+      invariant(
+        shadowView,
+        `Shadow View with reactTag ${reactTag} does not exist`
+      );
+      invariant(
+        shadowView.measurement,
+        `Shadow View with tag ${reactTag} has no measurement calculated`
+      );
+      this.layoutAnimationManager.addLayoutChange({
+        reactTag,
+        layout,
+        previousMeasurement: shadowView.prevMeasurement,
+        nextMeasurement: shadowView.measurement
+      });
+    } else {
+      const view = this.viewRegistry.get(reactTag);
+      invariant(view, `View with reactTag ${reactTag} does not exist`);
+      view.frame = layout;
+    }
   }
 
   measure(reactTag: number) {
@@ -427,6 +441,9 @@ class RCTUIManager extends RCTModule {
       componentData.setPropsForShadowView(props, shadowView);
       this.shadowViewRegistry.set(reactTag, shadowView);
     }
+
+    if (this.layoutAnimationManager.isPending())
+      this.layoutAnimationManager.queueAddedNode(reactTag);
 
     if (!shadowView.isVirtual()) {
       this.nativeViewHierarchyOptimizer.handleCreateView(shadowView, props);
