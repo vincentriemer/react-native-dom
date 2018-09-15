@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.4.0"></a>
+# [0.4.0](https://github.com/vincentriemer/react-native-dom/compare/v0.3.0...v0.4.0) (2018-09-15)
+
+
+### Bug Fixes
+
+* **LayoutAnimation:** Fix layout animations with heirarchy optimizer ([8a158af](https://github.com/vincentriemer/react-native-dom/commit/8a158af))
+* **RCTScrollView:** move scrolling logic back to host element ([d629031](https://github.com/vincentriemer/react-native-dom/commit/d629031))
+
+
+### Features
+
+* **RCTNativeViewHierarchyOptimizer:** Enable hierarchy optimization ([5038e70](https://github.com/vincentriemer/react-native-dom/commit/5038e70))
+
+
+
+
 <a name="0.3.0"></a>
 # [0.3.0](https://github.com/vincentriemer/react-native-dom/compare/v0.2.0...v0.3.0) (2018-09-13)
 
