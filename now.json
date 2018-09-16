@@ -1,0 +1,17 @@
+{
+  "name": "rntester",
+  "type": "static",
+  "static": {
+    "headers": [
+      {
+        "source": "**/*.@(jpg|jpeg|gif|png|bundle)",
+        "headers": [{ "key": "Cache-Control", "value": "max-age=7200" }]
+      },
+      {
+        "source": "**/*.@(bundle)",
+        "headers": [{ "key": "Content-Type", "value": "text/javascript" }]
+      }
+    ],
+    "directoryListing": false
+  }
+}
