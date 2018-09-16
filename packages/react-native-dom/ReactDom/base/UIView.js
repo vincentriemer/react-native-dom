@@ -202,7 +202,8 @@ class UIView extends HTMLElement implements RCTComponent {
   set top(value: number) {
     if (value !== this._top) {
       this._top = value;
-      this.updateTransform();
+      this.updateHostStyle("top", `${value}px`);
+      // this.updateTransform();
     }
   }
 
@@ -213,12 +214,13 @@ class UIView extends HTMLElement implements RCTComponent {
   set left(value: number) {
     if (value !== this._left) {
       this._left = value;
-      this.updateTransform();
+      this.updateHostStyle("left", `${value}px`);
+      // this.updateTransform();
     }
   }
 
   updateTransform() {
-    const transforms = [`translate(${this._left}px, ${this._top}px)`];
+    const transforms = [];
 
     if (this._animatedTransform) {
       transforms.push(this._animatedTransform);
