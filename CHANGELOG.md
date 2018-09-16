@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.4.1"></a>
+## [0.4.1](https://github.com/vincentriemer/react-native-dom/compare/v0.4.0...v0.4.1) (2018-09-16)
+
+
+### Bug Fixes
+
+* **RCTBlobManager:** Fix Blob's native module name ([171d9c4](https://github.com/vincentriemer/react-native-dom/commit/171d9c4))
+* **TextMetrics:** Remove unecessary trimming from fast text measurement ([fd816e5](https://github.com/vincentriemer/react-native-dom/commit/fd816e5))
+
+
+
+
 <a name="0.4.0"></a>
 # [0.4.0](https://github.com/vincentriemer/react-native-dom/compare/v0.3.0...v0.4.0) (2018-09-15)
 

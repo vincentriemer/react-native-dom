@@ -15,7 +15,7 @@ const kBlobURIScheme = "blob";
 
 class RCTBlobManager extends RCTModule
   implements RCTNetworkingRequestHandler, RCTNetworkingResponseHandler {
-  static moduleName = "RCTBlobManager";
+  static moduleName = "BlobModule";
 
   blobs: { [key: string]: Blob };
 

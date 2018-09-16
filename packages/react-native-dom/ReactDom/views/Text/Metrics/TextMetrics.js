@@ -319,10 +319,7 @@ export class TextMetrics {
    * method
    */
   static addLine(line: string, newLine: boolean = true) {
-    line = TextMetrics.trimRight(line);
-
     line = newLine ? `${line}\n` : line;
-
     return line;
   }
 

@@ -15,12 +15,10 @@ aliases:
         - rn-dom-repo-{{ .Branch }}-{{ .Revision }}
         - rn-dom-repo-{{ .Branch }}
         - rn-dom-repo
-  
-  npm_cache_key: &npm_cache_key
-    v1-dependency-npm-{{ checksum "yarn.lock" }}
 
-  npm_backup_cache_key: &npm_backup_cache_key
-    v1-dependency-npm
+  npm_cache_key: &npm_cache_key v1-dependency-npm-{{ checksum "yarn.lock" }}
+
+  npm_backup_cache_key: &npm_backup_cache_key v1-dependency-npm
 
   init_submodules: &init_submodules
     run:
@@ -32,25 +30,23 @@ aliases:
       keys:
         - *npm_cache_key
         - *npm_backup_cache_key
-  
-  rndom_cache_key: &rndom_cache_key
-    rn-dom-lib-{{ .Branch }}-{{ .Revision }}
-  
+
+  rndom_cache_key: &rndom_cache_key rn-dom-lib-{{ .Branch }}-{{ .Revision }}
+
   restore_rndom: &restore_rndom
     restore_cache:
       keys:
         - *rndom_cache_key
 
-  components_cache_key: &components_cache_key
-    rndom-components-{{ .Branch }}-{{ .Revision }}
+  components_cache_key:
+    &components_cache_key rndom-components-{{ .Branch }}-{{ .Revision }}
 
   restore_components: &restore_components
     restore_cache:
       keys:
         - *components_cache_key
 
-  rntester_cache_key: &rntester_cache_key
-    rntester-{{ .Branch }}-{{ .Revision }}
+  rntester_cache_key: &rntester_cache_key rntester-{{ .Branch }}-{{ .Revision }}
 
   restore_rntester: &restore_rntester
     restore_cache:
@@ -79,7 +75,7 @@ jobs:
       - run:
           name: Run Linters
           command: yarn lint
-  
+
   unittest:
     <<: *container_config
     steps:
@@ -87,7 +83,7 @@ jobs:
       - run:
           name: Run Unittests
           command: yarn test
-  
+
   build_react_native_dom:
     <<: *container_config
     steps:
@@ -99,7 +95,7 @@ jobs:
           key: *rndom_cache_key
           paths:
             - packages/react-native-dom/lib
-  
+
   build_components:
     <<: *container_config
     steps:
@@ -126,7 +122,7 @@ jobs:
           key: *rntester_cache_key
           paths:
             - ~/react-native-dom/packages/react-native-dom/dist
-  
+
   release_canary:
     <<: *container_config
     steps:
@@ -137,7 +133,7 @@ jobs:
       - run:
           name: Publish Canary Release to NPM
           command: yarn release:canary
-  
+
   smoke_test:
     <<: *container_config
     steps:
@@ -145,7 +141,7 @@ jobs:
       - run:
           name: Run project initialization smoke test
           command: yarn test:smoke
-  
+
   deploy_rntester:
     <<: *container_config
     steps:
@@ -155,7 +151,6 @@ jobs:
           name: Deploy RNTester to now.sh
           command: |
             sudo npm install -unsafe-perm --global now
-            cd packages/react-native-dom/dist
             URL=$(now -t ${NOW_TOKEN})
             now alias -t ${NOW_TOKEN} ${URL} rntester.now.sh
 
