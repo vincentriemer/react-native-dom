@@ -6,7 +6,7 @@ An experimental, comprehensive port of React Native to the web.
   Native on mobile, all of your react components/app logic are run in web
   worker, leaving the main thread to entirely focus on rendering.
 - **Same layout behavior as React Native on mobile:** Powered by custom bindings
-  to Yoga and compiled to Web Assembly, avoid layout inconsistencies between
+  to Yoga and compiled to WebAssembly, avoid layout inconsistencies between
   your native and web projects.
 - **Built with the same bundler used for existing React Native platforms:**
   Build both the "native" main and JS threads with the Metro Bundler along with
