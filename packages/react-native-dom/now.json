@@ -1,7 +1,9 @@
 {
   "name": "rntester",
   "type": "static",
+  "files": ["dist"],
   "static": {
+    "public": "dist",
     "headers": [
       {
         "source": "**/*.@(jpg|jpeg|gif|png|bundle)",
@@ -11,7 +13,6 @@
         "source": "**/*.@(bundle)",
         "headers": [{ "key": "Content-Type", "value": "text/javascript" }]
       }
-    ],
-    "directoryListing": false
+    ]
   }
 }
