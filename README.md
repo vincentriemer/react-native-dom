@@ -97,6 +97,26 @@ an error message like `Unable to resolve module AccessibilityInfo`.
 
 ---
 
+## React Developer Tools
+
+You can use
+[the standalone version of React Developer Tools](https://github.com/facebook/react-devtools/tree/master/packages/react-devtools)
+to debug the React component hierarchy. To use it, install the react-devtools
+package globally:
+
+```
+npm install -g react-devtools
+```
+
+Now run react-devtools from the terminal to launch the standalone DevTools app:
+
+```
+react-devtools
+```
+
+In order to activate the connection with the devtools app add '?devtools' to the
+end of your development url (e.g. localhost:8081/dom?devtools)
+
 ## Building for Production
 
 A built-in script for performing a production build is still in the backlog but
