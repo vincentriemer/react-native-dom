@@ -71,8 +71,8 @@ if (__DEV__) {
     if (window.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
       console.log(
         "We detected that you have the React Devtools extension installed. " +
-          "Please note that at this time, React VR is only compatible with the " +
-          "standalone React Native Inspector that ships with Nuclide."
+          "Please note that at this time, React Native DOM is only compatible with the " +
+          "standalone version of React Developer Tools."
       );
     }
   }
