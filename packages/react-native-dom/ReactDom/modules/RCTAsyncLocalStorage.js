@@ -55,7 +55,7 @@ class RCTAsyncLocalStorage extends RCTModule {
     const callback = this.bridge.callbackFromId(callbackId);
     Promise.all(
       keys.map((key) => {
-        return idbKeyval.delete(key);
+        return idbKeyval.del(key);
       })
     ).then(() => {
       callback();
