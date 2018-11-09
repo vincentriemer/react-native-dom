@@ -1,4 +1,4 @@
-import { RNDomInstance } from "ReactDom";
+import { RNDomInstance } from "react-native-dom";
 
 function init(bundle, parent, options) {
   const web = new RNDomInstance(bundle, "RNTesterApp", parent, {
