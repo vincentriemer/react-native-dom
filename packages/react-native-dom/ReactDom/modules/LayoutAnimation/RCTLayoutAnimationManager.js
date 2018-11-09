@@ -193,8 +193,8 @@ class RCTLayoutAnimationManager {
   ): TransformAnimationConfig {
     return [
       new Array(keyLength).fill({
-        translateX: layout.left,
-        translateY: layout.top,
+        translateX: 0,
+        translateY: 0,
         scaleX: 1.0,
         scaleY: 1.0,
         inverseScaleX: 1.0,
@@ -356,12 +356,10 @@ class RCTLayoutAnimationManager {
         } = layout;
 
         if (prevTop !== nextTop) {
-          const prevTranslateY = prevTop;
-          const nextTranslateY = nextTop;
-
+          const deltaY = prevTop - nextTop;
           const newFrames = this.createTransformAnimationKeyframes(
-            prevTranslateY,
-            nextTranslateY,
+            deltaY,
+            0,
             updateKeyConfig.keyframes,
             "translateY",
             registry[reactTag][0]
@@ -371,12 +369,10 @@ class RCTLayoutAnimationManager {
         }
 
         if (prevLeft !== nextLeft) {
-          const prevTranslateX = prevLeft;
-          const nextTranslateX = nextLeft;
-
+          const deltaX = prevLeft - nextLeft;
           const newFrames = this.createTransformAnimationKeyframes(
-            prevTranslateX,
-            nextTranslateX,
+            deltaX,
+            0,
             updateKeyConfig.keyframes,
             "translateX",
             registry[reactTag][0]
@@ -476,6 +472,8 @@ class RCTLayoutAnimationManager {
       );
 
       const layoutStyle = {
+        top: layout.top,
+        left: layout.left,
         width: `${layout.width}px`,
         height: `${layout.height}px`
       };
