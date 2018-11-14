@@ -46,7 +46,7 @@
     "fmt": "prettier --write 'packages/**/*.js'",
     "lint": "flow check && eslint packages",
     "release": "lerna publish --conventional-commits --yes --cd-version-minor",
-    "release:canary": "lerna publish --canary --yes --cd-version minor",
+    "release:canary": "lerna publish minor --canary --yes",
     "run-examples": "cd packages/react-native-dom && yarn run-examples",
     "test": "lerna run test",
     "test:smoke": "node scripts/smoke.js"
@@ -66,7 +66,7 @@
     "eslint-plugin-prettier": "^2.6.0",
     "flow-bin": "^0.75.0",
     "husky": "^0.14.3",
-    "lerna": "^2.4.0",
+    "lerna": "3.4.3",
     "lint-staged": "^7.2.2",
     "prettier": "^1.12.1",
     "shelljs": "^0.8.2",
