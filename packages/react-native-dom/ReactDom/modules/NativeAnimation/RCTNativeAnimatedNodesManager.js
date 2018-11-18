@@ -14,6 +14,7 @@ import RCTInterpolationAnimatedNode from "RCTInterpolationAnimatedNode";
 import RCTTransformAnimatedNode from "RCTTransformAnimatedNode";
 import RCTMultiplicationAnimatedNode from "RCTMultiplicationAnimatedNode";
 import RCTAdditionAnimatedNode from "RCTAdditionAnimatedNode";
+import RCTSubtractionAnimatedNode from "RCTSubtractionAnimatedNode";
 import RCTModuloAnimatedNode from "RCTModuloAnimatedNode";
 import RCTDivisionAnimatedNode from "RCTDivisionAnimatedNode";
 import RCTTrackingAnimatedNode from "RCTTrackingAnimatedNode";
@@ -32,6 +33,7 @@ const NODE_TYPE_MAP: { [typeName: string]: Class<RCTAnimatedNode> } = {
   transform: RCTTransformAnimatedNode,
   multiplication: RCTMultiplicationAnimatedNode,
   addition: RCTAdditionAnimatedNode,
+  subtraction: RCTSubtractionAnimatedNode,
   modulus: RCTModuloAnimatedNode,
   division: RCTDivisionAnimatedNode,
   tracking: RCTTrackingAnimatedNode
