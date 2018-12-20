@@ -52,7 +52,6 @@ document.body && document.body.appendChild(textMeasurementContainer);
 
 const canvasMesurement = document.createElement("canvas");
 canvasMesurement.id = "canvas-measurement";
-// $FlowFixMe
 Object.assign(canvasMesurement.style, {
   position: "absolute",
   visibility: "hidden",
@@ -338,16 +337,21 @@ class RCTShadowText extends RCTShadowView {
     return this._testTree;
   }
 
-  insertReactSubviewAtIndex(
-    subview: RCTShadowText | RCTShadowRawText,
-    index: number
-  ) {
+  insertReactSubviewAtIndex(subview: RCTShadowView, index: number) {
+    invariant(
+      subview instanceof RCTShadowText || subview instanceof RCTShadowRawText,
+      "Cannot insert subview to ShadowText that isn't of type RCTShadowText or RCTShadowRawText"
+    );
     subview.reactSuperview = this;
     this.textChildren.splice(index, 0, subview);
     this.markTextDirty();
   }
 
-  removeReactSubview(subview: RCTShadowText | RCTShadowRawText) {
+  removeReactSubview(subview: RCTShadowView) {
+    invariant(
+      subview instanceof RCTShadowText || subview instanceof RCTShadowRawText,
+      "Cannot remove a subview that isn't of type RCTShadowText or RCTShadowRawText"
+    );
     subview.reactSuperview = undefined;
     this.textChildren = this.textChildren.filter((s) => s !== subview);
     this.markTextDirty();

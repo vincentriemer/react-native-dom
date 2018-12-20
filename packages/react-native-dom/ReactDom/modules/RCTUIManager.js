@@ -275,7 +275,7 @@ class RCTUIManager extends RCTModule {
     return this.$measure(reactTag);
   }
 
-  $measure(reactTag: number, callbackId: ?number) {
+  $measure(reactTag: number, callbackId: ?number): Promise<*> {
     return new Promise((resolve, reject) => {
       this.addUIBlock(() => {
         let shadowView = this.shadowViewRegistry.get(reactTag);

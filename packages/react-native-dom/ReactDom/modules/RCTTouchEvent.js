@@ -85,10 +85,6 @@ class RCTTouchEvent implements RCTEvent {
       this.changedIndexes
     ];
   }
-
-  coalescingKey(): number {
-    return this.coalescingKey;
-  }
 }
 
 export default RCTTouchEvent;

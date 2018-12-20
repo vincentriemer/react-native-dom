@@ -44,4 +44,4 @@ module.system.haste.paths.whitelist=<PROJECT_ROOT>/packages/react-native-dom/RNT
 module.system.haste.paths.whitelist=<PROJECT_ROOT>/packages/react-native-dom/ReactDom/.*
 
 [version]
-^0.75.0
+^0.89.0

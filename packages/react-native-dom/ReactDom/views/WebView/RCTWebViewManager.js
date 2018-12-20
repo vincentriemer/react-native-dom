@@ -41,7 +41,7 @@ class RCTWebViewManager extends RCTViewManager {
 
   $reload(reactTag: number) {
     this.bridge.uiManager.addUIBlock((_, viewRegistry) => {
-      const view: ?RCTWebView = viewRegistry.get(reactTag);
+      const view = viewRegistry.get(reactTag);
       if (view && view instanceof RCTWebView) {
         view.iframeElement.src += "";
       }
@@ -50,7 +50,7 @@ class RCTWebViewManager extends RCTViewManager {
 
   $stopLoading(reactTag: number) {
     this.bridge.uiManager.addUIBlock((_, viewRegistry) => {
-      const view: ?RCTWebView = viewRegistry.get(reactTag);
+      const view = viewRegistry.get(reactTag);
       if (view && view instanceof RCTWebView) {
         view.source = {};
       }

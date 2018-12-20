@@ -75,7 +75,6 @@ export default class RCTModule {
       // $FlowFixMe
       x !== Object.prototype &&
       Object.getOwnPropertyNames(x).concat(
-        // $FlowFixMe
         deepProps(Object.getPrototypeOf(x)) || []
       );
 

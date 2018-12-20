@@ -1,5 +1,5 @@
 declare module "history/createBrowserHistory" {
-  declare function Unblock(): void;
+  declare type Unblock = () => void;
 
   declare export type Action = "PUSH" | "REPLACE" | "POP";
 
@@ -41,7 +41,7 @@ declare module "history/createBrowserHistory" {
 }
 
 declare module "history/createMemoryHistory" {
-  declare function Unblock(): void;
+  declare type Unblock = () => void;
 
   declare export type Action = "PUSH" | "REPLACE" | "POP";
 
@@ -87,7 +87,7 @@ declare module "history/createMemoryHistory" {
 }
 
 declare module "history/createHashHistory" {
-  declare function Unblock(): void;
+  declare type Unblock = () => void;
 
   declare export type Action = "PUSH" | "REPLACE" | "POP";
 

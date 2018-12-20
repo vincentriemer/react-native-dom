@@ -17,14 +17,13 @@ import type RCTDevLoadingView from "RCTDevLoadingView";
 import type RCTDevSettings from "RCTDevSettings";
 import type RCTNetworking from "RCTNetworkingNative";
 import type RCTBlobManager from "RCTBlobManager";
-import type RCTModule, {
-  ModuleDescription,
-  NativeModuleImports
+import RCTModule, {
+  type ModuleDescription,
+  type NativeModuleImports
 } from "RCTModule";
 import { bridgeModuleNameForClass } from "RCTModule";
 import type RCTRedBox from "RCTRedBox";
-import typeof _RCTUIManager from "RCTUIManager";
-type RCTUIManager = $Call<$await<_RCTUIManager>>;
+import type RCTUIManager from "RCTUIManager";
 
 export { RCTFunctionTypeNormal, RCTFunctionTypePromise, RCTFunctionTypeSync };
 export type { RCTFunctionType };
@@ -279,8 +278,8 @@ export default class RCTBridge {
   modulesConformingToProtocol<T: Class<any>>(
     protocol: T
   ): $Call<ClassInstance, T>[] {
-    return Object.values(this.modulesByName).filter((module: RCTModule) => {
-      return module instanceof protocol;
+    return Object.values(this.modulesByName).filter((module) => {
+      return module instanceof RCTModule && module instanceof protocol;
     });
   }
 

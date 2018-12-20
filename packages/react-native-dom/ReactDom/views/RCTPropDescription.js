@@ -41,7 +41,7 @@ class RCTPropDescription {
   viewProps: PropDefType[] = [];
   shadowProps: PropDefType[] = [];
 
-  addShadowProp(name: string) {
+  addShadowProp(name: string): RCTPropDescription {
     this.shadowProps.push({
       name,
       type: RCTPropTypes.string,
@@ -53,7 +53,12 @@ class RCTPropDescription {
     return this;
   }
 
-  addProp(name: string, type: string, setter: Setter, nativeOnly: boolean) {
+  addProp(
+    name: string,
+    type: string,
+    setter: Setter,
+    nativeOnly: boolean
+  ): RCTPropDescription {
     this.viewProps.push({ name, type, setter, nativeOnly });
     return this;
   }
@@ -63,7 +68,7 @@ class RCTPropDescription {
     type: string,
     setter: Setter,
     nativeOnly: boolean = false
-  ) {
+  ): RCTPropDescription {
     return this.addProp(name, type, setter, nativeOnly).addShadowProp(name);
   }
 
@@ -71,7 +76,7 @@ class RCTPropDescription {
     name: string,
     setter: $PropertyType<NumberPropDef, "setter">,
     nativeOnly: boolean = false
-  ) {
+  ): RCTPropDescription {
     return this.addProp(name, RCTPropTypes.number, setter, nativeOnly);
   }
 
@@ -79,7 +84,7 @@ class RCTPropDescription {
     name: string,
     setter: $PropertyType<StringPropDef, "setter">,
     nativeOnly: boolean = false
-  ) {
+  ): RCTPropDescription {
     return this.addProp(name, RCTPropTypes.string, setter, nativeOnly);
   }
 
@@ -87,7 +92,7 @@ class RCTPropDescription {
     name: string,
     setter: $PropertyType<BoolPropDef, "setter">,
     nativeOnly: boolean = false
-  ) {
+  ): RCTPropDescription {
     return this.addProp(name, RCTPropTypes.bool, setter, nativeOnly);
   }
 
@@ -95,7 +100,7 @@ class RCTPropDescription {
     name: string,
     setter: $PropertyType<ArrayPropDef, "setter">,
     nativeOnly: boolean = false
-  ) {
+  ): RCTPropDescription {
     return this.addProp(name, RCTPropTypes.array, setter, nativeOnly);
   }
 
@@ -103,7 +108,7 @@ class RCTPropDescription {
     name: string,
     setter: $PropertyType<ColorPropDef, "setter">,
     nativeOnly: boolean = false
-  ) {
+  ): RCTPropDescription {
     const betterSetter = (view: RCTView, value: ?(number | string)) => {
       if (typeof value === "number") {
         const [a, r, g, b] = ColorArrayFromHexARGB(value);
@@ -121,11 +126,11 @@ class RCTPropDescription {
     name: string,
     setter: $PropertyType<ObjectPropDef, "setter">,
     nativeOnly: boolean = false
-  ) {
+  ): RCTPropDescription {
     return this.addProp(name, RCTPropTypes.object, setter, nativeOnly);
   }
 
-  addDirectShadowEvent(name: string) {
+  addDirectShadowEvent(name: string): RCTPropDescription {
     const setter = eventSetter(name);
     this.shadowProps.push({
       name,
@@ -136,12 +141,18 @@ class RCTPropDescription {
     return this;
   }
 
-  addDirectEvent(name: string, nativeOnly: boolean = false) {
+  addDirectEvent(
+    name: string,
+    nativeOnly: boolean = false
+  ): RCTPropDescription {
     const setter = eventSetter(name);
     return this.addProp(name, RCTPropTypes.directEvent, setter, nativeOnly);
   }
 
-  addBubblingEvent(name: string, nativeOnly: boolean = false) {
+  addBubblingEvent(
+    name: string,
+    nativeOnly: boolean = false
+  ): RCTPropDescription {
     const setter = eventSetter(name);
     return this.addProp(name, RCTPropTypes.bubblingEvent, setter, nativeOnly);
   }
