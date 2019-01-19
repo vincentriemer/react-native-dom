@@ -1,9 +1,6 @@
 workflow "Continuous Integration" {
   on = "push"
-  resolves = [
-    "Build RNTester",
-    "new-action",
-  ]
+  resolves = ["Build RNTester"]
 }
 
 action "Update Submodules" {
