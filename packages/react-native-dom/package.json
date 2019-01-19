@@ -122,7 +122,6 @@
         "dom"
       ]
     },
-    "plugin": "./local-cli/index.js",
-    "platform": "./local-cli/platform.js"
+    "plugin": "./local-cli/index.js"
   }
 }
