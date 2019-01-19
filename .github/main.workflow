@@ -16,6 +16,20 @@ action "Unit Tests" {
   args = "test"
 }
 
+action "Lint" {
+  uses = "aquariuslt/github-actions-yarn@master"
+  needs = ["Dependencies"]
+  runs = "yarn"
+  args = "lint"
+}
+
+action "Build React Native DOM" {
+  uses = "aquariuslt/github-actions-yarn@master"
+  needs = ["Unit Tests"]
+  runs = "yarn"
+  args = "compile:rndom"
+}
+
 action "Build Components" {
   uses = "aquariuslt/github-actions-yarn@master"
   needs = ["Unit Tests"]
@@ -23,23 +37,9 @@ action "Build Components" {
   args = "compile:components"
 }
 
-action "Lint" {
-  uses = "aquariuslt/github-actions-yarn@master"
-  needs = ["Build Components"]
-  runs = "yarn"
-  args = "lint"
-}
-
-action "Build React Native DOM" {
-  uses = "aquariuslt/github-actions-yarn@master"
-  needs = ["Lint"]
-  runs = "yarn"
-  args = "compile:rndom"
-}
-
 action "Build RNTester" {
   uses = "aquariuslt/github-actions-yarn@master"
-  needs = ["Build React Native DOM"]
+  needs = ["Build Components", "Build React Native DOM"]
   runs = "yarn"
   args = "build:rntester"
 }

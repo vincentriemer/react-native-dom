@@ -46,6 +46,7 @@
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "fmt": "prettier --write 'packages/**/*.js'",
+    "prelint": "yarn compile:components",
     "lint": "flow check && eslint packages",
     "release:canary": "lerna publish minor --canary --yes",
     "run-examples": "cd packages/react-native-dom && yarn run-examples",
