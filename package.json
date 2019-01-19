@@ -37,10 +37,12 @@
     ]
   },
   "scripts": {
+    "build:rntester": "lerna run build:rntester --scope react-native-dom --stream",
     "clean": "shx rm -rf packages/*/lib",
     "precommit": "lint-staged",
     "compile": "lerna run compile --stream",
     "compile:components": "lerna run compile --scope rndom-* --stream",
+    "compile:rndom": "lerna run compile --scope react-native-dom --stream",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "fmt": "prettier --write 'packages/**/*.js'",
