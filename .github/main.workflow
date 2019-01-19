@@ -46,8 +46,3 @@ action "Build RNTester" {
   needs = ["Build Components", "Build React Native DOM"]
   args = "build:rntester"
 }
-
-action "new-action" {
-  uses = "owner/repo/path@ref"
-  needs = ["Dependencies"]
-}
