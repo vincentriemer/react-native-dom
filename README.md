@@ -35,6 +35,8 @@ For the best introduction to this project, check out
 This project is still highly experimental and many aspects of it are subject to
 breaking changes, continue at your own risk.
 
+**Note:** React Native DOM does not work with React Native 0.56 (or above)
+
 ---
 
 ## Getting Started
