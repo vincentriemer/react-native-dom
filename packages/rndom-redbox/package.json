@@ -33,7 +33,7 @@
     "rollup-plugin-node-resolve": "^3.0.3",
     "rollup-plugin-svelte": "^4.3.0",
     "rollup-plugin-terser": "^2.0.2",
-    "serve": "^7.0.0",
+    "serve": "^10.1.2",
     "svelte": "^2.13.4"
   },
   "umd:main": "lib/rndom-redbox.umd.js"
