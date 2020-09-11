@@ -67,7 +67,7 @@
     "idb-keyval": "^3.0.5",
     "inline-style-prefixer": "^3.0.8",
     "invariant": "^2.2.2",
-    "node-fetch": "^1.7.3",
+    "node-fetch": "^2.6.1",
     "normalize-css-color": "^1.0.2",
     "opn": "^5.2.0",
     "pepjs": "^0.4.3",
