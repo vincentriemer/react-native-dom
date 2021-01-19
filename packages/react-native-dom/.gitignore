@@ -1,8 +1,9 @@
-dist
 node_modules
-lib
-stats.html
-yarn-error.log
-flow-coverage
-.yarnrc
-yalc.lock
+.npmrc
+flow
+jest
+Libraries
+index.js
+interface.js
+rn-get-polyfills.js
+!src/Libraries

@@ -15,113 +15,38 @@
     "email": "vincentriemer+rndom@gmail.com",
     "url": "https://vincentriemer.com"
   },
-  "files": [
-    "lib",
-    "Libraries",
-    "local-cli",
-    "flow-typed",
-    "jest"
-  ],
-  "main": "lib/ReactDom.js",
+  "main": "index.js",
   "scripts": {
-    "prebuild:rntester": "rimraf dist && mkdir -p dist",
-    "build:rntester": "NODE_ENV=production yarn run build:rntester:client && yarn run build:rntester:bundle && cp ./RNTester/js/index.html ./dist/index.html",
-    "build:rntester:bundle": "react-native bundle --config $(pwd)/metro.config.js --dev false --entry-file $(pwd)/RNTester/js/RNTesterApp.dom.js --bundle-output ./dist/RNTesterApp.dom.bundle --sourcemap-output ./dist/RNTesterApp.bundle.map --platform dom --assets-dest ./dist --reset-cache",
-    "build:rntester:client": "react-native bundle --config $(pwd)/metro.config.js --dev false --entry-file $(pwd)/RNTester/js/client.js --bundle-output ./dist/client.bundle --sourcemap-output ./dist/client.bundle.map --platform dom --reset-cache",
-    "precompile": "rimraf lib",
-    "compile": "BABEL_ENV=lib babel ReactDom --out-dir lib --source-maps",
-    "postcompile": "flow-copy-source ReactDom lib",
-    "flow": "flow",
-    "prepublishOnly": "yarn compile",
-    "run-examples": "react-native start --port 8081",
-    "test": "jest"
+    "compile": "just-scripts build",
+    "test": "just-scripts test",
+    "package": "npm pack"
   },
-  "jest": {
-    "haste": {
-      "defaultPlatform": "dom",
-      "providesModuleNodeModules": [
-        "react-native-dom"
-      ],
-      "platforms": [
-        "dom"
-      ]
-    },
-    "roots": [
-      "<rootDir>/Libraries/",
-      "<rootDir>/ReactDom/"
-    ]
-  },
-  "dependencies": {
-    "@babel/generator": "^7.0.0",
-    "@babel/runtime": "^7.0.0",
-    "@babel/template": "^7.0.0",
-    "@babel/types": "^7.0.0",
-    "@webcomponents/webcomponentsjs": "^2.0.2",
-    "bezier-easing": "^2.0.3",
-    "cuid": "^2.1.1",
-    "debounce": "^1.0.2",
-    "deepmerge": "^1.5.0",
-    "detect-it": "^3.0.0",
-    "fast-memoize": "^2.2.7",
-    "history": "^4.7.2",
-    "idb-keyval": "^3.0.5",
-    "inline-style-prefixer": "^3.0.8",
-    "invariant": "^2.2.2",
-    "node-fetch": "^1.7.3",
-    "normalize-css-color": "^1.0.2",
-    "opn": "^5.2.0",
-    "pepjs": "^0.4.3",
-    "query-string": "^6.1.0",
-    "resize-observer-polyfill": "^1.5.0",
-    "rndom-redbox": "0.5.0",
-    "rndom-switch": "0.5.0",
-    "rtl-detect": "^1.0.2",
-    "tinycolor2": "^1.4.1",
-    "wait-port": "^0.2.2",
-    "web-animations-js": "^2.3.1",
-    "wolfy87-eventemitter": "^5.1.0",
-    "yeoman-environment": "^2.2.0",
-    "yeoman-generator": "^2.0.5",
-    "yoga-dom": "0.0.15"
-  },
+  "keywords": [
+    "react-native",
+    "react-native-dom"
+  ],
+  "files": [
+    "react-native.config.js",
+    "metro.config.js",
+    "rn-get-polyfills.js",
+    "index.js",
+    "index.dom.js",
+    "generateDom.js",
+    "dom",
+    "scripts",
+    "Libraries"
+  ],
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.0.0",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.0.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
-    "@babel/plugin-transform-runtime": "^7.0.0",
-    "@babel/preset-flow": "^7.0.0",
-    "@babel/template": "^7.0.0",
-    "babel-core": "7.0.0-bridge.0",
-    "babel-jest": "^23.6.0",
-    "babel-plugin-module-resolver": "^3.1.1",
-    "babel-plugin-preval": "^1.3.2",
-    "babel-plugin-transform-inline-environment-variables": "^0.1.1",
-    "flow-bin": "^0.70.0",
-    "flow-copy-source": "^1.3.0",
-    "flow-typed": "^2.2.3",
-    "jest": "^23.6.0",
-    "lint-staged": "^6.0.0",
-    "metro-react-native-babel-preset": "^0.49.0",
-    "prettier": "^1.9.0",
-    "react": "16.6.0-alpha.8af6728",
-    "react-native": "~0.57.8",
-    "resolve": "^1.7.1",
-    "rimraf": "^2.6.1"
+    "just-scripts": "^1.2.6",
+    "react-native": "0.62.2"
   },
   "peerDependencies": {
-    "react-native": "~0.57.0"
+    "react-native": "~0.62.0"
   },
-  "rnpm": {
-    "haste": {
-      "providesModuleNodeModules": [
-        "react-native-dom"
-      ],
-      "platforms": [
-        "dom"
-      ]
-    },
-    "plugin": "./local-cli/index.js"
+  "dependencies": {
+    "metro-config": "^0.64.0",
+    "metro-resolver": "^0.64.0",
+    "react-native-dom-cli": "^1.0.0",
+    "react-native-dom-renderer": "^1.0.0"
   }
 }
