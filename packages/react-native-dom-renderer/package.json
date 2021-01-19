@@ -1,0 +1,81 @@
+{
+  "name": "react-native-dom-renderer",
+  "version": "1.0.0",
+  "description": "renderer for react-native-dom (to render react-native components on browser)",
+  "main": "build/ReactDom.js",
+  "homepage": "https://github.com/vincentriemer/react-native-dom",
+  "bugs": {
+    "url": "https://github.com/vincentriemer/react-native-dom/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vincentriemer/react-native-dom.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Vincent Riemer",
+    "email": "vincentriemer+rndom@gmail.com",
+    "url": "https://vincentriemer.com"
+  },
+  "scripts": {
+    "precompile": "rimraf build",
+    "compile": "babel ReactDom --out-dir build --source-maps",
+    "postcompile": "flow-copy-source ReactDom build"
+  },
+  "keywords": [
+    "react-native",
+    "react-native-dom",
+    "react-native-dom-renderer",
+    "react-native on web"
+  ],
+  "files": [
+    "package.json",
+    "build",
+    "ReactDom"
+  ],
+  "dependencies": {
+    "@webcomponents/webcomponentsjs": "^2.0.2",
+    "bezier-easing": "^2.0.3",
+    "cuid": "^2.1.1",
+    "debounce": "^1.0.2",
+    "deepmerge": "^1.5.0",
+    "detect-it": "^3.0.0",
+    "fast-memoize": "^2.2.7",
+    "history": "^5.0.0",
+    "idb-keyval": "^3.2.0",
+    "inline-style-prefixer": "^3.0.8",
+    "invariant": "^2.2.4",
+    "pepjs": "^0.4.3",
+    "query-string": "^6.1.0",
+    "resize-observer-polyfill": "^1.5.0",
+    "rndom-redbox": "0.5.0",
+    "rndom-switch": "0.5.0",
+    "rtl-detect": "^1.0.2",
+    "tinycolor2": "^1.4.1",
+    "web-animations-js": "^2.3.1",
+    "wolfy87-eventemitter": "^5.1.0",
+    "yoga-dom": "0.0.15"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.0.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.0.0",
+    "@babel/preset-flow": "^7.0.0",
+    "@babel/template": "^7.0.0",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-jest": "^23.6.0",
+    "babel-plugin-module-resolver": "^3.1.1",
+    "babel-plugin-preval": "^1.3.2",
+    "babel-plugin-transform-inline-environment-variables": "^0.1.1",
+    "flow-bin": "^0.70.0",
+    "flow-copy-source": "^1.3.0",
+    "flow-typed": "^2.2.3",
+    "jest": "^23.6.0",
+    "lint-staged": "^6.0.0",
+    "metro-react-native-babel-preset": "^0.49.0",
+    "prettier": "^1.9.0"
+  }
+}

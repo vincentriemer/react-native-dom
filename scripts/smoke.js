@@ -25,7 +25,7 @@ guardedExec(
 
 // Initialize new React Native Project
 guardedExec(
-  `react-native init ${APP_NAME}`,
+  `react-native init ${APP_NAME} --version 0.62.2`,
   "Error: Failed to initialize new React Native project"
 );
 
@@ -33,13 +33,13 @@ shell.cd(`/tmp/${APP_NAME}`);
 
 // Install RNDom's RNPM Plugin
 guardedExec(
-  "yarn add --dev --exact rnpm-plugin-dom@canary",
-  "Error: Failed to install rnpm-plugin-dom"
+  "yarn global add react-native-dom-init",
+  "Error: Failed to install react-native-dom-init"
 );
 
 // Bootstrap React Native DOM
 guardedExec(
-  "react-native dom --exact --domVersion canary",
+  "react-native-dom-init",
   "Error: Failed to bootstrap react-native-dom into new React Native project"
 );
 

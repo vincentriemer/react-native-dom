@@ -1,0 +1,39 @@
+{
+  "name": "react-native-dom-cli",
+  "version": "1.0.0",
+  "description": "CLI for react-native-dom",
+  "main": "build/index.js",
+  "homepage": "https://github.com/vincentriemer/react-native-dom",
+  "bugs": {
+    "url": "https://github.com/vincentriemer/react-native-dom/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vincentriemer/react-native-dom.git"
+  },
+  "license": "MIT",
+  "scripts": {
+    "compile": "babel src -d build",
+    "watch": "watch \"yarn compile\" src"
+  },
+  "files": [
+    "build"
+  ],
+  "keywords": [
+    "react-native",
+    "react-native-dom",
+    "react-native-dom-cli"
+  ],
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "watch": "^1.0.2"
+  },
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "fs-extra": "^9.0.1",
+    "opn": "^6.0.0",
+    "wait-port": "^0.2.9"
+  }
+}
